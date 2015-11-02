@@ -11,7 +11,6 @@ namespace GalaxyGen.Model
     {
         public GalaxyContext() : base()
         {
-
         }
 
         public DbSet<Planet> Planets { get; set; }

@@ -16,6 +16,7 @@ namespace GalaxyGen.Engine
 
             IPlanet plan = kernel.Get<IPlanet>();
             plan.Population = 10000;
+            plan.Name = "Earth";
             ISociety soc = kernel.Get<ISociety>();
             plan.Society = soc;
             IMarket mar = kernel.Get<IMarket>();

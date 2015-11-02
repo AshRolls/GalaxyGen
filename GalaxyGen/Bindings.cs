@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Ninject;
+using Ninject.Extensions.Factory;
 using GalaxyGen.Engine;
 using GalaxyGen.Model;
 using GalaxyGen.ViewModel;
@@ -46,9 +47,12 @@ namespace GalaxyGen
             kernel.Bind<IPlanet>().To<Planet>();
             kernel.Bind<ISociety>().To<Society>();
             kernel.Bind<IMarket>().To<Market>();
+            kernel.Bind<IAgent>().To<Agent>();
 
             // ViewModel bindings
             kernel.Bind<IMainViewModel>().To<MainViewModel>();
+            kernel.Bind<IPlanetViewModel>().To<PlanetViewModel>();
+            kernel.Bind<IPlanetViewModelFactory>().ToFactory();
 
             return kernel;
         }

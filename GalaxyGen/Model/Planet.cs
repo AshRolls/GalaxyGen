@@ -1,6 +1,8 @@
 ﻿using Ninject;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,33 +11,22 @@ namespace GalaxyGen.Model
 {
     public class Planet : IPlanet
     {
-        ISociety _society;
-        IMarket _market;
+        [Key]
+        public Int64 Id { get; set; }
+      
+        [Required]
+        [StringLength(30)]
+        public String Name { get; set; }
 
-        Int64 _population;
+        [Required]
+        public Int64 Population { get; set; }
+        
+        [ForeignKey("SocietyId")]
+        public ISociety Society { get; set; }
 
-        public Planet()
-        {
+        [ForeignKey("MarketId")]
+        public IMarket Market { get; set; }
 
-        }
-
-        public ISociety Society
-        {
-            get { return _society; }
-            set { _society = value; }
-        }
-
-        public IMarket Market
-        {
-            get { return _market; }
-            set { _market = value; }
-        }
-
-        public Int64 Population
-        {
-            get { return _population; }
-            set { _population = value; }
-        }
 
     }
 }

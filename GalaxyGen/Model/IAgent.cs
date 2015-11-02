@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Society : ISociety
+    public interface IAgent
     {
-        [Key]
-        public Int64 Id { get; set; }
     }
 }
