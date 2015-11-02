@@ -14,11 +14,14 @@ namespace GalaxyGen.ViewModel
     {
         IGalaxyCreator _galaxyCreator;
         IPlanetViewModelFactory _planetViewModelFactory;
+        ResourceTypeInitialiser _resourceTypeInitialiser;
         
         public MainViewModel(IGalaxyCreator initGalaxyCreator, IPlanetViewModelFactory initPlanetViewModelFactory)
         {
             _galaxyCreator = initGalaxyCreator;
             _planetViewModelFactory = initPlanetViewModelFactory;
+
+            _resourceTypeInitialiser = new ResourceTypeInitialiser();
 
             loadOrCreateGalaxy();           
         }

@@ -87,10 +87,16 @@
     </ApplicationDefinition>
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\GalaxyContext.cs" />
+    <Compile Include="Model\GalaxyInitialiser.cs" />
     <Compile Include="Model\IAgent.cs" />
+    <Compile Include="Model\IMarketBuyOrder.cs" />
+    <Compile Include="Model\MarketBuyOrder.cs" />
+    <Compile Include="Engine\ResourceTypes.cs" />
     <Compile Include="ViewModel\IMainViewModel.cs" />
+    <Compile Include="ViewModel\IMarketViewModel.cs" />
     <Compile Include="ViewModel\IPlanetViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\MarketViewModel.cs" />
     <Compile Include="ViewModel\PlanetViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

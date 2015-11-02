@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GalaxyGen.Model
+namespace GalaxyGen.ViewModel
 {
-    public interface IAgent
+    public interface IMarketViewModel
     {
-        Int64 Id { get; set; }
-        String Name { get; set; }
 
     }
 }

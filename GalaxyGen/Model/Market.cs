@@ -12,5 +12,9 @@ namespace GalaxyGen.Model
         [Key]
         public Int64 Id { get; set; }
 
+        [Required]
+        public ICollection<IMarketBuyOrder> BuyOrders { get; set; }
+
+
     }
 }

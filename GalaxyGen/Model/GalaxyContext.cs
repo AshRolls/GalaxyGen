@@ -9,8 +9,13 @@ namespace GalaxyGen.Model
 {
     public class GalaxyContext : DbContext
     {
-        public GalaxyContext() : base()
+        static GalaxyContext()
         {
+            Database.SetInitializer<GalaxyContext>(new GalaxyInitialiser());
+            using (GalaxyContext db = new GalaxyContext())
+            {
+                db.Database.Initialize(false);
+            }
         }
 
         public DbSet<Planet> Planets { get; set; }

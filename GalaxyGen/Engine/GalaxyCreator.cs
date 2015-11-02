@@ -19,7 +19,16 @@ namespace GalaxyGen.Engine
             plan.Name = "Earth";
             ISociety soc = kernel.Get<ISociety>();
             plan.Society = soc;
-            IMarket mar = kernel.Get<IMarket>();
+            IMarket mar = kernel.Get<IMarket>();            
+            
+            IMarketBuyOrder mbo = kernel.Get<IMarketBuyOrder>();
+            IAgent agent = kernel.Get<IAgent>();
+            agent.Name = "Agent 1";
+            mbo.Owner = agent;
+            mbo.Quantity = 5;
+            mbo.Type = ResourceTypeEnum.Spice;
+            mar.BuyOrders.Add(mbo);
+
             plan.Market = mar;
 
             return plan;

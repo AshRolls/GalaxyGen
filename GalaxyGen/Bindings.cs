@@ -47,6 +47,7 @@ namespace GalaxyGen
             kernel.Bind<IPlanet>().To<Planet>();
             kernel.Bind<ISociety>().To<Society>();
             kernel.Bind<IMarket>().To<Market>();
+            kernel.Bind<IMarketBuyOrder>().To<MarketBuyOrder>();
             kernel.Bind<IAgent>().To<Agent>();
 
             // ViewModel bindings
