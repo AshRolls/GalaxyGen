@@ -19,5 +19,6 @@ namespace GalaxyGen.Model
         }
 
         public DbSet<Planet> Planets { get; set; }
+        public DbSet<Society> Societies { get; set; }
     }
 }

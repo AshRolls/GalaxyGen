@@ -44,8 +44,8 @@ namespace GalaxyGen
             kernel.Bind<IGalaxyCreator>().To<GalaxyCreator>();
 
             // Model bindings
-            kernel.Bind<IPlanet>().To<Planet>();
-            kernel.Bind<ISociety>().To<Society>();
+            //kernel.Bind<IPlanet>().To<Planet>();
+            //kernel.Bind<ISociety>().To<Society>();
             kernel.Bind<IMarket>().To<Market>();
             kernel.Bind<IMarketBuyOrder>().To<MarketBuyOrder>();
             kernel.Bind<IAgent>().To<Agent>();

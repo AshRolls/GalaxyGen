@@ -10,26 +10,25 @@ namespace GalaxyGen.Engine
 {
     public class GalaxyCreator : IGalaxyCreator
     {
-        public IPlanet GetPlanet()
+        public Planet GetPlanet()
         {
-            StandardKernel kernel = Bindings.Kernel;
-
-            IPlanet plan = kernel.Get<IPlanet>();
+            Planet plan = new Planet();
             plan.Population = 10000;
             plan.Name = "Earth";
-            ISociety soc = kernel.Get<ISociety>();
-            plan.Society = soc;
-            IMarket mar = kernel.Get<IMarket>();            
+            Society soc = new Society();
+            soc.Name = "Earth Soc";
+            plan.Soc = soc;
+            //IMarket mar = kernel.Get<IMarket>();            
             
-            IMarketBuyOrder mbo = kernel.Get<IMarketBuyOrder>();
-            IAgent agent = kernel.Get<IAgent>();
-            agent.Name = "Agent 1";
-            mbo.Owner = agent;
-            mbo.Quantity = 5;
-            mbo.Type = ResourceTypeEnum.Spice;
-            mar.BuyOrders.Add(mbo);
+            //IMarketBuyOrder mbo = kernel.Get<IMarketBuyOrder>();
+            //IAgent agent = kernel.Get<IAgent>();
+            //agent.Name = "Agent 1";
+            //mbo.Owner = agent;
+            //mbo.Quantity = 5;
+            //mbo.Type = ResourceTypeEnum.Spice;
+            //mar.BuyOrders.Add(mbo);
 
-            plan.Market = mar;
+            //plan.Market = mar;
 
             return plan;
         }

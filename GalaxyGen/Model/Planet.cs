@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Planet : IPlanet
+    public class Planet
     {
         [Key]
-        public Int64 Id { get; set; }
+        public Int64 PlanetId { get; set; }
       
         [Required]
         [StringLength(30)]
@@ -21,11 +21,11 @@ namespace GalaxyGen.Model
         [Required]
         public Int64 Population { get; set; }
         
-        [ForeignKey("SocietyId")]
-        public ISociety Society { get; set; }
+        [Required]
+        public virtual Society Soc { get; set; }
 
-        [ForeignKey("MarketId")]
-        public IMarket Market { get; set; }
+        //[ForeignKey("MarketId")]
+        //public IMarket Market { get; set; }
 
 
     }

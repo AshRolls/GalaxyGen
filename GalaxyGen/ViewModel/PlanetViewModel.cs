@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public class PlanetViewModel : IPlanetViewModel, INotifyPropertyChanged
+    public class PlanetViewModel : IPlanetViewModel
     {
-        private IPlanet model_Var;
-        public IPlanet Model
+        private Planet model_Var;
+        public Planet Model
         {
             get { return model_Var; }
             set
@@ -61,6 +61,17 @@ namespace GalaxyGen.ViewModel
                     model_Var.Population = value;
                     OnPropertyChanged("Population");
                 }
+            }
+        }
+
+        public Society Society
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.Soc;
+                else
+                    return null;
             }
         }
 

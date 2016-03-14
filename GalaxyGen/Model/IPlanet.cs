@@ -7,7 +7,7 @@ namespace GalaxyGen.Model
         Int64 Id { get; set; }
         String Name { get; set; }
         Int64 Population { get; set; }
-        ISociety Society { get; set; }
-        IMarket Market { get; set; }        
+        ISociety Soc { get; set; }
+        //IMarket Market { get; set; }        
     }
 }
