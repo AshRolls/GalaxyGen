@@ -87,6 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Framework\RelayCommand.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\GalaxyContext.cs" />
     <Compile Include="Model\GalaxyInitialiser.cs" />

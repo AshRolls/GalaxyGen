@@ -7,5 +7,6 @@ namespace GalaxyGen.ViewModel
     public interface IMainViewModel : INotifyPropertyChanged
     {
         ObservableCollection<IPlanetViewModel> Planets { get; set; }
+        IPlanetViewModel SelectedPlanet { get; set; }
     }
 }

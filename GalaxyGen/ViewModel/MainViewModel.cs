@@ -9,19 +9,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace GalaxyGen.ViewModel
 {
     public class MainViewModel : IMainViewModel
     {
         IGalaxyCreator _galaxyCreator;
+        ITickEngine _tickEngine;
         IPlanetViewModelFactory _planetViewModelFactory;
         ResourceTypeInitialiser _resourceTypeInitialiser;
         GalaxyContext _db;
         
-        public MainViewModel(IGalaxyCreator initGalaxyCreator, IPlanetViewModelFactory initPlanetViewModelFactory)
+        public MainViewModel(IGalaxyCreator initGalaxyCreator, IPlanetViewModelFactory initPlanetViewModelFactory, ITickEngine initTickEngine)
         {
             _galaxyCreator = initGalaxyCreator;
+            _tickEngine = initTickEngine;
             _planetViewModelFactory = initPlanetViewModelFactory;
 
             _resourceTypeInitialiser = new ResourceTypeInitialiser();

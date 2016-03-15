@@ -9,11 +9,9 @@ namespace GalaxyGen.Engine
 {
     public class TickEngine : ITickEngine
     {
-        Planet _planet;
-
-        public TickEngine(Planet initPlanet)
+        public TickEngine()
         {
-            _planet = initPlanet;
+            
         }
 
         public void RunTick(int numberOfTicks)
