@@ -89,7 +89,7 @@ namespace GalaxyGen.ViewModel
             set
             {
                 selectedPlanet_Var = value;
-                OnPropertyChanged("SelectedPlanet");
+                OnPropertyChanged("SelectedPlanet");                
             }
         }
 

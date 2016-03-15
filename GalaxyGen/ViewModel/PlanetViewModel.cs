@@ -10,12 +10,11 @@ namespace GalaxyGen.ViewModel
 {
     public class PlanetViewModel : IPlanetViewModel
     {
-        ISocietyViewModelFactory _societyViewModelFactory;
 
         public PlanetViewModel(ISocietyViewModelFactory initSocietyViewModelFactory)
         {
             ISocietyViewModelFactory _societyViewModelFactory = initSocietyViewModelFactory;
-            societyVm_Var = _societyViewModelFactory.CreateSocietyViewModel();
+            this.Society = _societyViewModelFactory.CreateSocietyViewModel();
         }
 
         private Planet model_Var;

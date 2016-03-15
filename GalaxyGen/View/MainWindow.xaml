@@ -14,6 +14,6 @@
             <ColumnDefinition Width="7*" />
         </Grid.ColumnDefinitions>
         <ListBox Grid.Column="0" ItemsSource="{Binding Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />
-        <TextBox Grid.Column="1" Text="{Binding SelectedPlanet.Society.Name}" />
+        <local:SocietyControl Grid.Column="1" SocietyVm="{Binding SelectedPlanet.Society}" />      
     </Grid>
 </Window>
