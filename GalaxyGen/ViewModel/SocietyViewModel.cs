@@ -8,18 +8,10 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public class PlanetViewModel : IPlanetViewModel
+    public class SocietyViewModel : ISocietyViewModel
     {
-        ISocietyViewModelFactory _societyViewModelFactory;
-
-        public PlanetViewModel(ISocietyViewModelFactory initSocietyViewModelFactory)
-        {
-            ISocietyViewModelFactory _societyViewModelFactory = initSocietyViewModelFactory;
-            societyVm_Var = _societyViewModelFactory.CreateSocietyViewModel();
-        }
-
-        private Planet model_Var;
-        public Planet Model
+        private Society model_Var;
+        public Society Model
         {
             get { return model_Var; }
             set
@@ -33,8 +25,6 @@ namespace GalaxyGen.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
-            Population = model_Var.Population;           
-            societyVm_Var.Model = model_Var.Society;
         }
 
         public String Name
@@ -52,40 +42,7 @@ namespace GalaxyGen.ViewModel
                     OnPropertyChanged("Name");
                 }
             }
-        }
-
-        public Int64 Population
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Population;
-                else
-                    return 0;
-            }
-            set
-            {
-                if (model_Var != null)
-                { 
-                    model_Var.Population = value;
-                    OnPropertyChanged("Population");
-                }
-            }
-        }
-
-        private ISocietyViewModel societyVm_Var;
-        public ISocietyViewModel Society
-        {
-            get
-            {
-                return societyVm_Var;
-            }
-            private set
-            {
-                societyVm_Var = value;
-                OnPropertyChanged("Society");
-            }
-        }
+        }     
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

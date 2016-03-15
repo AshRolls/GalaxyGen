@@ -5,16 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GalaxyGen.Model
 {
-    public class MarketBuyOrder : IMarketBuyOrder
+    public class MarketBuyOrder
     {
         [Key]
-        public Int64 Id { get; set; }
+        public Int64 MarketBuyOrderId { get; set; }
 
         public ResourceTypeEnum Type {get; set;}
         public Int64 Quantity { get; set; }
 
         [ForeignKey("AgentId")]
-        public IAgent Owner { get; set; }        
+        public Agent Owner { get; set; }        
 
     }
 }

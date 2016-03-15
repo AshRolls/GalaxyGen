@@ -22,7 +22,7 @@ namespace GalaxyGen.Model
         public Int64 Population { get; set; }
         
         [Required]
-        public virtual Society Soc { get; set; }
+        public virtual Society Society { get; set; }
 
         //[ForeignKey("MarketId")]
         //public IMarket Market { get; set; }

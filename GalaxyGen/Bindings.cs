@@ -43,17 +43,12 @@ namespace GalaxyGen
             kernel.Bind<ITickEngine>().To<TickEngine>();
             kernel.Bind<IGalaxyCreator>().To<GalaxyCreator>();
 
-            // Model bindings
-            //kernel.Bind<IPlanet>().To<Planet>();
-            //kernel.Bind<ISociety>().To<Society>();
-            kernel.Bind<IMarket>().To<Market>();
-            kernel.Bind<IMarketBuyOrder>().To<MarketBuyOrder>();
-            kernel.Bind<IAgent>().To<Agent>();
-
             // ViewModel bindings
             kernel.Bind<IMainViewModel>().To<MainViewModel>();
             kernel.Bind<IPlanetViewModel>().To<PlanetViewModel>();
             kernel.Bind<IPlanetViewModelFactory>().ToFactory();
+            kernel.Bind<ISocietyViewModel>().To<SocietyViewModel>();
+            kernel.Bind<ISocietyViewModelFactory>().ToFactory();
 
             return kernel;
         }

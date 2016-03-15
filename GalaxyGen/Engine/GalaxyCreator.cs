@@ -10,14 +10,16 @@ namespace GalaxyGen.Engine
 {
     public class GalaxyCreator : IGalaxyCreator
     {
-        public Planet GetPlanet()
+        public Planet GetPlanet(string seedName)
         {
             Planet plan = new Planet();
             plan.Population = 10000;
-            plan.Name = "Earth";
+            plan.Name = seedName;
             Society soc = new Society();
-            soc.Name = "Earth Soc";
-            plan.Soc = soc;
+            soc.Name = seedName + " Soc";
+            plan.Society = soc;
+
+
             //IMarket mar = kernel.Get<IMarket>();            
             
             //IMarketBuyOrder mbo = kernel.Get<IMarketBuyOrder>();

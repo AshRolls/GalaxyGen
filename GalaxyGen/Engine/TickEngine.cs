@@ -9,9 +9,9 @@ namespace GalaxyGen.Engine
 {
     public class TickEngine : ITickEngine
     {
-        IPlanet _planet;
+        Planet _planet;
 
-        public TickEngine(IPlanet initPlanet)
+        public TickEngine(Planet initPlanet)
         {
             _planet = initPlanet;
         }

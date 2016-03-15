@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Agent : IAgent
+    public class Agent
     {
         [Key]
-        public Int64 Id { get; set; }
+        public Int64 AgentId { get; set; }
 
+        [Required]
         public String Name { get; set; }
     }
 }

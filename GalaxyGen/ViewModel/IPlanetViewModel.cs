@@ -13,7 +13,7 @@ namespace GalaxyGen.ViewModel
         Planet Model { get; set; }
         String Name { get; set; }
         Int64 Population { get; set; }
-        Society Society { get; }
+        ISocietyViewModel Society { get; }
     }
 
     public interface IPlanetViewModelFactory

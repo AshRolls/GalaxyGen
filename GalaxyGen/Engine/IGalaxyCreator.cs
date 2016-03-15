@@ -4,6 +4,6 @@ namespace GalaxyGen.Engine
 {
     public interface IGalaxyCreator
     {
-        Planet GetPlanet();
+        Planet GetPlanet(string seedName);
     }
 }

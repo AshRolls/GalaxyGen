@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Market : IMarket
-    {
+    public class Market
+    { 
         [Key]
         public Int64 Id { get; set; }
 
         [Required]
-        public ICollection<IMarketBuyOrder> BuyOrders { get; set; }
-
+        public ICollection<MarketBuyOrder> BuyOrders { get; set; }
 
     }
 }

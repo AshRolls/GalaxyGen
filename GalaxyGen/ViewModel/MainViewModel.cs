@@ -31,16 +31,11 @@ namespace GalaxyGen.ViewModel
         }
 
         private void loadOrCreateGalaxy()
-        {
-            Planet planet;
-
-
-            planet = _db.Planets.FirstOrDefault();
-            if (planet == null)
+        {            
+            if (_db.Planets.Count() == 0)
             {
-                planet = _galaxyCreator.GetPlanet();
-                _db.Planets.Add(planet);
-                _db.Societies.Add(planet.Soc);
+                _db.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
+                _db.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
 
                 try
                 {
@@ -62,15 +57,13 @@ namespace GalaxyGen.ViewModel
                 }
             }      
             
-
-            IPlanetViewModel planetViewModel;
-            if (planet != null)
+            foreach(Planet p in _db.Planets)
             {
+                IPlanetViewModel planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
                 planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
-                planetViewModel.Model = planet;
+                planetViewModel.Model = p;
                 planets_Var.Add(planetViewModel);
-            }
-
+            }        
         }
 
         private ObservableCollection<IPlanetViewModel> planets_Var = new ObservableCollection<IPlanetViewModel>();
