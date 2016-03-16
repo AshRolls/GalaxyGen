@@ -10,6 +10,14 @@ namespace GalaxyGen.Engine
 {
     public class GalaxyCreator : IGalaxyCreator
     {
+        public SolarSystem GetSolarSystem(string seedName)
+        {
+            SolarSystem sys = new SolarSystem();
+            sys.Name = seedName;
+            sys.Planets = new List<Planet>();
+            return sys;
+        }
+
         public Planet GetPlanet(string seedName)
         {
             Planet plan = new Planet();

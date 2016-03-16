@@ -39,19 +39,25 @@ namespace GalaxyGen.ViewModel
         {
             _db = new GalaxyContext();
 
-            if (_db.Planets.Count() == 0)
+            if (_db.SolarSystems.Count() == 0)
             {
-                _db.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
-                _db.Planets.Add(_galaxyCreator.GetPlanet("Mars"));                
-            }      
-            
-            foreach(Planet p in _db.Planets)
+                SolarSystem ss =  _galaxyCreator.GetSolarSystem("Sol");
+                ss.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
+                ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
+                _db.SolarSystems.Add(ss);
+                _db.SaveChanges();
+            }
+
+            foreach (SolarSystem ss in _db.SolarSystems)
             {
-                IPlanetViewModel planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
-                planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
-                planetViewModel.Model = p;
-                planets_Var.Add(planetViewModel);
-            }        
+                foreach (Planet p in ss.Planets)
+                {
+                    IPlanetViewModel planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
+                    planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
+                    planetViewModel.Model = p;
+                    planets_Var.Add(planetViewModel);
+                }
+            }       
         }
 
         private void saveGalaxy()

@@ -112,6 +112,7 @@
     <Compile Include="Model\GalaxyInitialiser.cs" />
     <Compile Include="Model\MarketBuyOrder.cs" />
     <Compile Include="Engine\ResourceTypes.cs" />
+    <Compile Include="Model\System.cs" />
     <Compile Include="ViewModel\IMainGalaxyViewModel.cs" />
     <Compile Include="ViewModel\IMarketViewModel.cs" />
     <Compile Include="ViewModel\IPlanetViewModel.cs" />

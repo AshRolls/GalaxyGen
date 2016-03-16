@@ -15,7 +15,7 @@ namespace GalaxyGen.Model
         public Int64 PlanetId { get; set; }
       
         [Required]
-        [StringLength(30)]
+        [StringLength(60)]
         public String Name { get; set; }
 
         [Required]
@@ -23,6 +23,10 @@ namespace GalaxyGen.Model
         
         [Required]
         public virtual Society Society { get; set; }
+
+        public Int64 SolarSystemId { get; set; }
+        [ForeignKey("SolarSystemId")]
+        public SolarSystem SolarSystem { get; set; }
 
         //[ForeignKey("MarketId")]
         //public IMarket Market { get; set; }
