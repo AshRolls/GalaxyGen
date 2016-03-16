@@ -16,6 +16,7 @@ namespace GalaxyGen.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
     {
+        Galaxy gal;
         GalaxyContext _db;
         IGalaxyCreator _galaxyCreator;
         ITickEngine _tickEngine;
@@ -39,16 +40,22 @@ namespace GalaxyGen.ViewModel
         {
             _db = new GalaxyContext();
 
-            if (_db.SolarSystems.Count() == 0)
+            if (_db.Galaxies.Count() == 0)
             {
-                SolarSystem ss =  _galaxyCreator.GetSolarSystem("Sol");
+                gal = _galaxyCreator.GetGalaxy();
+                SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
-                _db.SolarSystems.Add(ss);
+                gal.SolarSystems.Add(ss);
+                _db.Galaxies.Add(gal);
                 _db.SaveChanges();
             }
-
-            foreach (SolarSystem ss in _db.SolarSystems)
+            else
+            {
+                gal = _db.Galaxies.First();
+            }
+            
+            foreach (SolarSystem ss in gal.SolarSystems)
             {
                 foreach (Planet p in ss.Planets)
                 {
@@ -130,7 +137,7 @@ namespace GalaxyGen.ViewModel
         }
 
         private void runEngine()
-        {
+        {            
             _tickEngine.RunTick(1);
         }
 

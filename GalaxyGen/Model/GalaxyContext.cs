@@ -18,6 +18,6 @@ namespace GalaxyGen.Model
             }
         }
 
-        public DbSet<SolarSystem> SolarSystems { get; set; }        
+        public DbSet<Galaxy> Galaxies { get; set; }        
     }
 }
