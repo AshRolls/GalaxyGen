@@ -1,9 +1,11 @@
-﻿using System;
+﻿using GalaxyGen.ViewModel;
+using System;
 
 namespace GalaxyGen.Engine
 {
     public interface ITickEngine
     {
-        void RunTick(Int32 numberOfTicks);
+        void SetupTickEngine(IGalaxyViewModel state);
+        void RunNTick(Int32 numberOfTicks);
     }
 }

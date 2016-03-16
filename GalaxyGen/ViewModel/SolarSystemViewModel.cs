@@ -1,6 +1,7 @@
 ﻿using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -8,17 +9,11 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public class PlanetViewModel : IPlanetViewModel
+    public class SolarSystemViewModel : ISolarSystemViewModel
     {
 
-        public PlanetViewModel(ISocietyViewModelFactory initSocietyViewModelFactory)
-        {
-            ISocietyViewModelFactory _societyViewModelFactory = initSocietyViewModelFactory;
-            this.Society = _societyViewModelFactory.CreateSocietyViewModel();
-        }
-
-        private Planet model_Var;
-        public Planet Model
+        private SolarSystem model_Var;
+        public SolarSystem Model
         {
             get { return model_Var; }
             set
@@ -31,9 +26,7 @@ namespace GalaxyGen.ViewModel
 
         private void updateFromModel()
         {
-            Name = model_Var.Name;
-            Population = model_Var.Population;           
-            societyVm_Var.Model = model_Var.Society;
+            Name = model_Var.Name;       
         }
 
         public String Name
@@ -53,37 +46,13 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        public Int64 Population
+        private ObservableCollection<IPlanetViewModel> planets_Var = new ObservableCollection<IPlanetViewModel>();
+        public ObservableCollection<IPlanetViewModel> Planets
         {
             get
             {
-                if (model_Var != null)
-                    return model_Var.Population;
-                else
-                    return 0;
-            }
-            set
-            {
-                if (model_Var != null)
-                { 
-                    model_Var.Population = value;
-                    OnPropertyChanged("Population");
-                }
-            }
-        }
-
-        private ISocietyViewModel societyVm_Var;
-        public ISocietyViewModel Society
-        {
-            get
-            {
-                return societyVm_Var;
-            }
-            private set
-            {
-                societyVm_Var = value;
-                OnPropertyChanged("Society");
-            }
+                return planets_Var;
+            }            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

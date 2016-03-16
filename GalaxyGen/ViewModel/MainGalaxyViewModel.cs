@@ -16,55 +16,72 @@ namespace GalaxyGen.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
     {
-        Galaxy gal;
+        IGalaxyViewModel _galaxyVm;
         GalaxyContext _db;
         IGalaxyCreator _galaxyCreator;
         ITickEngine _tickEngine;
+
+        IGalaxyViewModelFactory _galaxyViewModelFactory;
+        ISolarSystemViewModelFactory _solarSystemViewModelFactory;
         IPlanetViewModelFactory _planetViewModelFactory;
+        
         ResourceTypeInitialiser _resourceTypeInitialiser;        
         
-        public MainGalaxyViewModel(IGalaxyCreator initGalaxyCreator, IPlanetViewModelFactory initPlanetViewModelFactory, ITickEngine initTickEngine)
+        public MainGalaxyViewModel(IGalaxyCreator initGalaxyCreator, 
+                                    IGalaxyViewModelFactory initGalaxyViewModelFactory, 
+                                    ISolarSystemViewModelFactory initSolarSystemViewModelFactory, 
+                                    IPlanetViewModelFactory initPlanetViewModelFactory, 
+                                    ITickEngine initTickEngine)
         {
             _galaxyCreator = initGalaxyCreator;
             _tickEngine = initTickEngine;
+
+            _galaxyViewModelFactory = initGalaxyViewModelFactory;
+            _solarSystemViewModelFactory = initSolarSystemViewModelFactory;
             _planetViewModelFactory = initPlanetViewModelFactory;
 
             _resourceTypeInitialiser = new ResourceTypeInitialiser();
             
             loadOrCreateGalaxy();
+            initialiseEngine();
 
             saveGalaxy();      
-        }       
+        }
 
         private void loadOrCreateGalaxy()
         {
             _db = new GalaxyContext();
-
+            
             if (_db.Galaxies.Count() == 0)
-            {
-                gal = _galaxyCreator.GetGalaxy();
+            {                
+                Galaxy gal = _galaxyCreator.GetGalaxy();
                 SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
-                gal.SolarSystems.Add(ss);
+                gal.SolarSystems.Add(ss);                
                 _db.Galaxies.Add(gal);
                 _db.SaveChanges();
             }
-            else
-            {
-                gal = _db.Galaxies.First();
-            }
-            
-            foreach (SolarSystem ss in gal.SolarSystems)
-            {
-                foreach (Planet p in ss.Planets)
-                {
-                    IPlanetViewModel planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
-                    planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
-                    planetViewModel.Model = p;
-                    planets_Var.Add(planetViewModel);
-                }
-            }       
+
+            _galaxyVm = _galaxyViewModelFactory.CreateGalaxyViewModel();
+            _galaxyVm.Model = _db.Galaxies.First();
+               
+            // TODO move child VM creation into each seperate VM
+            //foreach (SolarSystem ss in _galaxyVm.SolarSystems)
+            //{
+            //    foreach (Planet p in ss.Planets)
+            //    {
+            //        IPlanetViewModel planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
+            //        planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
+            //        planetViewModel.Model = p;
+            //        planets_Var.Add(planetViewModel);
+            //    }
+            //}       
+        }
+
+        private void initialiseEngine()
+        {
+            _tickEngine.SetupTickEngine(_galaxyVm);
         }
 
         private void saveGalaxy()
@@ -138,7 +155,7 @@ namespace GalaxyGen.ViewModel
 
         private void runEngine()
         {            
-            _tickEngine.RunTick(1);
+            _tickEngine.RunNTick(1);
         }
 
         private bool canRunEngine()

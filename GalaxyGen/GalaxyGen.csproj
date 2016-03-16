@@ -114,13 +114,17 @@
     <Compile Include="Model\MarketBuyOrder.cs" />
     <Compile Include="Engine\ResourceTypes.cs" />
     <Compile Include="Model\SolarSystem.cs" />
+    <Compile Include="ViewModel\ISolarSystemViewModel.cs" />
     <Compile Include="ViewModel\IMainGalaxyViewModel.cs" />
     <Compile Include="ViewModel\IMarketViewModel.cs" />
+    <Compile Include="ViewModel\IGalaxyViewModel.cs" />
     <Compile Include="ViewModel\IPlanetViewModel.cs" />
     <Compile Include="ViewModel\ISocietyViewModel.cs" />
     <Compile Include="ViewModel\MainGalaxyViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MarketViewModel.cs" />
+    <Compile Include="ViewModel\GalaxyViewModel.cs" />
+    <Compile Include="ViewModel\SolarSystemViewModel.cs" />
     <Compile Include="ViewModel\SocietyViewModel.cs" />
     <Compile Include="ViewModel\PlanetViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
