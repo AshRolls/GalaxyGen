@@ -35,7 +35,7 @@ namespace GalaxyGen
         private void SetupBackEnd()
         {
             StandardKernel kernel = Bindings.Kernel;
-            IMainViewModel mvm = kernel.Get<IMainViewModel>();
+            IMainGalaxyViewModel mvm = kernel.Get<IMainGalaxyViewModel>();
             this.DataContext = mvm;
         }
     }

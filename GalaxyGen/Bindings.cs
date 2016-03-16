@@ -44,7 +44,7 @@ namespace GalaxyGen
             kernel.Bind<IGalaxyCreator>().To<GalaxyCreator>();
 
             // ViewModel bindings
-            kernel.Bind<IMainViewModel>().To<MainViewModel>();
+            kernel.Bind<IMainGalaxyViewModel>().To<MainGalaxyViewModel>();
             kernel.Bind<IPlanetViewModel>().To<PlanetViewModel>();
             kernel.Bind<IPlanetViewModelFactory>().ToFactory();
             kernel.Bind<ISocietyViewModel>().To<SocietyViewModel>();
