@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Engine;
 using GalaxyGen.Model;
+using GalaxyGen.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,7 +29,7 @@ namespace GalaxyGen.Engine
             get; set;
         }
 
-        private Agent agent
+        private IAgentViewModel agent
         {
             get; set;
         }

@@ -28,7 +28,7 @@ namespace GalaxyGen.Engine
             Parallel.ForEach(_state.Agents, (agentVm) =>
             {
                 IActorRef actor = humanActorSystem.ActorOf<ActorHuman>(agentVm.Model.AgentId.ToString());
-                ActorInitialiseMessage msg = new ActorInitialiseMessage(_state.CurrentTick, agentVm.Model);
+                ActorInitialiseMessage msg = new ActorInitialiseMessage(_state.CurrentTick, agentVm);
                 actor.Tell(msg);
             });
         }
