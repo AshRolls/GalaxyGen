@@ -60,6 +60,8 @@ namespace GalaxyGen.ViewModel
                 gal.SolarSystems.Add(ss);
                 Agent ag = _galaxyCreator.GetAgent("The Mule");
                 gal.Agents.Add(ag);
+                Agent ag2 = _galaxyCreator.GetAgent("The Shrike");
+                gal.Agents.Add(ag2);
                 _db.Galaxies.Add(gal);
                 _db.SaveChanges();
             }

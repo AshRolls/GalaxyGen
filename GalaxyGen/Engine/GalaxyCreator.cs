@@ -36,7 +36,6 @@ namespace GalaxyGen.Engine
             soc.Name = seedName + " Soc";
             plan.Society = soc;
 
-
             //IMarket mar = kernel.Get<IMarket>();            
             
             //IMarketBuyOrder mbo = kernel.Get<IMarketBuyOrder>();

@@ -20,9 +20,15 @@ namespace GalaxyGen.Engine
         private void receiveInitialiseMsg(ActorInitialiseMessage msg)
         {
             currentTick = msg.CurrentTick;
+            agent = msg.Agent;
         }
 
         private Int64 currentTick
+        {
+            get; set;
+        }
+
+        private Agent agent
         {
             get; set;
         }

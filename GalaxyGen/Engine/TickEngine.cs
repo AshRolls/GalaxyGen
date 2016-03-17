@@ -24,12 +24,11 @@ namespace GalaxyGen.Engine
         private void setupAgentsAsActors()
         {
             humanActorSystem = ActorSystem.Create("GalaxyActors");
-
-            ActorInitialiseMessage msg = new ActorInitialiseMessage(_state.CurrentTick);
-
+            
             Parallel.ForEach(_state.Agents, (agentVm) =>
             {
-                var actor = humanActorSystem.ActorOf<ActorHuman>("Actor");
+                IActorRef actor = humanActorSystem.ActorOf<ActorHuman>(agentVm.Model.AgentId.ToString());
+                ActorInitialiseMessage msg = new ActorInitialiseMessage(_state.CurrentTick, agentVm.Model);
                 actor.Tell(msg);
             });
         }
