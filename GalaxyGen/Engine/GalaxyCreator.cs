@@ -15,6 +15,7 @@ namespace GalaxyGen.Engine
             Galaxy gal = new Galaxy();
             gal.Name = "Milky Way";
             gal.SolarSystems = new List<SolarSystem>();
+            gal.Agents = new List<Agent>();
             return gal;
         }
 
@@ -50,5 +51,13 @@ namespace GalaxyGen.Engine
 
             return plan;
         }
+
+        public Agent GetAgent(String seedName)
+        {
+            Agent ag = new Agent();
+            ag.Name = seedName;
+            return ag;
+        }
+
     }
 }

@@ -11,6 +11,15 @@ namespace GalaxyGen.ViewModel
 {
     public class GalaxyViewModel : IGalaxyViewModel
     {
+        ISolarSystemViewModelFactory solarSystemViewModelFactory;
+        IAgentViewModelFactory agentViewModelFactory;
+
+        public GalaxyViewModel(ISolarSystemViewModelFactory initSolarSystemViewModelFactory, IAgentViewModelFactory initAgentViewModelFactory)
+        {
+            solarSystemViewModelFactory = initSolarSystemViewModelFactory;
+            agentViewModelFactory = initAgentViewModelFactory;
+        }
+
         private Galaxy model_Var;
         public Galaxy Model
         {
@@ -26,6 +35,18 @@ namespace GalaxyGen.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;       
+            foreach(SolarSystem ss in model_Var.SolarSystems)
+            {
+                ISolarSystemViewModel ssVm = solarSystemViewModelFactory.CreateSolarSystemViewModel();
+                ssVm.Model = ss;
+                solarSystems_Var.Add(ssVm);
+            }
+            foreach (Agent ag in model_Var.Agents)
+            {
+                IAgentViewModel agVm = agentViewModelFactory.CreateAgentViewModel();
+                agVm.Model = ag;
+                agents_Var.Add(agVm);
+            }
         }
 
         public String Name
@@ -45,6 +66,25 @@ namespace GalaxyGen.ViewModel
             }
         }
 
+        public Int64 CurrentTick
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.CurrentTick;
+                else
+                    return 0;
+            }
+            set
+            {
+                if (model_Var != null)
+                {
+                    model_Var.CurrentTick = value;
+                    OnPropertyChanged("CurrentTick");
+                }
+            }
+        }
+
         private ObservableCollection<ISolarSystemViewModel> solarSystems_Var = new ObservableCollection<ISolarSystemViewModel>();
         public ObservableCollection<ISolarSystemViewModel> SolarSystems
         {
@@ -52,6 +92,15 @@ namespace GalaxyGen.ViewModel
             {
                 return solarSystems_Var;
             }            
+        }
+
+        private ObservableCollection<IAgentViewModel> agents_Var = new ObservableCollection<IAgentViewModel>();
+        public ObservableCollection<IAgentViewModel> Agents
+        {
+            get
+            {
+                return agents_Var;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -18,12 +18,15 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="6*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <ListBox Grid.Column="0" ItemsSource="{Binding Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />
-        <local:SocietyControl Grid.Column="1" SocietyVm="{Binding SelectedPlanet.Society}" />
-        <StackPanel Orientation="Vertical" Grid.Column="3">
+        <ListBox Grid.Column="0" ItemsSource="{Binding Galaxy.SolarSystems}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSolarSystem}" />
+        <ListBox Grid.Column="1" ItemsSource="{Binding SelectedSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />
+        <local:SocietyControl Grid.Column="2" SocietyVm="{Binding SelectedPlanet.Society}" />
+        
+        <StackPanel Orientation="Vertical" Grid.Column="4">
             <Button Command="{Binding RunEngineCommand}" Content="RUN" />
         </StackPanel>
     </Grid>

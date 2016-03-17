@@ -7,5 +7,6 @@ namespace GalaxyGen.Engine
         Galaxy GetGalaxy();
         SolarSystem GetSolarSystem(string seedName);
         Planet GetPlanet(string seedName);
+        Agent GetAgent(string seedName);
     }
 }

@@ -13,7 +13,9 @@ namespace GalaxyGen.ViewModel
     {
         Galaxy Model { get; set; }
         String Name { get; set; }
+        Int64 CurrentTick { get; set; }
         ObservableCollection<ISolarSystemViewModel> SolarSystems { get; }
+        ObservableCollection<IAgentViewModel> Agents { get; }
     }
 
     public interface IGalaxyViewModelFactory

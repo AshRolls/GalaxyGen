@@ -17,6 +17,12 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
 
         [Required]
+        public Int64 CurrentTick { get; set; }
+
+        [Required]
         public virtual ICollection<SolarSystem> SolarSystems { get; set; }
+
+        [Required]
+        public virtual ICollection<Agent> Agents { get; set; }
     }
 }

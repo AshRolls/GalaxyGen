@@ -7,10 +7,10 @@ namespace GalaxyGen.ViewModel
 {
     public interface IMainGalaxyViewModel : INotifyPropertyChanged
     {
-        ObservableCollection<IPlanetViewModel> Planets { get; set; }
+        IGalaxyViewModel Galaxy { get; set; }
+        ISolarSystemViewModel SelectedSolarSystem { get; set; }
         IPlanetViewModel SelectedPlanet { get; set; }
         ICommand WindowClosing { get; }
         ICommand RunEngineCommand { get; }
-
     }
 }

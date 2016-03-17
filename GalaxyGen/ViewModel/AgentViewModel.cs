@@ -1,7 +1,6 @@
 ﻿using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -9,21 +8,14 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public class SolarSystemViewModel : ISolarSystemViewModel
+    public class AgentViewModel : IAgentViewModel
     {
-        IPlanetViewModelFactory planetViewModelFactory;
-
-        public SolarSystemViewModel(IPlanetViewModelFactory initPlanetViewModelFactory)
-        {
-            planetViewModelFactory = initPlanetViewModelFactory;
-        }
-
-        private SolarSystem model_Var;
-        public SolarSystem Model
+        private Agent model_Var;
+        public Agent Model
         {
             get { return model_Var; }
             set
-            {                
+            {
                 model_Var = value;
                 updateFromModel();
                 OnPropertyChanged("Model");
@@ -33,12 +25,6 @@ namespace GalaxyGen.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
-            foreach(Planet p in model_Var.Planets)
-            {
-                IPlanetViewModel pVm = planetViewModelFactory.CreatePlanetViewModel();
-                pVm.Model = p;
-                planets_Var.Add(pVm);
-            }
         }
 
         public String Name
@@ -56,16 +42,7 @@ namespace GalaxyGen.ViewModel
                     OnPropertyChanged("Name");
                 }
             }
-        }
-
-        private ObservableCollection<IPlanetViewModel> planets_Var = new ObservableCollection<IPlanetViewModel>();
-        public ObservableCollection<IPlanetViewModel> Planets
-        {
-            get
-            {
-                return planets_Var;
-            }            
-        }
+        }     
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

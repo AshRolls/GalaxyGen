@@ -15,8 +15,7 @@ using System.Windows.Input;
 namespace GalaxyGen.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
-    {
-        IGalaxyViewModel _galaxyVm;
+    {        
         GalaxyContext _db;
         IGalaxyCreator _galaxyCreator;
         ITickEngine _tickEngine;
@@ -58,30 +57,20 @@ namespace GalaxyGen.ViewModel
                 SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
-                gal.SolarSystems.Add(ss);                
+                gal.SolarSystems.Add(ss);
+                Agent ag = _galaxyCreator.GetAgent("The Mule");
+                gal.Agents.Add(ag);
                 _db.Galaxies.Add(gal);
                 _db.SaveChanges();
             }
 
-            _galaxyVm = _galaxyViewModelFactory.CreateGalaxyViewModel();
-            _galaxyVm.Model = _db.Galaxies.First();
-               
-            // TODO move child VM creation into each seperate VM
-            //foreach (SolarSystem ss in _galaxyVm.SolarSystems)
-            //{
-            //    foreach (Planet p in ss.Planets)
-            //    {
-            //        IPlanetViewModel planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
-            //        planetViewModel = _planetViewModelFactory.CreatePlanetViewModel();
-            //        planetViewModel.Model = p;
-            //        planets_Var.Add(planetViewModel);
-            //    }
-            //}       
+            galaxyViewModel_Var = _galaxyViewModelFactory.CreateGalaxyViewModel();
+            galaxyViewModel_Var.Model = _db.Galaxies.First();                   
         }
 
         private void initialiseEngine()
         {
-            _tickEngine.SetupTickEngine(_galaxyVm);
+            _tickEngine.SetupTickEngine(galaxyViewModel_Var);
         }
 
         private void saveGalaxy()
@@ -106,16 +95,31 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        private ObservableCollection<IPlanetViewModel> planets_Var = new ObservableCollection<IPlanetViewModel>();
-        public ObservableCollection<IPlanetViewModel> Planets
+        private IGalaxyViewModel galaxyViewModel_Var;
+        public IGalaxyViewModel Galaxy
         {
             get
             {
-                return planets_Var;
+                return galaxyViewModel_Var;
             }
             set
             {
-                planets_Var = value;
+                galaxyViewModel_Var = value;
+            }
+        }
+
+
+        private ISolarSystemViewModel selectedSolarSystem_Var;
+        public ISolarSystemViewModel SelectedSolarSystem
+        {
+            get
+            {
+                return selectedSolarSystem_Var;
+            }
+            set
+            {
+                selectedSolarSystem_Var = value;
+                OnPropertyChanged("SelectedSolarSystem");
             }
         }
 
