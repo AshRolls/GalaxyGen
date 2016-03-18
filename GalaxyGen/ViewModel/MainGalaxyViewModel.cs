@@ -22,7 +22,7 @@ namespace GalaxyGen.ViewModel
 
         IGalaxyViewModelFactory _galaxyViewModelFactory;
         ISolarSystemViewModelFactory _solarSystemViewModelFactory;
-        IPlanetViewModelFactory _planetViewModelFactory;
+        IPlanetViewModelFactory _planetViewModelFactory;        
         
         ResourceTypeInitialiser _resourceTypeInitialiser;        
         
@@ -30,6 +30,7 @@ namespace GalaxyGen.ViewModel
                                     IGalaxyViewModelFactory initGalaxyViewModelFactory, 
                                     ISolarSystemViewModelFactory initSolarSystemViewModelFactory, 
                                     IPlanetViewModelFactory initPlanetViewModelFactory, 
+                                    ITextOutputViewModel initTextOutputViewModel,
                                     ITickEngine initTickEngine)
         {
             _galaxyCreator = initGalaxyCreator;
@@ -38,6 +39,8 @@ namespace GalaxyGen.ViewModel
             _galaxyViewModelFactory = initGalaxyViewModelFactory;
             _solarSystemViewModelFactory = initSolarSystemViewModelFactory;
             _planetViewModelFactory = initPlanetViewModelFactory;
+
+            TextOutput = initTextOutputViewModel;
 
             _resourceTypeInitialiser = new ResourceTypeInitialiser();
             
@@ -72,7 +75,7 @@ namespace GalaxyGen.ViewModel
 
         private void initialiseEngine()
         {
-            _tickEngine.SetupTickEngine(galaxyViewModel_Var);
+            _tickEngine.SetupTickEngine(galaxyViewModel_Var, textOutput_Var);
         }
 
         private void saveGalaxy()
@@ -136,6 +139,20 @@ namespace GalaxyGen.ViewModel
             {
                 selectedPlanet_Var = value;
                 OnPropertyChanged("SelectedPlanet");                
+            }
+        }
+
+        private ITextOutputViewModel textOutput_Var;
+        public ITextOutputViewModel TextOutput
+        {
+            get
+            {
+                return textOutput_Var;
+            }
+            set
+            {
+                textOutput_Var = value;
+                OnPropertyChanged("TextOutput");
             }
         }
 

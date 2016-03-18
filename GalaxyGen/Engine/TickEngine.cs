@@ -12,34 +12,44 @@ namespace GalaxyGen.Engine
     public class TickEngine : ITickEngine
     {
         IGalaxyViewModel _state;
-        ActorSystem humanActorSystem;
+        ITextOutputViewModel _textOutput;
+        ActorSystem _galaxyActorSystem;
+        IActorRef _actorTECoordinator;
+        IActorRef _actorTextOutput;
 
-        public void SetupTickEngine(IGalaxyViewModel state)
+        public void SetupTickEngine(IGalaxyViewModel state, ITextOutputViewModel textOutput)
         {
             _state = state;
+            _textOutput = textOutput;
 
             setupAgentsAsActors();        
         }
 
         private void setupAgentsAsActors()
         {
-            humanActorSystem = ActorSystem.Create("GalaxyActors");
-            
-            Parallel.ForEach(_state.Agents, (agentVm) =>
-            {
-                IActorRef actor = humanActorSystem.ActorOf<ActorHuman>(agentVm.Model.AgentId.ToString());
-                ActorInitialiseMessage msg = new ActorInitialiseMessage(_state.CurrentTick, agentVm);
-                actor.Tell(msg);
-            });
+            _galaxyActorSystem = ActorSystem.Create("GalaxyActors");
+
+            Props textOutputProps = Props.Create<ActorTextOutput>(_textOutput).WithDispatcher("akka.actor.synchronized-dispatcher");          
+            _actorTextOutput = _galaxyActorSystem.ActorOf(textOutputProps,"TextOutput");
+
+            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_actorTextOutput);
+            _actorTECoordinator = _galaxyActorSystem.ActorOf(teCoordinatorProps,"TECoordinator");
+
+            // tell co-ordinator actor to create child actors for each agent
+            foreach (IAgentViewModel agentVm in _state.Agents)
+            {                
+                MessageActorHumanInitialise msg = new MessageActorHumanInitialise(agentVm);
+                _actorTECoordinator.Tell(msg);
+            }
         }
 
         public void RunNTick(int numberOfTicks)
         {
             if (_state == null) throw new Exception("You must initialise engine first");
 
-            for (int i=0;i<=numberOfTicks;i++)
+            for (int i=0;i<=numberOfTicks-1;i++)
             {
-                _state.SolarSystems.First().Planets.First().Name = "Earth 2";
+                _actorTextOutput.Tell("Tick " + i.ToString());
             }
         }
     }

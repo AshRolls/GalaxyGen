@@ -123,7 +123,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\ActorInitialiseMessage.cs" />
+    <Compile Include="Engine\MessageActorHumanInitialise.cs" />
+    <Compile Include="Engine\ActorTextOutput.cs" />
+    <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\Galaxy.cs" />
     <Compile Include="Model\GalaxyContext.cs" />
@@ -138,6 +140,7 @@
     <Compile Include="ViewModel\IGalaxyViewModel.cs" />
     <Compile Include="ViewModel\IPlanetViewModel.cs" />
     <Compile Include="ViewModel\ISocietyViewModel.cs" />
+    <Compile Include="ViewModel\ITextOutputViewModel.cs" />
     <Compile Include="ViewModel\MainGalaxyViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MarketViewModel.cs" />
@@ -147,6 +150,7 @@
     <Compile Include="ViewModel\SolarSystemViewModel.cs" />
     <Compile Include="ViewModel\SocietyViewModel.cs" />
     <Compile Include="ViewModel\PlanetViewModel.cs" />
+    <Compile Include="ViewModel\TextOutputViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\SocietyControl.xaml.cs">
       <DependentUpon>SocietyControl.xaml</DependentUpon>

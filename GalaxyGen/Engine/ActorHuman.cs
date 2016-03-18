@@ -12,21 +12,19 @@ using System.Threading.Tasks;
 namespace GalaxyGen.Engine
 {
     public class ActorHuman : ReceiveActor
-    {        
-        public ActorHuman()
+    {
+        IActorRef _actorTextOutput;
+
+        public ActorHuman(IActorRef actorTextOutput)
         {
-            Receive<ActorInitialiseMessage>(msg => receiveInitialiseMsg(msg));
+            _actorTextOutput = actorTextOutput;
+            Receive<MessageActorHumanInitialise>(msg => receiveInitialiseMsg(msg));
         }
 
-        private void receiveInitialiseMsg(ActorInitialiseMessage msg)
+        private void receiveInitialiseMsg(MessageActorHumanInitialise msg)
         {
-            currentTick = msg.CurrentTick;
             agent = msg.Agent;
-        }
-
-        private Int64 currentTick
-        {
-            get; set;
+            _actorTextOutput.Tell("Human Agent initialised : " + msg.Agent.Name );
         }
 
         private IAgentViewModel agent

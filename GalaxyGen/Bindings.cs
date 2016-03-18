@@ -43,8 +43,12 @@ namespace GalaxyGen
             kernel.Bind<ITickEngine>().To<TickEngine>();
             kernel.Bind<IGalaxyCreator>().To<GalaxyCreator>();
 
+            // Framework bindings
+           
+
             // ViewModel bindings
             kernel.Bind<IMainGalaxyViewModel>().To<MainGalaxyViewModel>();
+            kernel.Bind<ITextOutputViewModel>().To<TextOutputViewModel>().InSingletonScope();
             kernel.Bind<IGalaxyViewModel>().To<GalaxyViewModel>();
             kernel.Bind<IGalaxyViewModelFactory>().ToFactory();
             kernel.Bind<ISolarSystemViewModel>().To<SolarSystemViewModel>();

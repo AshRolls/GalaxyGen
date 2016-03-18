@@ -22,12 +22,26 @@
             <ColumnDefinition Width="6*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <ListBox Grid.Column="0" ItemsSource="{Binding Galaxy.SolarSystems}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSolarSystem}" />
-        <ListBox Grid.Column="1" ItemsSource="{Binding SelectedSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />
-        <local:SocietyControl Grid.Column="2" SocietyVm="{Binding SelectedPlanet.Society}" />
-        
-        <StackPanel Orientation="Vertical" Grid.Column="4">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="300" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ListBox Grid.Column="0" Grid.Row="0" ItemsSource="{Binding Galaxy.SolarSystems}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSolarSystem}" />
+        <ListBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding SelectedSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />
+        <local:SocietyControl Grid.Column="2" Grid.Row="0" SocietyVm="{Binding SelectedPlanet.Society}" />
+
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="4">
             <Button Command="{Binding RunEngineCommand}" Content="RUN" />
         </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Grid.Column="3" Background="Black">
+            <ItemsControl ItemsSource="{Binding TextOutput.ConsoleLines, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Foreground="White" FontFamily="Consolas"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </Window>

@@ -7,15 +7,13 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
-    public class ActorInitialiseMessage
+    public class MessageActorHumanInitialise
     {
-        public ActorInitialiseMessage(Int64 currentTick, IAgentViewModel agent)
+        public MessageActorHumanInitialise(IAgentViewModel agent)
         {
-            CurrentTick = currentTick;
             Agent = agent;
         }
 
-        public Int64 CurrentTick { get; private set; }
         public IAgentViewModel Agent { get; private set; }
     }
 }
