@@ -35,7 +35,7 @@
             <Button Command="{Binding StopEngineCommand}" Content="STOP" />
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="5" Background="Black">
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Background="Black">
             <ItemsControl ItemsSource="{Binding TextOutput.ConsoleLines, Mode=OneWay}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

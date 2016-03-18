@@ -40,21 +40,21 @@ namespace GalaxyGen.Engine
             Receive<MessageTick>(msg => receiveTick(msg));
         }
 
-        ICancelable runCancel;
+        ICancelable _runCancel;
         private void receiveEngineRunCommand(MessageEngineRunCommand msg)
         {
             MessageTick pulse = new MessageTick(0);
             if (msg.RunCommand == EngineRunCommand.Run && _runState != TickEngineRunState.Running)
             {
                 _runState = TickEngineRunState.Running;
-                runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 500, Self, pulse, ActorRefs.Nobody);
+                _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 500, Self, pulse, ActorRefs.Nobody);
             }
             else if (msg.RunCommand == EngineRunCommand.Stop && _runState == TickEngineRunState.Running)
             {
-                if (runCancel != null)
+                if (_runCancel != null)
                 {
                     _runState = TickEngineRunState.Stopped;
-                    runCancel.Cancel();                    
+                    _runCancel.Cancel();                    
                 }
             }
         }

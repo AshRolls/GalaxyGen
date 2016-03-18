@@ -24,8 +24,9 @@ namespace GalaxyGen.ViewModel
         }
 
         public void AddLine(string line)
-        {
+        {            
             consoleLines_Var.Add(line);
+            while (consoleLines_Var.Count > 1000) consoleLines_Var.RemoveAt(0);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
