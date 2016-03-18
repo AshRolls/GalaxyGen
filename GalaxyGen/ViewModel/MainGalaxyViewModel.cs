@@ -178,13 +178,34 @@ namespace GalaxyGen.ViewModel
 
         private void runEngine()
         {            
-            _tickEngine.RunNTick(1);
+            _tickEngine.Run();
         }
 
         private bool canRunEngine()
         {
             return true;
         }
+
+        private RelayCommand stopEngineCommand;
+        public ICommand StopEngineCommand
+        {
+            get
+            {
+                if (stopEngineCommand == null) stopEngineCommand = new RelayCommand(() => stopEngine(), () => canStopEngine());
+                return stopEngineCommand;
+            }
+        }
+
+        private void stopEngine()
+        {
+            _tickEngine.Stop();
+        }
+
+        private bool canStopEngine()
+        {
+            return true;
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GalaxyGen.Framework;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
 
@@ -27,7 +26,6 @@ namespace GalaxyGen.ViewModel
         public void AddLine(string line)
         {
             consoleLines_Var.Add(line);
-            //OnPropertyChanged("ConsoleLines");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

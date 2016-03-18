@@ -123,7 +123,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\MessageActorHumanInitialise.cs" />
+    <Compile Include="Engine\MessageTick.cs" />
+    <Compile Include="Engine\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Model\Agent.cs" />

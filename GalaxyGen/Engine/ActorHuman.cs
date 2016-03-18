@@ -14,22 +14,20 @@ namespace GalaxyGen.Engine
     public class ActorHuman : ReceiveActor
     {
         IActorRef _actorTextOutput;
+        IAgentViewModel _agentVm;
 
-        public ActorHuman(IActorRef actorTextOutput)
+        public ActorHuman(IActorRef actorTextOutput, IAgentViewModel agentVm)
         {
             _actorTextOutput = actorTextOutput;
-            Receive<MessageActorHumanInitialise>(msg => receiveInitialiseMsg(msg));
+            _agentVm = agentVm;
+            Receive<MessageTick>(msg => receiveTick(msg));
+
+            _actorTextOutput.Tell("Human Agent initialised : " + _agentVm.Name);            
         }
 
-        private void receiveInitialiseMsg(MessageActorHumanInitialise msg)
+        private void receiveTick(MessageTick tick)
         {
-            agent = msg.Agent;
-            _actorTextOutput.Tell("Human Agent initialised : " + msg.Agent.Name );
-        }
-
-        private IAgentViewModel agent
-        {
-            get; set;
+            _actorTextOutput.Tell("TICK RCV : " + _agentVm.Name + " " + tick.Tick.ToString());
         }
 
     }
