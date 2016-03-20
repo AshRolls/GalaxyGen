@@ -62,23 +62,24 @@ namespace GalaxyGen.ViewModel
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
                 gal.SolarSystems.Add(ss);
 
-                for (int i = 0; i < 500; i++)
-                {
-                    SolarSystem ss2 = _galaxyCreator.GetSolarSystem(i.ToString());
-                    ss2.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
-                    ss2.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
-                    gal.SolarSystems.Add(ss2);
-                }
+                //for (int i = 0; i < 500; i++)
+                //{
+                //    SolarSystem ss2 = _galaxyCreator.GetSolarSystem(i.ToString());
+                //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
+                //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
+                //    gal.SolarSystems.Add(ss2);
+                //}
 
                 Agent ag = _galaxyCreator.GetAgent("The Mule");
                 ss.Agents.Add(ag);
                 Agent ag2 = _galaxyCreator.GetAgent("The Shrike");
                 ss.Agents.Add(ag2);
-                for (int i = 0; i < 500; i++)
-                {
-                    Agent ag3 = _galaxyCreator.GetAgent(i.ToString());
-                    ss.Agents.Add(ag3);
-                }
+
+                //for (int i = 0; i < 500; i++)
+                //{
+                //    Agent ag3 = _galaxyCreator.GetAgent(i.ToString());
+                //    ss.Agents.Add(ag3);
+                //}
 
                 _db.Galaxies.Add(gal);
                 _db.SaveChanges();

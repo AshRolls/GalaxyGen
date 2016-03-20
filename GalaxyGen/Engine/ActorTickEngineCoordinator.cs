@@ -17,7 +17,7 @@ namespace GalaxyGen.Engine
     public class ActorTickEngineCoordinator : ReceiveActor
     {
         IGalaxyViewModel _state;
-        private HashSet<IActorRef> _subscribedActorSolarSystems;
+        private HashSet<IActorRef> _subscribedActorSolarSystems; // hashset here as faster than list for large number of items (>~20) http://stackoverflow.com/questions/150750/hashset-vs-list-performance
         IActorRef _actorTextOutput;
         TickEngineRunState _runState;
 

@@ -15,20 +15,30 @@ namespace GalaxyGen.Engine
     {
         IActorRef _actorTextOutput;
         ISolarSystemViewModel _solarSystemVm;
-        private HashSet<IActorRef> _subscribedActorHumans;
+        private List<IActorRef> _subscribedActorHumans;
+        private List<IActorRef> _subscribedActorPlanets;
 
         public ActorSolarSystem(IActorRef actorTextOutput, ISolarSystemViewModel ssVm)
         {
             _actorTextOutput = actorTextOutput;
             _solarSystemVm = ssVm;
-            _subscribedActorHumans = new HashSet<IActorRef>();
+            _subscribedActorHumans = new List<IActorRef>();
+            _subscribedActorPlanets = new List<IActorRef>();
 
             // create child actors for each agent
             foreach (IAgentViewModel agentVm in _solarSystemVm.Agents)
             {
-                Props humanProps = Props.Create<ActorHuman>(_actorTextOutput, agentVm);
+                Props humanProps = Props.Create<ActorHuman>(_actorTextOutput, agentVm, Self);
                 IActorRef actor = Context.ActorOf(humanProps, "Human" + agentVm.Model.AgentId.ToString());
                 _subscribedActorHumans.Add(actor);
+            }
+
+            // create child actors for each planet
+            foreach (IPlanetViewModel planetVm in _solarSystemVm.Planets)
+            {
+                Props planetProps = Props.Create<ActorPlanet>(_actorTextOutput, planetVm, Self);
+                IActorRef actor = Context.ActorOf(planetProps, "Planet" + planetVm.Model.PlanetId.ToString());
+                _subscribedActorPlanets.Add(actor);
             }
 
             Receive<MessageTick>(msg => receiveTick(msg));
@@ -44,6 +54,12 @@ namespace GalaxyGen.Engine
             {
                 humanActor.Tell(tick);
             }
+
+            foreach (IActorRef planetActor in _subscribedActorPlanets)
+            {
+                planetActor.Tell(tick);
+            }
+
         }
 
     }
