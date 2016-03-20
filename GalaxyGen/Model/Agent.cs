@@ -15,9 +15,9 @@ namespace GalaxyGen.Model
 
         [Required]
         public String Name { get; set; }
-
-        public Int64 GalaxyId { get; set; }
-        [ForeignKey("GalaxyId")]
-        public Galaxy Galaxy { get; set; }
+        
+        public Int64 SolarSystemId { get; set; }
+        [ForeignKey("SolarSystemId")]
+        public SolarSystem SolarSystem { get; set; }
     }
 }

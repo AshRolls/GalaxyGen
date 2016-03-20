@@ -11,13 +11,11 @@ namespace GalaxyGen.ViewModel
 {
     public class GalaxyViewModel : IGalaxyViewModel
     {
-        ISolarSystemViewModelFactory solarSystemViewModelFactory;
-        IAgentViewModelFactory agentViewModelFactory;
+        ISolarSystemViewModelFactory solarSystemViewModelFactory;       
 
-        public GalaxyViewModel(ISolarSystemViewModelFactory initSolarSystemViewModelFactory, IAgentViewModelFactory initAgentViewModelFactory)
+        public GalaxyViewModel(ISolarSystemViewModelFactory initSolarSystemViewModelFactory)
         {
-            solarSystemViewModelFactory = initSolarSystemViewModelFactory;
-            agentViewModelFactory = initAgentViewModelFactory;
+            solarSystemViewModelFactory = initSolarSystemViewModelFactory;            
         }
 
         private Galaxy model_Var;
@@ -40,13 +38,7 @@ namespace GalaxyGen.ViewModel
                 ISolarSystemViewModel ssVm = solarSystemViewModelFactory.CreateSolarSystemViewModel();
                 ssVm.Model = ss;
                 solarSystems_Var.Add(ssVm);
-            }
-            foreach (Agent ag in model_Var.Agents)
-            {
-                IAgentViewModel agVm = agentViewModelFactory.CreateAgentViewModel();
-                agVm.Model = ag;
-                agents_Var.Add(agVm);
-            }
+            }          
         }
 
         public String Name
@@ -92,15 +84,6 @@ namespace GalaxyGen.ViewModel
             {
                 return solarSystems_Var;
             }            
-        }
-
-        private ObservableCollection<IAgentViewModel> agents_Var = new ObservableCollection<IAgentViewModel>();
-        public ObservableCollection<IAgentViewModel> Agents
-        {
-            get
-            {
-                return agents_Var;
-            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

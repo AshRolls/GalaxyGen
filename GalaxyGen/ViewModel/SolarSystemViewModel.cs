@@ -12,10 +12,12 @@ namespace GalaxyGen.ViewModel
     public class SolarSystemViewModel : ISolarSystemViewModel
     {
         IPlanetViewModelFactory planetViewModelFactory;
+        IAgentViewModelFactory agentViewModelFactory;
 
-        public SolarSystemViewModel(IPlanetViewModelFactory initPlanetViewModelFactory)
+        public SolarSystemViewModel(IPlanetViewModelFactory initPlanetViewModelFactory, IAgentViewModelFactory initAgentViewModelFactory)
         {
             planetViewModelFactory = initPlanetViewModelFactory;
+            agentViewModelFactory = initAgentViewModelFactory;
         }
 
         private SolarSystem model_Var;
@@ -38,6 +40,12 @@ namespace GalaxyGen.ViewModel
                 IPlanetViewModel pVm = planetViewModelFactory.CreatePlanetViewModel();
                 pVm.Model = p;
                 planets_Var.Add(pVm);
+            }
+            foreach (Agent ag in model_Var.Agents)
+            {
+                IAgentViewModel agVm = agentViewModelFactory.CreateAgentViewModel();
+                agVm.Model = ag;
+                agents_Var.Add(agVm);
             }
         }
 
@@ -65,6 +73,15 @@ namespace GalaxyGen.ViewModel
             {
                 return planets_Var;
             }            
+        }
+
+        private ObservableCollection<IAgentViewModel> agents_Var = new ObservableCollection<IAgentViewModel>();
+        public ObservableCollection<IAgentViewModel> Agents
+        {
+            get
+            {
+                return agents_Var;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

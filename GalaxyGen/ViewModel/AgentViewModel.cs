@@ -42,7 +42,18 @@ namespace GalaxyGen.ViewModel
                     OnPropertyChanged("Name");
                 }
             }
-        }     
+        }
+
+        public SolarSystem ss
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.SolarSystem;
+                else
+                    return null;
+            }            
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

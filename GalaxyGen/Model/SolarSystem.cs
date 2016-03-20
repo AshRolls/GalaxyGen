@@ -20,6 +20,9 @@ namespace GalaxyGen.Model
         [Required]
         public virtual ICollection<Planet> Planets { get; set; }
 
+        [Required]
+        public virtual ICollection<Agent> Agents { get; set; }
+
         public Int64 GalaxyId { get; set; }
         [ForeignKey("GalaxyId")]
         public Galaxy Galaxy { get; set; }

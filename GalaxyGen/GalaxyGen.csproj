@@ -115,6 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\MessageTick.cs" />
     <Compile Include="Engine\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />

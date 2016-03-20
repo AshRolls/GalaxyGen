@@ -12,6 +12,7 @@ namespace GalaxyGen.ViewModel
     {
         Agent Model { get; set; }
         string Name { get; set; }
+        SolarSystem ss { get; }
     }
 
     public interface IAgentViewModelFactory

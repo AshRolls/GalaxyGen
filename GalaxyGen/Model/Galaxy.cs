@@ -21,8 +21,5 @@ namespace GalaxyGen.Model
 
         [Required]
         public virtual ICollection<SolarSystem> SolarSystems { get; set; }
-
-        [Required]
-        public virtual ICollection<Agent> Agents { get; set; }
     }
 }

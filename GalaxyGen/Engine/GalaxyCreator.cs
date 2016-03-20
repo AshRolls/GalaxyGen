@@ -14,8 +14,7 @@ namespace GalaxyGen.Engine
         {
             Galaxy gal = new Galaxy();
             gal.Name = "Milky Way";
-            gal.SolarSystems = new List<SolarSystem>();
-            gal.Agents = new List<Agent>();
+            gal.SolarSystems = new List<SolarSystem>();            
             return gal;
         }
 
@@ -24,6 +23,7 @@ namespace GalaxyGen.Engine
             SolarSystem sys = new SolarSystem();
             sys.Name = seedName;
             sys.Planets = new List<Planet>();
+            sys.Agents = new List<Agent>();
             return sys;
         }
 

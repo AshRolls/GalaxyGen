@@ -17,7 +17,7 @@ namespace GalaxyGen.Engine
     public class ActorTickEngineCoordinator : ReceiveActor
     {
         IGalaxyViewModel _state;
-        private HashSet<IActorRef> _subscribedActorHumans;
+        private HashSet<IActorRef> _subscribedActorSolarSystems;
         IActorRef _actorTextOutput;
         TickEngineRunState _runState;
 
@@ -25,15 +25,15 @@ namespace GalaxyGen.Engine
         {
             _runState = TickEngineRunState.Stopped;
             _state = state;
-            _subscribedActorHumans = new HashSet<IActorRef>();
-            _actorTextOutput = actorTextOutput;
+            _subscribedActorSolarSystems = new HashSet<IActorRef>();
+            _actorTextOutput = actorTextOutput;          
 
-            // create child actors for each agent
-            foreach (IAgentViewModel agentVm in _state.Agents)
+            // create child actors for each solar system
+            foreach (ISolarSystemViewModel ssVm in _state.SolarSystems)
             {
-                Props humanProps = Props.Create<ActorHuman>(_actorTextOutput, agentVm);
-                IActorRef actor = Context.ActorOf(humanProps, agentVm.Model.AgentId.ToString());
-                _subscribedActorHumans.Add(actor);
+                Props ssProps = Props.Create<ActorSolarSystem>(_actorTextOutput, ssVm);
+                IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ssVm.Model.SolarSystemId.ToString());
+                _subscribedActorSolarSystems.Add(actor);
             }
 
             Receive<MessageEngineRunCommand>(msg => receiveEngineRunCommand(msg));
@@ -63,10 +63,10 @@ namespace GalaxyGen.Engine
         {
             _state.CurrentTick++;
             MessageTick tick = new MessageTick(_state.CurrentTick);
-            foreach (IActorRef humanActor in _subscribedActorHumans)
+            foreach (IActorRef ssActor in _subscribedActorSolarSystems)
             {
-                humanActor.Tell(tick);
-            }
+                ssActor.Tell(tick);
+            }           
         }
 
     }
