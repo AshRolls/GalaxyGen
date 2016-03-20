@@ -15,15 +15,14 @@ namespace GalaxyGen.Model
         [Key]
         public Int64 PlanetId { get; set; }
       
-        [Required]
         [StringLength(60)]
         public String Name { get; set; }
-
-        [Required]
         public Int64 Population { get; set; }
         
         [Required]
         public virtual Society Society { get; set; }
+
+        public virtual ICollection<Producer> Producers { get; set; }
 
         public Int64 SolarSystemId { get; set; }
         [ForeignKey("SolarSystemId")]
@@ -31,7 +30,6 @@ namespace GalaxyGen.Model
 
         //[ForeignKey("MarketId")]
         //public IMarket Market { get; set; }
-
 
     }
 }

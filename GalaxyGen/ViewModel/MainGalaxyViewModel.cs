@@ -55,12 +55,27 @@ namespace GalaxyGen.ViewModel
             _db = new GalaxyContext();
             
             if (_db.Galaxies.Count() == 0)
-            {                
+            {
+                Agent ag = _galaxyCreator.GetAgent("The Mule");                
+                Agent ag2 = _galaxyCreator.GetAgent("The Shrike");
+                
                 Galaxy gal = _galaxyCreator.GetGalaxy();
                 SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
-                ss.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
+                ss.Agents.Add(ag);
+                ss.Agents.Add(ag2);
+                Planet p = _galaxyCreator.GetPlanet("Earth");
+                Producer prod = _galaxyCreator.GetProducer("Factory X");
+                prod.Owner = ag2;
+                p.Producers.Add(prod);                
+                ss.Planets.Add(p);
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
                 gal.SolarSystems.Add(ss);
+
+                //for (int i = 0; i < 500; i++)
+                //{
+                //    Agent ag3 = _galaxyCreator.GetAgent(i.ToString());
+                //    ss.Agents.Add(ag3);
+                //}
 
                 //for (int i = 0; i < 500; i++)
                 //{
@@ -68,17 +83,6 @@ namespace GalaxyGen.ViewModel
                 //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
                 //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
                 //    gal.SolarSystems.Add(ss2);
-                //}
-
-                Agent ag = _galaxyCreator.GetAgent("The Mule");
-                ss.Agents.Add(ag);
-                Agent ag2 = _galaxyCreator.GetAgent("The Shrike");
-                ss.Agents.Add(ag2);
-
-                //for (int i = 0; i < 500; i++)
-                //{
-                //    Agent ag3 = _galaxyCreator.GetAgent(i.ToString());
-                //    ss.Agents.Add(ag3);
                 //}
 
                 _db.Galaxies.Add(gal);

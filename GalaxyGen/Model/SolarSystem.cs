@@ -13,14 +13,10 @@ namespace GalaxyGen.Model
         [Key]
         public Int64 SolarSystemId { get; set; }
 
-        [Required]
         [StringLength(60)]
         public String Name { get; set; }
 
-        [Required]
         public virtual ICollection<Planet> Planets { get; set; }
-
-        [Required]
         public virtual ICollection<Agent> Agents { get; set; }
 
         public Int64 GalaxyId { get; set; }

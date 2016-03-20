@@ -8,18 +8,19 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Agent
+    public class Producer
     {
         [Key]
-        public Int64 AgentId { get; set; }
-
+        public Int64 ProducerId { get; set; }
 
         public String Name { get; set; }
 
-        public virtual ICollection<Producer> Producers { get; set; }
+        public virtual Agent Owner { get; set; }
+
+        public Int64 PlanetId { get; set; }
+        [ForeignKey("PlanetId")]
+        public Planet Planet { get; set; }
+
         
-        public Int64 SolarSystemId { get; set; }
-        [ForeignKey("SolarSystemId")]
-        public SolarSystem SolarSystem { get; set; }
     }
 }

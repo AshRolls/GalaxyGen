@@ -121,6 +121,7 @@
     <Compile Include="Engine\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
+    <Compile Include="Model\Producer.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\Galaxy.cs" />
     <Compile Include="Model\GalaxyContext.cs" />

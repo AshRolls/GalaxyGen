@@ -13,7 +13,6 @@ namespace GalaxyGen.Model
         [Key]
         public Int64 SocietyId { get; set; }
 
-        [Required]
         public String Name { get; set; }
         
         public Int64 PlanetId { get; set; }

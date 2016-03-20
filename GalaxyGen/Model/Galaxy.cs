@@ -12,14 +12,10 @@ namespace GalaxyGen.Model
         [Key]
         public Int64 GalaxyId { get; set; }
 
-        [Required]
         [StringLength(60)]
         public String Name { get; set; }
-
-        [Required]
         public Int64 CurrentTick { get; set; }
 
-        [Required]
         public virtual ICollection<SolarSystem> SolarSystems { get; set; }
     }
 }

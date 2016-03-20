@@ -14,7 +14,7 @@ namespace GalaxyGen.Engine
         {
             Galaxy gal = new Galaxy();
             gal.Name = "Milky Way";
-            gal.SolarSystems = new List<SolarSystem>();            
+            gal.SolarSystems = new HashSet<SolarSystem>();            
             return gal;
         }
 
@@ -35,6 +35,7 @@ namespace GalaxyGen.Engine
             Society soc = new Society();
             soc.Name = seedName + " Soc";
             plan.Society = soc;
+            plan.Producers = new List<Producer>();
 
             //IMarket mar = kernel.Get<IMarket>();            
             
@@ -56,6 +57,13 @@ namespace GalaxyGen.Engine
             Agent ag = new Agent();
             ag.Name = seedName;
             return ag;
+        }
+
+        public Producer GetProducer(String seedName)
+        {
+            Producer prod = new Producer();
+            prod.Name = seedName;
+            return prod;
         }
 
     }
