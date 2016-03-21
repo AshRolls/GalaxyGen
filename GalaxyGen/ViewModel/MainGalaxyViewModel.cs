@@ -65,20 +65,25 @@ namespace GalaxyGen.ViewModel
 
                 SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
 
-                Agent ag = _galaxyCreator.GetAgent("The Mule");
+                Agent ag = _galaxyCreator.GetAgent("The Mule");                
+                Producer prod = _galaxyCreator.GetProducer("Factory Metal", new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Spice) }, new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Platinum) });
+                prod.Owner = ag;
+                ag.Producers.Add(prod);
                 ss.Agents.Add(ag);
 
                 Agent ag2 = _galaxyCreator.GetAgent("The Shrike");                                                                               
-                Producer prod = _galaxyCreator.GetProducer("Factory Harkonen", ResourceTypes.GetResource(ResourceTypeEnum.Spice));
-                prod.Owner = ag2;
-                ag2.Producers.Add(prod);
+                Producer prod2 = _galaxyCreator.GetProducer("Factory Harkonen", new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Spice) }, new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Platinum) });
+                prod2.Owner = ag2;
+                ag2.Producers.Add(prod2);
                 ss.Agents.Add(ag2);
 
                 Planet p = _galaxyCreator.GetPlanet("Earth");
                 p.Producers.Add(prod);                
                 ss.Planets.Add(p);
 
-                ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
+                Planet p2 = _galaxyCreator.GetPlanet("Mars");
+                p.Producers.Add(prod2);
+                ss.Planets.Add(p2);
                 gal.SolarSystems.Add(ss);
 
                 //for (int i = 0; i < 500; i++)

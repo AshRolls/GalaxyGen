@@ -61,13 +61,20 @@ namespace GalaxyGen.Engine
             return ag;
         }
 
-        public Producer GetProducer(String seedName, ResourceType produced)
+        public Producer GetProducer(String seedName, List<ResourceType> produced, List<ResourceType> consumed)
         {
             Producer prod = new Producer();
             prod.Name = seedName;
             prod.ResourcesProduced = new List<ResourceType>();
-            prod.ResourcesProduced.Add(produced);
+            foreach (ResourceType res in produced)
+            {
+                prod.ResourcesProduced.Add(res);
+            }            
             prod.ResourcesConsumed = new List<ResourceType>();
+            foreach (ResourceType res in produced)
+            {
+                prod.ResourcesConsumed.Add(res);
+            }
             return prod;
         }
 

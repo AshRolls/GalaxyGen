@@ -17,5 +17,7 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
         public Double VolumePerUnit { get; set; }
         public Int64 DefaultTicksToProduce { get; set; }
+
+        public virtual ICollection<Producer> Producers { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GalaxyGen.Model;
+using System.Collections.Generic;
 
 namespace GalaxyGen.Engine
 {
@@ -8,6 +9,6 @@ namespace GalaxyGen.Engine
         SolarSystem GetSolarSystem(string seedName);
         Planet GetPlanet(string seedName);
         Agent GetAgent(string seedName);
-        Producer GetProducer(string seedName, ResourceType resProduced);
+        Producer GetProducer(string seedName, List<ResourceType> resProduced, List<ResourceType> resConsumed);
     }
 }
