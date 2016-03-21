@@ -1,7 +1,6 @@
 ﻿using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -9,23 +8,14 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public class PlanetViewModel : IPlanetViewModel
+    public class ProducerViewModel : IProducerViewModel
     {
-        private IProducerViewModelFactory _producerVmFactory;
-
-        public PlanetViewModel(ISocietyViewModelFactory initSocietyViewModelFactory, IProducerViewModelFactory initProducerVmFactory)
-        {            
-            _producerVmFactory = initProducerVmFactory;
-            ISocietyViewModelFactory societyViewModelFactory = initSocietyViewModelFactory;
-            this.Society = societyViewModelFactory.CreateSocietyViewModel();
-        }
-
-        private Planet model_Var;
-        public Planet Model
+        private Producer model_Var;
+        public Producer Model
         {
             get { return model_Var; }
             set
-            {                
+            {
                 model_Var = value;
                 updateFromModel();
                 OnPropertyChanged("Model");
@@ -35,15 +25,6 @@ namespace GalaxyGen.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
-            Population = model_Var.Population;           
-            societyVm_Var.Model = model_Var.Society;
-
-            foreach (Producer prod in model_Var.Producers)
-            {
-                IProducerViewModel prodVm = _producerVmFactory.CreateProducerViewModel();
-                prodVm.Model = prod;
-                producers_Var.Add(prodVm);
-            }
         }
 
         public String Name
@@ -63,45 +44,41 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        public Int64 Population
+        public Agent Owner
         {
             get
             {
                 if (model_Var != null)
-                    return model_Var.Population;
+                    return model_Var.Owner;
                 else
-                    return 0;
+                    return null;
             }
             set
             {
                 if (model_Var != null)
-                { 
-                    model_Var.Population = value;
-                    OnPropertyChanged("Population");
+                {
+                    model_Var.Owner = value;
+                    OnPropertyChanged("Owner");
                 }
             }
         }
 
-        private ISocietyViewModel societyVm_Var;
-        public ISocietyViewModel Society
+        public Planet Planet
         {
             get
             {
-                return societyVm_Var;
+                if (model_Var != null)
+                    return model_Var.Planet;
+                else
+                    return null;
             }
-            private set
+            set
             {
-                societyVm_Var = value;
-                OnPropertyChanged("Society");
-            }
-        }
-
-        private ObservableCollection<IProducerViewModel> producers_Var = new ObservableCollection<IProducerViewModel>();
-        public ObservableCollection<IProducerViewModel> Producers
-        {
-            get
-            {
-                return producers_Var;
+                if (model_Var != null)
+                {
+                    model_Var.Planet = value;
+                    OnPropertyChanged("Planet");
+                }
             }
         }
 

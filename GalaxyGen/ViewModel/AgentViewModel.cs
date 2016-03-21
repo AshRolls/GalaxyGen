@@ -1,6 +1,7 @@
 ﻿using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,13 @@ namespace GalaxyGen.ViewModel
 {
     public class AgentViewModel : IAgentViewModel
     {
+        private IProducerViewModelFactory _producerVmFactory;
+
+        public AgentViewModel(IProducerViewModelFactory initProducerViewModelFactory)
+        {
+            _producerVmFactory = initProducerViewModelFactory;
+        }
+
         private Agent model_Var;
         public Agent Model
         {
@@ -25,6 +33,13 @@ namespace GalaxyGen.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
+
+            foreach (Producer prod in model_Var.Producers)
+            {
+                IProducerViewModel prodVm = _producerVmFactory.CreateProducerViewModel();
+                prodVm.Model = prod;
+                producers_Var.Add(prodVm);
+            }
         }
 
         public String Name
@@ -53,6 +68,15 @@ namespace GalaxyGen.ViewModel
                 else
                     return null;
             }            
+        }
+
+        private ObservableCollection<IProducerViewModel> producers_Var = new ObservableCollection<IProducerViewModel>();
+        public ObservableCollection<IProducerViewModel> Producers
+        {
+            get
+            {
+                return producers_Var;
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

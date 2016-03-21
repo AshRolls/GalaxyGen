@@ -115,6 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Engine\ActorProducer.cs" />
     <Compile Include="Engine\ActorPlanet.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\MessageTick.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Engine\ResourceTypes.cs" />
     <Compile Include="Model\SolarSystem.cs" />
     <Compile Include="ViewModel\IAgentViewModel.cs" />
+    <Compile Include="ViewModel\IProducerViewModel.cs" />
     <Compile Include="ViewModel\ISolarSystemViewModel.cs" />
     <Compile Include="ViewModel\IMainGalaxyViewModel.cs" />
     <Compile Include="ViewModel\IMarketViewModel.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="ViewModel\GalaxyViewModel.cs" />
     <Compile Include="Engine\ActorHuman.cs" />
     <Compile Include="ViewModel\AgentViewModel.cs" />
+    <Compile Include="ViewModel\ProducerViewModel.cs" />
     <Compile Include="ViewModel\SolarSystemViewModel.cs" />
     <Compile Include="ViewModel\SocietyViewModel.cs" />
     <Compile Include="ViewModel\PlanetViewModel.cs" />

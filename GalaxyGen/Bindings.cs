@@ -59,6 +59,8 @@ namespace GalaxyGen
             kernel.Bind<ISocietyViewModelFactory>().ToFactory();
             kernel.Bind<IAgentViewModel>().To<AgentViewModel>();
             kernel.Bind<IAgentViewModelFactory>().ToFactory();
+            kernel.Bind<IProducerViewModel>().To<ProducerViewModel>();
+            kernel.Bind<IProducerViewModelFactory>().ToFactory();
 
             return kernel;
         }

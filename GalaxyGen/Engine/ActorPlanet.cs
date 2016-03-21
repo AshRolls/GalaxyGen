@@ -16,12 +16,23 @@ namespace GalaxyGen.Engine
         IActorRef _actorTextOutput;
         IPlanetViewModel _planetVm;
         IActorRef _actorSolarSystem;
+        private HashSet<IActorRef> _subscribedActorProducers;
 
         public ActorPlanet(IActorRef actorTextOutput, IPlanetViewModel planetVm, IActorRef actorSolarSystem)
         {
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
             _planetVm = planetVm;
+            _subscribedActorProducers = new HashSet<IActorRef>();
+
+            // create child actors for each producer in planet
+            foreach (IProducerViewModel prodVm in _planetVm.Producers)
+            {
+                Props prodProps = Props.Create<ActorProducer>(_actorTextOutput, prodVm, Self);
+                IActorRef actor = Context.ActorOf(prodProps, "Producer" + prodVm.Model.ProducerId.ToString());
+                _subscribedActorProducers.Add(actor);
+            }
+
             Receive<MessageTick>(msg => receiveTick(msg));
 
             _actorTextOutput.Tell("Planet initialised : " + _planetVm.Name);            
@@ -30,6 +41,11 @@ namespace GalaxyGen.Engine
         private void receiveTick(MessageTick tick)
         {
             _actorTextOutput.Tell("TICK RCV P: " + _planetVm.Name + " " + tick.Tick.ToString());
+
+            foreach (IActorRef prodActor in _subscribedActorProducers)
+            {
+                prodActor.Tell(tick);
+            }
         }
 
     }

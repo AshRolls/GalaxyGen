@@ -25,7 +25,7 @@ namespace GalaxyGen.Engine
             _subscribedActorHumans = new List<IActorRef>();
             _subscribedActorPlanets = new List<IActorRef>();
 
-            // create child actors for each agent
+            // create child actors for each agent in ss
             foreach (IAgentViewModel agentVm in _solarSystemVm.Agents)
             {
                 Props humanProps = Props.Create<ActorHuman>(_actorTextOutput, agentVm, Self);
@@ -33,7 +33,7 @@ namespace GalaxyGen.Engine
                 _subscribedActorHumans.Add(actor);
             }
 
-            // create child actors for each planet
+            // create child actors for each planet in ss
             foreach (IPlanetViewModel planetVm in _solarSystemVm.Planets)
             {
                 Props planetProps = Props.Create<ActorPlanet>(_actorTextOutput, planetVm, Self);

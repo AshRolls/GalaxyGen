@@ -1,6 +1,7 @@
 ﻿using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace GalaxyGen.ViewModel
         Agent Model { get; set; }
         string Name { get; set; }
         SolarSystem ss { get; }
+        ObservableCollection<IProducerViewModel> Producers { get; }
     }
 
     public interface IAgentViewModelFactory
