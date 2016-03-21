@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaxyGen.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
+    public enum ResourceTypeEnum
+    {
+        NotSet = 0,
+        Spice = 1,
+        Platinum = 2
+    }
+
     public static class ResourceTypes
     {
         private static ResourceType[] types_Var;
@@ -22,6 +30,12 @@ namespace GalaxyGen.Engine
                 types_Var = value;
             }
         }
+
+        public static ResourceType GetResource(ResourceTypeEnum resType)
+        {
+            int resIdx = (int)resType;            
+            return types_Var[resIdx];
+        }
     }
 
     public class ResourceTypeInitialiser
@@ -29,31 +43,18 @@ namespace GalaxyGen.Engine
         public ResourceTypeInitialiser()
         {
             // pull these in from XML eventually
-            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = getResource(ResourceTypeEnum.Spice, "Spice", 10); 
-            ResourceTypes.Types[(int)ResourceTypeEnum.Platinum] = getResource(ResourceTypeEnum.Platinum, "Platinum", 0.5);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = getResource(ResourceTypeEnum.Spice, "Spice", 10, 5); 
+            ResourceTypes.Types[(int)ResourceTypeEnum.Platinum] = getResource(ResourceTypeEnum.Platinum, "Platinum", 0.5, 25);
         }
 
-        private ResourceType getResource(ResourceTypeEnum type, String name, double volPerUnit)
+        private ResourceType getResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)
         {
             ResourceType res = new ResourceType();
             res.Type = type;
             res.Name = name;
             res.VolumePerUnit = volPerUnit;
+            res.DefaultTicksToProduce = defaultToProd;
             return res;
         }
-    }
-
-    public enum ResourceTypeEnum
-    {
-        NotSet = 0,
-        Spice = 1,
-        Platinum = 2
-    }
-
-    public class ResourceType 
-    {        
-        public ResourceTypeEnum Type { get; set; }
-        public String Name { get; set; }
-        public Double VolumePerUnit { get; set; }
     }
 }

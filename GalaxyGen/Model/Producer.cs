@@ -16,6 +16,12 @@ namespace GalaxyGen.Model
 
         public String Name { get; set; }
 
+        public Int64 TicksToProduceEach { get; set; }
+        public Int64 TicksRemaining { get; set; }
+        
+        public virtual ICollection<ResourceType> ResourcesProduced { get; set; }
+        public virtual ICollection<ResourceType> ResourcesConsumed { get; set; }
+
         public virtual Agent Owner { get; set; }
 
         public Int64 PlanetId { get; set; }

@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using GalaxyGen.Engine;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,17 +10,10 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public class GalaxyViewModel : IGalaxyViewModel
+    public class ResourceTypeViewModel : IResourceTypeViewModel
     {
-        ISolarSystemViewModelFactory solarSystemViewModelFactory;       
-
-        public GalaxyViewModel(ISolarSystemViewModelFactory initSolarSystemViewModelFactory)
-        {
-            solarSystemViewModelFactory = initSolarSystemViewModelFactory;            
-        }
-
-        private Galaxy model_Var;
-        public Galaxy Model
+        private ResourceType model_Var;
+        public ResourceType Model
         {
             get { return model_Var; }
             set
@@ -32,13 +26,29 @@ namespace GalaxyGen.ViewModel
 
         private void updateFromModel()
         {
-            Name = model_Var.Name;       
-            foreach(SolarSystem ss in model_Var.SolarSystems)
+            Type = model_Var.Type;
+            Name = model_Var.Name;
+            VolumePerUnit = model_Var.VolumePerUnit;
+            DefaultTicksToProduce = model_Var.DefaultTicksToProduce;           
+        }
+
+        public ResourceTypeEnum Type
+        {
+            get
             {
-                ISolarSystemViewModel ssVm = solarSystemViewModelFactory.CreateSolarSystemViewModel();
-                ssVm.Model = ss;
-                solarSystems_Var.Add(ssVm);
-            }          
+                if (model_Var != null)
+                    return model_Var.Type;
+                else
+                    return 0;
+            }
+            private set
+            {
+                if (model_Var != null)
+                {
+                    model_Var.Type = value;
+                    OnPropertyChanged("Type");
+                }
+            }
         }
 
         public String Name
@@ -49,7 +59,7 @@ namespace GalaxyGen.ViewModel
                 else
                     return null;
             }
-            set {
+            private set {
                 if (model_Var != null)
                 {
                     model_Var.Name = value;
@@ -58,40 +68,41 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        public Int64 CurrentTick
+        public Double VolumePerUnit
         {
             get
             {
                 if (model_Var != null)
-                    return model_Var.CurrentTick;
+                    return model_Var.VolumePerUnit;
                 else
-                    return 0;
+                    return Double.NaN;
             }
-            set
+            private set
             {
                 if (model_Var != null)
                 {
-                    model_Var.CurrentTick = value;
-                    OnPropertyChanged("CurrentTick");
+                    model_Var.VolumePerUnit = value;
+                    OnPropertyChanged("VolumePerUnit");
                 }
             }
         }
 
-        private ObservableCollection<ISolarSystemViewModel> solarSystems_Var = new ObservableCollection<ISolarSystemViewModel>();
-        public ObservableCollection<ISolarSystemViewModel> SolarSystems
+        public Int64 DefaultTicksToProduce
         {
             get
             {
-                return solarSystems_Var;
-            }            
-        }
-
-        private ObservableCollection<IResourceTypeViewModel> resourceTypes_Var = new ObservableCollection<IResourceTypeViewModel>();
-        public ObservableCollection<IResourceTypeViewModel> ResourceTypes
-        {
-            get
+                if (model_Var != null)
+                    return model_Var.DefaultTicksToProduce;
+                else
+                    return 0;
+            }
+            private set
             {
-                return resourceTypes_Var;
+                if (model_Var != null)
+                {
+                    model_Var.DefaultTicksToProduce = value;
+                    OnPropertyChanged("DefaultTicksToProduce");
+                }
             }
         }
 

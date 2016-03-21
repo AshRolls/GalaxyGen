@@ -56,18 +56,28 @@ namespace GalaxyGen.ViewModel
             
             if (_db.Galaxies.Count() == 0)
             {
-                Agent ag = _galaxyCreator.GetAgent("The Mule");                
-                Agent ag2 = _galaxyCreator.GetAgent("The Shrike");
-                
                 Galaxy gal = _galaxyCreator.GetGalaxy();
+
+                foreach (ResourceType res in ResourceTypes.Types.Skip(1))
+                {
+                    gal.ResourceTypes.Add(res);
+                }
+
                 SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
+
+                Agent ag = _galaxyCreator.GetAgent("The Mule");
                 ss.Agents.Add(ag);
-                ss.Agents.Add(ag2);
-                Planet p = _galaxyCreator.GetPlanet("Earth");
-                Producer prod = _galaxyCreator.GetProducer("Factory X");
+
+                Agent ag2 = _galaxyCreator.GetAgent("The Shrike");                                                                               
+                Producer prod = _galaxyCreator.GetProducer("Factory Harkonen", ResourceTypes.GetResource(ResourceTypeEnum.Spice));
                 prod.Owner = ag2;
+                ag2.Producers.Add(prod);
+                ss.Agents.Add(ag2);
+
+                Planet p = _galaxyCreator.GetPlanet("Earth");
                 p.Producers.Add(prod);                
                 ss.Planets.Add(p);
+
                 ss.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
                 gal.SolarSystems.Add(ss);
 

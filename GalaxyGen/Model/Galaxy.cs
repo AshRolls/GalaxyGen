@@ -17,5 +17,6 @@ namespace GalaxyGen.Model
         public Int64 CurrentTick { get; set; }
 
         public virtual ICollection<SolarSystem> SolarSystems { get; set; }
+        public virtual ICollection<ResourceType> ResourceTypes { get; set; }
     }
 }
