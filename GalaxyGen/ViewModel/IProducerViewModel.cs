@@ -1,6 +1,8 @@
-﻿using GalaxyGen.Model;
+﻿using GalaxyGen.Engine;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -14,6 +16,8 @@ namespace GalaxyGen.ViewModel
         string Name { get; set; }
         Agent Owner { get; set; }
         Planet Planet { get; set; }
+        ObservableCollection<ResourceType> ResourcesProduced { get; set; }
+        ObservableCollection<ResourceType> ResourcesConsumed { get; set; }
     }
 
     public interface IProducerViewModelFactory

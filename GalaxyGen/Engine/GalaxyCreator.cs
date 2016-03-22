@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaxyGen.Model;
 using Ninject;
+using GalaxyGen.Framework;
 
 namespace GalaxyGen.Engine
 {
@@ -15,7 +16,6 @@ namespace GalaxyGen.Engine
             Galaxy gal = new Galaxy();
             gal.Name = "Milky Way";
             gal.SolarSystems = new HashSet<SolarSystem>();
-            gal.ResourceTypes = new HashSet<ResourceType>();
             return gal;
         }
 
@@ -61,20 +61,14 @@ namespace GalaxyGen.Engine
             return ag;
         }
 
-        public Producer GetProducer(String seedName, List<ResourceType> produced, List<ResourceType> consumed)
+        public Producer GetProducer(String seedName, List<ResourceTypeEnum> produced, List<ResourceTypeEnum> consumed)
         {
             Producer prod = new Producer();
             prod.Name = seedName;
-            prod.ResourcesProduced = new List<ResourceType>();
-            foreach (ResourceType res in produced)
-            {
-                prod.ResourcesProduced.Add(res);
-            }            
-            prod.ResourcesConsumed = new List<ResourceType>();
-            foreach (ResourceType res in produced)
-            {
-                prod.ResourcesConsumed.Add(res);
-            }
+            List<int> producedInt = produced.Select(x => (int)x).ToList();
+            prod.ResourcesProducedJsonSerialized = GalaxyJsonSerializer.Serialize(producedInt);
+            List<int> consumedInt = consumed.Select(x => (int)x).ToList();
+            prod.ResourcesConsumedJsonSerialized = GalaxyJsonSerializer.Serialize(consumedInt);
             return prod;
         }
 

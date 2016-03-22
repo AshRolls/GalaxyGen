@@ -58,21 +58,16 @@ namespace GalaxyGen.ViewModel
             {
                 Galaxy gal = _galaxyCreator.GetGalaxy();
 
-                foreach (ResourceType res in ResourceTypes.Types.Skip(1))
-                {
-                    gal.ResourceTypes.Add(res);
-                }
-
                 SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
 
                 Agent ag = _galaxyCreator.GetAgent("The Mule");                
-                Producer prod = _galaxyCreator.GetProducer("Factory Metal", new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Spice) }, new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Platinum) });
+                Producer prod = _galaxyCreator.GetProducer("Factory Metal", new List<ResourceTypeEnum> { ResourceTypeEnum.Spice }, new List<ResourceTypeEnum> { ResourceTypeEnum.Platinum });
                 prod.Owner = ag;
                 ag.Producers.Add(prod);
                 ss.Agents.Add(ag);
 
                 Agent ag2 = _galaxyCreator.GetAgent("The Shrike");                                                                               
-                Producer prod2 = _galaxyCreator.GetProducer("Factory Harkonen", new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Spice) }, new List<ResourceType> { ResourceTypes.GetResource(ResourceTypeEnum.Platinum) });
+                Producer prod2 = _galaxyCreator.GetProducer("Factory Harkonen", new List<ResourceTypeEnum> { ResourceTypeEnum.Platinum }, new List<ResourceTypeEnum> { ResourceTypeEnum.Spice });
                 prod2.Owner = ag2;
                 ag2.Producers.Add(prod2);
                 ss.Agents.Add(ag2);

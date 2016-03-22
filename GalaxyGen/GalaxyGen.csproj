@@ -122,6 +122,7 @@
     <Compile Include="Engine\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
+    <Compile Include="Framework\GalaxyJsonSerializer.cs" />
     <Compile Include="Model\Producer.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\Galaxy.cs" />
@@ -129,7 +130,6 @@
     <Compile Include="Model\GalaxyInitialiser.cs" />
     <Compile Include="Model\MarketBuyOrder.cs" />
     <Compile Include="Engine\ResourceTypes.cs" />
-    <Compile Include="Model\ResourceType.cs" />
     <Compile Include="Model\SolarSystem.cs" />
     <Compile Include="ViewModel\IAgentViewModel.cs" />
     <Compile Include="ViewModel\IResourceTypeViewModel.cs" />
@@ -212,9 +212,7 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Framework\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

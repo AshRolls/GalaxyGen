@@ -9,6 +9,6 @@ namespace GalaxyGen.Engine
         SolarSystem GetSolarSystem(string seedName);
         Planet GetPlanet(string seedName);
         Agent GetAgent(string seedName);
-        Producer GetProducer(string seedName, List<ResourceType> resProduced, List<ResourceType> resConsumed);
+        Producer GetProducer(string seedName, List<ResourceTypeEnum> resProduced, List<ResourceTypeEnum> resConsumed);
     }
 }

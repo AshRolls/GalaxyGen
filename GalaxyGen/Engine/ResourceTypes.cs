@@ -15,6 +15,14 @@ namespace GalaxyGen.Engine
         Platinum = 2
     }
 
+    public class ResourceType
+    {
+        public ResourceTypeEnum Type { get; set; }
+        public String Name { get; set; }
+        public Double VolumePerUnit { get; set; }
+        public Int64 DefaultTicksToProduce { get; set; }
+    }
+
     public static class ResourceTypes
     {
         private static ResourceType[] types_Var;
