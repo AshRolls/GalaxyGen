@@ -13,6 +13,7 @@ namespace GalaxyGen.ViewModel
 {
     public class ProducerViewModel : IProducerViewModel
     {
+       
         private Producer model_Var;
         public Producer Model
         {
@@ -29,17 +30,7 @@ namespace GalaxyGen.ViewModel
         {
             Name = model_Var.Name;
             Owner = model_Var.Owner;
-            Planet = model_Var.Planet;
-            List<int> resProd = GalaxyJsonSerializer.Deserialize(model_Var.ResourcesProducedJsonSerialized);
-            foreach (int i in resProd)
-            {
-                resourcesProduced_Var.Add(ResourceTypes.Types[i]);
-            }
-            List<int> resConsume = GalaxyJsonSerializer.Deserialize(model_Var.ResourcesConsumedJsonSerialized);
-            foreach (int i in resConsume)
-            {
-                resourcesConsumed_Var.Add(ResourceTypes.Types[i]);
-            }
+            Planet = model_Var.Planet;           
         }
 
         public String Name
@@ -97,53 +88,43 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        private ObservableCollection<ResourceType> resourcesProduced_Var = new ObservableCollection<ResourceType>();
-        public ObservableCollection<ResourceType> ResourcesProduced
+        public BluePrintEnum BluePrintType
         {
             get
             {
-                return resourcesProduced_Var;
+                if (model_Var != null)
+                    return model_Var.BluePrintType;
+                else
+                    return BluePrintEnum.NotSet;
             }
             set
             {
-                resourcesProduced_Var = value;
                 if (model_Var != null)
                 {
-                    model_Var.ResourcesConsumedJsonSerialized = serializeResourceTypes(resourcesProduced_Var);
+                    model_Var.BluePrintType = value;
+                    OnPropertyChanged("BluePrintType");
                 }
-                OnPropertyChanged("ResourcesProduced");
             }
         }
 
-        private ObservableCollection<ResourceType> resourcesConsumed_Var = new ObservableCollection<ResourceType>();
-        public ObservableCollection<ResourceType> ResourcesConsumed
+        public int TicksCompleted
         {
             get
             {
-                return resourcesConsumed_Var;
+                if (model_Var != null)
+                    return model_Var.TicksCompleted;
+                else
+                    return 0;
             }
             set
             {
-                resourcesConsumed_Var = value;
                 if (model_Var != null)
                 {
-                    model_Var.ResourcesConsumedJsonSerialized = serializeResourceTypes(resourcesConsumed_Var);
+                    model_Var.TicksCompleted = value;
+                    OnPropertyChanged("TicksCompleted");
                 }
-                OnPropertyChanged("ResourcesProduced");
             }
         }
-
-        private String serializeResourceTypes(ObservableCollection<ResourceType> types)
-        {
-            List<int> typeInts = new List<int>();
-            foreach(ResourceType res in types)
-            {
-                typeInts.Add((int)res.Type);
-            }
-            return GalaxyJsonSerializer.Serialize(typeInts);
-        }
-
-        //List<ResourceType> ResourcesConsumed { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

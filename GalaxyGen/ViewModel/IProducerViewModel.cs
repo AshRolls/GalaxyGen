@@ -16,8 +16,8 @@ namespace GalaxyGen.ViewModel
         string Name { get; set; }
         Agent Owner { get; set; }
         Planet Planet { get; set; }
-        ObservableCollection<ResourceType> ResourcesProduced { get; set; }
-        ObservableCollection<ResourceType> ResourcesConsumed { get; set; }
+        BluePrintEnum BluePrintType { get; set; }
+        int TicksCompleted { get; set; }
     }
 
     public interface IProducerViewModelFactory

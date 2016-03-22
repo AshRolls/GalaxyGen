@@ -30,6 +30,7 @@ namespace GalaxyGen.Engine
 
         private void receiveTick(MessageTick tick)
         {
+            _producerVm.TicksCompleted++;            
             _actorTextOutput.Tell("TICK RCV PROD: " + _producerVm.Name + " " + tick.Tick.ToString());
         }
 

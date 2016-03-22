@@ -61,13 +61,13 @@ namespace GalaxyGen.ViewModel
                 SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
 
                 Agent ag = _galaxyCreator.GetAgent("The Mule");                
-                Producer prod = _galaxyCreator.GetProducer("Factory Metal", new List<ResourceTypeEnum> { ResourceTypeEnum.Spice }, new List<ResourceTypeEnum> { ResourceTypeEnum.Platinum });
+                Producer prod = _galaxyCreator.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
                 prod.Owner = ag;
                 ag.Producers.Add(prod);
                 ss.Agents.Add(ag);
 
                 Agent ag2 = _galaxyCreator.GetAgent("The Shrike");                                                                               
-                Producer prod2 = _galaxyCreator.GetProducer("Factory Harkonen", new List<ResourceTypeEnum> { ResourceTypeEnum.Platinum }, new List<ResourceTypeEnum> { ResourceTypeEnum.Spice });
+                Producer prod2 = _galaxyCreator.GetProducer("Factory Harkonen", BluePrintEnum.PlatinumToSpice);
                 prod2.Owner = ag2;
                 ag2.Producers.Add(prod2);
                 ss.Agents.Add(ag2);

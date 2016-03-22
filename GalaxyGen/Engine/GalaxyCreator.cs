@@ -61,14 +61,12 @@ namespace GalaxyGen.Engine
             return ag;
         }
 
-        public Producer GetProducer(String seedName, List<ResourceTypeEnum> produced, List<ResourceTypeEnum> consumed)
+        public Producer GetProducer(String seedName, BluePrintEnum bpType)
         {
             Producer prod = new Producer();
             prod.Name = seedName;
-            List<int> producedInt = produced.Select(x => (int)x).ToList();
-            prod.ResourcesProducedJsonSerialized = GalaxyJsonSerializer.Serialize(producedInt);
-            List<int> consumedInt = consumed.Select(x => (int)x).ToList();
-            prod.ResourcesConsumedJsonSerialized = GalaxyJsonSerializer.Serialize(consumedInt);
+            prod.BluePrintType = bpType;
+            prod.TicksCompleted = 0;
             return prod;
         }
 

@@ -16,11 +16,8 @@ namespace GalaxyGen.Model
 
         public String Name { get; set; }
 
-        public Int64 TicksToProduceEach { get; set; }
-        public Int64 TicksRemaining { get; set; }        
-
-        public String ResourcesProducedJsonSerialized { get; set; }
-        public String ResourcesConsumedJsonSerialized { get; set; }
+        public BluePrintEnum BluePrintType {get; set;}       
+        public int TicksCompleted { get; set; }
 
         public virtual Agent Owner { get; set; }
 
