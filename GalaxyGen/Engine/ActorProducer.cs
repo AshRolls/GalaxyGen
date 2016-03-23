@@ -30,8 +30,18 @@ namespace GalaxyGen.Engine
 
         private void receiveTick(MessageTick tick)
         {
-            _producerVm.TicksCompleted++;            
-            _actorTextOutput.Tell("TICK RCV PROD: " + _producerVm.Name + " " + tick.Tick.ToString());
+            _producerVm.TicksRemaining--;
+            if (_producerVm.TicksRemaining <= 0)
+            {
+                BluePrint bp = BluePrints.GetBluePrint(_producerVm.BluePrintType);
+                _producerVm.TicksRemaining = bp.BaseTicks;                  // reset ticks remaining counter
+                foreach (ResourceQuantity resQ in bp.Produces)
+                {
+                    // add res to owners store at producer location
+                    _actorTextOutput.Tell(_producerVm.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                }
+            }
+            //_actorTextOutput.Tell("TICK RCV PROD: " + _producerVm.Name + " " + tick.Tick.ToString());
         }
 
     }

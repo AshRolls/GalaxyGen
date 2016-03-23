@@ -21,12 +21,7 @@ namespace GalaxyGen.Engine
         public String Name { get; set; }
         public List<ResourceQuantity> Produces { get; set; }
         public List<ResourceQuantity> Consumes { get; set; }
-    }
-
-    public class ResourceQuantity
-    {
-        public ResourceTypeEnum Type { get; set; }
-        public Int64 Quantity { get; set; }
+        public int BaseTicks { get; set; }
     }
 
     public static class BluePrints
@@ -45,10 +40,10 @@ namespace GalaxyGen.Engine
             }
         }
 
-        public static BluePrint GetResource(BluePrintEnum resType)
+        public static BluePrint GetBluePrint(BluePrintEnum bpType)
         {
-            int resIdx = (int)resType;            
-            return types_Var[resIdx];
+            int bpIdx = (int)bpType;            
+            return types_Var[bpIdx];
         }
     }
 
@@ -59,11 +54,11 @@ namespace GalaxyGen.Engine
             // pull these in from XML eventually
             ResourceQuantity prod = new ResourceQuantity();
             prod.Type = ResourceTypeEnum.Platinum;
-            prod.Quantity = 10;
+            prod.Quantity = 1;
             ResourceQuantity cons = new ResourceQuantity();
             cons.Type = ResourceTypeEnum.Spice;
-            prod.Quantity = 100;
-            BluePrints.Types[(int)BluePrintEnum.SpiceToPlatinum] = getBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons });
+            cons.Quantity = 10;
+            BluePrints.Types[(int)BluePrintEnum.SpiceToPlatinum] = getBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 10);
 
 
             prod = new ResourceQuantity();
@@ -71,18 +66,19 @@ namespace GalaxyGen.Engine
             prod.Quantity = 10;
             cons = new ResourceQuantity();
             cons.Type = ResourceTypeEnum.Platinum;
-            prod.Quantity = 1;
-            BluePrints.Types[(int)BluePrintEnum.PlatinumToSpice] = getBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons });
+            cons.Quantity = 1;
+            BluePrints.Types[(int)BluePrintEnum.PlatinumToSpice] = getBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 50);
         }
 
-        private BluePrint getBluePrint(BluePrintEnum type, String name, List<ResourceQuantity> produces, List<ResourceQuantity> consumes)
+        private BluePrint getBluePrint(BluePrintEnum type, String name, List<ResourceQuantity> produces, List<ResourceQuantity> consumes, int baseTicks)
         {
-            BluePrint res = new BluePrint();
-            res.Type = type;
-            res.Name = name;
-            res.Produces = produces;
-            res.Consumes = consumes;
-            return res;
+            BluePrint bp = new BluePrint();
+            bp.Type = type;
+            bp.Name = name;
+            bp.Produces = produces;
+            bp.Consumes = consumes;
+            bp.BaseTicks = baseTicks;
+            return bp;
         }
     }
 }

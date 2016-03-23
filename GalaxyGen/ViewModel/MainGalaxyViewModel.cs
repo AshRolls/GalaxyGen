@@ -24,7 +24,9 @@ namespace GalaxyGen.ViewModel
         ISolarSystemViewModelFactory _solarSystemViewModelFactory;
         IPlanetViewModelFactory _planetViewModelFactory;        
         
-        ResourceTypeInitialiser _resourceTypeInitialiser;        
+        // should improve this system don't need them hanging around
+        ResourceTypeInitialiser _resourceTypeInitialiser;
+        BluePrintInitialiser _bluePrintTypeInitialiser;     
         
         public MainGalaxyViewModel(IGalaxyCreator initGalaxyCreator, 
                                     IGalaxyViewModelFactory initGalaxyViewModelFactory, 
@@ -43,6 +45,7 @@ namespace GalaxyGen.ViewModel
             TextOutput = initTextOutputViewModel;
 
             _resourceTypeInitialiser = new ResourceTypeInitialiser();
+            _bluePrintTypeInitialiser = new BluePrintInitialiser();
             
             loadOrCreateGalaxy();
             initialiseEngine();
@@ -56,45 +59,7 @@ namespace GalaxyGen.ViewModel
             
             if (_db.Galaxies.Count() == 0)
             {
-                Galaxy gal = _galaxyCreator.GetGalaxy();
-
-                SolarSystem ss = _galaxyCreator.GetSolarSystem("Sol");
-
-                Agent ag = _galaxyCreator.GetAgent("The Mule");                
-                Producer prod = _galaxyCreator.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-                prod.Owner = ag;
-                ag.Producers.Add(prod);
-                ss.Agents.Add(ag);
-
-                Agent ag2 = _galaxyCreator.GetAgent("The Shrike");                                                                               
-                Producer prod2 = _galaxyCreator.GetProducer("Factory Harkonen", BluePrintEnum.PlatinumToSpice);
-                prod2.Owner = ag2;
-                ag2.Producers.Add(prod2);
-                ss.Agents.Add(ag2);
-
-                Planet p = _galaxyCreator.GetPlanet("Earth");
-                p.Producers.Add(prod);                
-                ss.Planets.Add(p);
-
-                Planet p2 = _galaxyCreator.GetPlanet("Mars");
-                p.Producers.Add(prod2);
-                ss.Planets.Add(p2);
-                gal.SolarSystems.Add(ss);
-
-                //for (int i = 0; i < 500; i++)
-                //{
-                //    Agent ag3 = _galaxyCreator.GetAgent(i.ToString());
-                //    ss.Agents.Add(ag3);
-                //}
-
-                //for (int i = 0; i < 500; i++)
-                //{
-                //    SolarSystem ss2 = _galaxyCreator.GetSolarSystem(i.ToString());
-                //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
-                //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
-                //    gal.SolarSystems.Add(ss2);
-                //}
-
+                Galaxy gal = _galaxyCreator.GetFullGalaxy();                
                 _db.Galaxies.Add(gal);
                 _db.SaveChanges();
             }

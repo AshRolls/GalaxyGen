@@ -40,7 +40,7 @@ namespace GalaxyGen.Engine
 
         private void receiveTick(MessageTick tick)
         {
-            _actorTextOutput.Tell("TICK RCV P: " + _planetVm.Name + " " + tick.Tick.ToString());
+            //_actorTextOutput.Tell("TICK RCV P: " + _planetVm.Name + " " + tick.Tick.ToString());
 
             foreach (IActorRef prodActor in _subscribedActorProducers)
             {

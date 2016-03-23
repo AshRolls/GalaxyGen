@@ -23,6 +23,7 @@ namespace GalaxyGen.Model
         public virtual Society Society { get; set; }
 
         public virtual ICollection<Producer> Producers { get; set; }
+        public virtual ICollection<Store> Stores { get; set; }
 
         public Int64 SolarSystemId { get; set; }
         [ForeignKey("SolarSystemId")]

@@ -5,6 +5,7 @@ namespace GalaxyGen.Engine
 {
     public interface IGalaxyCreator
     {
+        Galaxy GetFullGalaxy();
         Galaxy GetGalaxy();
         SolarSystem GetSolarSystem(string seedName);
         Planet GetPlanet(string seedName);

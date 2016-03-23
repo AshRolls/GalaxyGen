@@ -124,6 +124,8 @@
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Framework\GalaxyJsonSerializer.cs" />
+    <Compile Include="Model\ResourceQuantity.cs" />
+    <Compile Include="Model\Store.cs" />
     <Compile Include="Model\Producer.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\Galaxy.cs" />

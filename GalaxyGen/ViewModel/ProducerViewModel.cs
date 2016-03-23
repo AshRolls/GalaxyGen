@@ -107,7 +107,7 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        public int TicksCompleted
+        public int TicksRemaining
         {
             get
             {
@@ -124,6 +124,12 @@ namespace GalaxyGen.ViewModel
                     OnPropertyChanged("TicksCompleted");
                 }
             }
+        }
+
+        public void DoTick(Int64 tick)
+        {
+
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

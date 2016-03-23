@@ -48,7 +48,7 @@ namespace GalaxyGen.Engine
 
         private void receiveTick(MessageTick tick)
         {
-            _actorTextOutput.Tell("TICK RCV SS: " + _solarSystemVm.Name + " " + tick.Tick.ToString());
+            //_actorTextOutput.Tell("TICK RCV SS: " + _solarSystemVm.Name + " " + tick.Tick.ToString());
 
             foreach (IActorRef humanActor in _subscribedActorHumans)
             {

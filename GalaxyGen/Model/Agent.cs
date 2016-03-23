@@ -13,10 +13,10 @@ namespace GalaxyGen.Model
         [Key]
         public Int64 AgentId { get; set; }
 
-
         public String Name { get; set; }
 
         public virtual ICollection<Producer> Producers { get; set; }
+        public virtual ICollection<Store> Stores { get; set; }
         
         public Int64 SolarSystemId { get; set; }
         [ForeignKey("SolarSystemId")]
