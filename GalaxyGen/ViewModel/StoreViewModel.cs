@@ -11,11 +11,17 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public class ProducerViewModel : IProducerViewModel
+    public class StoreViewModel : IStoreViewModel
     {
-       
-        private Producer model_Var;
-        public Producer Model
+        IResourceQuantityViewModelFactory _resQVmFactory;
+
+        public StoreViewModel(IResourceQuantityViewModelFactory initResQVmFactory)
+        {
+            _resQVmFactory = initResQVmFactory;
+        }
+
+        private Store model_Var;
+        public Store Model
         {
             get { return model_Var; }
             set
@@ -30,7 +36,15 @@ namespace GalaxyGen.ViewModel
         {
             Name = model_Var.Name;
             Owner = model_Var.Owner;
-            Planet = model_Var.Planet;           
+            Location = model_Var.Location;
+
+            foreach (ResourceQuantity resQ in model_Var.StoredResources) // TODO large inefficiencies with this method. Maybe better just to have storeVM add model objects directly?
+            {
+                IResourceQuantityViewModel resQVm = _resQVmFactory.CreateResourceQuantityViewModel();
+                resQVm.Type = resQ.Type;
+                resQVm.Quantity = resQ.Quantity;
+                storedResources_Var.Add(resQVm);
+            }
         }
 
         public String Name
@@ -69,12 +83,12 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        public Planet Planet
+        public Planet Location
         {
             get
             {
                 if (model_Var != null)
-                    return model_Var.Planet;
+                    return model_Var.Location;
                 else
                     return null;
             }
@@ -82,49 +96,21 @@ namespace GalaxyGen.ViewModel
             {
                 if (model_Var != null)
                 {
-                    model_Var.Planet = value;
-                    OnPropertyChanged("Planet");
+                    model_Var.Location = value;
+                    OnPropertyChanged("Location");
                 }
             }
         }
 
-        public BluePrintEnum BluePrintType
+        private ObservableCollection<IResourceQuantityViewModel> storedResources_Var = new ObservableCollection<IResourceQuantityViewModel>();
+        public ObservableCollection<IResourceQuantityViewModel> StoredResources
         {
             get
             {
-                if (model_Var != null)
-                    return model_Var.BluePrintType;
-                else
-                    return BluePrintEnum.NotSet;
-            }
-            set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.BluePrintType = value;
-                    OnPropertyChanged("BluePrintType");
-                }
+                return storedResources_Var;
             }
         }
 
-        public int TicksRemaining
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.TicksCompleted;
-                else
-                    return 0;
-            }
-            set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.TicksCompleted = value;
-                    OnPropertyChanged("TicksCompleted");
-                }
-            }
-        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)

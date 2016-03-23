@@ -11,7 +11,7 @@ namespace GalaxyGen.Model
     public class ResourceQuantity
     {
         [Key]
-        public Int64 ResourceQuantityID {get;set;}
+        public Int64 ResourceQuantityID { get; set;}
         public ResourceTypeEnum Type { get; set; }
         public Int64 Quantity { get; set; }
     }

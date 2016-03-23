@@ -135,6 +135,8 @@
     <Compile Include="Engine\ResourceTypes.cs" />
     <Compile Include="Model\SolarSystem.cs" />
     <Compile Include="ViewModel\IAgentViewModel.cs" />
+    <Compile Include="ViewModel\IResourceQuantityViewModel.cs" />
+    <Compile Include="ViewModel\IStoreViewModel.cs" />
     <Compile Include="ViewModel\IResourceTypeViewModel.cs" />
     <Compile Include="ViewModel\IProducerViewModel.cs" />
     <Compile Include="ViewModel\ISolarSystemViewModel.cs" />
@@ -150,6 +152,8 @@
     <Compile Include="ViewModel\GalaxyViewModel.cs" />
     <Compile Include="Engine\ActorHuman.cs" />
     <Compile Include="ViewModel\AgentViewModel.cs" />
+    <Compile Include="ViewModel\StoreViewModel.cs" />
+    <Compile Include="ViewModel\ResourceQuantityViewModel.cs" />
     <Compile Include="ViewModel\ResourceTypeViewModel.cs" />
     <Compile Include="ViewModel\ProducerViewModel.cs" />
     <Compile Include="ViewModel\SolarSystemViewModel.cs" />

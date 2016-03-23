@@ -31,7 +31,7 @@ namespace GalaxyGen.Engine
 
             Planet p = this.GetPlanet("Earth");
             p.Producers.Add(prod);
-            addNewStoreToPlanet(p, ag);
+            addNewStoreToPlanet(p, ag);            
             p.Producers.Add(prod2);
             addNewStoreToPlanet(p, ag2);
             ss.Planets.Add(p);
@@ -106,9 +106,14 @@ namespace GalaxyGen.Engine
             Store s = new Store();
             s.StoredResources = new HashSet<ResourceQuantity>();
             s.Owner = o;
-            s.Location = p;
+            s.Location = p;            
             p.Stores.Add(s);
             o.Stores.Add(s);
+
+            ResourceQuantity resQ = new ResourceQuantity(); // seed with basic starter resource
+            resQ.Type = ResourceTypeEnum.Spice;
+            resQ.Quantity = 40;
+            s.StoredResources.Add(resQ);
         }
 
         public Agent GetAgent(String seedName)
