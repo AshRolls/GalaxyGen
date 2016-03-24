@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using Akka.Actor;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +13,7 @@ namespace GalaxyGen.ViewModel
     public interface IGalaxyViewModel : INotifyPropertyChanged
     {
         Galaxy Model { get; set; }
+        IActorRef Actor { get; set; }
         String Name { get; set; }
         Int64 CurrentTick { get; set; }
         ObservableCollection<ISolarSystemViewModel> SolarSystems { get; }

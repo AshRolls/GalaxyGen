@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Engine;
+﻿using Akka.Actor;
+using GalaxyGen.Engine;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using System;
@@ -13,7 +14,8 @@ namespace GalaxyGen.ViewModel
 {
     public class ProducerViewModel : IProducerViewModel
     {
-       
+        public IActorRef Actor { get; set; }
+
         private Producer model_Var;
         public Producer Model
         {

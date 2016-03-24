@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using Akka.Actor;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,12 +12,14 @@ namespace GalaxyGen.ViewModel
 {
     public class GalaxyViewModel : IGalaxyViewModel
     {
-        ISolarSystemViewModelFactory solarSystemViewModelFactory;       
-
+        ISolarSystemViewModelFactory solarSystemViewModelFactory;
+        
         public GalaxyViewModel(ISolarSystemViewModelFactory initSolarSystemViewModelFactory)
         {
             solarSystemViewModelFactory = initSolarSystemViewModelFactory;            
         }
+
+        public IActorRef Actor { get; set; }
 
         private Galaxy model_Var;
         public Galaxy Model

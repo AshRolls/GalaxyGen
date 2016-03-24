@@ -150,7 +150,7 @@
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MarketViewModel.cs" />
     <Compile Include="ViewModel\GalaxyViewModel.cs" />
-    <Compile Include="Engine\ActorHuman.cs" />
+    <Compile Include="Engine\ActorAgent.cs" />
     <Compile Include="ViewModel\AgentViewModel.cs" />
     <Compile Include="ViewModel\StoreViewModel.cs" />
     <Compile Include="ViewModel\ResourceQuantityViewModel.cs" />

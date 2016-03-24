@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using Akka.Actor;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +20,8 @@ namespace GalaxyGen.ViewModel
             ISocietyViewModelFactory societyViewModelFactory = initSocietyViewModelFactory;
             this.Society = societyViewModelFactory.CreateSocietyViewModel();
         }
+
+        public IActorRef Actor { get; set; }
 
         private Planet model_Var;
         public Planet Model

@@ -25,6 +25,7 @@ namespace GalaxyGen.Engine
         {
             _runState = TickEngineRunState.Stopped;
             _state = state;
+            _state.Actor = Self;
             _subscribedActorSolarSystems = new HashSet<IActorRef>();
             _actorTextOutput = actorTextOutput;          
 

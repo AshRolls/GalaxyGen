@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using Akka.Actor;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +20,8 @@ namespace GalaxyGen.ViewModel
             planetViewModelFactory = initPlanetViewModelFactory;
             agentViewModelFactory = initAgentViewModelFactory;
         }
+
+        public IActorRef Actor { get; set; }
 
         private SolarSystem model_Var;
         public SolarSystem Model

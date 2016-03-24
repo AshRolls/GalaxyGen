@@ -23,6 +23,7 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
             _planetVm = planetVm;
+            _planetVm.Actor = Self;
             _subscribedActorProducers = new HashSet<IActorRef>();
 
             // create child actors for each producer in planet

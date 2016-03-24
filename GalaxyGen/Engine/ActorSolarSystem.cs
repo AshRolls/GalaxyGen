@@ -15,22 +15,23 @@ namespace GalaxyGen.Engine
     {
         IActorRef _actorTextOutput;
         ISolarSystemViewModel _solarSystemVm;
-        private List<IActorRef> _subscribedActorHumans;
+        private List<IActorRef> _subscribedActorAgents;
         private List<IActorRef> _subscribedActorPlanets;
 
         public ActorSolarSystem(IActorRef actorTextOutput, ISolarSystemViewModel ssVm)
         {
             _actorTextOutput = actorTextOutput;
             _solarSystemVm = ssVm;
-            _subscribedActorHumans = new List<IActorRef>();
+            _solarSystemVm.Actor = Self;
+            _subscribedActorAgents = new List<IActorRef>();
             _subscribedActorPlanets = new List<IActorRef>();
 
             // create child actors for each agent in ss
             foreach (IAgentViewModel agentVm in _solarSystemVm.Agents)
             {
-                Props humanProps = Props.Create<ActorHuman>(_actorTextOutput, agentVm, Self);
-                IActorRef actor = Context.ActorOf(humanProps, "Human" + agentVm.Model.AgentId.ToString());
-                _subscribedActorHumans.Add(actor);
+                Props agentProps = Props.Create<ActorAgent>(_actorTextOutput, agentVm, Self);
+                IActorRef actor = Context.ActorOf(agentProps, "Agent" + agentVm.Model.AgentId.ToString());
+                _subscribedActorAgents.Add(actor);
             }
 
             // create child actors for each planet in ss
@@ -50,7 +51,7 @@ namespace GalaxyGen.Engine
         {
             //_actorTextOutput.Tell("TICK RCV SS: " + _solarSystemVm.Name + " " + tick.Tick.ToString());
 
-            foreach (IActorRef humanActor in _subscribedActorHumans)
+            foreach (IActorRef humanActor in _subscribedActorAgents)
             {
                 humanActor.Tell(tick);
             }

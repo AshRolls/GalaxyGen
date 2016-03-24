@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using Akka.Actor;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,6 +18,8 @@ namespace GalaxyGen.ViewModel
         {
             _producerVmFactory = initProducerViewModelFactory;
         }
+
+        public IActorRef Actor { get; set; }
 
         private Agent model_Var;
         public Agent Model

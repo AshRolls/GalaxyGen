@@ -22,6 +22,7 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;
             _actorPlanet = actorPlanet;
             _producerVm = producerVm;
+            _producerVm.Actor = Self;
 
             Receive<MessageTick>(msg => receiveTick(msg));
 
