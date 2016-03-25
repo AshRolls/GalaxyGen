@@ -61,8 +61,7 @@ namespace GalaxyGen.Engine
         public Galaxy GetGalaxy()
         {
             Galaxy gal = new Galaxy();
-            gal.Name = "Milky Way";
-            gal.SolarSystems = new HashSet<SolarSystem>();
+            gal.Name = "Milky Way";            
             return gal;
         }
 
@@ -70,8 +69,6 @@ namespace GalaxyGen.Engine
         {
             SolarSystem sys = new SolarSystem();
             sys.Name = seedName;
-            sys.Planets = new List<Planet>();
-            sys.Agents = new List<Agent>();
             return sys;
         }
 
@@ -82,9 +79,7 @@ namespace GalaxyGen.Engine
             plan.Name = seedName;
             Society soc = new Society();
             soc.Name = seedName + " Soc";
-            plan.Society = soc;
-            plan.Producers = new HashSet<Producer>();
-            plan.Stores = new HashSet<Store>();
+            plan.Society = soc;           
 
             //IMarket mar = kernel.Get<IMarket>();            
             
@@ -104,7 +99,6 @@ namespace GalaxyGen.Engine
         private void addNewStoreToPlanet(Planet p, Agent o)
         {
             Store s = new Store();
-            s.StoredResources = new HashSet<ResourceQuantity>();
             s.Owner = o;
             s.Location = p;            
             p.Stores.Add(s);
@@ -120,8 +114,6 @@ namespace GalaxyGen.Engine
         {
             Agent ag = new Agent();
             ag.Name = seedName;
-            ag.Producers = new HashSet<Producer>();
-            ag.Stores = new HashSet<Store>();
             return ag;
         }
 
@@ -130,7 +122,7 @@ namespace GalaxyGen.Engine
             Producer prod = new Producer();
             prod.Name = seedName;
             prod.BluePrintType = bpType;
-            prod.TicksRemaining = 100;
+            prod.TicksRemaining = BluePrints.GetBluePrint(bpType).BaseTicks;
             return prod;
         }       
 

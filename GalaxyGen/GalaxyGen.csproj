@@ -119,6 +119,7 @@
     <Compile Include="Engine\ActorPlanet.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\BluePrints.cs" />
+    <Compile Include="Engine\MessageProducedResources.cs" />
     <Compile Include="Engine\MessageTick.cs" />
     <Compile Include="Engine\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />

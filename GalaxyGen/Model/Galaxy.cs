@@ -9,6 +9,11 @@ namespace GalaxyGen.Model
 {
     public class Galaxy : ModelActor
     {
+        public Galaxy()
+        {
+            SolarSystems = new HashSet<SolarSystem>();
+        }
+
         [Key]
         public Int64 GalaxyId { get; set; }
 

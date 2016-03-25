@@ -25,8 +25,7 @@ namespace GalaxyGen.ViewModel
         IPlanetViewModelFactory _planetViewModelFactory;        
         
         // should improve this system don't need them hanging around
-        ResourceTypeInitialiser _resourceTypeInitialiser;
-        BluePrintInitialiser _bluePrintTypeInitialiser;     
+        ResourceTypeInitialiser _resourceTypeInitialiser;  
         
         public MainGalaxyViewModel(IGalaxyCreator initGalaxyCreator, 
                                     IGalaxyViewModelFactory initGalaxyViewModelFactory, 
@@ -44,9 +43,10 @@ namespace GalaxyGen.ViewModel
 
             TextOutput = initTextOutputViewModel;
 
-            _resourceTypeInitialiser = new ResourceTypeInitialiser();
-            _bluePrintTypeInitialiser = new BluePrintInitialiser();
-            
+            _resourceTypeInitialiser = new ResourceTypeInitialiser(); // TODO modify resources to use same sys as bp
+            BluePrints.initialiseBluePrints();
+
+
             loadOrCreateGalaxy();
             initialiseEngine();
 

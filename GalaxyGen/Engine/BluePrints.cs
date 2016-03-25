@@ -1,6 +1,7 @@
 ﻿using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
@@ -17,26 +18,39 @@ namespace GalaxyGen.Engine
 
     public class BluePrint
     {
-        public BluePrintEnum Type { get; set; }
-        public String Name { get; set; }
-        public List<ResourceQuantity> Produces { get; set; }
-        public List<ResourceQuantity> Consumes { get; set; }
+        public BluePrint(BluePrintEnum type, String name, List<ResourceQuantity> produces, List<ResourceQuantity> consumes, int baseTicks)
+        {
+            Type = type;
+            Name = name;
+            Produces = produces;
+            Consumes = consumes;
+            BaseTicks = baseTicks;
+        }
+
+        public BluePrintEnum Type { get; private set; }
+        public String Name { get; private set; }
+        public List<ResourceQuantity> Produces { get; private set; }
+        public List<ResourceQuantity> Consumes { get; private set; }
         public int BaseTicks { get; set; }
     }
 
     public static class BluePrints
     {
-        private static BluePrint[] types_Var;
-        public static BluePrint[] Types
+        private static BluePrint[] types_Var = new BluePrint[Enum.GetNames(typeof(BluePrintEnum)).Length]; // initialise to size of enum
+        private static ReadOnlyCollection<BluePrint> typesReadOnly_Var;
+        public static ReadOnlyCollection<BluePrint> Types
         {
             get
             {
-                if (types_Var == null) types_Var = new BluePrint[Enum.GetNames(typeof(BluePrintEnum)).Length]; // initialise to size of enum
-                return types_Var;
+                if (typesReadOnly_Var == null)
+                {                    
+                    ReadOnlyCollection<BluePrint> typesReadOnly_Var = new ReadOnlyCollection<BluePrint>(types_Var);
+                }
+                return typesReadOnly_Var;
             }
             set
             {
-                types_Var = value;
+                typesReadOnly_Var = value;
             }
         }
 
@@ -45,11 +59,8 @@ namespace GalaxyGen.Engine
             int bpIdx = (int)bpType;            
             return types_Var[bpIdx];
         }
-    }
 
-    public class BluePrintInitialiser
-    {                        
-        public BluePrintInitialiser()
+        public static void initialiseBluePrints()
         {
             // pull these in from XML eventually
             ResourceQuantity prod = new ResourceQuantity();
@@ -58,7 +69,7 @@ namespace GalaxyGen.Engine
             ResourceQuantity cons = new ResourceQuantity();
             cons.Type = ResourceTypeEnum.Spice;
             cons.Quantity = 10;
-            BluePrints.Types[(int)BluePrintEnum.SpiceToPlatinum] = getBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 10);
+            types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 10);
 
 
             prod = new ResourceQuantity();
@@ -67,18 +78,13 @@ namespace GalaxyGen.Engine
             cons = new ResourceQuantity();
             cons.Type = ResourceTypeEnum.Platinum;
             cons.Quantity = 1;
-            BluePrints.Types[(int)BluePrintEnum.PlatinumToSpice] = getBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 50);
+            types_Var[(int)BluePrintEnum.PlatinumToSpice] = createBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 50);
         }
 
-        private BluePrint getBluePrint(BluePrintEnum type, String name, List<ResourceQuantity> produces, List<ResourceQuantity> consumes, int baseTicks)
+        private static BluePrint createBluePrint(BluePrintEnum type, String name, List<ResourceQuantity> produces, List<ResourceQuantity> consumes, int baseTicks)
         {
-            BluePrint bp = new BluePrint();
-            bp.Type = type;
-            bp.Name = name;
-            bp.Produces = produces;
-            bp.Consumes = consumes;
-            bp.BaseTicks = baseTicks;
+            BluePrint bp = new BluePrint(type, name, produces, consumes, baseTicks);
             return bp;
         }
-    }
+    }   
 }

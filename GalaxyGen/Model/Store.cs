@@ -10,6 +10,11 @@ namespace GalaxyGen.Model
 {
     public class Store : ModelActor
     {
+        public Store()
+        {
+            StoredResources = new HashSet<ResourceQuantity>();
+        }
+
         [Key]
         public Int64 StoreId { get; set; }
 

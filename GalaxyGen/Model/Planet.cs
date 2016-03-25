@@ -12,6 +12,12 @@ namespace GalaxyGen.Model
 {
     public class Planet : ModelActor
     {
+        public Planet()
+        {
+            Producers = new HashSet<Producer>();
+            Stores = new HashSet<Store>();
+        }
+
         [Key]
         public Int64 PlanetId { get; set; }
       

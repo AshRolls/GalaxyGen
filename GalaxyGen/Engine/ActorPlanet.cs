@@ -35,8 +35,42 @@ namespace GalaxyGen.Engine
             }
 
             Receive<MessageTick>(msg => receiveTick(msg));
+            Receive<MessageProducedResources>(msg => receiveProducedRes(msg));
 
             _actorTextOutput.Tell("Planet initialised : " + _planet.Name);            
+        }
+
+        private void receiveProducedRes(MessageProducedResources msg)
+        {
+            Store s = _planet.Stores.Where(x => x.Owner == msg.Owner).FirstOrDefault();
+            if (s == null)
+            {
+                s = new Store();
+                s.Location = _planet;
+                s.Owner = msg.Owner;
+                _planet.Stores.Add(s);
+            }
+
+            addResourceQuantityToStore(s, msg);
+        }
+
+        private void addResourceQuantityToStore(Store s, MessageProducedResources msg)
+        {
+            foreach (ResourceQuantity resQ in msg.Resources)
+            {
+                ResourceQuantity storedResQ = s.StoredResources.Where(x => x.Type == resQ.Type).FirstOrDefault();
+                if (storedResQ != null)
+                {
+                    storedResQ.Quantity += resQ.Quantity;
+                }
+                else
+                {
+                    ResourceQuantity newResQ = new ResourceQuantity();
+                    newResQ.Quantity = resQ.Quantity;
+                    newResQ.Type = resQ.Type;
+                    s.StoredResources.Add(newResQ);
+                }
+            }
         }
 
         private void receiveTick(MessageTick tick)
@@ -48,6 +82,8 @@ namespace GalaxyGen.Engine
                 prodActor.Tell(tick);
             }
         }
+
+
 
     }
 }

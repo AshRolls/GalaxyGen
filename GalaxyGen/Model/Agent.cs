@@ -10,6 +10,12 @@ namespace GalaxyGen.Model
 {
     public class Agent : ModelActor
     {
+        public Agent()
+        {
+            Producers = new HashSet<Producer>();
+            Stores = new HashSet<Store>();
+        }
+
         [Key]
         public Int64 AgentId { get; set; }
 

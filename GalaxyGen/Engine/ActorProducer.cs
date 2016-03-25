@@ -38,6 +38,17 @@ namespace GalaxyGen.Engine
             {
                 BluePrint bp = BluePrints.GetBluePrint(_producer.BluePrintType);
                 _producer.TicksRemaining = bp.BaseTicks;                  // reset ticks remaining counter
+
+                if (_producer.Owner != null)
+                {
+                    MessageProducedResources mpr = new MessageProducedResources(bp.Produces, _producer.Owner);
+                    _actorPlanet.Tell(mpr);
+                }
+                else
+                {
+                    // shut down production
+                }
+
                 foreach (ResourceQuantity resQ in bp.Produces)
                 {
                     // add res to owners store at producer location

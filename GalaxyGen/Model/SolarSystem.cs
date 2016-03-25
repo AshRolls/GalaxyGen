@@ -10,6 +10,12 @@ namespace GalaxyGen.Model
 {
     public class SolarSystem : ModelActor
     {
+        public SolarSystem()
+        {
+            Planets = new List<Planet>();
+            Agents = new List<Agent>();
+        }
+
         [Key]
         public Int64 SolarSystemId { get; set; }
 

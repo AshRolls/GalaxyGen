@@ -23,7 +23,7 @@ namespace GalaxyGen.Engine
             _actorSolarSystem = actorSolarSystem;
             _agent = ag;
             _agent.Actor = Self;
-            Receive<MessageTick>(msg => receiveTick(msg));
+            Receive<MessageTick>(msg => receiveTick(msg));            
 
             _actorTextOutput.Tell("Agent initialised : " + _agent.Name);            
         }
