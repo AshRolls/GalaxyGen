@@ -19,7 +19,8 @@ namespace GalaxyGen.ViewModel
         Agent Owner { get; set; }
         Planet Planet { get; set; }
         BluePrintEnum BluePrintType { get; set; }
-        Int64 TickForNextProduction { get; set; }        
+        Int64 TickForNextProduction { get; set; }
+        bool Producing { get; set; }        
     }
 
     public interface IProducerViewModelFactory

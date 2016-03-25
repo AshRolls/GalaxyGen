@@ -20,6 +20,6 @@ namespace GalaxyGen.Engine
             RunCommand = runCmd;
         }
 
-        public EngineRunCommand RunCommand { get; private set; }
+        public EngineRunCommand RunCommand { get; private set; }        
     }
 }

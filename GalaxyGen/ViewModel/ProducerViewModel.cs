@@ -137,6 +137,25 @@ namespace GalaxyGen.ViewModel
             }
         }
 
+        public bool Producing
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.Producing;
+                else
+                    return false;
+            }
+            set
+            {
+                if (model_Var != null)
+                {
+                    model_Var.Producing = value;
+                    OnPropertyChanged("Producing");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {

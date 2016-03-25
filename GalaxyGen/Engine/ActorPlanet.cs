@@ -17,6 +17,7 @@ namespace GalaxyGen.Engine
         Planet _planet;
         IActorRef _actorSolarSystem;
         private HashSet<IActorRef> _subscribedActorProducers;
+        Int64 curTick;
 
         public ActorPlanet(IActorRef actorTextOutput, Planet planet, IActorRef actorSolarSystem)
         {
@@ -36,29 +37,67 @@ namespace GalaxyGen.Engine
 
             Receive<MessageTick>(msg => receiveTick(msg));
             Receive<MessageProducedResources>(msg => receiveProducedRes(msg));
+            Receive<MessageRequestResources>(msg => receiveRequestRes(msg));
 
             _actorTextOutput.Tell("Planet initialised : " + _planet.Name);            
         }
 
         private void receiveProducedRes(MessageProducedResources msg)
         {
-            Store s = _planet.Stores.Where(x => x.Owner == msg.Owner).FirstOrDefault();
+            Store s = getOrCreateStoreForOwner(msg.Owner);
+            addResourceQuantityToStore(s, msg);
+        }
+
+        private void receiveRequestRes(MessageRequestResources msg)
+        {
+            Store s = getStoreForOwner(msg.Owner);
+            // check that we have the resources in store
+            bool hasResources = true;
+            foreach (ResourceQuantity resQ in msg.ResourcesRequested)
+            {
+                ResourceQuantity storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
+                if (storedResQ == null || storedResQ.Quantity < resQ.Quantity)
+                {
+                    hasResources = false;
+                    break;
+                }
+            }
+            if (hasResources)
+            {
+                // remove resources
+                foreach (ResourceQuantity resQ in msg.ResourcesRequested)
+                {
+                    ResourceQuantity storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
+                    storedResQ.Quantity -= resQ.Quantity;                    
+                }
+                MessageResources msgRes = new MessageResources(msg.ResourcesRequested, curTick);
+                Sender.Tell(msgRes);
+            }
+        }
+
+        private Store getOrCreateStoreForOwner(Agent owner)
+        {
+            Store s = getStoreForOwner(owner);
             if (s == null)
             {
                 s = new Store();
                 s.Location = _planet;
-                s.Owner = msg.Owner;
+                s.Owner = owner;
                 _planet.Stores.Add(s);
             }
+            return s;
+        }
 
-            addResourceQuantityToStore(s, msg);
+        private Store getStoreForOwner(Agent owner)
+        {
+            return _planet.Stores.Where(x => x.Owner == owner).FirstOrDefault();
         }
 
         private void addResourceQuantityToStore(Store s, MessageProducedResources msg)
         {
             foreach (ResourceQuantity resQ in msg.Resources)
             {
-                ResourceQuantity storedResQ = s.StoredResources.Where(x => x.Type == resQ.Type).FirstOrDefault();
+                ResourceQuantity storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
                 if (storedResQ != null)
                 {
                     storedResQ.Quantity += resQ.Quantity;
@@ -73,9 +112,15 @@ namespace GalaxyGen.Engine
             }
         }
 
+        private ResourceQuantity getStoredResourceQtyFromStore(Store s, ResourceTypeEnum type)
+        {
+            return s.StoredResources.Where(x => x.Type == type).FirstOrDefault();
+        }
+
         private void receiveTick(MessageTick tick)
         {
             //_actorTextOutput.Tell("TICK RCV P: " + _planetVm.Name + " " + tick.Tick.ToString());
+            curTick = tick.Tick;
 
             foreach (IActorRef prodActor in _subscribedActorProducers)
             {

@@ -20,20 +20,15 @@ namespace GalaxyGen.Engine
             Agent ag = this.GetAgent("The Mule");
             Producer prod = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
             prod.Owner = ag;
+            Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);            
+            prod2.Owner = ag;
             ag.Producers.Add(prod);
-            ss.Agents.Add(ag);
-
-            Agent ag2 = this.GetAgent("The Shrike");
-            Producer prod2 = this.GetProducer("Factory Harkonen", BluePrintEnum.PlatinumToSpice);
-            prod2.Owner = ag2;
-            ag2.Producers.Add(prod2);
-            ss.Agents.Add(ag2);
+            ss.Agents.Add(ag);           
 
             Planet p = this.GetPlanet("Earth");
-            p.Producers.Add(prod);
-            addNewStoreToPlanet(p, ag);            
+            addNewStoreToPlanet(p, ag);
+            p.Producers.Add(prod);            
             p.Producers.Add(prod2);
-            addNewStoreToPlanet(p, ag2);
             ss.Planets.Add(p);
 
             Planet p2 = this.GetPlanet("Mars");
@@ -106,7 +101,12 @@ namespace GalaxyGen.Engine
 
             ResourceQuantity resQ = new ResourceQuantity(); // seed with basic starter resource
             resQ.Type = ResourceTypeEnum.Spice;
-            resQ.Quantity = 40;
+            resQ.Quantity = 100;
+            s.StoredResources.Add(resQ);
+
+            resQ = new ResourceQuantity(); // seed with basic starter resource
+            resQ.Type = ResourceTypeEnum.Platinum;
+            resQ.Quantity = 100;
             s.StoredResources.Add(resQ);
         }
 
@@ -122,7 +122,7 @@ namespace GalaxyGen.Engine
             Producer prod = new Producer();
             prod.Name = seedName;
             prod.BluePrintType = bpType;
-            prod.TicksRemaining = BluePrints.GetBluePrint(bpType).BaseTicks;
+            prod.Producing = false;           
             return prod;
         }       
 
