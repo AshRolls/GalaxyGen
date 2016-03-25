@@ -33,11 +33,10 @@ namespace GalaxyGen.Engine
 
         private void receiveTick(MessageTick tick)
         {
-            _producer.TicksRemaining--;
-            if (_producer.TicksRemaining <= 0)
+            if (_producer.TickForNextProduction <= tick.Tick)
             {
                 BluePrint bp = BluePrints.GetBluePrint(_producer.BluePrintType);
-                _producer.TicksRemaining = bp.BaseTicks;                  // reset ticks remaining counter
+                _producer.TickForNextProduction = tick.Tick + bp.BaseTicks;                  // reset ticks remaining counter
 
                 if (_producer.Owner != null)
                 {

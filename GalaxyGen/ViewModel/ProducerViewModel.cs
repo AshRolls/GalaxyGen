@@ -118,12 +118,12 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        public int TicksRemaining
+        public Int64 TickForNextProduction
         {
             get
             {
                 if (model_Var != null)
-                    return model_Var.TicksRemaining;
+                    return model_Var.TickForNextProduction;
                 else
                     return 0;
             }
@@ -131,8 +131,8 @@ namespace GalaxyGen.ViewModel
             {
                 if (model_Var != null)
                 {
-                    model_Var.TicksRemaining = value;
-                    OnPropertyChanged("TicksRemaining");
+                    model_Var.TickForNextProduction = value;
+                    OnPropertyChanged("TickForNextProduction");
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
 
         public BluePrintEnum BluePrintType {get; set;}       
-        public int TicksRemaining { get; set; }
+        public Int64 TickForNextProduction { get; set; }
         //public bool Producing { get; set; }
 
         public virtual Agent Owner { get; set; }
