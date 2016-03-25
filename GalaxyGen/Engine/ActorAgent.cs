@@ -15,17 +15,17 @@ namespace GalaxyGen.Engine
     {
         IActorRef _actorTextOutput;
         IActorRef _actorSolarSystem;
-        IAgentViewModel _agentVm;
+        Agent _agent;
 
-        public ActorAgent(IActorRef actorTextOutput, IAgentViewModel agentVm, IActorRef actorSolarSystem)
+        public ActorAgent(IActorRef actorTextOutput, Agent ag, IActorRef actorSolarSystem)
         {
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
-            _agentVm = agentVm;
-            _agentVm.Actor = Self;
+            _agent = ag;
+            _agent.Actor = Self;
             Receive<MessageTick>(msg => receiveTick(msg));
 
-            _actorTextOutput.Tell("Agent initialised : " + _agentVm.Name);            
+            _actorTextOutput.Tell("Agent initialised : " + _agent.Name);            
         }
 
         private void receiveTick(MessageTick tick)

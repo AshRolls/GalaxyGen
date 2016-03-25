@@ -14,29 +14,29 @@ namespace GalaxyGen.Engine
     public class ActorPlanet : ReceiveActor
     {
         IActorRef _actorTextOutput;
-        IPlanetViewModel _planetVm;
+        Planet _planet;
         IActorRef _actorSolarSystem;
         private HashSet<IActorRef> _subscribedActorProducers;
 
-        public ActorPlanet(IActorRef actorTextOutput, IPlanetViewModel planetVm, IActorRef actorSolarSystem)
+        public ActorPlanet(IActorRef actorTextOutput, Planet planet, IActorRef actorSolarSystem)
         {
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
-            _planetVm = planetVm;
-            _planetVm.Actor = Self;
+            _planet = planet;
+            _planet.Actor = Self;
             _subscribedActorProducers = new HashSet<IActorRef>();
 
             // create child actors for each producer in planet
-            foreach (IProducerViewModel prodVm in _planetVm.Producers)
+            foreach (Producer prod in _planet.Producers)
             {
-                Props prodProps = Props.Create<ActorProducer>(_actorTextOutput, prodVm, Self);
-                IActorRef actor = Context.ActorOf(prodProps, "Producer" + prodVm.Model.ProducerId.ToString());
+                Props prodProps = Props.Create<ActorProducer>(_actorTextOutput, prod, Self);
+                IActorRef actor = Context.ActorOf(prodProps, "Producer" + prod.ProducerId.ToString());
                 _subscribedActorProducers.Add(actor);
             }
 
             Receive<MessageTick>(msg => receiveTick(msg));
 
-            _actorTextOutput.Tell("Planet initialised : " + _planetVm.Name);            
+            _actorTextOutput.Tell("Planet initialised : " + _planet.Name);            
         }
 
         private void receiveTick(MessageTick tick)

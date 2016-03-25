@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Producer
+    public class Producer : ModelActor
     {
         [Key]
         public Int64 ProducerId { get; set; }
@@ -17,7 +17,7 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
 
         public BluePrintEnum BluePrintType {get; set;}       
-        public int TicksCompleted { get; set; }
+        public int TicksRemaining { get; set; }
         //public bool Producing { get; set; }
 
         public virtual Agent Owner { get; set; }

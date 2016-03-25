@@ -14,32 +14,34 @@ namespace GalaxyGen.Engine
     public class ActorProducer : ReceiveActor
     {
         IActorRef _actorTextOutput;
-        IProducerViewModel _producerVm;
+        Producer _producer;
         IActorRef _actorPlanet;
+        IActorRef _actorOwner;
 
-        public ActorProducer(IActorRef actorTextOutput, IProducerViewModel producerVm, IActorRef actorPlanet)
+        public ActorProducer(IActorRef actorTextOutput, Producer producer, IActorRef actorPlanet)
         {
             _actorTextOutput = actorTextOutput;
             _actorPlanet = actorPlanet;
-            _producerVm = producerVm;
-            _producerVm.Actor = Self;
+            _producer = producer;
+            _producer.Actor = Self;
+            _actorOwner = _producer.Owner.Actor;
 
             Receive<MessageTick>(msg => receiveTick(msg));
 
-            _actorTextOutput.Tell("Producer initialised : " + _producerVm.Name);            
+            _actorTextOutput.Tell("Producer initialised : " + _producer.Name);            
         }
 
         private void receiveTick(MessageTick tick)
         {
-            _producerVm.TicksRemaining--;
-            if (_producerVm.TicksRemaining <= 0)
+            _producer.TicksRemaining--;
+            if (_producer.TicksRemaining <= 0)
             {
-                BluePrint bp = BluePrints.GetBluePrint(_producerVm.BluePrintType);
-                _producerVm.TicksRemaining = bp.BaseTicks;                  // reset ticks remaining counter
+                BluePrint bp = BluePrints.GetBluePrint(_producer.BluePrintType);
+                _producer.TicksRemaining = bp.BaseTicks;                  // reset ticks remaining counter
                 foreach (ResourceQuantity resQ in bp.Produces)
                 {
                     // add res to owners store at producer location
-                    _actorTextOutput.Tell(_producerVm.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                    _actorTextOutput.Tell(_producer.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
                 }
             }
             //_actorTextOutput.Tell("TICK RCV PROD: " + _producerVm.Name + " " + tick.Tick.ToString());

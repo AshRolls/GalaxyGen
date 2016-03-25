@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Model;
 using GalaxyGen.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -16,12 +17,12 @@ namespace GalaxyGen.Engine
 
     public class ActorTickEngineCoordinator : ReceiveActor
     {
-        IGalaxyViewModel _state;
+        Galaxy _state;
         private HashSet<IActorRef> _subscribedActorSolarSystems; // hashset here as faster than list for large number of items (>~20) http://stackoverflow.com/questions/150750/hashset-vs-list-performance
         IActorRef _actorTextOutput;
         TickEngineRunState _runState;
 
-        public ActorTickEngineCoordinator(IActorRef actorTextOutput, IGalaxyViewModel state)
+        public ActorTickEngineCoordinator(IActorRef actorTextOutput, Galaxy state)
         {
             _runState = TickEngineRunState.Stopped;
             _state = state;
@@ -30,10 +31,10 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;          
 
             // create child actors for each solar system
-            foreach (ISolarSystemViewModel ssVm in _state.SolarSystems)
+            foreach (SolarSystem ss in _state.SolarSystems)
             {
-                Props ssProps = Props.Create<ActorSolarSystem>(_actorTextOutput, ssVm);
-                IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ssVm.Model.SolarSystemId.ToString());
+                Props ssProps = Props.Create<ActorSolarSystem>(_actorTextOutput, ss);
+                IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ss.SolarSystemId.ToString());
                 _subscribedActorSolarSystems.Add(actor);
             }
 

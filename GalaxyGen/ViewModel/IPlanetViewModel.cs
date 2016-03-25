@@ -13,7 +13,7 @@ namespace GalaxyGen.ViewModel
     public interface IPlanetViewModel : INotifyPropertyChanged
     {
         Planet Model { get; set; }
-        IActorRef Actor { get; set; }
+        IActorRef Actor { get; }
         String Name { get; set; }
         Int64 Population { get; set; }
         ISocietyViewModel Society { get; }

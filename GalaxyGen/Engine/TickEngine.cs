@@ -23,7 +23,7 @@ namespace GalaxyGen.Engine
             Props textOutputProps = Props.Create<ActorTextOutput>(textOutput).WithDispatcher("akka.actor.synchronized-dispatcher");
             _actorTextOutput = _galaxyActorSystem.ActorOf(textOutputProps, "TextOutput");
 
-            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_actorTextOutput, state);
+            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_actorTextOutput, state.Model);
             _actorTECoordinator = _galaxyActorSystem.ActorOf(teCoordinatorProps, "TECoordinator");
             
             engineInitialised = true;

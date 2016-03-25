@@ -14,37 +14,37 @@ namespace GalaxyGen.Engine
     public class ActorSolarSystem : ReceiveActor
     {
         IActorRef _actorTextOutput;
-        ISolarSystemViewModel _solarSystemVm;
+        SolarSystem _solarSystem;
         private List<IActorRef> _subscribedActorAgents;
         private List<IActorRef> _subscribedActorPlanets;
 
-        public ActorSolarSystem(IActorRef actorTextOutput, ISolarSystemViewModel ssVm)
+        public ActorSolarSystem(IActorRef actorTextOutput, SolarSystem ss)
         {
             _actorTextOutput = actorTextOutput;
-            _solarSystemVm = ssVm;
-            _solarSystemVm.Actor = Self;
+            _solarSystem = ss;
+            _solarSystem.Actor = Self;
             _subscribedActorAgents = new List<IActorRef>();
             _subscribedActorPlanets = new List<IActorRef>();
 
             // create child actors for each agent in ss
-            foreach (IAgentViewModel agentVm in _solarSystemVm.Agents)
+            foreach (Agent agent in _solarSystem.Agents)
             {
-                Props agentProps = Props.Create<ActorAgent>(_actorTextOutput, agentVm, Self);
-                IActorRef actor = Context.ActorOf(agentProps, "Agent" + agentVm.Model.AgentId.ToString());
+                Props agentProps = Props.Create<ActorAgent>(_actorTextOutput, agent, Self);
+                IActorRef actor = Context.ActorOf(agentProps, "Agent" + agent.AgentId.ToString());
                 _subscribedActorAgents.Add(actor);
             }
 
             // create child actors for each planet in ss
-            foreach (IPlanetViewModel planetVm in _solarSystemVm.Planets)
+            foreach (Planet p in _solarSystem.Planets)
             {
-                Props planetProps = Props.Create<ActorPlanet>(_actorTextOutput, planetVm, Self);
-                IActorRef actor = Context.ActorOf(planetProps, "Planet" + planetVm.Model.PlanetId.ToString());
+                Props planetProps = Props.Create<ActorPlanet>(_actorTextOutput, p, Self);
+                IActorRef actor = Context.ActorOf(planetProps, "Planet" + p.PlanetId.ToString());
                 _subscribedActorPlanets.Add(actor);
             }
 
             Receive<MessageTick>(msg => receiveTick(msg));
 
-            _actorTextOutput.Tell("Solar System initialised : " + _solarSystemVm.Name);            
+            _actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
         }
 
         private void receiveTick(MessageTick tick)

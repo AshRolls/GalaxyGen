@@ -13,7 +13,7 @@ namespace GalaxyGen.ViewModel
     public interface IGalaxyViewModel : INotifyPropertyChanged
     {
         Galaxy Model { get; set; }
-        IActorRef Actor { get; set; }
+        IActorRef Actor { get; }
         String Name { get; set; }
         Int64 CurrentTick { get; set; }
         ObservableCollection<ISolarSystemViewModel> SolarSystems { get; }

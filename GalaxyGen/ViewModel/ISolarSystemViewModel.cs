@@ -13,7 +13,7 @@ namespace GalaxyGen.ViewModel
     public interface ISolarSystemViewModel : INotifyPropertyChanged
     {
         SolarSystem Model { get; set; }
-        IActorRef Actor { get; set; }
+        IActorRef Actor { get; }
         String Name { get; set; }
         ObservableCollection<IPlanetViewModel> Planets { get; }
         ObservableCollection<IAgentViewModel> Agents { get; }

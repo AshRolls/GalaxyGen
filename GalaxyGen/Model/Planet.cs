@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Planet
+    public class Planet : ModelActor
     {
         [Key]
         public Int64 PlanetId { get; set; }

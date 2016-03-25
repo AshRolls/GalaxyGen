@@ -14,7 +14,16 @@ namespace GalaxyGen.ViewModel
 {
     public class ProducerViewModel : IProducerViewModel
     {
-        public IActorRef Actor { get; set; }
+        public IActorRef Actor
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.Actor;
+                else
+                    return null;
+            }
+        }
 
         private Producer model_Var;
         public Producer Model
@@ -114,7 +123,7 @@ namespace GalaxyGen.ViewModel
             get
             {
                 if (model_Var != null)
-                    return model_Var.TicksCompleted;
+                    return model_Var.TicksRemaining;
                 else
                     return 0;
             }
@@ -122,8 +131,8 @@ namespace GalaxyGen.ViewModel
             {
                 if (model_Var != null)
                 {
-                    model_Var.TicksCompleted = value;
-                    OnPropertyChanged("TicksCompleted");
+                    model_Var.TicksRemaining = value;
+                    OnPropertyChanged("TicksRemaining");
                 }
             }
         }

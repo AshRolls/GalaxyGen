@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class SolarSystem
+    public class SolarSystem : ModelActor
     {
         [Key]
         public Int64 SolarSystemId { get; set; }

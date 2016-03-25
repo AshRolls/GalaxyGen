@@ -19,7 +19,16 @@ namespace GalaxyGen.ViewModel
             solarSystemViewModelFactory = initSolarSystemViewModelFactory;            
         }
 
-        public IActorRef Actor { get; set; }
+        public IActorRef Actor
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.Actor;
+                else
+                    return null;
+            }
+        }
 
         private Galaxy model_Var;
         public Galaxy Model
