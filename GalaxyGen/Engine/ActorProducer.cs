@@ -49,17 +49,16 @@ namespace GalaxyGen.Engine
         private void receiveProducingTick(MessageTick tick)
         {
             if (_producer.TickForNextProduction <= tick.Tick)
-            {                              
+            {                
                 if (_producer.Owner != null)
                 {
                     MessageProducedResources mpr = new MessageProducedResources(_bp.Produces, _producer.Owner);
                     _actorPlanet.Tell(mpr);
                     _producer.Producing = false;
-                    foreach (ResourceQuantity resQ in _bp.Produces)
-                    {
-                        // add res to owners store at producer location
-                        _actorTextOutput.Tell(_producer.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
-                    }
+                    //foreach (ResourceQuantity resQ in _bp.Produces)
+                    //{
+                    //    _actorTextOutput.Tell(_producer.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                    //}
                 }                
 
                 // assume we always want to continue producing, if we have the resources.
@@ -77,7 +76,7 @@ namespace GalaxyGen.Engine
         }
 
         private void receiveResources(MessageResources res)
-        {
+        {            
             _producer.TickForNextProduction = res.TickSent + _bp.BaseTicks;
             _producer.Producing = true;
             Become(Producing);
@@ -85,7 +84,11 @@ namespace GalaxyGen.Engine
 
         private void receiveResourcesError(MessageResources res)
         {
-            _actorTextOutput.Tell(_producer.Name + " ERROR, resources received whilst already producing " + res.TickSent.ToString());
+            _actorTextOutput.Tell(_producer.Name + " ERROR, resources received whilst already producing " + res.TickSent.ToString()); 
+            //if (_producer.ProducerId == 10)
+            //{
+            //    Console.WriteLine("error " + res.TickSent.ToString());
+            //}
         }
 
     }

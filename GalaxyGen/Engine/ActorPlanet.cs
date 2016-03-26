@@ -51,6 +51,7 @@ namespace GalaxyGen.Engine
         private void receiveRequestRes(MessageRequestResources msg)
         {
             Store s = getStoreForOwner(msg.Owner);
+            if (s == null) return; // does not have resources
             // check that we have the resources in store
             bool hasResources = true;
             foreach (ResourceQuantity resQ in msg.ResourcesRequested)
@@ -90,7 +91,7 @@ namespace GalaxyGen.Engine
 
         private Store getStoreForOwner(Agent owner)
         {
-            return _planet.Stores.Where(x => x.Owner == owner).FirstOrDefault();
+            return _planet.Stores.Where(x => x.Owner == owner).FirstOrDefault(); // TODO slow, optimise!
         }
 
         private void addResourceQuantityToStore(Store s, MessageProducedResources msg)

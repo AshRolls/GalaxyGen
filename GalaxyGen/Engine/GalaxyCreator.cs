@@ -20,9 +20,11 @@ namespace GalaxyGen.Engine
             Agent ag = this.GetAgent("The Mule");
             Producer prod = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
             prod.Owner = ag;
+            ag.Producers.Add(prod);
             Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);            
             prod2.Owner = ag;
-            ag.Producers.Add(prod);
+            ag.Producers.Add(prod2);
+
             ss.Agents.Add(ag);           
 
             Planet p = this.GetPlanet("Earth");
@@ -36,17 +38,26 @@ namespace GalaxyGen.Engine
             ss.Planets.Add(p2);
             gal.SolarSystems.Add(ss);
 
-            //for (int i = 0; i < 500; i++)
+            //for (int i = 0; i < 5000; i++)
             //{
-            //    Agent ag3 = _galaxyCreator.GetAgent(i.ToString());
-            //    ss.Agents.Add(ag3);
+            //    Agent newAg = this.GetAgent(i.ToString());
+            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+            //    pr.Owner = newAg;
+            //    newAg.Producers.Add(pr);
+            //    p.Producers.Add(pr);
+            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+            //    pr2.Owner = newAg;
+            //    newAg.Producers.Add(pr2);
+            //    p.Producers.Add(pr2);
+            //    addNewStoreToPlanet(p, newAg);
+            //    ss.Agents.Add(newAg);
             //}
 
             //for (int i = 0; i < 500; i++)
             //{
-            //    SolarSystem ss2 = _galaxyCreator.GetSolarSystem(i.ToString());
-            //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Earth"));
-            //    ss2.Planets.Add(_galaxyCreator.GetPlanet("Mars"));
+            //    SolarSystem ss2 = this.GetSolarSystem(i.ToString());
+            //    ss2.Planets.Add(this.GetPlanet("Earth"));
+            //    ss2.Planets.Add(this.GetPlanet("Mars"));
             //    gal.SolarSystems.Add(ss2);
             //}
 
