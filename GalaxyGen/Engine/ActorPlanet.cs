@@ -71,7 +71,12 @@ namespace GalaxyGen.Engine
                     ResourceQuantity storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
                     storedResQ.Quantity -= resQ.Quantity;                    
                 }
-                MessageResources msgRes = new MessageResources(msg.ResourcesRequested, curTick);
+                MessageRequestResourcesResponse msgRes = new MessageRequestResourcesResponse(true, curTick);
+                Sender.Tell(msgRes);
+            }
+            else
+            {
+                MessageRequestResourcesResponse msgRes = new MessageRequestResourcesResponse(false, curTick);
                 Sender.Tell(msgRes);
             }
         }

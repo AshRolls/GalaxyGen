@@ -11,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
-    public class ActorProducer : ReceiveActor
+    public class ActorProducer : ReceiveActor, IWithUnboundedStash
     {
         IActorRef _actorTextOutput;
         Producer _producer;
         IActorRef _actorPlanet;
         IActorRef _actorOwner;
-        BluePrint _bp;
+        BluePrint _bp;        
 
         public ActorProducer(IActorRef actorTextOutput, Producer producer, IActorRef actorPlanet)
         {
@@ -37,14 +37,22 @@ namespace GalaxyGen.Engine
         private void Producing()
         {
             Receive<MessageTick>(msg => receiveProducingTick(msg));
-            Receive<MessageResources>(msg => receiveResourcesError(msg));
+            Receive<MessageRequestResourcesResponse>(msg => receiveResourcesError(msg));
+        }
+
+        private void AwaitingResourceReqResponse()
+        {
+            Receive<MessageTick>(msg => receiveAwaitingTick(msg));
+            Receive<MessageRequestResourcesResponse>(msg => receiveResources(msg));
         }
 
         private void NotProducing()
         {
             Receive<MessageTick>(msg => receiveNotProducingTick(msg));
-            Receive<MessageResources>(msg => receiveResources(msg));
+            Receive<MessageRequestResourcesResponse>(msg => receiveResources(msg));
         }
+
+        public IStash Stash { get; set; }
 
         private void receiveProducingTick(MessageTick tick)
         {
@@ -64,7 +72,7 @@ namespace GalaxyGen.Engine
                 // assume we always want to continue producing, if we have the resources.
                 MessageRequestResources msg = new MessageRequestResources(_bp.Consumes, _producer.Owner, tick.Tick);
                 _actorPlanet.Tell(msg);
-                Become(NotProducing);
+                Become(AwaitingResourceReqResponse);
             }            
         }
 
@@ -73,16 +81,30 @@ namespace GalaxyGen.Engine
             // check store to see if we have resource bp needs, if so restart
             MessageRequestResources msg = new MessageRequestResources(_bp.Consumes, _producer.Owner, tick.Tick);
             _actorPlanet.Tell(msg);
+            Become(AwaitingResourceReqResponse);
         }
 
-        private void receiveResources(MessageResources res)
-        {            
-            _producer.TickForNextProduction = res.TickSent + _bp.BaseTicks;
-            _producer.Producing = true;
-            Become(Producing);
+        private void receiveAwaitingTick(MessageTick tick)
+        {
+            Stash.Stash();
         }
 
-        private void receiveResourcesError(MessageResources res)
+        private void receiveResources(MessageRequestResourcesResponse msg)
+        {
+            if (msg.Response == true)
+            {
+                _producer.TickForNextProduction = msg.TickSent + _bp.BaseTicks;
+                _producer.Producing = true;
+                Become(Producing);                
+            }
+            else
+            {
+                Become(NotProducing);
+            }
+            Stash.UnstashAll();
+        }
+
+        private void receiveResourcesError(MessageRequestResourcesResponse res)
         {
             _actorTextOutput.Tell(_producer.Name + " ERROR, resources received whilst already producing " + res.TickSent.ToString()); 
             //if (_producer.ProducerId == 10)
