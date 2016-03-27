@@ -46,19 +46,7 @@ namespace GalaxyGen.ViewModel
 
         private void updateFromModel()
         {
-            Name = model_Var.Name;
-            foreach(Planet p in model_Var.Planets)
-            {
-                IPlanetViewModel pVm = planetViewModelFactory.CreatePlanetViewModel();
-                pVm.Model = p;
-                planets_Var.Add(pVm);
-            }
-            foreach (Agent ag in model_Var.Agents)
-            {
-                IAgentViewModel agVm = agentViewModelFactory.CreateAgentViewModel();
-                agVm.Model = ag;
-                agents_Var.Add(agVm);
-            }
+            Name = model_Var.Name;                       
         }
 
         public String Name
@@ -78,21 +66,51 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        private ObservableCollection<IPlanetViewModel> planets_Var = new ObservableCollection<IPlanetViewModel>();
+        private ObservableCollection<IPlanetViewModel> planets_Var;
         public ObservableCollection<IPlanetViewModel> Planets
         {
             get
             {
+                if (planets_Var == null) initialisePlanets();
                 return planets_Var;
             }            
         }
 
-        private ObservableCollection<IAgentViewModel> agents_Var = new ObservableCollection<IAgentViewModel>();
+        private void initialisePlanets()
+        {
+            planets_Var = new ObservableCollection<IPlanetViewModel>();
+            if (model_Var != null)
+            {
+                foreach (Planet p in model_Var.Planets)
+                {
+                    IPlanetViewModel pVm = planetViewModelFactory.CreatePlanetViewModel();
+                    pVm.Model = p;
+                    planets_Var.Add(pVm);
+                }
+            }
+        }
+
+        private ObservableCollection<IAgentViewModel> agents_Var;
         public ObservableCollection<IAgentViewModel> Agents
         {
             get
             {
+                if (agents_Var == null) initialiseAgents();
                 return agents_Var;
+            }
+        }
+
+        private void initialiseAgents()
+        {
+            agents_Var = new ObservableCollection<IAgentViewModel>();
+            if (model_Var != null)
+            {
+                foreach (Agent ag in model_Var.Agents)
+                {
+                    IAgentViewModel agVm = agentViewModelFactory.CreateAgentViewModel();
+                    agVm.Model = ag;
+                    agents_Var.Add(agVm);
+                }
             }
         }
 
