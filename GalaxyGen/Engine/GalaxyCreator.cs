@@ -148,7 +148,8 @@ namespace GalaxyGen.Engine
             Producer prod = new Producer();
             prod.Name = seedName;
             prod.BluePrintType = bpType;
-            prod.Producing = false;           
+            prod.Producing = false;
+            prod.AutoResumeProduction = true;        
             return prod;
         }       
 

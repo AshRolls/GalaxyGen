@@ -20,6 +20,7 @@ namespace GalaxyGen.Model
         public BluePrintEnum BluePrintType {get; set;}       
         public Int64 TickForNextProduction { get; set; }
         public bool Producing { get; set; }
+        public bool AutoResumeProduction { get; set; }
 
         public virtual Agent Owner { get; set; }
 

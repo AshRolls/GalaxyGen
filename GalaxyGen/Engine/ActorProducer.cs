@@ -63,22 +63,33 @@ namespace GalaxyGen.Engine
                     MessageProducedResources mpr = new MessageProducedResources(_bp.Produces, _producer.Owner);
                     _actorPlanet.Tell(mpr);
                     _producer.Producing = false;
-                    //foreach (ResourceQuantity resQ in _bp.Produces)
-                    //{
-                    //    _actorTextOutput.Tell(_producer.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
-                    //}
-                }                
+                    foreach (ResourceQuantity resQ in _bp.Produces)
+                    {
+                        _actorTextOutput.Tell(_producer.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                    }
+                }
 
-                // assume we always want to continue producing, if we have the resources.
-                MessageRequestResources msg = new MessageRequestResources(_bp.Consumes, _producer.Owner, tick.Tick);
-                _actorPlanet.Tell(msg);
-                Become(AwaitingResourceReqResponse);
+                if (_producer.AutoResumeProduction)
+                {
+                    requestResources(tick);
+                }
+                else
+                {
+                    Become(NotProducing);
+                }
             }            
         }
 
         private void receiveNotProducingTick(MessageTick tick)
         {
-            // check store to see if we have resource bp needs, if so restart
+            if (_producer.AutoResumeProduction)
+            {
+                requestResources(tick);
+            }
+        }
+
+        private void requestResources(MessageTick tick)
+        {
             MessageRequestResources msg = new MessageRequestResources(_bp.Consumes, _producer.Owner, tick.Tick);
             _actorPlanet.Tell(msg);
             Become(AwaitingResourceReqResponse);

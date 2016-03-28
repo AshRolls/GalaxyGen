@@ -20,7 +20,8 @@ namespace GalaxyGen.ViewModel
         Planet Planet { get; set; }
         BluePrintEnum BluePrintType { get; set; }
         Int64 TickForNextProduction { get; set; }
-        bool Producing { get; set; }        
+        bool Producing { get; set; }
+        bool AutoResumeProduction { get; set; }
     }
 
     public interface IProducerViewModelFactory

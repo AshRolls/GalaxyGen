@@ -49,7 +49,7 @@ namespace GalaxyGen.Engine
             if (msg.RunCommand == EngineRunCommand.Run && _runState != TickEngineRunState.Running)
             {
                 _runState = TickEngineRunState.Running;
-                _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 20, Self, pulse, ActorRefs.Nobody);
+                _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 5, Self, pulse, ActorRefs.Nobody);
             }
             else if (msg.RunCommand == EngineRunCommand.Stop && _runState == TickEngineRunState.Running)
             {

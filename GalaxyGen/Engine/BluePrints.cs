@@ -68,7 +68,7 @@ namespace GalaxyGen.Engine
             prod.Quantity = 1;
             ResourceQuantity cons = new ResourceQuantity();
             cons.Type = ResourceTypeEnum.Spice;
-            cons.Quantity = 10;
+            cons.Quantity = 9;
             types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 10);
 
 

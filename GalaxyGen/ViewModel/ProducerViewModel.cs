@@ -156,6 +156,25 @@ namespace GalaxyGen.ViewModel
             }
         }
 
+        public bool AutoResumeProduction
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.AutoResumeProduction;
+                else
+                    return false;
+            }
+            set
+            {
+                if (model_Var != null)
+                {
+                    model_Var.AutoResumeProduction = value;
+                    OnPropertyChanged("AutoResumeProduction");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
