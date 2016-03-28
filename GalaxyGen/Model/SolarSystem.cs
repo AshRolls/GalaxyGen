@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Akka.Actor;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class SolarSystem : ModelActor
+    public class SolarSystem
     {
         public SolarSystem()
         {
@@ -28,5 +29,8 @@ namespace GalaxyGen.Model
         public Int64 GalaxyId { get; set; }
         [ForeignKey("GalaxyId")]
         public Galaxy Galaxy { get; set; }
+
+        [NotMapped]
+        public IActorRef Actor { get; set; }
     }
 }

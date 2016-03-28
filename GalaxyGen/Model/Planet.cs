@@ -1,4 +1,5 @@
-﻿using Ninject;
+﻿using Akka.Actor;
+using Ninject;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Planet : ModelActor
+    public class Planet
     {
         public Planet()
         {
@@ -34,6 +35,9 @@ namespace GalaxyGen.Model
         public Int64 SolarSystemId { get; set; }
         [ForeignKey("SolarSystemId")]
         public SolarSystem SolarSystem { get; set; }
+
+        [NotMapped]
+        public IActorRef Actor { get; set; }
 
         //[ForeignKey("MarketId")]
         //public IMarket Market { get; set; }

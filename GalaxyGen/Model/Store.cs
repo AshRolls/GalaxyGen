@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Store : ModelActor
+    public class Store
     {
         public Store()
         {

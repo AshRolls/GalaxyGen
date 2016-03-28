@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Engine;
+﻿using Akka.Actor;
+using GalaxyGen.Engine;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Producer : ModelActor
+    public class Producer
     {
         [Key]
         public Int64 ProducerId { get; set; }
@@ -26,6 +27,7 @@ namespace GalaxyGen.Model
         [ForeignKey("PlanetId")]
         public Planet Planet { get; set; }
 
-        
+        [NotMapped]
+        public IActorRef Actor { get; set; }
     }
 }

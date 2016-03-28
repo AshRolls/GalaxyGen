@@ -35,9 +35,16 @@ namespace GalaxyGen.ViewModel
         {
             get { return model_Var; }
             set
-            {                
+            {     
+                if (model_Var != null)
+                    model_Var.PropertyChanged -= Model_Var_PropertyChanged;
+
                 model_Var = value;
                 updateFromModel();
+
+                if (model_Var != null)
+                    model_Var.PropertyChanged += Model_Var_PropertyChanged;
+
                 OnPropertyChanged("Model");
             }
         }
@@ -50,7 +57,15 @@ namespace GalaxyGen.ViewModel
                 ISolarSystemViewModel ssVm = solarSystemViewModelFactory.CreateSolarSystemViewModel();
                 ssVm.Model = ss;
                 solarSystems_Var.Add(ssVm);
-            }          
+            }            
+        }
+
+        private void Model_Var_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "CurrentTick")
+            {
+                OnPropertyChanged("CurrentTick");
+            }
         }
 
         public String Name
