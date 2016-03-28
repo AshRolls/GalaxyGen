@@ -137,6 +137,21 @@ namespace GalaxyGen.ViewModel
             }
         }
 
+
+        private IAgentViewModel selectedAgent_Var;
+        public IAgentViewModel SelectedAgent
+        {
+            get
+            {
+                return selectedAgent_Var;
+            }
+            set
+            {
+                selectedAgent_Var = value;
+                OnPropertyChanged("SelectedAgent");
+            }
+        }
+
         private ITextOutputViewModel textOutput_Var;
         public ITextOutputViewModel TextOutput
         {

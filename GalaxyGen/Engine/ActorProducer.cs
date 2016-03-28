@@ -84,9 +84,10 @@ namespace GalaxyGen.Engine
             Become(AwaitingResourceReqResponse);
         }
 
+        // TODO put in system for when we never receive a response!
         private void receiveAwaitingTick(MessageTick tick)
         {
-            Stash.Stash();
+            Stash.Stash(); // stash messages while we are waiting for our response.
         }
 
         private void receiveResources(MessageRequestResourcesResponse msg)

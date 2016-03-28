@@ -167,6 +167,9 @@
     <Compile Include="ViewModel\PlanetViewModel.cs" />
     <Compile Include="ViewModel\TextOutputViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="View\AgentControl.xaml.cs">
+      <DependentUpon>AgentControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SocietyControl.xaml.cs">
       <DependentUpon>SocietyControl.xaml</DependentUpon>
     </Compile>
@@ -185,6 +188,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\AgentControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\SocietyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
