@@ -22,6 +22,7 @@ namespace GalaxyGen.ViewModel
         Int64 TickForNextProduction { get; set; }
         bool Producing { get; set; }
         bool AutoResumeProduction { get; set; }
+        int ProduceNThenStop { get; set; }
     }
 
     public interface IProducerViewModelFactory

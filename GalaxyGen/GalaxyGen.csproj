@@ -120,6 +120,7 @@
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\BluePrints.cs" />
     <Compile Include="Engine\Message.cs" />
+    <Compile Include="Engine\MessageProducerCommand.cs" />
     <Compile Include="Engine\MessageProducedResources.cs" />
     <Compile Include="Engine\MessageRequestResourcesResponse.cs" />
     <Compile Include="Engine\MessageRequestResources.cs" />

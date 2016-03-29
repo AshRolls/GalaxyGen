@@ -175,6 +175,25 @@ namespace GalaxyGen.ViewModel
             }
         }
 
+        public int ProduceNThenStop
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.ProduceNThenStop;
+                else
+                    return 0;
+            }
+            set
+            {
+                if (model_Var != null)
+                {
+                    model_Var.ProduceNThenStop = value;
+                    OnPropertyChanged("ProduceNThenStop");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {

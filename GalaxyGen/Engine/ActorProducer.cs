@@ -50,6 +50,7 @@ namespace GalaxyGen.Engine
         {
             Receive<MessageTick>(msg => receiveNotProducingTick(msg));
             Receive<MessageRequestResourcesResponse>(msg => receiveResources(msg));
+            Receive<MessageProducerCommand>(msg => receiveProducerCommand(msg));
         }
 
         public IStash Stash { get; set; }
@@ -82,10 +83,10 @@ namespace GalaxyGen.Engine
 
         private void receiveNotProducingTick(MessageTick tick)
         {
-            if (_producer.AutoResumeProduction)
+            if (_producer.AutoResumeProduction || _producer.ProduceNThenStop > 0)
             {
                 requestResources(tick);
-            }
+            }            
         }
 
         private void requestResources(MessageTick tick)
@@ -107,6 +108,7 @@ namespace GalaxyGen.Engine
             {
                 _producer.TickForNextProduction = msg.TickSent + _bp.BaseTicks;
                 _producer.Producing = true;
+                _producer.ProduceNThenStop--;
                 Become(Producing);                
             }
             else
@@ -118,11 +120,20 @@ namespace GalaxyGen.Engine
 
         private void receiveResourcesError(MessageRequestResourcesResponse res)
         {
-            _actorTextOutput.Tell(_producer.Name + " ERROR, resources received whilst already producing " + res.TickSent.ToString()); 
-            //if (_producer.ProducerId == 10)
-            //{
-            //    Console.WriteLine("error " + res.TickSent.ToString());
-            //}
+            _actorTextOutput.Tell(_producer.Name + " ERROR, resources received whilst already producing " + res.TickSent.ToString());             
+        }
+
+        private void receiveProducerCommand(MessageProducerCommand msg)
+        {
+            // we assume that run or stop always occurs after current production ends.
+            if (msg.ProducerCommand == ProducerCommand.Run)
+            {
+                _producer.ProduceNThenStop = msg.ProduceN; 
+            }
+            else if (msg.ProducerCommand == ProducerCommand.Stop)
+            {
+                _producer.ProduceNThenStop = 0;                  
+            }
         }
 
     }
