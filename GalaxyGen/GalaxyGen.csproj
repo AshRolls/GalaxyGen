@@ -131,6 +131,7 @@
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Framework\GalaxyJsonSerializer.cs" />
     <Compile Include="Model\ModelNotifyBase.cs" />
+    <Compile Include="Model\Ship.cs" />
     <Compile Include="Model\ResourceQuantity.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Model\Producer.cs" />

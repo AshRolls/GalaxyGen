@@ -21,21 +21,27 @@ namespace GalaxyGen.Engine
             Producer prod = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
             prod.Owner = ag;
             ag.Producers.Add(prod);
-            Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);            
+            Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
             prod2.Owner = ag;
             ag.Producers.Add(prod2);
 
-            ss.Agents.Add(ag);           
+            ss.Agents.Add(ag);
 
             Planet p = this.GetPlanet("Earth");
             addNewStoreToPlanet(p, ag);
-            p.Producers.Add(prod);            
+            p.Producers.Add(prod);
             p.Producers.Add(prod2);
             ss.Planets.Add(p);
 
             Planet p2 = this.GetPlanet("Mars");
-            
             ss.Planets.Add(p2);
+
+            Ship s = this.GetShip("Whitestar");
+            s.Owner = ag;
+            ag.Ships.Add(s);
+            s.SolarSystem = ss;
+            ss.Ships.Add(s);
+
             gal.SolarSystems.Add(ss);
 
             //for (int i = 0; i < 5000; i++)
@@ -82,7 +88,7 @@ namespace GalaxyGen.Engine
         public Galaxy GetGalaxy()
         {
             Galaxy gal = new Galaxy();
-            gal.Name = "Milky Way";            
+            gal.Name = "Milky Way";
             return gal;
         }
 
@@ -100,10 +106,10 @@ namespace GalaxyGen.Engine
             plan.Name = seedName;
             Society soc = new Society();
             soc.Name = seedName + " Soc";
-            plan.Society = soc;           
+            plan.Society = soc;
 
             //IMarket mar = kernel.Get<IMarket>();            
-            
+
             //IMarketBuyOrder mbo = kernel.Get<IMarketBuyOrder>();
             //IAgent agent = kernel.Get<IAgent>();
             //agent.Name = "Agent 1";
@@ -121,19 +127,13 @@ namespace GalaxyGen.Engine
         {
             Store s = new Store();
             s.Owner = o;
-            s.Location = p;            
+            s.Location = p;
             p.Stores.Add(s);
             o.Stores.Add(s);
 
-            ResourceQuantity resQ = new ResourceQuantity(); // seed with basic starter resource
-            resQ.Type = ResourceTypeEnum.Spice;
-            resQ.Quantity = 100;
-            s.StoredResources.Add(resQ);
-
-            resQ = new ResourceQuantity(); // seed with basic starter resource
-            resQ.Type = ResourceTypeEnum.Platinum;
-            resQ.Quantity = 100;
-            s.StoredResources.Add(resQ);
+             // seed with basic starter resource
+            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Spice, 100));
+            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Platinum, 100));            
         }
 
         public Agent GetAgent(String seedName)
@@ -149,10 +149,26 @@ namespace GalaxyGen.Engine
             prod.Name = seedName;
             prod.BluePrintType = bpType;
             prod.Producing = false;
-            prod.AutoResumeProduction = false;
-            prod.ProduceNThenStop = 5;        
+            prod.AutoResumeProduction = true;
+            prod.ProduceNThenStop = 0;
             return prod;
-        }       
+        }
+
+        public Ship GetShip(String seedName)
+        {
+            Ship s = new Ship();
+            s.Name = seedName;
+            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Spice, 10));
+            return s;
+        }
+
+        public ResourceQuantity GetResourceQuantity(ResourceTypeEnum type, Int64 qty)
+        {
+            ResourceQuantity resQ = new ResourceQuantity();
+            resQ.Type = type;
+            resQ.Quantity = qty;
+            return resQ;
+        }     
 
     }
 }

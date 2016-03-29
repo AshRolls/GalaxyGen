@@ -1,6 +1,8 @@
 ﻿using Akka.Actor;
+using Ninject;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -9,23 +11,22 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Agent
+    public class Ship
     {
-        public Agent()
+        public Ship()
         {
-            Producers = new HashSet<Producer>();
-            Stores = new HashSet<Store>();
-            Ships = new HashSet<Ship>();
+            StoredResources = new HashSet<ResourceQuantity>();
         }
 
         [Key]
-        public Int64 AgentId { get; set; }
-
+        public Int64 ShipId { get; set; }
+      
+        [StringLength(60)]
         public String Name { get; set; }
 
-        public virtual ICollection<Producer> Producers { get; set; }
-        public virtual ICollection<Store> Stores { get; set; }
-        public virtual ICollection<Ship> Ships { get; set; }
+        public virtual Agent Owner { get; set; }
+
+        public virtual ICollection<ResourceQuantity> StoredResources { get; set; }        
 
         public Int64 SolarSystemId { get; set; }
         [ForeignKey("SolarSystemId")]

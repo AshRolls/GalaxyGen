@@ -15,6 +15,7 @@ namespace GalaxyGen.Model
         {
             Planets = new List<Planet>();
             Agents = new List<Agent>();
+            Ships = new HashSet<Ship>();
         }
 
         [Key]
@@ -25,6 +26,7 @@ namespace GalaxyGen.Model
 
         public virtual ICollection<Planet> Planets { get; set; }
         public virtual ICollection<Agent> Agents { get; set; }
+        public virtual ICollection<Ship> Ships { get; set; }
 
         public Int64 GalaxyId { get; set; }
         [ForeignKey("GalaxyId")]
