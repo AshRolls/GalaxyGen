@@ -87,7 +87,7 @@ namespace GalaxyGen.Engine
             if (s == null)
             {
                 s = new Store();
-                s.Location = _planet;
+                s.Planet = _planet;
                 s.Owner = owner;
                 _planet.Stores.Add(s);
             }

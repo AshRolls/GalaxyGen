@@ -15,7 +15,8 @@ namespace GalaxyGen.ViewModel
         Store Model { get; set; }
         string Name { get; set; }
         Agent Owner { get; set; }
-        Planet Location { get; }
+        Planet Planet { get; }
+        //Ship Ship { get; }
         ObservableCollection<IResourceQuantityViewModel> StoredResources { get; }
     }
 

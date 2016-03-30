@@ -21,8 +21,12 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
 
         public virtual ICollection<ResourceQuantity> StoredResources { get; set; }
-
         public virtual Agent Owner { get; set; }
-        public virtual Planet Location { get; set; }                
+        [Index]
+        public virtual Planet Planet { get; set; }
+
+        public Int64 ShipId { get; set; }
+        [ForeignKey("ShipId")]
+        public virtual Ship Ship { get; set; }
     }
 }

@@ -16,9 +16,8 @@ namespace GalaxyGen.Model
 
         public String Name { get; set; }
         
-        public Int64 PlanetId { get; set; }
-        [ForeignKey("PlanetId")]
-        public Planet Planet { get; set; }
+        [Required]
+        public virtual Planet Planet { get; set; }
 
         [NotMapped]
         public IActorRef Actor { get; set; }

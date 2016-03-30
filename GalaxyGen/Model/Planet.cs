@@ -25,15 +25,14 @@ namespace GalaxyGen.Model
         [StringLength(60)]
         public String Name { get; set; }
         public Int64 Population { get; set; }
-        
-        [Required]
+
+        public Int64 SocietyId { get; set; }
+        [ForeignKey("SocietyId")]
         public virtual Society Society { get; set; }
 
         public virtual ICollection<Producer> Producers { get; set; }
         public virtual ICollection<Store> Stores { get; set; }
 
-        public Int64 SolarSystemId { get; set; }
-        [ForeignKey("SolarSystemId")]
         public SolarSystem SolarSystem { get; set; }
 
         [NotMapped]

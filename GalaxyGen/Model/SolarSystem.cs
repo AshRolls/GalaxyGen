@@ -27,10 +27,7 @@ namespace GalaxyGen.Model
         public virtual ICollection<Planet> Planets { get; set; }
         public virtual ICollection<Agent> Agents { get; set; }
         public virtual ICollection<Ship> Ships { get; set; }
-
-        public Int64 GalaxyId { get; set; }
-        [ForeignKey("GalaxyId")]
-        public Galaxy Galaxy { get; set; }
+        public virtual Galaxy Galaxy { get; set; }
 
         [NotMapped]
         public IActorRef Actor { get; set; }

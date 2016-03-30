@@ -39,8 +39,10 @@ namespace GalaxyGen.Engine
             Ship s = this.GetShip("Whitestar");
             s.Owner = ag;
             ag.Ships.Add(s);
+            addNewCargoStoreToShip(s, ag);
             s.SolarSystem = ss;
             ss.Ships.Add(s);
+
 
             gal.SolarSystems.Add(ss);
 
@@ -127,7 +129,7 @@ namespace GalaxyGen.Engine
         {
             Store s = new Store();
             s.Owner = o;
-            s.Location = p;
+            s.Planet = p;
             p.Stores.Add(s);
             o.Stores.Add(s);
 
@@ -154,11 +156,22 @@ namespace GalaxyGen.Engine
             return prod;
         }
 
+        private void addNewCargoStoreToShip(Ship ship, Agent o)
+        {
+            Store s = new Store();
+            s.Owner = o;
+            s.Ship = ship;
+            ship.Store = s;           
+            o.Stores.Add(s);
+
+            // seed with basic starter resource
+            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Spice, 10));
+        }
+
         public Ship GetShip(String seedName)
         {
             Ship s = new Ship();
-            s.Name = seedName;
-            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Spice, 10));
+            s.Name = seedName;                        
             return s;
         }
 

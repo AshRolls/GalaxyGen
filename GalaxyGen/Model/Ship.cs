@@ -13,11 +13,6 @@ namespace GalaxyGen.Model
 {
     public class Ship
     {
-        public Ship()
-        {
-            StoredResources = new HashSet<ResourceQuantity>();
-        }
-
         [Key]
         public Int64 ShipId { get; set; }
       
@@ -25,12 +20,11 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
 
         public virtual Agent Owner { get; set; }
+        
+        [Required]
+        public virtual Store Store { get; set; }
 
-        public virtual ICollection<ResourceQuantity> StoredResources { get; set; }        
-
-        public Int64 SolarSystemId { get; set; }
-        [ForeignKey("SolarSystemId")]
-        public SolarSystem SolarSystem { get; set; }
+        public virtual SolarSystem SolarSystem { get; set; }
 
         [NotMapped]
         public IActorRef Actor { get; set; }
