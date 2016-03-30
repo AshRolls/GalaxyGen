@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Engine;
+using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGen.ViewModel;
 using System;
@@ -61,7 +62,18 @@ namespace GalaxyGen.Engine
                 planetActor.Tell(tick);
             }
 
+            movePlanets(tick);
+
         }
 
+        private void movePlanets(MessageTick tick)
+        {
+            foreach (Planet p in _solarSystem.Planets)
+            {
+                PointD pt = OrbitalUtils.CalcPositionFromTick(tick.Tick, p.OrbitDays, p.OrbitKm);
+                p.PositionX = pt.X;
+                p.PositionY = pt.Y;
+            }
+        }
     }
 }

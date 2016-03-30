@@ -8,7 +8,7 @@ namespace GalaxyGen.Engine
         Galaxy GetFullGalaxy();
         Galaxy GetGalaxy();
         SolarSystem GetSolarSystem(string seedName);
-        Planet GetPlanet(string seedName);
+        Planet GetPlanet(string seedName, double orbitalKm, double orbitalDays);
         Agent GetAgent(string seedName);
         Producer GetProducer(string seedName, BluePrintEnum bpType);
     }

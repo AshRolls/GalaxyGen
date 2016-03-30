@@ -37,9 +37,16 @@ namespace GalaxyGen.ViewModel
         {
             get { return model_Var; }
             set
-            {                
+            {
+                if (model_Var != null)
+                    model_Var.PropertyChanged -= Model_Var_PropertyChanged;
+
                 model_Var = value;
                 updateFromModel();
+
+                if (model_Var != null)
+                    model_Var.PropertyChanged += Model_Var_PropertyChanged;
+
                 OnPropertyChanged("Model");
             }
         }
@@ -57,6 +64,20 @@ namespace GalaxyGen.ViewModel
                 producers_Var.Add(prodVm);
             }
         }
+
+        private void Model_Var_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "PositionX")
+            {
+                OnPropertyChanged("PositionX");
+                updatePosX300();
+            }
+            else if (e.PropertyName == "PositionY")
+            {
+                OnPropertyChanged("PositionY");
+                updatePosY300();
+            }
+        }       
 
         public String Name
         {
@@ -91,6 +112,69 @@ namespace GalaxyGen.ViewModel
                     model_Var.Population = value;
                     OnPropertyChanged("Population");
                 }
+            }
+        }
+
+        public Double PositionX
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.PositionX;
+                else
+                    return 0;
+            }
+        }
+
+
+        public Double PositionY
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.PositionY;
+                else
+                    return 0;
+            }
+        }
+
+        private void updatePosX300()
+        {
+            Double posX = PositionX / 3000000;
+            PosX300 = (int)posX + 150;
+        }
+
+        private int posX300_Var;
+        public int PosX300
+        {
+            get
+            {
+                return posX300_Var;
+            }
+            private set
+            {
+                posX300_Var = value;
+                OnPropertyChanged("PosX300");
+            }
+        }
+
+        private void updatePosY300()
+        {
+            Double posY = PositionY / 3000000;
+            PosY300 = (int)posY + 150;
+        }
+
+        private int posY300_Var;
+        public int PosY300
+        {
+            get
+            {
+                return posY300_Var;
+            }
+            private set
+            {
+                posY300_Var = value;
+                OnPropertyChanged("PosY300");
             }
         }
 

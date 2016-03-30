@@ -18,6 +18,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="300" />
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
@@ -35,14 +36,29 @@
             <TextBlock Text="Planets" DockPanel.Dock="Top" />
             <ListBox ItemsSource="{Binding SelectedSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />    
         </DockPanel>
-        <local:SocietyControl Grid.Column="2" Grid.Row="0" SocietyVm="{Binding SelectedPlanet.Society}" />
-        <DockPanel Grid.Column="3" Grid.Row="0">
+        <Canvas Grid.Column="2" Grid.Row="0" Height="300" Width="300" Background="Black">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="X : " Foreground="White" />
+                    <TextBlock Text="{Binding SelectedPlanet.PositionX}" Foreground="White" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Y : " Foreground="White" />
+                    <TextBlock Text="{Binding SelectedPlanet.PositionY}" Foreground="White"  />
+                </StackPanel>
+            </StackPanel>
+            <Ellipse Fill="Yellow" Height="3" Width="3" Canvas.Left="150" Canvas.Top="150" />
+            <Ellipse Fill="Cyan" Height="2" Width="2" Canvas.Left="{Binding SelectedPlanet.PosX300}" Canvas.Top="{Binding SelectedPlanet.PosY300}" />
+        </Canvas>
+        <local:SocietyControl Grid.Column="3" Grid.Row="0" SocietyVm="{Binding SelectedPlanet.Society}" />
+        <DockPanel Grid.Column="4" Grid.Row="0">
             <TextBlock Text="Agents" DockPanel.Dock="Top" />
             <ListBox ItemsSource="{Binding SelectedSolarSystem.Agents}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedAgent}" />
         </DockPanel>
-        <local:AgentControl Grid.Column="4" Grid.Row="0" AgentVm="{Binding SelectedAgent}" />
+        <local:AgentControl Grid.Column="5" Grid.Row="0" AgentVm="{Binding SelectedAgent}" />
+
         
-        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="5">
+        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="6">
             <Button Command="{Binding RunEngineCommand}" Content="RUN" />
             <Button Command="{Binding StopEngineCommand}" Content="STOP" />
             <StackPanel Orientation="Horizontal">
@@ -51,7 +67,7 @@
             </StackPanel>
         </StackPanel>
 
-        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6" Background="Black">
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Background="Black">
             <ItemsControl ItemsSource="{Binding TextOutput.ConsoleLines, Mode=OneWay}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

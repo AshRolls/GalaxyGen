@@ -16,6 +16,10 @@ namespace GalaxyGen.ViewModel
         IActorRef Actor { get; }
         String Name { get; set; }
         Int64 Population { get; set; }
+        Double PositionX { get; }
+        Double PositionY { get; }
+        int PosX300 { get; }
+        int PosY300 { get; }
         ISocietyViewModel Society { get; }
         ObservableCollection<IProducerViewModel> Producers { get; }
     }

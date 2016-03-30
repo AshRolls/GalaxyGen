@@ -130,6 +130,8 @@
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Framework\GalaxyJsonSerializer.cs" />
+    <Compile Include="Framework\OrbitalUtils.cs" />
+    <Compile Include="Framework\CommonStructs.cs" />
     <Compile Include="Model\ModelNotifyBase.cs" />
     <Compile Include="Model\Ship.cs" />
     <Compile Include="Model\ResourceQuantity.cs" />

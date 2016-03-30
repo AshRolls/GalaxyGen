@@ -27,13 +27,13 @@ namespace GalaxyGen.Engine
 
             ss.Agents.Add(ag);
 
-            Planet p = this.GetPlanet("Earth");
+            Planet p = this.GetPlanet("Earth", 150000000d, 365);
             addNewStoreToPlanet(p, ag);
             p.Producers.Add(prod);
             p.Producers.Add(prod2);
             ss.Planets.Add(p);
 
-            Planet p2 = this.GetPlanet("Mars");
+            Planet p2 = this.GetPlanet("Mars", 227000000d, 687);
             ss.Planets.Add(p2);
 
             Ship s = this.GetShip("Whitestar");
@@ -101,10 +101,12 @@ namespace GalaxyGen.Engine
             return sys;
         }
 
-        public Planet GetPlanet(string seedName)
+        public Planet GetPlanet(string seedName, Double orbitalKm, Double orbitalDays)
         {
             Planet plan = new Planet();
             plan.Population = 10000;
+            plan.OrbitKm = orbitalKm;
+            plan.OrbitDays = orbitalDays;
             plan.Name = seedName;
             Society soc = new Society();
             soc.Name = seedName + " Soc";
