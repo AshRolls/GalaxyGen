@@ -34,22 +34,39 @@
         </DockPanel>
         <DockPanel Grid.Column="1" Grid.Row="0">
             <TextBlock Text="Planets" DockPanel.Dock="Top" />
-            <ListBox ItemsSource="{Binding SelectedSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />    
+            <ListBox ItemsSource="{Binding SelectedSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />
         </DockPanel>
-        <Canvas Grid.Column="2" Grid.Row="0" Height="300" Width="300" Background="Black">
-            <StackPanel Orientation="Vertical">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="X : " Foreground="White" />
-                    <TextBlock Text="{Binding SelectedPlanet.PositionX}" Foreground="White" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Y : " Foreground="White" />
-                    <TextBlock Text="{Binding SelectedPlanet.PositionY}" Foreground="White"  />
-                </StackPanel>
+
+        <ItemsControl ItemsSource="{Binding Path=SelectedSolarSystem.Planets}" Grid.Column="2" Grid.Row="0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Width="300" Height="300" Background="Black" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding PosX300}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding PosY300}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Fill="Cyan" Height="2" Width="2" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Orientation="Vertical" Grid.Column="2" Grid.Row="0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="X : " Foreground="White" />
+                <TextBlock Text="{Binding SelectedPlanet.PositionX}" Foreground="White" />
             </StackPanel>
-            <Ellipse Fill="Yellow" Height="3" Width="3" Canvas.Left="150" Canvas.Top="150" />
-            <Ellipse Fill="Cyan" Height="2" Width="2" Canvas.Left="{Binding SelectedPlanet.PosX300}" Canvas.Top="{Binding SelectedPlanet.PosY300}" />
-        </Canvas>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Y : " Foreground="White" />
+                <TextBlock Text="{Binding SelectedPlanet.PositionY}" Foreground="White"  />
+            </StackPanel>
+        </StackPanel>
+        <!--<Ellipse Fill="Yellow" Height="3" Width="3" Grid.Column="2" Grid.Row="0" Margin="150" Panel.ZIndex="100"/>-->
+        
         <local:SocietyControl Grid.Column="3" Grid.Row="0" SocietyVm="{Binding SelectedPlanet.Society}" />
         <DockPanel Grid.Column="4" Grid.Row="0">
             <TextBlock Text="Agents" DockPanel.Dock="Top" />
