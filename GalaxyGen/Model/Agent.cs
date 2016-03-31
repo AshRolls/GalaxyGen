@@ -15,17 +15,17 @@ namespace GalaxyGen.Model
         {
             Producers = new HashSet<Producer>();
             Stores = new HashSet<Store>();
-            Ships = new HashSet<Ship>();
+            ShipsOwned = new HashSet<Ship>();
         }
 
         [Key]
         public Int64 AgentId { get; set; }
 
         public String Name { get; set; }
-
+        
         public virtual ICollection<Producer> Producers { get; set; }
         public virtual ICollection<Store> Stores { get; set; }
-        public virtual ICollection<Ship> Ships { get; set; }
+        public virtual ICollection<Ship> ShipsOwned { get; set; }
 
         public Int64 SolarSystemId { get; set; }
         [ForeignKey("SolarSystemId")]

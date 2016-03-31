@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Framework;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace GalaxyGen.Model
 
         public Double OrbitKm { get; set; }
         public Double OrbitDays { get; set; }
+
         private Double positionX_Var;
         public Double PositionX
         {

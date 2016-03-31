@@ -38,7 +38,10 @@ namespace GalaxyGen.Engine
 
             Ship s = this.GetShip("Whitestar");
             s.Owner = ag;
-            ag.Ships.Add(s);
+            s.Docked = true;
+            s.DockedPlanet = p;
+            p.DockedShips.Add(s);
+            ag.ShipsOwned.Add(s);
             addNewCargoStoreToShip(s, ag);
             s.SolarSystem = ss;
             ss.Ships.Add(s);

@@ -22,7 +22,7 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Ellipse Fill="Cyan" Height="1" Width="1" />
+                    <Ellipse Fill="Cyan" Height="3" Width="3" />
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -37,7 +37,7 @@
             </StackPanel>
         </StackPanel>
         <Canvas>
-            <Ellipse Fill="Yellow" Height="3" Width="3" Canvas.Top="149" Canvas.Left="149"/>
+            <Ellipse Fill="Yellow" Height="5" Width="5" Canvas.Top="148" Canvas.Left="148"/>
         </Canvas>
     </Grid>
 </UserControl>

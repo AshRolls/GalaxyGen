@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Framework;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,55 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Ship
+    public class Ship : ModelNotifyBase
     {
         [Key]
         public Int64 ShipId { get; set; }
       
         [StringLength(60)]
         public String Name { get; set; }
-        public Double PositionX { get; set; }
-        public Double PositionY { get; set; }
+
+        private Boolean docked_Var;
+        public Boolean Docked
+        {
+            get
+            {
+                return docked_Var;
+            }
+            set
+            {
+                docked_Var = value;
+                OnPropertyChanged("Docked");
+            }
+        }
+
+        private Double positionX_Var;
+        public Double PositionX
+        {
+            get
+            {
+                return positionX_Var;
+            }
+            set
+            {
+                positionX_Var = value;
+                OnPropertyChanged("PositionX");
+            }
+        }
+
+        private Double positionY_Var;
+        public Double PositionY
+        {
+            get
+            {
+                return positionY_Var;
+            }
+            set
+            {
+                positionY_Var = value;
+                OnPropertyChanged("PositionY");
+            }
+        }
 
         public virtual Agent Owner { get; set; }
         
