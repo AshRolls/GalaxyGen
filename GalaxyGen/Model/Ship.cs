@@ -12,6 +12,12 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
+    public enum ShipStateEnum
+    {
+        Docked,        
+        Cruising
+    }
+
     public class Ship : ModelNotifyBase
     {
         [Key]
@@ -20,17 +26,17 @@ namespace GalaxyGen.Model
         [StringLength(60)]
         public String Name { get; set; }
 
-        private Boolean docked_Var;
-        public Boolean Docked
+        private ShipStateEnum shipState_Var;
+        public ShipStateEnum ShipState
         {
             get
             {
-                return docked_Var;
+                return shipState_Var;
             }
             set
             {
-                docked_Var = value;
-                OnPropertyChanged("Docked");
+                shipState_Var = value;
+                OnPropertyChanged("ShipState");
             }
         }
 

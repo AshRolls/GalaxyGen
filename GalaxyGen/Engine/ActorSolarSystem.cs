@@ -18,6 +18,7 @@ namespace GalaxyGen.Engine
         SolarSystem _solarSystem;
         private List<IActorRef> _subscribedActorAgents;
         private List<IActorRef> _subscribedActorPlanets;
+        private List<IActorRef> _subscribedActorShips;
 
         public ActorSolarSystem(IActorRef actorTextOutput, SolarSystem ss)
         {
@@ -26,6 +27,7 @@ namespace GalaxyGen.Engine
             _solarSystem.Actor = Self;
             _subscribedActorAgents = new List<IActorRef>();
             _subscribedActorPlanets = new List<IActorRef>();
+            _subscribedActorShips = new List<IActorRef>();
 
             // create child actors for each agent in ss
             foreach (Agent agent in _solarSystem.Agents)
@@ -43,6 +45,14 @@ namespace GalaxyGen.Engine
                 _subscribedActorPlanets.Add(actor);
             }
 
+            // create child actors for each ship in ss
+            foreach (Ship s in _solarSystem.Ships)
+            {
+                Props shipProps = Props.Create<ActorShip>(_actorTextOutput, s, Self);
+                IActorRef actor = Context.ActorOf(shipProps, "Ship" + s.ShipId.ToString());
+                _subscribedActorShips.Add(actor);
+            }
+
             Receive<MessageTick>(msg => receiveTick(msg));
 
             _actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
@@ -52,14 +62,20 @@ namespace GalaxyGen.Engine
         {
             //_actorTextOutput.Tell("TICK RCV SS: " + _solarSystemVm.Name + " " + tick.Tick.ToString());
 
-            foreach (IActorRef humanActor in _subscribedActorAgents)
-            {
-                humanActor.Tell(tick);
-            }
 
             foreach (IActorRef planetActor in _subscribedActorPlanets)
             {
                 planetActor.Tell(tick);
+            }
+
+            foreach (IActorRef shipActor in _subscribedActorShips)
+            {
+                shipActor.Tell(tick);
+            }
+
+            foreach (IActorRef agentActor in _subscribedActorAgents)
+            {
+                agentActor.Tell(tick);
             }
 
             movePlanets(tick);

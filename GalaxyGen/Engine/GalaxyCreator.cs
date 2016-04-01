@@ -38,7 +38,7 @@ namespace GalaxyGen.Engine
 
             Ship s = this.GetShip("Whitestar");
             s.Owner = ag;
-            s.Docked = true;
+            s.ShipState = ShipStateEnum.Docked;
             s.DockedPlanet = p;
             p.DockedShips.Add(s);
             ag.ShipsOwned.Add(s);
