@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Framework;
+using Newtonsoft.Json;
 using Ninject;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,11 @@ namespace GalaxyGen.Model
 
     public class Ship : ModelNotifyBase
     {
-        [Key]
+        public Ship()
+        {
+            ShipId = IdUtils.GetId();
+        }
+
         public Int64 ShipId { get; set; }
       
         [StringLength(60)]
@@ -70,13 +75,12 @@ namespace GalaxyGen.Model
 
         public virtual Agent Owner { get; set; }
         
-        [Required]
         public virtual Store Store { get; set; }
 
         public virtual SolarSystem SolarSystem { get; set; }
         public virtual Planet DockedPlanet { get; set; }
 
-        [NotMapped]
+        [JsonIgnore]
         public IActorRef Actor { get; set; }
     }
 }

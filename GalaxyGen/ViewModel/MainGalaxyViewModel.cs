@@ -1,11 +1,12 @@
 ﻿using GalaSoft.MvvmLight.CommandWpf;
 using GalaxyGen.Engine;
+using GalaxyGen.Framework;
 using GalaxyGen.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data.Entity.Validation;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,6 @@ namespace GalaxyGen.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
     {        
-        GalaxyContext _db;
         IGalaxyCreator _galaxyCreator;
         ITickEngine _tickEngine;
 
@@ -55,17 +55,20 @@ namespace GalaxyGen.ViewModel
 
         private void loadOrCreateGalaxy()
         {
-            _db = new GalaxyContext();
-            
-            if (_db.Galaxies.Count() == 0)
+            // try to deserialise
+            Galaxy gal = GalaxyJsonSerializer.Deserialize();
+
+            if (gal == null)
             {
-                Galaxy gal = _galaxyCreator.GetFullGalaxy();                
-                _db.Galaxies.Add(gal);
-                _db.SaveChanges();
+                IdUtils.currentId = 100;
+                gal = _galaxyCreator.GetFullGalaxy();
+                GalaxyJsonSerializer.SerializeAndSave(gal);                
             }
 
+            IdUtils.currentId = gal.MaxId;
+
             galaxyViewModel_Var = _galaxyViewModelFactory.CreateGalaxyViewModel();
-            galaxyViewModel_Var.Model = _db.Galaxies.First();                   
+            galaxyViewModel_Var.Model = gal;                                    
         }
 
         private void initialiseEngine()
@@ -75,24 +78,8 @@ namespace GalaxyGen.ViewModel
 
         private void saveGalaxy()
         {
-            try
-            {
-                _db.SaveChanges();
-            }
-            catch (DbEntityValidationException e)
-            {
-                foreach (var eve in e.EntityValidationErrors)
-                {
-                    Console.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
-                        eve.Entry.Entity.GetType().Name, eve.Entry.State);
-                    foreach (var ve in eve.ValidationErrors)
-                    {
-                        Console.WriteLine("- Property: \"{0}\", Error: \"{1}\"",
-                            ve.PropertyName, ve.ErrorMessage);
-                    }
-                }
-                throw;
-            }
+            galaxyViewModel_Var.Model.MaxId = IdUtils.currentId;
+            GalaxyJsonSerializer.SerializeAndSave(galaxyViewModel_Var.Model);
         }
 
         private IGalaxyViewModel galaxyViewModel_Var;

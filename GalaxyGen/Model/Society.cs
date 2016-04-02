@@ -1,4 +1,6 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Framework;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,15 +13,18 @@ namespace GalaxyGen.Model
 {
     public class Society
     {
-        [Key]
+        public Society()
+        {
+            SocietyId = IdUtils.GetId();
+        }
+
         public Int64 SocietyId { get; set; }
 
         public String Name { get; set; }
         
-        [Required]
         public virtual Planet Planet { get; set; }
 
-        [NotMapped]
+        [JsonIgnore]
         public IActorRef Actor { get; set; }
     }
 }

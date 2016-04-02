@@ -1,4 +1,5 @@
 ﻿using GalaxyGen.Engine;
+using GalaxyGen.Framework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,8 +11,12 @@ namespace GalaxyGen.Model
 {
     public class ResourceQuantity
     {
-        [Key]
-        public Int64 ResourceQuantityID { get; set;}
+        public ResourceQuantity()
+        {
+             ResourceQuantityId = IdUtils.GetId();
+        }
+
+        public Int64 ResourceQuantityId { get; set;}
         public ResourceTypeEnum Type { get; set; }
         public Int64 Quantity { get; set; }
     }

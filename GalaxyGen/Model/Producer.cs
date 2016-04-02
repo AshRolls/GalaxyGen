@@ -1,7 +1,9 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Engine;
+using GalaxyGen.Framework;
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -12,7 +14,11 @@ namespace GalaxyGen.Model
 {
     public class Producer
     {
-        [Key]
+        public Producer()
+        {
+            ProducerId = IdUtils.GetId();
+        }
+
         public Int64 ProducerId { get; set; }
 
         public String Name { get; set; }
@@ -27,7 +33,7 @@ namespace GalaxyGen.Model
 
         public virtual Planet Planet { get; set; }
 
-        [NotMapped]
+        [JsonIgnore]
         public IActorRef Actor { get; set; }
     }
 }

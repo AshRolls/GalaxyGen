@@ -4,6 +4,7 @@ using Ninject;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -16,12 +17,12 @@ namespace GalaxyGen.Model
     {
         public Planet()
         {
+            PlanetId = IdUtils.GetId();
             Producers = new HashSet<Producer>();
             Stores = new HashSet<Store>();
             DockedShips = new List<Ship>();
         }
 
-        [Key]
         public Int64 PlanetId { get; set; }
 
         public Double OrbitKm { get; set; }
@@ -59,17 +60,16 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
         public Int64 Population { get; set; }
 
-        public Int64 SocietyId { get; set; }
-        [ForeignKey("SocietyId")]
+
         public virtual Society Society { get; set; }
 
-        public virtual ICollection<Producer> Producers { get; set; }
-        public virtual ICollection<Store> Stores { get; set; }
-        public virtual ICollection<Ship> DockedShips { get; set; }
+        public ICollection<Producer> Producers { get; set; }
+        public ICollection<Store> Stores { get; set; }
+        public ICollection<Ship> DockedShips { get; set; }
 
         public SolarSystem SolarSystem { get; set; }
 
-        [NotMapped]
+        [JsonIgnore]
         public IActorRef Actor { get; set; }
 
         //[ForeignKey("MarketId")]

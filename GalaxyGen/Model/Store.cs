@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaxyGen.Framework;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,20 +14,17 @@ namespace GalaxyGen.Model
         public Store()
         {
             StoredResources = new HashSet<ResourceQuantity>();
+            StoreId = IdUtils.GetId();
         }
 
-        [Key]
         public Int64 StoreId { get; set; }
 
         public String Name { get; set; }
 
-        public virtual ICollection<ResourceQuantity> StoredResources { get; set; }
-        public virtual Agent Owner { get; set; }
-        [Index]
-        public virtual Planet Planet { get; set; }
+        public ICollection<ResourceQuantity> StoredResources { get; set; }
+        public Agent Owner { get; set; }
 
-        public Int64 ShipId { get; set; }
-        [ForeignKey("ShipId")]
-        public virtual Ship Ship { get; set; }
+        public Planet Planet { get; set; }
+        public Ship Ship { get; set; }
     }
 }

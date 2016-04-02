@@ -1,4 +1,6 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Framework;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -13,12 +15,12 @@ namespace GalaxyGen.Model
     {
         public SolarSystem()
         {
+            SolarSystemId = IdUtils.GetId();
             Planets = new List<Planet>();
             Agents = new List<Agent>();
             Ships = new HashSet<Ship>();
         }
 
-        [Key]
         public Int64 SolarSystemId { get; set; }
 
         [StringLength(60)]
@@ -29,7 +31,7 @@ namespace GalaxyGen.Model
         public virtual ICollection<Ship> Ships { get; set; }
         public virtual Galaxy Galaxy { get; set; }
 
-        [NotMapped]
+        [JsonIgnore]
         public IActorRef Actor { get; set; }
     }
 }

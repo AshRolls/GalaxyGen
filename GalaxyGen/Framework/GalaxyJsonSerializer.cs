@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using GalaxyGen.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,14 +11,25 @@ namespace GalaxyGen.Framework
 {
     public static class GalaxyJsonSerializer
     {
-        public static String Serialize(List<int> vals)
+        public const string saveFile = @"E:\Documents\Dropbox\Work\SpaceCivSim\Dev\galDbJson.gal";
+
+        public static void SerializeAndSave(Galaxy gal)
         {
-            return JsonConvert.SerializeObject(vals);
+            //JsonSerializerSettings settings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+            JsonSerializerSettings settings = new JsonSerializerSettings() { PreserveReferencesHandling = PreserveReferencesHandling.Objects };
+            string ser = JsonConvert.SerializeObject(gal, Formatting.Indented, settings); // TODO change formatting when we think we need a touch of extra speed
+            File.WriteAllText(saveFile,ser);
         }
 
-        public static List<int> Deserialize(String json)
+        public static Galaxy Deserialize()
         {
-            return JsonConvert.DeserializeObject<List<int>>(json);
+            Galaxy gal = null;
+            if (File.Exists(saveFile))
+            {
+                String json = File.ReadAllText(saveFile);
+                gal = JsonConvert.DeserializeObject<Galaxy>(json);                
+            }
+            return gal;
         }
     }
 }
