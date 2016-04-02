@@ -8,11 +8,11 @@ namespace GalaxyGen.Framework
 {
     public static class IdUtils
     {
-        public static Int64 currentId { get; set; }
+        public static Int64 currentId;
 
         public static Int64 GetId()
         {
-            return currentId++;
+            return System.Threading.Interlocked.Increment(ref currentId);
         }
 
     }

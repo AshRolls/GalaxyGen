@@ -14,6 +14,7 @@ namespace GalaxyGen.Engine
         public Galaxy GetFullGalaxy()
         {
             Galaxy gal = this.GetGalaxy();
+            gal.MaxId = 100;
 
             SolarSystem ss = this.GetSolarSystem("Sol");
 
@@ -49,35 +50,35 @@ namespace GalaxyGen.Engine
 
             gal.SolarSystems.Add(ss);
 
-            //for (int i = 0; i < 5000; i++)
-            //{
-            //    Agent newAg = this.GetAgent(i.ToString());
-            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-            //    pr.Owner = newAg;
-            //    newAg.Producers.Add(pr);
-            //    p.Producers.Add(pr);
-            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-            //    pr2.Owner = newAg;
-            //    newAg.Producers.Add(pr2);
-            //    p.Producers.Add(pr2);
-            //    addNewStoreToPlanet(p, newAg);
-            //    ss.Agents.Add(newAg);
-            //}
+            for (int i = 0; i < 5000; i++)
+            {
+                Agent newAg = this.GetAgent(i.ToString());
+                Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+                pr.Owner = newAg;
+                newAg.Producers.Add(pr);
+                p.Producers.Add(pr);
+                Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+                pr2.Owner = newAg;
+                newAg.Producers.Add(pr2);
+                p.Producers.Add(pr2);
+                addNewStoreToPlanet(p, newAg);
+                ss.Agents.Add(newAg);
+            }
 
-            //for (int i = 5001; i < 10000; i++)
-            //{
-            //    Agent newAg = this.GetAgent(i.ToString());
-            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-            //    pr.Owner = newAg;
-            //    newAg.Producers.Add(pr);
-            //    p2.Producers.Add(pr);
-            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-            //    pr2.Owner = newAg;
-            //    newAg.Producers.Add(pr2);
-            //    p2.Producers.Add(pr2);
-            //    addNewStoreToPlanet(p2, newAg);
-            //    ss.Agents.Add(newAg);
-            //}
+            for (int i = 5001; i < 10000; i++)
+            {
+                Agent newAg = this.GetAgent(i.ToString());
+                Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+                pr.Owner = newAg;
+                newAg.Producers.Add(pr);
+                p2.Producers.Add(pr);
+                Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+                pr2.Owner = newAg;
+                newAg.Producers.Add(pr2);
+                p2.Producers.Add(pr2);
+                addNewStoreToPlanet(p2, newAg);
+                ss.Agents.Add(newAg);
+            }
 
             //for (int i = 0; i < 500; i++)
             //{

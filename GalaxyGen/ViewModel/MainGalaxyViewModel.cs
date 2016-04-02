@@ -55,25 +55,20 @@ namespace GalaxyGen.ViewModel
 
         private void loadOrCreateGalaxy()
         {
-            // try to deserialise
             Galaxy gal = GalaxyJsonSerializer.Deserialize();
-
             if (gal == null)
             {
                 IdUtils.currentId = 100;
                 gal = _galaxyCreator.GetFullGalaxy();
-                GalaxyJsonSerializer.SerializeAndSave(gal);                
+                GalaxyJsonSerializer.SerializeAndSave(gal);
             }
-
-            IdUtils.currentId = gal.MaxId;
+            else
+            {
+                IdUtils.currentId = gal.MaxId;
+            }
 
             galaxyViewModel_Var = _galaxyViewModelFactory.CreateGalaxyViewModel();
             galaxyViewModel_Var.Model = gal;                                    
-        }
-
-        private void initialiseEngine()
-        {
-            _tickEngine.SetupTickEngine(galaxyViewModel_Var, textOutput_Var);
         }
 
         private void saveGalaxy()
@@ -81,6 +76,11 @@ namespace GalaxyGen.ViewModel
             galaxyViewModel_Var.Model.MaxId = IdUtils.currentId;
             GalaxyJsonSerializer.SerializeAndSave(galaxyViewModel_Var.Model);
         }
+
+        private void initialiseEngine()
+        {
+            _tickEngine.SetupTickEngine(galaxyViewModel_Var, textOutput_Var);
+        }        
 
         private IGalaxyViewModel galaxyViewModel_Var;
         public IGalaxyViewModel Galaxy
@@ -94,7 +94,6 @@ namespace GalaxyGen.ViewModel
                 galaxyViewModel_Var = value;
             }
         }
-
 
         private ISolarSystemViewModel selectedSolarSystem_Var;
         public ISolarSystemViewModel SelectedSolarSystem

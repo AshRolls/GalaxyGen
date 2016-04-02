@@ -11,11 +11,10 @@ namespace GalaxyGen.Framework
 {
     public static class GalaxyJsonSerializer
     {
-        public const string saveFile = @"E:\Documents\Dropbox\Work\SpaceCivSim\Dev\galDbJson.gal";
+        public const string saveFile = @"C:\Space\galDbJson.gal";
 
         public static void SerializeAndSave(Galaxy gal)
-        {
-            //JsonSerializerSettings settings = new JsonSerializerSettings() { ReferenceLoopHandling = ReferenceLoopHandling.Ignore };
+        {            
             JsonSerializerSettings settings = new JsonSerializerSettings() { PreserveReferencesHandling = PreserveReferencesHandling.Objects };
             string ser = JsonConvert.SerializeObject(gal, Formatting.Indented, settings); // TODO change formatting when we think we need a touch of extra speed
             File.WriteAllText(saveFile,ser);

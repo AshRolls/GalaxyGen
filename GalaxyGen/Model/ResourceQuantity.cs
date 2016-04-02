@@ -11,12 +11,6 @@ namespace GalaxyGen.Model
 {
     public class ResourceQuantity
     {
-        public ResourceQuantity()
-        {
-             ResourceQuantityId = IdUtils.GetId();
-        }
-
-        public Int64 ResourceQuantityId { get; set;}
         public ResourceTypeEnum Type { get; set; }
         public Int64 Quantity { get; set; }
     }
