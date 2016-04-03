@@ -37,13 +37,13 @@ namespace GalaxyGen.ViewModel
             Name = model_Var.Name;
             Owner = model_Var.Owner;
 
-            foreach (ResourceQuantity resQ in model_Var.StoredResources) // TODO large inefficiencies with this method. Maybe better just to have storeVM add model objects directly?
-            {
-                IResourceQuantityViewModel resQVm = _resQVmFactory.CreateResourceQuantityViewModel();
-                resQVm.Type = resQ.Type;
-                resQVm.Quantity = resQ.Quantity;
-                storedResources_Var.Add(resQVm);
-            }
+            //foreach (ResourceQuantity resQ in model_Var.StoredResources) // TODO large inefficiencies with this method. Maybe better just to have storeVM add model objects directly?
+            //{
+            //    IResourceQuantityViewModel resQVm = _resQVmFactory.CreateResourceQuantityViewModel();
+            //    resQVm.Type = resQ.Type;
+            //    resQVm.Quantity = resQ.Quantity;
+            //    storedResources_Var.Add(resQVm);
+            //}
         }
 
         public String Name

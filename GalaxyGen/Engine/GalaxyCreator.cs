@@ -52,35 +52,35 @@ namespace GalaxyGen.Engine
 
             gal.SolarSystems.Add(ss);
 
-            //for (int i = 0; i < 5000; i++)
-            //{
-            //    Agent newAg = this.GetAgent(i.ToString());
-            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-            //    pr.Owner = newAg;
-            //    newAg.Producers.Add(pr);
-            //    p.Producers.Add(pr);
-            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-            //    pr2.Owner = newAg;
-            //    newAg.Producers.Add(pr2);
-            //    p.Producers.Add(pr2);
-            //    addNewStoreToPlanet(p, newAg);
-            //    ss.Agents.Add(newAg);
-            //}
+            for (int i = 0; i < 5000; i++)
+            {
+                Agent newAg = this.GetAgent(i.ToString());
+                Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+                pr.Owner = newAg;
+                newAg.Producers.Add(pr);
+                p.Producers.Add(pr);
+                Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+                pr2.Owner = newAg;
+                newAg.Producers.Add(pr2);
+                p.Producers.Add(pr2);
+                addNewStoreToPlanet(p, newAg);
+                ss.Agents.Add(newAg);
+            }
 
-            //for (int i = 5001; i < 10000; i++)
-            //{
-            //    Agent newAg = this.GetAgent(i.ToString());
-            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-            //    pr.Owner = newAg;
-            //    newAg.Producers.Add(pr);
-            //    p2.Producers.Add(pr);
-            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-            //    pr2.Owner = newAg;
-            //    newAg.Producers.Add(pr2);
-            //    p2.Producers.Add(pr2);
-            //    addNewStoreToPlanet(p2, newAg);
-            //    ss.Agents.Add(newAg);
-            //}
+            for (int i = 5001; i < 10000; i++)
+            {
+                Agent newAg = this.GetAgent(i.ToString());
+                Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+                pr.Owner = newAg;
+                newAg.Producers.Add(pr);
+                p2.Producers.Add(pr);
+                Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+                pr2.Owner = newAg;
+                newAg.Producers.Add(pr2);
+                p2.Producers.Add(pr2);
+                addNewStoreToPlanet(p2, newAg);
+                ss.Agents.Add(newAg);
+            }
 
             //for (int i = 0; i < 500; i++)
             //{
@@ -142,8 +142,8 @@ namespace GalaxyGen.Engine
             o.Stores.Add(s);
 
              // seed with basic starter resource
-            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Spice, 100));
-            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Platinum, 100));            
+            s.StoredResources.Add(ResourceTypeEnum.Spice, 100);
+            s.StoredResources.Add(ResourceTypeEnum.Platinum, 100);            
         }
 
         public Agent GetAgent(String seedName)
@@ -173,7 +173,7 @@ namespace GalaxyGen.Engine
             o.Stores.Add(s);
 
             // seed with basic starter resource
-            s.StoredResources.Add(GetResourceQuantity(ResourceTypeEnum.Spice, 10));
+            s.StoredResources.Add(ResourceTypeEnum.Spice, 10);
         }
 
         public Ship GetShip(String seedName)
@@ -183,13 +183,13 @@ namespace GalaxyGen.Engine
             return s;
         }
 
-        public ResourceQuantity GetResourceQuantity(ResourceTypeEnum type, Int64 qty)
-        {
-            ResourceQuantity resQ = new ResourceQuantity();
-            resQ.Type = type;
-            resQ.Quantity = qty;
-            return resQ;
-        }     
+        //public ResourceQuantity GetResourceQuantity(ResourceTypeEnum type, Int64 qty)
+        //{
+        //    ResourceQuantity resQ = new ResourceQuantity();
+        //    resQ.Type = type;
+        //    resQ.Quantity = qty;
+        //    return resQ;
+        //}     
 
     }
 }

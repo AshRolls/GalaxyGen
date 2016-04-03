@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Framework;
+﻿using GalaxyGen.Engine;
+using GalaxyGen.Framework;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,14 +15,14 @@ namespace GalaxyGen.Model
         public Store()
         {
             StoreId = IdUtils.GetId();
-            StoredResources = new HashSet<ResourceQuantity>();            
+            StoredResources = new Dictionary<ResourceTypeEnum, UInt64>();
         }
 
         public Int64 StoreId { get; set; }
 
         public String Name { get; set; }
 
-        public ICollection<ResourceQuantity> StoredResources { get; set; }
+        public Dictionary<ResourceTypeEnum,UInt64> StoredResources { get; set; }
         public Agent Owner { get; set; }
 
         public IStoreLocation Location { get; set; }

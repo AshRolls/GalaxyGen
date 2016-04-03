@@ -45,7 +45,6 @@ namespace GalaxyGen.Framework
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-
             JObject jo = JObject.Load(reader);
             object target;
             if (jo["$ref"] != null)

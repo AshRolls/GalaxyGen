@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class ResourceQuantity
+    public struct ResourceQuantity
     {
         public ResourceTypeEnum Type { get; set; }
-        public Int64 Quantity { get; set; }
+        public UInt64 Quantity { get; set; }
     }
 }

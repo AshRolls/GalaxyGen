@@ -56,20 +56,28 @@ namespace GalaxyGen.Engine
             bool hasResources = true;
             foreach (ResourceQuantity resQ in msg.ResourcesRequested)
             {
-                ResourceQuantity storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
-                if (storedResQ == null || storedResQ.Quantity < resQ.Quantity)
+                if (s.StoredResources.ContainsKey(resQ.Type))
+                {
+                    UInt64 storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
+                    if (storedResQ < resQ.Quantity)
+                    {
+                        hasResources = false;
+                        break;
+                    }
+                }
+                else 
                 {
                     hasResources = false;
                     break;
                 }
             }
+
             if (hasResources)
             {
                 // remove resources
                 foreach (ResourceQuantity resQ in msg.ResourcesRequested)
                 {
-                    ResourceQuantity storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
-                    storedResQ.Quantity -= resQ.Quantity;                    
+                    s.StoredResources[resQ.Type] -= resQ.Quantity;              
                 }
                 MessageRequestResourcesResponse msgRes = new MessageRequestResourcesResponse(true, curTick);
                 Sender.Tell(msgRes);
@@ -103,24 +111,20 @@ namespace GalaxyGen.Engine
         {
             foreach (ResourceQuantity resQ in msg.Resources)
             {
-                ResourceQuantity storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
-                if (storedResQ != null)
+                if (s.StoredResources.ContainsKey(resQ.Type))
                 {
-                    storedResQ.Quantity += resQ.Quantity;
+                    s.StoredResources[resQ.Type] += resQ.Quantity;
                 }
                 else
-                {
-                    ResourceQuantity newResQ = new ResourceQuantity();
-                    newResQ.Quantity = resQ.Quantity;
-                    newResQ.Type = resQ.Type;
-                    s.StoredResources.Add(newResQ);
+                {                    
+                    s.StoredResources.Add(resQ.Type, resQ.Quantity);
                 }
             }
         }
 
-        private ResourceQuantity getStoredResourceQtyFromStore(Store s, ResourceTypeEnum type)
+        private UInt64 getStoredResourceQtyFromStore(Store s, ResourceTypeEnum type)
         {
-            return s.StoredResources.Where(x => x.Type == type).FirstOrDefault();
+            return s.StoredResources[type];
         }
 
         private void receiveTick(MessageTick tick)
