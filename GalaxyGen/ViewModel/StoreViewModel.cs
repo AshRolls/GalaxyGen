@@ -36,7 +36,6 @@ namespace GalaxyGen.ViewModel
         {
             Name = model_Var.Name;
             Owner = model_Var.Owner;
-            Planet = model_Var.Planet;
 
             foreach (ResourceQuantity resQ in model_Var.StoredResources) // TODO large inefficiencies with this method. Maybe better just to have storeVM add model objects directly?
             {
@@ -79,25 +78,6 @@ namespace GalaxyGen.ViewModel
                 {
                     model_Var.Owner = value;
                     OnPropertyChanged("Owner");
-                }
-            }
-        }
-
-        public Planet Planet
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Planet;
-                else
-                    return null;
-            }
-            set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.Planet = value;
-                    OnPropertyChanged("Planet");
                 }
             }
         }

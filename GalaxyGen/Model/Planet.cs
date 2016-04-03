@@ -12,18 +12,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
-{
-    public class Planet : ModelNotifyBase
+{   
+    public class Planet : ModelNotifyBase, IAgentLocation, IStoreLocation
     {
         public Planet()
         {
             PlanetId = IdUtils.GetId();
+            GalType = TypeEnum.Planet;
             Producers = new HashSet<Producer>();
             Stores = new HashSet<Store>();
             DockedShips = new List<Ship>();
+            Agents = new List<Agent>();
         }
 
         public Int64 PlanetId { get; set; }
+        public TypeEnum GalType { get; set; }
 
         public Double OrbitKm { get; set; }
         public Double OrbitDays { get; set; }
@@ -61,18 +64,18 @@ namespace GalaxyGen.Model
         public Int64 Population { get; set; }
 
 
-        public virtual Society Society { get; set; }
+        public Society Society { get; set; }
 
         public ICollection<Producer> Producers { get; set; }
         public ICollection<Store> Stores { get; set; }
         public ICollection<Ship> DockedShips { get; set; }
+        public ICollection<Agent> Agents { get; set; }
 
         public SolarSystem SolarSystem { get; set; }
 
         [JsonIgnore]
         public IActorRef Actor { get; set; }
 
-        //[ForeignKey("MarketId")]
         //public IMarket Market { get; set; }
 
     }

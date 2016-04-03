@@ -13,8 +13,8 @@ namespace GalaxyGen.Model
     {
         public Store()
         {
-            StoredResources = new HashSet<ResourceQuantity>();
             StoreId = IdUtils.GetId();
+            StoredResources = new HashSet<ResourceQuantity>();            
         }
 
         public Int64 StoreId { get; set; }
@@ -24,7 +24,8 @@ namespace GalaxyGen.Model
         public ICollection<ResourceQuantity> StoredResources { get; set; }
         public Agent Owner { get; set; }
 
-        public Planet Planet { get; set; }
-        public Ship Ship { get; set; }
+        public IStoreLocation Location { get; set; }
+
+
     }
 }

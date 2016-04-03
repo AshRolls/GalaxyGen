@@ -122,6 +122,8 @@
     <Compile Include="Framework\IdUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
     <Compile Include="Framework\CommonStructs.cs" />
+    <Compile Include="Model\IStoreLocation.cs" />
+    <Compile Include="Model\IAgentLocation.cs" />
     <Compile Include="Model\ModelNotifyBase.cs" />
     <Compile Include="Model\Ship.cs" />
     <Compile Include="Model\ResourceQuantity.cs" />
@@ -132,6 +134,7 @@
     <Compile Include="Model\MarketBuyOrder.cs" />
     <Compile Include="Engine\ResourceTypes.cs" />
     <Compile Include="Model\SolarSystem.cs" />
+    <Compile Include="Model\TypeEnum.cs" />
     <Compile Include="ViewModel\IAgentViewModel.cs" />
     <Compile Include="ViewModel\IResourceQuantityViewModel.cs" />
     <Compile Include="ViewModel\IStoreViewModel.cs" />

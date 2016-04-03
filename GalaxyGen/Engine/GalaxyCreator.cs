@@ -40,6 +40,8 @@ namespace GalaxyGen.Engine
             Ship s = this.GetShip("Whitestar");
             s.Owner = ag;
             s.ShipState = ShipStateEnum.Docked;
+            s.Agents.Add(ag);
+            ag.Location = s;
             s.DockedPlanet = p;
             p.DockedShips.Add(s);
             ag.ShipsOwned.Add(s);
@@ -50,35 +52,35 @@ namespace GalaxyGen.Engine
 
             gal.SolarSystems.Add(ss);
 
-            for (int i = 0; i < 5000; i++)
-            {
-                Agent newAg = this.GetAgent(i.ToString());
-                Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-                pr.Owner = newAg;
-                newAg.Producers.Add(pr);
-                p.Producers.Add(pr);
-                Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-                pr2.Owner = newAg;
-                newAg.Producers.Add(pr2);
-                p.Producers.Add(pr2);
-                addNewStoreToPlanet(p, newAg);
-                ss.Agents.Add(newAg);
-            }
+            //for (int i = 0; i < 5000; i++)
+            //{
+            //    Agent newAg = this.GetAgent(i.ToString());
+            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+            //    pr.Owner = newAg;
+            //    newAg.Producers.Add(pr);
+            //    p.Producers.Add(pr);
+            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+            //    pr2.Owner = newAg;
+            //    newAg.Producers.Add(pr2);
+            //    p.Producers.Add(pr2);
+            //    addNewStoreToPlanet(p, newAg);
+            //    ss.Agents.Add(newAg);
+            //}
 
-            for (int i = 5001; i < 10000; i++)
-            {
-                Agent newAg = this.GetAgent(i.ToString());
-                Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-                pr.Owner = newAg;
-                newAg.Producers.Add(pr);
-                p2.Producers.Add(pr);
-                Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-                pr2.Owner = newAg;
-                newAg.Producers.Add(pr2);
-                p2.Producers.Add(pr2);
-                addNewStoreToPlanet(p2, newAg);
-                ss.Agents.Add(newAg);
-            }
+            //for (int i = 5001; i < 10000; i++)
+            //{
+            //    Agent newAg = this.GetAgent(i.ToString());
+            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+            //    pr.Owner = newAg;
+            //    newAg.Producers.Add(pr);
+            //    p2.Producers.Add(pr);
+            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+            //    pr2.Owner = newAg;
+            //    newAg.Producers.Add(pr2);
+            //    p2.Producers.Add(pr2);
+            //    addNewStoreToPlanet(p2, newAg);
+            //    ss.Agents.Add(newAg);
+            //}
 
             //for (int i = 0; i < 500; i++)
             //{
@@ -135,7 +137,7 @@ namespace GalaxyGen.Engine
         {
             Store s = new Store();
             s.Owner = o;
-            s.Planet = p;
+            s.Location = p;
             p.Stores.Add(s);
             o.Stores.Add(s);
 
@@ -166,8 +168,8 @@ namespace GalaxyGen.Engine
         {
             Store s = new Store();
             s.Owner = o;
-            s.Ship = ship;
-            ship.Store = s;           
+            s.Location = ship;
+            ship.Stores.Add(s);           
             o.Stores.Add(s);
 
             // seed with basic starter resource

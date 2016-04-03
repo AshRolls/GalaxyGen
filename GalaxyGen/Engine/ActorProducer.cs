@@ -64,10 +64,10 @@ namespace GalaxyGen.Engine
                     MessageProducedResources mpr = new MessageProducedResources(_bp.Produces, _producer.Owner);
                     _actorPlanet.Tell(mpr);
                     _producer.Producing = false;
-                    //foreach (ResourceQuantity resQ in _bp.Produces)
-                    //{
-                    //    _actorTextOutput.Tell(_producer.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
-                    //}
+                    foreach (ResourceQuantity resQ in _bp.Produces)
+                    {
+                        _actorTextOutput.Tell(_producer.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                    }
                 }
 
                 if (_producer.AutoResumeProduction)

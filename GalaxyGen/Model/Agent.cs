@@ -29,6 +29,7 @@ namespace GalaxyGen.Model
         public ICollection<Store> Stores { get; set; }
         public ICollection<Ship> ShipsOwned { get; set; }
 
+        public IAgentLocation Location { get; set; }
         public SolarSystem SolarSystem { get; set; }
 
         [JsonIgnore]

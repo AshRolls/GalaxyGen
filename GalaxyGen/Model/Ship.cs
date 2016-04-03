@@ -19,14 +19,18 @@ namespace GalaxyGen.Model
         Cruising
     }
 
-    public class Ship : ModelNotifyBase
+    public class Ship : ModelNotifyBase, IAgentLocation, IStoreLocation
     {
         public Ship()
         {
             ShipId = IdUtils.GetId();
+            GalType = TypeEnum.Ship;
+            Agents = new List<Agent>();
+            Stores = new List<Store>();
         }
 
         public Int64 ShipId { get; set; }
+        public TypeEnum GalType { get; set; }
       
         [StringLength(60)]
         public String Name { get; set; }
@@ -73,12 +77,11 @@ namespace GalaxyGen.Model
             }
         }
 
-        public virtual Agent Owner { get; set; }
-        
-        public virtual Store Store { get; set; }
-
-        public virtual SolarSystem SolarSystem { get; set; }
-        public virtual Planet DockedPlanet { get; set; }
+        public Agent Owner { get; set; }
+        public ICollection<Store> Stores { get; set; }
+        public SolarSystem SolarSystem { get; set; }
+        public Planet DockedPlanet { get; set; }
+        public ICollection<Agent> Agents { get; set; }
 
         [JsonIgnore]
         public IActorRef Actor { get; set; }
