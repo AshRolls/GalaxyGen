@@ -26,7 +26,7 @@ namespace GalaxyGen.Model
             ShipId = IdUtils.GetId();
             GalType = TypeEnum.Ship;
             Agents = new List<Agent>();
-            Stores = new List<Store>();
+            Stores = new Dictionary<Int64, Store>();
         }
 
         public Int64 ShipId { get; set; }
@@ -78,7 +78,7 @@ namespace GalaxyGen.Model
         }
 
         public Agent Owner { get; set; }
-        public ICollection<Store> Stores { get; set; }
+        public Dictionary<Int64, Store> Stores { get; set; }
         public SolarSystem SolarSystem { get; set; }
         public Planet DockedPlanet { get; set; }
         public ICollection<Agent> Agents { get; set; }

@@ -97,14 +97,14 @@ namespace GalaxyGen.Engine
                 s = new Store();
                 s.Location = _planet;
                 s.Owner = owner;
-                _planet.Stores.Add(s);
+                _planet.Stores.Add(owner.AgentId,s);
             }
             return s;
         }
 
         private Store getStoreForOwner(Agent owner)
         {
-            return _planet.Stores.Where(x => x.Owner == owner).FirstOrDefault(); // TODO slow, optimise!
+            return _planet.Stores[owner.AgentId]; 
         }
 
         private void addResourceQuantityToStore(Store s, MessageProducedResources msg)

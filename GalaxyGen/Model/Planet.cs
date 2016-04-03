@@ -20,7 +20,7 @@ namespace GalaxyGen.Model
             PlanetId = IdUtils.GetId();
             GalType = TypeEnum.Planet;
             Producers = new HashSet<Producer>();
-            Stores = new HashSet<Store>();
+            Stores = new Dictionary<Int64,Store>();
             DockedShips = new List<Ship>();
             Agents = new List<Agent>();
         }
@@ -67,7 +67,7 @@ namespace GalaxyGen.Model
         public Society Society { get; set; }
 
         public ICollection<Producer> Producers { get; set; }
-        public ICollection<Store> Stores { get; set; }
+        public Dictionary<Int64,Store> Stores { get; set; }
         public ICollection<Ship> DockedShips { get; set; }
         public ICollection<Agent> Agents { get; set; }
 

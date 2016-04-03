@@ -138,7 +138,7 @@ namespace GalaxyGen.Engine
             Store s = new Store();
             s.Owner = o;
             s.Location = p;
-            p.Stores.Add(s);
+            p.Stores.Add(o.AgentId,s);
             o.Stores.Add(s);
 
              // seed with basic starter resource
@@ -169,7 +169,7 @@ namespace GalaxyGen.Engine
             Store s = new Store();
             s.Owner = o;
             s.Location = ship;
-            ship.Stores.Add(s);           
+            ship.Stores.Add(o.AgentId,s);           
             o.Stores.Add(s);
 
             // seed with basic starter resource

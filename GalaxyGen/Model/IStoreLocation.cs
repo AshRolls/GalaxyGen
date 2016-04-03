@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GalaxyGen.Model
 {
     public interface IStoreLocation
     {
-        ICollection<Store> Stores { get; set; }
+        Dictionary<Int64,Store> Stores { get; set; }
     }
 }
