@@ -31,6 +31,7 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;          
 
             // create child actors for each solar system
+            // TODO only subscribe child solar systems that are 'active' (ie have producer, agent, society etc)
             foreach (SolarSystem ss in _state.SolarSystems)
             {
                 Props ssProps = Props.Create<ActorSolarSystem>(_actorTextOutput, ss);
