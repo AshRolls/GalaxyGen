@@ -11,8 +11,15 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Agent
+    public enum AgentStateEnum
     {
+        PilotingShip,
+        PassengerShip,
+        Planetside
+    }
+
+    public class Agent : ModelNotifyBase
+    {      
         public Agent()
         {
             Producers = new HashSet<Producer>();
@@ -24,7 +31,21 @@ namespace GalaxyGen.Model
         public Int64 AgentId { get; set; }
 
         public String Name { get; set; }
-        
+
+        private AgentStateEnum AgentState_Var;
+        public AgentStateEnum AgentState
+        {
+            get
+            {
+                return AgentState_Var;
+            }
+            set
+            {
+                AgentState_Var = value;
+                OnPropertyChanged("AgentState");
+            }
+        }
+
         public ICollection<Producer> Producers { get; set; }
         public ICollection<Store> Stores { get; set; }
         public ICollection<Ship> ShipsOwned { get; set; }
