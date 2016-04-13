@@ -78,7 +78,7 @@ namespace GalaxyGen.Engine
             if (_agent.AgentState == AgentStateEnum.PilotingShip && _agent.Location.GalType == TypeEnum.Ship)
             {
                 Ship s = (Ship)_agent.Location;
-                MessageShipDockCommand cmd = new MessageShipDockCommand(ShipDockCommandEnum.Undock, tick.Tick);
+                MessageShipDockCommand cmd = new MessageShipDockCommand(ShipDockCommandEnum.Undock, tick.Tick, null);
                 s.Actor.Tell(cmd);
                 Become(AwaitingUndockingResponse);
             }

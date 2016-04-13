@@ -42,6 +42,7 @@ namespace GalaxyGen.Engine
             s.ShipState = ShipStateEnum.Docked;
             s.Agents.Add(ag);
             ag.Location = s;
+            s.Pilot = ag;
             ag.AgentState = AgentStateEnum.PilotingShip;
             s.DockedPlanet = p;
             p.DockedShips.Add(s);

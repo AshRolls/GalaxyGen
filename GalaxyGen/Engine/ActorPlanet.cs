@@ -38,6 +38,7 @@ namespace GalaxyGen.Engine
             Receive<MessageTick>(msg => receiveTick(msg));
             Receive<MessageProducedResources>(msg => receiveProducedRes(msg));
             Receive<MessageRequestResources>(msg => receiveRequestRes(msg));
+            Receive<MessageShipDockCommand>(msg => receiveDockCommand(msg));
 
             _actorTextOutput.Tell("Planet initialised : " + _planet.Name);            
         }
@@ -138,7 +139,11 @@ namespace GalaxyGen.Engine
             }
         }
 
-
+        private void receiveDockCommand(MessageShipDockCommand cmd)
+        {
+            MessageShipDockResponse resp = new MessageShipDockResponse(true, cmd.TickSent);
+            cmd.Ship.Actor.Tell(resp);
+        }
 
     }
 }

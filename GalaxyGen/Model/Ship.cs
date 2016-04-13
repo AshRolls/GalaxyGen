@@ -78,6 +78,7 @@ namespace GalaxyGen.Model
         }
 
         public Agent Owner { get; set; }
+        public Agent Pilot { get; set; }
         public Dictionary<Int64, Store> Stores { get; set; }
         public SolarSystem SolarSystem { get; set; }
         public Planet DockedPlanet { get; set; }

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
-    public class ActorShip : ReceiveActor
+    public class ActorShip : ReceiveActor, IWithUnboundedStash
     {
         IActorRef _actorTextOutput;
         IActorRef _actorSolarSystem;
@@ -23,12 +23,68 @@ namespace GalaxyGen.Engine
             _actorSolarSystem = actorSolarSystem;
             _ship = ship;
             _ship.Actor = Self;
-            Receive<MessageTick>(msg => receiveTick(msg));            
 
+            if (ship.ShipState == ShipStateEnum.Docked) Docked();
+            else Cruising();
+                   
             _actorTextOutput.Tell("Ship initialised : " + _ship.Name);            
         }
 
-        private void receiveTick(MessageTick tick)
+        private void Docked()
+        {
+            Receive<MessageTick>(msg => receiveDockedTick(msg));
+            Receive<MessageShipDockCommand>(msg => receiveDockCommand(msg));
+        }
+
+        private void Cruising()
+        {
+            Receive<MessageTick>(msg => receiveCruisingTick(msg));
+        }
+
+        private void AwaitingUndockingResponse()
+        {
+            Receive<MessageTick>(msg => receiveAwaitingTick(msg));
+            Receive<MessageShipDockResponse>(msg => receiveUndockResponse(msg));
+        }
+
+        private void receiveUndockResponse(MessageShipDockResponse msg)
+        {
+            if (msg.Response == true)
+            {                
+                Become(Cruising);
+                _ship.Pilot.Actor.Tell(msg);
+            }
+            else
+            {
+                Become(Docked);
+            }
+            Stash.UnstashAll();
+        }
+
+        public IStash Stash { get; set; }
+
+        // TODO put in system for when we never receive a response!
+        private void receiveAwaitingTick(MessageTick tick)
+        {
+            Stash.Stash(); // stash messages while we are waiting for our response.
+        }
+
+        private void receiveDockedTick(MessageTick tick)
+        {
+            //_actorTextOutput.Tell("TICK RCV H: " + _agentVm.Name + " " + tick.Tick.ToString());
+        }
+
+        private void receiveDockCommand(MessageShipDockCommand cmd)
+        {
+            if (cmd.DockCommand == ShipDockCommandEnum.Undock && _ship.ShipState == ShipStateEnum.Docked)
+            {
+                MessageShipDockCommand newCmd = new MessageShipDockCommand(cmd.DockCommand, cmd.TickSent, _ship);
+                _ship.DockedPlanet.Actor.Tell(newCmd);
+                Become(AwaitingUndockingResponse);
+            }
+        }
+
+        private void receiveCruisingTick(MessageTick tick)
         {
             //_actorTextOutput.Tell("TICK RCV H: " + _agentVm.Name + " " + tick.Tick.ToString());
         }
