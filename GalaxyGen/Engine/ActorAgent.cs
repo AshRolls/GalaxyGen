@@ -26,7 +26,14 @@ namespace GalaxyGen.Engine
 
             _actorTextOutput.Tell("Agent initialised : " + _agent.Name);
 
-            PilotingDocked();           
+            if (_agent.AgentState == AgentStateEnum.PilotingShip && _agent.Location.GalType == TypeEnum.Ship)
+            {
+                Ship s = (Ship)_agent.Location;
+                if (s.ShipState == ShipStateEnum.Docked)
+                    PilotingDocked();
+                else if (s.ShipState == ShipStateEnum.Cruising)
+                    Piloting();
+            }
         }
 
         private void PilotingDocked()

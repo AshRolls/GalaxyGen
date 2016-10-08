@@ -26,8 +26,27 @@ namespace GalaxyGen.Engine
 
             if (ship.ShipState == ShipStateEnum.Docked) Docked();
             else Cruising();
-                   
-            _actorTextOutput.Tell("Ship initialised : " + _ship.Name);            
+
+            _actorTextOutput.Tell("Ship initialised : " + shipStatus());
+        }
+
+        private string shipStatus()
+        {
+            StringBuilder initStr = new StringBuilder();
+            initStr.Append(_ship.Name);
+            initStr.Append(" [");
+            if (_ship.ShipState == ShipStateEnum.Docked)
+            {
+                initStr.Append(_ship.DockedPlanet.Name);
+            }
+            else
+            {
+                initStr.Append(_ship.PositionX);
+                initStr.Append(",");
+                initStr.Append(_ship.PositionY);
+            }
+            initStr.Append("]");
+            return initStr.ToString();
         }
 
         private void Docked()
@@ -53,6 +72,10 @@ namespace GalaxyGen.Engine
             {                
                 Become(Cruising);
                 _ship.Pilot.Actor.Tell(msg);
+                _ship.PositionX = _ship.DockedPlanet.PositionX;
+                _ship.PositionY = _ship.DockedPlanet.PositionY;
+                _ship.DockedPlanet = null;
+                _ship.ShipState = ShipStateEnum.Cruising;
             }
             else
             {
@@ -70,8 +93,8 @@ namespace GalaxyGen.Engine
         }
 
         private void receiveDockedTick(MessageTick tick)
-        {
-            //_actorTextOutput.Tell("TICK RCV H: " + _agentVm.Name + " " + tick.Tick.ToString());
+        {            
+            _actorTextOutput.Tell(shipStatus());
         }
 
         private void receiveDockCommand(MessageShipDockCommand cmd)
@@ -85,8 +108,8 @@ namespace GalaxyGen.Engine
         }
 
         private void receiveCruisingTick(MessageTick tick)
-        {
-            //_actorTextOutput.Tell("TICK RCV H: " + _agentVm.Name + " " + tick.Tick.ToString());
+        {            
+            _actorTextOutput.Tell(shipStatus());
         }
 
     }
