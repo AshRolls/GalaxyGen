@@ -27,14 +27,7 @@ namespace GalaxyGen.Engine
             _planet.Actor = Self;
             _subscribedActorProducers = new HashSet<IActorRef>();
 
-            // create child actors for each producer in planet
-            foreach (Producer prod in _planet.Producers)
-            {
-                Props prodProps = Props.Create<ActorProducer>(_actorTextOutput, prod, Self);
-                IActorRef actor = Context.ActorOf(prodProps, "Producer" + prod.ProducerId.ToString());
-                _subscribedActorProducers.Add(actor);
-            }
-
+          
             Receive<MessageTick>(msg => receiveTick(msg));
             Receive<MessageProducedResources>(msg => receiveProducedRes(msg));
             Receive<MessageRequestResources>(msg => receiveRequestRes(msg));
