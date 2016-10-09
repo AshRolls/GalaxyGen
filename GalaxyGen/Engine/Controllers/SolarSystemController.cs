@@ -11,18 +11,36 @@ namespace GalaxyGen.Engine
     public class SolarSystemController
     {
         private SolarSystem _model;
+        private List<PlanetController> _planetCs;        
 
         public SolarSystemController(SolarSystem ss)
         {
             _model = ss;
+            _planetCs = new List<PlanetController>();
+
+            // create child controller for each planet in ss
+            foreach (Planet p in ss.Planets)
+            {
+                PlanetController pc = new PlanetController(p);
+                _planetCs.Add(pc);
+            }
         }
 
         public void Tick(MessageTick tick)
         {
-            movePlanets(tick);
+            movePlanetXY(tick);            
+            updatePlanets(tick);
         }
 
-        private void movePlanets(MessageTick tick)
+        private void updatePlanets(MessageTick tick)
+        {
+            foreach (PlanetController pc in _planetCs)
+            {
+                pc.Tick(tick);
+            }
+        }
+
+        private void movePlanetXY(MessageTick tick)
         {
             foreach (Planet p in _model.Planets)
             {

@@ -73,6 +73,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SqlServerCe, Version=4.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
@@ -116,7 +120,6 @@
     <Compile Include="Engine\MessageShipDockCommand.cs" />
     <Compile Include="Engine\MessageProducerCommand.cs" />
     <Compile Include="Engine\MessageProducedResources.cs" />
-    <Compile Include="Engine\MessageRequestResourcesResponse.cs" />
     <Compile Include="Engine\MessageRequestResources.cs" />
     <Compile Include="Engine\MessageResources.cs" />
     <Compile Include="Engine\MessageTick.cs" />
@@ -153,6 +156,7 @@
     <Compile Include="ViewModel\ISocietyViewModel.cs" />
     <Compile Include="ViewModel\ITextOutputViewModel.cs" />
     <Compile Include="ViewModel\MainGalaxyViewModel.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MarketViewModel.cs" />
     <Compile Include="ViewModel\GalaxyViewModel.cs" />
     <Compile Include="Engine\ActorAgent.cs" />
@@ -165,6 +169,7 @@
     <Compile Include="ViewModel\SocietyViewModel.cs" />
     <Compile Include="ViewModel\PlanetViewModel.cs" />
     <Compile Include="ViewModel\TextOutputViewModel.cs" />
+    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\AgentControl.xaml.cs">
       <DependentUpon>AgentControl.xaml</DependentUpon>
     </Compile>

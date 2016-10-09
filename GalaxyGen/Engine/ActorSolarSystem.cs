@@ -17,7 +17,7 @@ namespace GalaxyGen.Engine
         IActorRef _actorTextOutput;
         private SolarSystemController _solarSystemC;
         //private List<IActorRef> _subscribedActorAgents;
-        private List<PlanetController> _planetCs;
+
         //private List<IActorRef> _subscribedActorShips;
 
         public ActorSolarSystem(IActorRef actorTextOutput, SolarSystem ss)
@@ -25,15 +25,6 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;
             ss.Actor = Self;
             _solarSystemC = new SolarSystemController(ss);
-            _planetCs = new List<PlanetController>();
-
-            // create child controller for each planet in ss
-            foreach (Planet p in ss.Planets)
-            {
-                PlanetController pc = new PlanetController(p);
-                _planetCs.Add(pc);
-            }
-
 
             
             //// create child actors for each agent in ss
@@ -61,23 +52,7 @@ namespace GalaxyGen.Engine
 
         private void receiveTick(MessageTick tick)
         {
-            _solarSystemC.Tick(tick);
-
-            foreach (PlanetController pc in _planetCs)
-            {
-                pc.Tick(tick);
-            }
-
-            //foreach (IActorRef shipActor in _subscribedActorShips)
-            //{
-            //    shipActor.Tell(tick);
-            //}
-
-            //foreach (IActorRef agentActor in _subscribedActorAgents)
-            //{
-            //    agentActor.Tell(tick);
-            //}            
-
+            _solarSystemC.Tick(tick);         
         }
 
 
