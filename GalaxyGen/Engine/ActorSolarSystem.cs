@@ -24,7 +24,7 @@ namespace GalaxyGen.Engine
         {
             _actorTextOutput = actorTextOutput;
             ss.Actor = Self;
-            _solarSystemC = new SolarSystemController(ss);
+            _solarSystemC = new SolarSystemController(ss, actorTextOutput);
 
             
             //// create child actors for each agent in ss

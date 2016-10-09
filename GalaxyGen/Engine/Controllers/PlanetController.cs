@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using Akka.Actor;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,17 +12,21 @@ namespace GalaxyGen.Engine
     {
         private Planet _model;
         private HashSet<ProducerController> _producerCs;
+        private IActorRef _actorTextOutput;
 
-        public PlanetController(Planet p)
+        public PlanetController(Planet p, IActorRef actorTextOutput)
         {
             _model = p;
+            _actorTextOutput = actorTextOutput;
+
             _producerCs = new HashSet<ProducerController>();
             // create child controllers for each producer in planet
             foreach (Producer prod in p.Producers)
             {
-                ProducerController pc = new ProducerController(prod, this);
+                ProducerController pc = new ProducerController(prod, this, actorTextOutput);
                 _producerCs.Add(pc);
             }
+
         }
 
         public void Tick(MessageTick tick)
@@ -73,6 +78,8 @@ namespace GalaxyGen.Engine
                 {
                     s.StoredResources.Add(resQ.Type, resQ.Quantity);
                 }
+
+                //_actorTextOutput.Tell("Store added " + resQ.Type + " " + resQ.Quantity);
             }
         }
 
@@ -94,6 +101,7 @@ namespace GalaxyGen.Engine
                 foreach (ResourceQuantity resQ in msg.ResourcesRequested)
                 {
                     s.StoredResources[resQ.Type] -= resQ.Quantity;
+                    //_actorTextOutput.Tell("Store removed " + resQ.Type + " " + resQ.Quantity);
                 }
                 return true;
             }

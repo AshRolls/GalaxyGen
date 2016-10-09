@@ -108,7 +108,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Engine\ActorShip.cs" />
-    <Compile Include="Engine\ActorProducer.cs" />
     <Compile Include="Engine\ActorPlanet.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\BluePrints.cs" />

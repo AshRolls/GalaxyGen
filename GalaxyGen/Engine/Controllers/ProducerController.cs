@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using Akka.Actor;
+using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +13,13 @@ namespace GalaxyGen.Engine
         private Producer _model;
         private BluePrint _bp;
         private PlanetController _planetC;
+        private IActorRef _actorTextOutput;
 
-        public ProducerController(Producer p, PlanetController pc)
+        public ProducerController(Producer p, PlanetController pc, IActorRef actorTextOutput)
         {
             _model = p;
             _planetC = pc;
+            _actorTextOutput = actorTextOutput;
             _bp = BluePrints.GetBluePrint(p.BluePrintType);            
         }
 
@@ -41,6 +44,11 @@ namespace GalaxyGen.Engine
                     MessageProducedResources mpr = new MessageProducedResources(_bp.Produces, _model.Owner);
                     _planetC.ReceiveProducedResource(mpr);                    
                     _model.Producing = false;
+
+                    //foreach (ResourceQuantity resQ in _bp.Produces)
+                    //{
+                    //    _actorTextOutput.Tell(_model.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                    //}
                 }
 
                 if (_model.AutoResumeProduction)
