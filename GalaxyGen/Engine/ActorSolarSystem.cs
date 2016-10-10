@@ -16,9 +16,8 @@ namespace GalaxyGen.Engine
     {
         IActorRef _actorTextOutput;
         private SolarSystemController _solarSystemC;
-        //private List<IActorRef> _subscribedActorAgents;
-
-        //private List<IActorRef> _subscribedActorShips;
+        private List<IActorRef> _subscribedActorAgents;
+        private Int64 _curTick;
 
         public ActorSolarSystem(IActorRef actorTextOutput, SolarSystem ss)
         {
@@ -26,35 +25,36 @@ namespace GalaxyGen.Engine
             ss.Actor = Self;
             _solarSystemC = new SolarSystemController(ss, actorTextOutput);
 
-            
-            //// create child actors for each agent in ss
-            //foreach (Agent agent in _solarSystem.Agents)
-            //{
-            //    Props agentProps = Props.Create<ActorAgent>(_actorTextOutput, agent, Self);
-            //    IActorRef actor = Context.ActorOf(agentProps, "Agent" + agent.AgentId.ToString());
-            //    _subscribedActorAgents.Add(actor);
-            //}
-
-            
-
-            //// create child actors for each ship in ss
-            //foreach (Ship s in _solarSystem.Ships)
-            //{
-            //    Props shipProps = Props.Create<ActorShip>(_actorTextOutput, s, Self);
-            //    IActorRef actor = Context.ActorOf(shipProps, "Ship" + s.ShipId.ToString());
-            //    _subscribedActorShips.Add(actor);
-            //}
+            // create child actors for each agent in ss
+            _subscribedActorAgents = new List<IActorRef>();
+            foreach (Agent agent in ss.Agents)
+            {
+                Props agentProps = Props.Create<ActorAgent>(_actorTextOutput, agent, Self);
+                IActorRef actor = Context.ActorOf(agentProps, "Agent" + agent.AgentId.ToString());
+                _subscribedActorAgents.Add(actor);
+            }
 
             Receive<MessageTick>(msg => receiveTick(msg));
+            Receive<MessageShipCommand>(msg => receiveShipCommand(msg));
 
            //_actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
         }
 
         private void receiveTick(MessageTick tick)
         {
-            _solarSystemC.Tick(tick);         
+            _curTick = tick.Tick;
+            _solarSystemC.Tick(tick);   
+            foreach(IActorRef agentActor in _subscribedActorAgents)
+            {
+                agentActor.Tell(tick);
+            }
         }
 
-
+        private void receiveShipCommand(MessageShipCommand msg)
+        {
+            bool success = _solarSystemC.ReceiveShipCommand(msg);
+            MessageShipResponse msr = new MessageShipResponse(success, msg, _curTick);
+            Sender.Tell(msr);
+        }
     }
 }

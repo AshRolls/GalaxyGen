@@ -111,12 +111,14 @@
     <Compile Include="Engine\ActorPlanet.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\BluePrints.cs" />
+    <Compile Include="Engine\Controllers\ShipController.cs" />
+    <Compile Include="Engine\Controllers\AgentController.cs" />
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
     <Compile Include="Engine\Message.cs" />
-    <Compile Include="Engine\MessageShipDockResponse.cs" />
-    <Compile Include="Engine\MessageShipDockCommand.cs" />
+    <Compile Include="Engine\MessageShipResponse.cs" />
+    <Compile Include="Engine\MessageShipCommand.cs" />
     <Compile Include="Engine\MessageProducerCommand.cs" />
     <Compile Include="Engine\MessageProducedResources.cs" />
     <Compile Include="Engine\MessageRequestResources.cs" />

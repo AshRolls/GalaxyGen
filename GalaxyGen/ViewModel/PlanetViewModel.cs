@@ -21,16 +21,6 @@ namespace GalaxyGen.ViewModel
             this.Society = societyViewModelFactory.CreateSocietyViewModel();
         }
 
-        public IActorRef Actor
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Actor;
-                else
-                    return null;
-            }
-        }
 
         private Planet model_Var;
         public Planet Model

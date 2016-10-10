@@ -73,9 +73,6 @@ namespace GalaxyGen.Model
 
         public SolarSystem SolarSystem { get; set; }
 
-        [JsonIgnore]
-        public IActorRef Actor { get; set; }
-
         //public IMarket Market { get; set; }
 
     }

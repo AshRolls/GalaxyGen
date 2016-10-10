@@ -8,14 +8,16 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
-    public class MessageShipDockResponse : Message
+    public class MessageShipResponse : Message
     {
-        public MessageShipDockResponse(bool response, Int64 tickSent)
+        public MessageShipResponse(bool response, MessageShipCommand sentCommand, Int64 tickSent)
         {
             Response = response;
+            SentCommand = sentCommand;
             TickSent = tickSent;
         }
         
         public Boolean Response { get; private set; }
+        public MessageShipCommand SentCommand { get; private set; }
     }
 }

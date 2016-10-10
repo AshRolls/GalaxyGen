@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
+    // AGENT SHOULD NEVER CHANGE IT'S OWN STATE. IT SHOULD TELL SOLARSYSTEM AND THAT WILL MANAGE THE STATE CHANGES.
+
     public class ActorAgent : ReceiveActor, IWithUnboundedStash
     {
         IActorRef _actorTextOutput;
@@ -44,7 +46,7 @@ namespace GalaxyGen.Engine
         private void AwaitingUndockingResponse()
         {
             Receive<MessageTick>(msg => receiveAwaitingTick(msg));
-            Receive<MessageShipDockResponse>(msg => receiveUndockResponse(msg));
+            Receive<MessageShipResponse>(msg => receiveShipResponse(msg));
         }
 
         private void Piloting()
@@ -58,15 +60,18 @@ namespace GalaxyGen.Engine
             _actorTextOutput.Tell(@"I'm flying : " + _agent.Name);
         }
 
-        private void receiveUndockResponse(MessageShipDockResponse msg)
+        private void receiveShipResponse(MessageShipResponse msg)
         {
-            if (msg.Response == true)
-            {                
-                Become(Piloting);
-            }
-            else
+            if (msg.SentCommand.Command == ShipCommandEnum.Undock)
             {
-                Become(PilotingDocked);
+                if (msg.Response == true)
+                {
+                    Become(Piloting);
+                }
+                else
+                {
+                    Become(PilotingDocked);
+                }
             }
             Stash.UnstashAll();
         }
@@ -85,8 +90,8 @@ namespace GalaxyGen.Engine
             if (_agent.AgentState == AgentStateEnum.PilotingShip && _agent.Location.GalType == TypeEnum.Ship)
             {
                 Ship s = (Ship)_agent.Location;
-                MessageShipDockCommand cmd = new MessageShipDockCommand(ShipDockCommandEnum.Undock, tick.Tick, null);
-                s.Actor.Tell(cmd);
+                MessageShipCommand cmd = new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, s.ShipId);
+                _actorSolarSystem.Tell(cmd);
                 Become(AwaitingUndockingResponse);
             }
         }

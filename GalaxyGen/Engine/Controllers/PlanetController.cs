@@ -134,5 +134,12 @@ namespace GalaxyGen.Engine
 
             return hasResources;
         }
+
+        internal void UndockShip(long shipId)
+        {
+            Ship s = _model.DockedShips.Where(x => x.ShipId == shipId).FirstOrDefault();
+            if (s != null)
+                _model.DockedShips.Remove(s);
+        }
     }
 }

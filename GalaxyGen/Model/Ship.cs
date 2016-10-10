@@ -83,8 +83,5 @@ namespace GalaxyGen.Model
         public SolarSystem SolarSystem { get; set; }
         public Planet DockedPlanet { get; set; }
         public ICollection<Agent> Agents { get; set; }
-
-        [JsonIgnore]
-        public IActorRef Actor { get; set; }
     }
 }
