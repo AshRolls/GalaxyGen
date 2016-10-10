@@ -66,6 +66,11 @@ namespace GalaxyGen.ViewModel
             {
                 OnPropertyChanged("CurrentTick");
             }
+            else if (e.PropertyName == "TicksPerSecond")
+            {
+                OnPropertyChanged("TicksPerSecond");
+            }
+
         }
 
         public String Name
@@ -100,6 +105,25 @@ namespace GalaxyGen.ViewModel
                 {
                     model_Var.CurrentTick = value;
                     OnPropertyChanged("CurrentTick");
+                }
+            }
+        }
+
+        public Int64 TicksPerSecond
+        {
+            get
+            {
+                if (model_Var != null)
+                    return model_Var.TicksPerSecond;
+                else
+                    return 0;
+            }
+            set
+            {
+                if (model_Var != null)
+                {
+                    model_Var.TicksPerSecond = value;
+                    OnPropertyChanged("TicksPerSecond");
                 }
             }
         }

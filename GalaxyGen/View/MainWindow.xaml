@@ -51,10 +51,21 @@
             <Button Command="{Binding RunMaxEngineCommand}" Content="RUN MAX" />
             <Button Command="{Binding RunEngineCommand}" Content="RUN" />
             <Button Command="{Binding StopEngineCommand}" Content="STOP" />
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Tick : " />
-                <TextBlock Text="{Binding Galaxy.CurrentTick}" />
-            </StackPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="T: " />
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding Galaxy.CurrentTick}" />
+
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="T/s: " />
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Galaxy.TicksPerSecond}" />
+            </Grid>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Background="Black">

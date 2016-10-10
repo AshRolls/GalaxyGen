@@ -37,9 +37,27 @@ namespace GalaxyGen.Model
             }
         }
 
+        
+        
+
         public Int64 MaxId { get; set; }
 
         public virtual ICollection<SolarSystem> SolarSystems { get; set; }
+
+        private Int64 ticksPerSecond_Var;
+        [JsonIgnore]
+        public Int64 TicksPerSecond
+        {
+            get
+            {
+                return ticksPerSecond_Var;
+            }
+            set
+            {
+                ticksPerSecond_Var = value;
+                OnPropertyChanged("TicksPerSecond");
+            }
+        }
 
         [JsonIgnore]
         public IActorRef Actor { get; set; }

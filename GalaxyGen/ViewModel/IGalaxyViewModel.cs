@@ -15,7 +15,8 @@ namespace GalaxyGen.ViewModel
         Galaxy Model { get; set; }
         IActorRef Actor { get; }
         String Name { get; set; }
-        Int64 CurrentTick { get; set; }
+        Int64 CurrentTick { get; }
+        Int64 TicksPerSecond { get; }
         ObservableCollection<ISolarSystemViewModel> SolarSystems { get; }
         ObservableCollection<IResourceTypeViewModel> ResourceTypes { get; }
     }

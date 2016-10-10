@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace GalaxyGen.Engine
 {
@@ -18,22 +19,35 @@ namespace GalaxyGen.Engine
 
     public class ActorTickEngineCoordinator : ReceiveActor
     {
-        Galaxy _state;
+        private Galaxy _state;
         private HashSet<IActorRef> _subscribedActorSolarSystems; // hashset here as faster than list for large number of items (>~20) http://stackoverflow.com/questions/150750/hashset-vs-list-performance
-        IActorRef _actorTextOutput;
-        TickEngineRunState _runState;
-        private Int64 _numberOfIncompleteSS;
+        private IActorRef _actorTextOutput;
+        private TickEngineRunState _runState;
+        private int _numberOfIncompleteSS;
+        private Timer _secondTimer;
+        private Int64 _ticksAtTimerStart;        
 
         public ActorTickEngineCoordinator(IActorRef actorTextOutput, Galaxy state)
         {
             _runState = TickEngineRunState.Stopped;
             _state = state;
             _state.Actor = Self;
-            _subscribedActorSolarSystems = new HashSet<IActorRef>();
             _actorTextOutput = actorTextOutput;
 
+            setupChildSolarSystemActors();
+
+            setupTimer();
+
+            Receive<MessageEngineRunCommand>(msg => receiveEngineRunCommand(msg));
+            Receive<MessageTick>(msg => receiveTick(msg));
+            Receive<MessageEngineSSCompletedCommand>(msg => receiveSSCompleted(msg));
+        }
+
+        private void setupChildSolarSystemActors()
+        {
             // create child actors for each solar system
             // TODO only subscribe child solar systems that are 'active' (ie have producer, agent, society etc)
+            _subscribedActorSolarSystems = new HashSet<IActorRef>();
             _numberOfIncompleteSS = _state.SolarSystems.Count();
             foreach (SolarSystem ss in _state.SolarSystems)
             {
@@ -41,10 +55,24 @@ namespace GalaxyGen.Engine
                 IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ss.SolarSystemId.ToString());
                 _subscribedActorSolarSystems.Add(actor);
             }
-            
-            Receive<MessageEngineRunCommand>(msg => receiveEngineRunCommand(msg));
-            Receive<MessageTick>(msg => receiveTick(msg));
-            Receive<MessageEngineSSCompletedCommand>(msg => receiveSSCompleted(msg));
+        }
+
+        private void setupTimer()
+        {
+            _secondTimer = new Timer(1000);
+            _secondTimer.Elapsed += _secondTimer_Elapsed;
+        }
+
+        private void startTicksTimer()
+        {
+            _ticksAtTimerStart = _state.CurrentTick;
+            _secondTimer.Start();
+        }
+
+        private void _secondTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            _state.TicksPerSecond = _state.CurrentTick - _ticksAtTimerStart;
+            _ticksAtTimerStart = _state.CurrentTick;
         }
 
         ICancelable _runCancel;
@@ -55,21 +83,26 @@ namespace GalaxyGen.Engine
             {
                 cancelPulse();
                 _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();                
-                _runState = TickEngineRunState.RunningMax;                
+                _runState = TickEngineRunState.RunningMax;
+                startTicksTimer();
                 receiveTick(pulse);
             }
             else if (msg.RunCommand == EngineRunCommand.RunPulse && _runState != TickEngineRunState.Running)
             {
                 _runState = TickEngineRunState.Running;
                 _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 20, Self, pulse, ActorRefs.Nobody);
+                startTicksTimer();
                 receiveTick(pulse);
             }
             else if (msg.RunCommand == EngineRunCommand.Stop && _runState != TickEngineRunState.Stopped)
             {
                 _runState = TickEngineRunState.Stopped;
                 cancelPulse();
+                _secondTimer.Stop();
             }
         }
+
+
 
         private void cancelPulse()
         {
@@ -95,11 +128,11 @@ namespace GalaxyGen.Engine
             {
                 _numberOfIncompleteSS--;
                 if (_numberOfIncompleteSS <= 0)
-                {
+                {                
                     _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
                     receiveTick(null);
                 }
-            }
+            }            
         }
 
     }
