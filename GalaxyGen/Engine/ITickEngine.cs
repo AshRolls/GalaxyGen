@@ -6,7 +6,7 @@ namespace GalaxyGen.Engine
     public interface ITickEngine
     {
         void SetupTickEngine(IGalaxyViewModel state, ITextOutputViewModel textOutput);
-        void Run();
+        void Run(bool maxRate);
         void Stop();
     }
 }

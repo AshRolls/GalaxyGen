@@ -14,5 +14,7 @@ namespace GalaxyGen.ViewModel
         ITextOutputViewModel TextOutput { get; set; }
         ICommand WindowClosing { get; }
         ICommand RunEngineCommand { get; }
+        ICommand RunMaxEngineCommand { get; }
+        ICommand StopEngineCommand { get; }
     }
 }

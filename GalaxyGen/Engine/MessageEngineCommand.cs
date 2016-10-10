@@ -9,7 +9,8 @@ namespace GalaxyGen.Engine
 {
     public enum EngineRunCommand
     {
-        Run,
+        RunMax,
+        RunPulse,
         Stop
     }
 

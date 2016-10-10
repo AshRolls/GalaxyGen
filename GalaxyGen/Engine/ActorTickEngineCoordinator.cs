@@ -12,6 +12,7 @@ namespace GalaxyGen.Engine
     public enum TickEngineRunState
     {
         Running,
+        RunningMax,
         Stopped
     }
 
@@ -46,23 +47,35 @@ namespace GalaxyGen.Engine
             Receive<MessageEngineSSCompletedCommand>(msg => receiveSSCompleted(msg));
         }
 
-        //ICancelable _runCancel;
+        ICancelable _runCancel;
         private void receiveEngineRunCommand(MessageEngineRunCommand msg)
         {
             MessageTick pulse = new MessageTick(0);
-            if (msg.RunCommand == EngineRunCommand.Run && _runState != TickEngineRunState.Running)
+            if (msg.RunCommand == EngineRunCommand.RunMax && _runState != TickEngineRunState.RunningMax)
             {
-                _runState = TickEngineRunState.Running;
-                //_runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 10, Self, pulse, ActorRefs.Nobody);
+                cancelPulse();
+                _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();                
+                _runState = TickEngineRunState.RunningMax;                
                 receiveTick(pulse);
             }
-            else if (msg.RunCommand == EngineRunCommand.Stop && _runState == TickEngineRunState.Running)
+            else if (msg.RunCommand == EngineRunCommand.RunPulse && _runState != TickEngineRunState.Running)
             {
-                //if (_runCancel != null)
-                //{
-                    _runState = TickEngineRunState.Stopped;
-                    //_runCancel.Cancel();                    
-                //}
+                _runState = TickEngineRunState.Running;
+                _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 20, Self, pulse, ActorRefs.Nobody);
+                receiveTick(pulse);
+            }
+            else if (msg.RunCommand == EngineRunCommand.Stop && _runState != TickEngineRunState.Stopped)
+            {
+                _runState = TickEngineRunState.Stopped;
+                cancelPulse();
+            }
+        }
+
+        private void cancelPulse()
+        {
+            if (_runCancel != null)
+            {
+                _runCancel.Cancel();
             }
         }
 
@@ -78,11 +91,14 @@ namespace GalaxyGen.Engine
 
         private void receiveSSCompleted(MessageEngineSSCompletedCommand msg)
         {
-            _numberOfIncompleteSS--;
-            if (_numberOfIncompleteSS == 0 && _runState == TickEngineRunState.Running)
+            if (_runState == TickEngineRunState.RunningMax)
             {
-                _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
-                receiveTick(null);
+                _numberOfIncompleteSS--;
+                if (_numberOfIncompleteSS <= 0)
+                {
+                    _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
+                    receiveTick(null);
+                }
             }
         }
 

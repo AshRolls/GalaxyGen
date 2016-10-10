@@ -162,19 +162,30 @@ namespace GalaxyGen.ViewModel
             }
         }
 
+
+        private RelayCommand runMaxEngineCommand;
+        public ICommand RunMaxEngineCommand
+        {
+            get
+            {
+                if (runMaxEngineCommand == null) runMaxEngineCommand = new RelayCommand(() => runEngine(true), () => canRunEngine());
+                return runMaxEngineCommand;
+            }
+        }
+
         private RelayCommand runEngineCommand;
         public ICommand RunEngineCommand
         {
             get
             {
-                if (runEngineCommand == null) runEngineCommand = new RelayCommand(() => runEngine(), () => canRunEngine());
+                if (runEngineCommand == null) runEngineCommand = new RelayCommand(() => runEngine(false), () => canRunEngine());
                 return runEngineCommand; 
             }
         }
 
-        private void runEngine()
+        private void runEngine(bool maxRate)
         {            
-            _tickEngine.Run();
+            _tickEngine.Run(maxRate);
         }
 
         private bool canRunEngine()
