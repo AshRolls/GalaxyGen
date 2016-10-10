@@ -24,7 +24,8 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
             _agent = ag;
-            _agent.Actor = Self;          
+            _agent.Actor = Self;
+            
 
             //_actorTextOutput.Tell("Agent initialised : " + _agent.Name);
 
@@ -36,6 +37,15 @@ namespace GalaxyGen.Engine
                 else if (s.ShipState == ShipStateEnum.Cruising)
                     Piloting();
             }
+            else
+            {
+                Default();
+            }                        
+        }
+
+        private void Default()
+        {
+            Receive<MessageTick>(msg => receiveDefaultTick(msg));
         }
 
         private void PilotingDocked()
@@ -54,10 +64,38 @@ namespace GalaxyGen.Engine
             Receive<MessageTick>(msg => receivePilotingTick(msg));
         }
 
-        private void receivePilotingTick(MessageTick msg)
+        private void receiveDefaultTick(MessageTick tick)
+        {            
+            sendAgentCompletedMessage(tick);
+        }
+
+        private void receivePilotingTick(MessageTick tick)
         {
             // head towards target
             //_actorTextOutput.Tell(@"I'm flying : " + _agent.Name);
+            sendAgentCompletedMessage(tick);
+        }
+
+        public IStash Stash { get; set; }
+
+        // TODO put in system for when we never receive a response!
+        private void receiveAwaitingTick(MessageTick tick)
+        {
+            Stash.Stash(); // stash messages while we are waiting for our response.
+            sendAgentCompletedMessage(tick);
+        }
+
+        private void receiveDockedTick(MessageTick tick)
+        {
+            //_actorTextOutput.Tell("TICK RCV H: " + _agentVm.Name + " " + tick.Tick.ToString());
+            if (_agent.AgentState == AgentStateEnum.PilotingShip && _agent.Location.GalType == TypeEnum.Ship)
+            {
+                Ship s = (Ship)_agent.Location;
+                MessageShipCommand cmd = new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, s.ShipId);
+                _actorSolarSystem.Tell(cmd);
+                Become(AwaitingUndockingResponse);
+            }
+            sendAgentCompletedMessage(tick);
         }
 
         private void receiveShipResponse(MessageShipResponse msg)
@@ -76,24 +114,10 @@ namespace GalaxyGen.Engine
             Stash.UnstashAll();
         }
 
-        public IStash Stash { get; set; }
-
-        // TODO put in system for when we never receive a response!
-        private void receiveAwaitingTick(MessageTick tick)
+        private void sendAgentCompletedMessage(MessageTick msg)
         {
-            Stash.Stash(); // stash messages while we are waiting for our response.
-        }
-
-        private void receiveDockedTick(MessageTick tick)
-        {
-            //_actorTextOutput.Tell("TICK RCV H: " + _agentVm.Name + " " + tick.Tick.ToString());
-            if (_agent.AgentState == AgentStateEnum.PilotingShip && _agent.Location.GalType == TypeEnum.Ship)
-            {
-                Ship s = (Ship)_agent.Location;
-                MessageShipCommand cmd = new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, s.ShipId);
-                _actorSolarSystem.Tell(cmd);
-                Become(AwaitingUndockingResponse);
-            }
+            MessageEngineAgCompletedCommand tickCompleteCmd = new MessageEngineAgCompletedCommand(_agent.AgentId, msg.Tick);
+            _actorSolarSystem.Tell(tickCompleteCmd);
         }
 
     }

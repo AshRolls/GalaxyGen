@@ -81,5 +81,13 @@ namespace GalaxyGen.Engine
             }
             return success;
         }
+
+        internal Int64 SolarSystemId
+        {
+            get
+            {
+                return _model.SolarSystemId;
+            }
+        }
     }
 }

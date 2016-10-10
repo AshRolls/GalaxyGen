@@ -107,7 +107,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\ActorPlanet.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\BluePrints.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
@@ -116,6 +115,7 @@
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
     <Compile Include="Engine\Message.cs" />
+    <Compile Include="Engine\MessageEngineAgCompletedCommand.cs" />
     <Compile Include="Engine\MessageEngineSSCompletedCommand.cs" />
     <Compile Include="Engine\MessageShipResponse.cs" />
     <Compile Include="Engine\MessageShipCommand.cs" />

@@ -51,7 +51,7 @@ namespace GalaxyGen.Engine
             _numberOfIncompleteSS = _state.SolarSystems.Count();
             foreach (SolarSystem ss in _state.SolarSystems)
             {
-                Props ssProps = Props.Create<ActorSolarSystem>(_actorTextOutput, ss);
+                Props ssProps = Props.Create<ActorSolarSystem>(Self, _actorTextOutput, ss);
                 IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ss.SolarSystemId.ToString());
                 _subscribedActorSolarSystems.Add(actor);
             }
@@ -126,11 +126,14 @@ namespace GalaxyGen.Engine
         {
             if (_runState == TickEngineRunState.RunningMax)
             {
-                _numberOfIncompleteSS--;
-                if (_numberOfIncompleteSS <= 0)
-                {                
-                    _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
-                    receiveTick(null);
+                if (msg.Tick == _state.CurrentTick)
+                {
+                    _numberOfIncompleteSS--;
+                    if (_numberOfIncompleteSS <= 0)
+                    {
+                        _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
+                        receiveTick(null);
+                    }
                 }
             }            
         }
