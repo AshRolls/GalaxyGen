@@ -21,6 +21,7 @@ namespace GalaxyGen.Engine
         private HashSet<IActorRef> _subscribedActorSolarSystems; // hashset here as faster than list for large number of items (>~20) http://stackoverflow.com/questions/150750/hashset-vs-list-performance
         IActorRef _actorTextOutput;
         TickEngineRunState _runState;
+        private Int64 _numberOfIncompleteSS;
 
         public ActorTickEngineCoordinator(IActorRef actorTextOutput, Galaxy state)
         {
@@ -28,37 +29,40 @@ namespace GalaxyGen.Engine
             _state = state;
             _state.Actor = Self;
             _subscribedActorSolarSystems = new HashSet<IActorRef>();
-            _actorTextOutput = actorTextOutput;          
+            _actorTextOutput = actorTextOutput;
 
             // create child actors for each solar system
             // TODO only subscribe child solar systems that are 'active' (ie have producer, agent, society etc)
+            _numberOfIncompleteSS = _state.SolarSystems.Count();
             foreach (SolarSystem ss in _state.SolarSystems)
             {
                 Props ssProps = Props.Create<ActorSolarSystem>(_actorTextOutput, ss);
                 IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ss.SolarSystemId.ToString());
                 _subscribedActorSolarSystems.Add(actor);
             }
-
+            
             Receive<MessageEngineRunCommand>(msg => receiveEngineRunCommand(msg));
             Receive<MessageTick>(msg => receiveTick(msg));
+            Receive<MessageEngineSSCompletedCommand>(msg => receiveSSCompleted(msg));
         }
 
-        ICancelable _runCancel;
+        //ICancelable _runCancel;
         private void receiveEngineRunCommand(MessageEngineRunCommand msg)
         {
             MessageTick pulse = new MessageTick(0);
             if (msg.RunCommand == EngineRunCommand.Run && _runState != TickEngineRunState.Running)
             {
                 _runState = TickEngineRunState.Running;
-                _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0,10, Self, pulse, ActorRefs.Nobody);
+                //_runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 10, Self, pulse, ActorRefs.Nobody);
+                receiveTick(pulse);
             }
             else if (msg.RunCommand == EngineRunCommand.Stop && _runState == TickEngineRunState.Running)
             {
-                if (_runCancel != null)
-                {
+                //if (_runCancel != null)
+                //{
                     _runState = TickEngineRunState.Stopped;
-                    _runCancel.Cancel();                    
-                }
+                    //_runCancel.Cancel();                    
+                //}
             }
         }
 
@@ -70,6 +74,16 @@ namespace GalaxyGen.Engine
             {
                 ssActor.Tell(tick);
             }           
+        }
+
+        private void receiveSSCompleted(MessageEngineSSCompletedCommand msg)
+        {
+            _numberOfIncompleteSS--;
+            if (_numberOfIncompleteSS == 0 && _runState == TickEngineRunState.Running)
+            {
+                _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
+                receiveTick(null);
+            }
         }
 
     }

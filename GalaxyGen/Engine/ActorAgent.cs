@@ -26,7 +26,7 @@ namespace GalaxyGen.Engine
             _agent = ag;
             _agent.Actor = Self;          
 
-            _actorTextOutput.Tell("Agent initialised : " + _agent.Name);
+            //_actorTextOutput.Tell("Agent initialised : " + _agent.Name);
 
             if (_agent.AgentState == AgentStateEnum.PilotingShip && _agent.Location.GalType == TypeEnum.Ship)
             {
@@ -57,7 +57,7 @@ namespace GalaxyGen.Engine
         private void receivePilotingTick(MessageTick msg)
         {
             // head towards target
-            _actorTextOutput.Tell(@"I'm flying : " + _agent.Name);
+            //_actorTextOutput.Tell(@"I'm flying : " + _agent.Name);
         }
 
         private void receiveShipResponse(MessageShipResponse msg)

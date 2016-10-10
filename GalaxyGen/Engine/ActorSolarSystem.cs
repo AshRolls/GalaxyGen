@@ -18,11 +18,13 @@ namespace GalaxyGen.Engine
         private SolarSystemController _solarSystemC;
         private List<IActorRef> _subscribedActorAgents;
         private Int64 _curTick;
+        private MessageEngineSSCompletedCommand _tickCompleteCmd;
 
         public ActorSolarSystem(IActorRef actorTextOutput, SolarSystem ss)
         {
             _actorTextOutput = actorTextOutput;
             ss.Actor = Self;
+            _tickCompleteCmd = new MessageEngineSSCompletedCommand(ss.SolarSystemId);
             _solarSystemC = new SolarSystemController(ss, actorTextOutput);
 
             // create child actors for each agent in ss
@@ -40,6 +42,7 @@ namespace GalaxyGen.Engine
            //_actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
         }
 
+         
         private void receiveTick(MessageTick tick)
         {
             _curTick = tick.Tick;
@@ -48,6 +51,7 @@ namespace GalaxyGen.Engine
             {
                 agentActor.Tell(tick);
             }
+            Sender.Tell(_tickCompleteCmd);
         }
 
         private void receiveShipCommand(MessageShipCommand msg)
