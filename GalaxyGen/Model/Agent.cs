@@ -18,7 +18,13 @@ namespace GalaxyGen.Model
         Planetside
     }
 
-    public class Agent : ModelNotifyBase
+    public enum AgentTypeEnum
+    {
+        Default,
+        Trader
+    }
+
+    public class Agent : ModelNotifyBase, IReadOnlyAgent
     {      
         public Agent()
         {
@@ -31,6 +37,7 @@ namespace GalaxyGen.Model
         public Int64 AgentId { get; set; }
 
         public String Name { get; set; }
+        public AgentTypeEnum Type { get; set; }
 
         private AgentStateEnum AgentState_Var;
         public AgentStateEnum AgentState

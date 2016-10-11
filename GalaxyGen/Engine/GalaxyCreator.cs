@@ -54,31 +54,31 @@ namespace GalaxyGen.Engine
 
             gal.SolarSystems.Add(ss);
 
-            for (int i = 0; i < 10000; i++)
-            {
-                SolarSystem ss1 = this.GetSolarSystem(i.ToString());
-                Planet p1 = this.GetPlanet(i.ToString(), 150000000d, 365);                
-                Agent newAg = this.GetAgent(i.ToString());
-                newAg.Location = p1;
-                Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-                pr.Owner = newAg;
-                newAg.Producers.Add(pr);
-                p1.Producers.Add(pr);
-                Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-                pr2.Owner = newAg;
-                newAg.Producers.Add(pr2);
-                p1.Producers.Add(pr2);
-                addNewStoreToPlanet(p1, newAg);
-                ss1.Agents.Add(newAg);
-                ss1.Planets.Add(p1);                
-                Planet p3 = this.GetPlanet("p3".ToString(), 180000000d, 780);
-                Planet p4 = this.GetPlanet("p4".ToString(), 210000000d, 280);
-                Planet p5 = this.GetPlanet("p5", 120000000d, 120);
-                ss1.Planets.Add(p3);
-                ss1.Planets.Add(p4);
-                ss1.Planets.Add(p5);
-                gal.SolarSystems.Add(ss1);
-            }
+            //for (int i = 0; i < 10000; i++)
+            //{
+            //    SolarSystem ss1 = this.GetSolarSystem(i.ToString());
+            //    Planet p1 = this.GetPlanet(i.ToString(), 150000000d, 365);                
+            //    Agent newAg = this.GetAgent(i.ToString());
+            //    newAg.Location = p1;
+            //    Producer pr = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+            //    pr.Owner = newAg;
+            //    newAg.Producers.Add(pr);
+            //    p1.Producers.Add(pr);
+            //    Producer pr2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+            //    pr2.Owner = newAg;
+            //    newAg.Producers.Add(pr2);
+            //    p1.Producers.Add(pr2);
+            //    addNewStoreToPlanet(p1, newAg);
+            //    ss1.Agents.Add(newAg);
+            //    ss1.Planets.Add(p1);                
+            //    Planet p3 = this.GetPlanet("p3".ToString(), 180000000d, 780);
+            //    Planet p4 = this.GetPlanet("p4".ToString(), 210000000d, 280);
+            //    Planet p5 = this.GetPlanet("p5", 120000000d, 120);
+            //    ss1.Planets.Add(p3);
+            //    ss1.Planets.Add(p4);
+            //    ss1.Planets.Add(p5);
+            //    gal.SolarSystems.Add(ss1);
+            //}
 
             return gal;
         }
