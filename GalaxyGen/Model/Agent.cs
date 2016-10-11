@@ -24,7 +24,7 @@ namespace GalaxyGen.Model
         Trader
     }
 
-    public class Agent : ModelNotifyBase, IReadOnlyAgent
+    public class Agent : IReadOnlyAgent
     {      
         public Agent()
         {
@@ -38,20 +38,7 @@ namespace GalaxyGen.Model
 
         public String Name { get; set; }
         public AgentTypeEnum Type { get; set; }
-
-        private AgentStateEnum AgentState_Var;
-        public AgentStateEnum AgentState
-        {
-            get
-            {
-                return AgentState_Var;
-            }
-            set
-            {
-                AgentState_Var = value;
-                OnPropertyChanged("AgentState");
-            }
-        }
+        public AgentStateEnum AgentState { get; set; }
 
         public ICollection<Producer> Producers { get; set; }
         public ICollection<Store> Stores { get; set; }

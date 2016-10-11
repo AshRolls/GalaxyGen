@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {   
-    public class Planet : ModelNotifyBase, IAgentLocation, IStoreLocation
+    public class Planet : IAgentLocation, IStoreLocation
     {
         public Planet()
         {
@@ -30,34 +30,9 @@ namespace GalaxyGen.Model
 
         public Double OrbitKm { get; set; }
         public Double OrbitDays { get; set; }
+        public Double PositionX { get; set; }
+        public Double PositionY { get; set; }
 
-        private Double positionX_Var;
-        public Double PositionX
-        {
-            get
-            {
-                return positionX_Var;
-            }
-            set
-            {
-                positionX_Var = value;
-                OnPropertyChanged("PositionX");
-            }
-        }
-
-        private Double positionY_Var;
-        public Double PositionY
-        {
-            get
-            {
-                return positionY_Var;
-            }
-            set
-            {
-                positionY_Var = value;
-                OnPropertyChanged("PositionY");
-            }
-        }
 
         [StringLength(60)]
         public String Name { get; set; }

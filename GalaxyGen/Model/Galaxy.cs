@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Model
 {
-    public class Galaxy : ModelNotifyBase
+    public class Galaxy
     {
         public Galaxy()
         {
@@ -23,42 +23,15 @@ namespace GalaxyGen.Model
 
         [StringLength(60)]
         public String Name { get; set; }
-
-        private Int64 currentTick_Var;
-        public Int64 CurrentTick {
-            get
-            {
-                return currentTick_Var;
-            }
-            set
-            {
-                currentTick_Var = value;
-                OnPropertyChanged("CurrentTick");
-            }
-        }
-
         
-        
+        public Int64 CurrentTick { get; set; }
 
         public Int64 MaxId { get; set; }
 
         public virtual ICollection<SolarSystem> SolarSystems { get; set; }
 
-        private Int64 ticksPerSecond_Var;
         [JsonIgnore]
-        public Int64 TicksPerSecond
-        {
-            get
-            {
-                return ticksPerSecond_Var;
-            }
-            set
-            {
-                ticksPerSecond_Var = value;
-                OnPropertyChanged("TicksPerSecond");
-            }
-        }
-
+        public Int64 TicksPerSecond { get; set; }
         [JsonIgnore]
         public IActorRef Actor { get; set; }
     }

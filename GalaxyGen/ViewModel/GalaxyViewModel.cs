@@ -7,16 +7,38 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace GalaxyGen.ViewModel
 {
     public class GalaxyViewModel : IGalaxyViewModel
     {
         ISolarSystemViewModelFactory solarSystemViewModelFactory;
-        
+        private Timer _refreshTimer;
+
         public GalaxyViewModel(ISolarSystemViewModelFactory initSolarSystemViewModelFactory)
         {
-            solarSystemViewModelFactory = initSolarSystemViewModelFactory;            
+            solarSystemViewModelFactory = initSolarSystemViewModelFactory;
+            setupAndStartTimer();
+        }
+
+        private void setupAndStartTimer()
+        {
+            _refreshTimer = new Timer(50);
+            _refreshTimer.Elapsed += _refreshTimer_Elapsed;
+            _refreshTimer.Start();
+        }        
+
+        private void _refreshTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            refreshAllProperties();
+        }
+
+        private void refreshAllProperties()
+        {
+            OnPropertyChanged("Name");
+            OnPropertyChanged("CurrentTick");
+            OnPropertyChanged("TicksPerSecond");
         }
 
         public IActorRef Actor
@@ -36,14 +58,9 @@ namespace GalaxyGen.ViewModel
             get { return model_Var; }
             set
             {     
-                if (model_Var != null)
-                    model_Var.PropertyChanged -= Model_Var_PropertyChanged;
 
                 model_Var = value;
                 updateFromModel();
-
-                if (model_Var != null)
-                    model_Var.PropertyChanged += Model_Var_PropertyChanged;
 
                 OnPropertyChanged("Model");
             }
@@ -58,19 +75,6 @@ namespace GalaxyGen.ViewModel
                 ssVm.Model = ss;
                 solarSystems_Var.Add(ssVm);
             }            
-        }
-
-        private void Model_Var_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "CurrentTick")
-            {
-                OnPropertyChanged("CurrentTick");
-            }
-            else if (e.PropertyName == "TicksPerSecond")
-            {
-                OnPropertyChanged("TicksPerSecond");
-            }
-
         }
 
         public String Name

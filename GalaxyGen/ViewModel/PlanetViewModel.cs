@@ -7,18 +7,41 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace GalaxyGen.ViewModel
 {
     public class PlanetViewModel : IPlanetViewModel
     {
         private IProducerViewModelFactory _producerVmFactory;
+        private Timer _refreshTimer;
 
         public PlanetViewModel(ISocietyViewModelFactory initSocietyViewModelFactory, IProducerViewModelFactory initProducerVmFactory)
         {            
             _producerVmFactory = initProducerVmFactory;
             ISocietyViewModelFactory societyViewModelFactory = initSocietyViewModelFactory;
             this.Society = societyViewModelFactory.CreateSocietyViewModel();
+            setupAndStartTimer();
+        }
+
+        private void setupAndStartTimer()
+        {
+            _refreshTimer = new Timer(50);
+            _refreshTimer.Elapsed += _refreshTimer_Elapsed;
+            _refreshTimer.Start();
+        }
+
+        private void _refreshTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            refreshAllProperties();
+        }
+
+        private void refreshAllProperties()
+        {
+            OnPropertyChanged("PositionX");
+            OnPropertyChanged("PositionY");
+            updatePosX300();
+            updatePosY300();
         }
 
 
@@ -28,14 +51,9 @@ namespace GalaxyGen.ViewModel
             get { return model_Var; }
             set
             {
-                if (model_Var != null)
-                    model_Var.PropertyChanged -= Model_Var_PropertyChanged;
 
                 model_Var = value;
                 updateFromModel();
-
-                if (model_Var != null)
-                    model_Var.PropertyChanged += Model_Var_PropertyChanged;
 
                 OnPropertyChanged("Model");
             }
@@ -44,7 +62,7 @@ namespace GalaxyGen.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
-            Population = model_Var.Population;           
+            //Population = model_Var.Population;           
             societyVm_Var.Model = model_Var.Society;
 
             foreach (Producer prod in model_Var.Producers)
@@ -53,21 +71,7 @@ namespace GalaxyGen.ViewModel
                 prodVm.Model = prod;
                 producers_Var.Add(prodVm);
             }
-        }
-
-        private void Model_Var_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "PositionX")
-            {
-                OnPropertyChanged("PositionX");
-                updatePosX300();
-            }
-            else if (e.PropertyName == "PositionY")
-            {
-                OnPropertyChanged("PositionY");
-                updatePosY300();
-            }
-        }       
+        }   
 
         public String Name
         {
@@ -86,24 +90,24 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        public Int64 Population
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Population;
-                else
-                    return 0;
-            }
-            set
-            {
-                if (model_Var != null)
-                { 
-                    model_Var.Population = value;
-                    OnPropertyChanged("Population");
-                }
-            }
-        }
+        //public Int64 Population
+        //{
+        //    get
+        //    {
+        //        if (model_Var != null)
+        //            return model_Var.Population;
+        //        else
+        //            return 0;
+        //    }
+        //    set
+        //    {
+        //        if (model_Var != null)
+        //        { 
+        //            model_Var.Population = value;
+        //            OnPropertyChanged("Population");
+        //        }
+        //    }
+        //}
 
         public Double PositionX
         {

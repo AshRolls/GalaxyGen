@@ -19,7 +19,7 @@ namespace GalaxyGen.Model
         Cruising
     }
 
-    public class Ship : ModelNotifyBase, IAgentLocation, IStoreLocation
+    public class Ship : IAgentLocation, IStoreLocation
     {
         public Ship()
         {
@@ -35,47 +35,10 @@ namespace GalaxyGen.Model
         [StringLength(60)]
         public String Name { get; set; }
 
-        private ShipStateEnum shipState_Var;
-        public ShipStateEnum ShipState
-        {
-            get
-            {
-                return shipState_Var;
-            }
-            set
-            {
-                shipState_Var = value;
-                OnPropertyChanged("ShipState");
-            }
-        }
+        public ShipStateEnum ShipState { get; set; }
+        public Double PositionX { get; set; }
+        public Double PositionY { get; set; }
 
-        private Double positionX_Var;
-        public Double PositionX
-        {
-            get
-            {
-                return positionX_Var;
-            }
-            set
-            {
-                positionX_Var = value;
-                OnPropertyChanged("PositionX");
-            }
-        }
-
-        private Double positionY_Var;
-        public Double PositionY
-        {
-            get
-            {
-                return positionY_Var;
-            }
-            set
-            {
-                positionY_Var = value;
-                OnPropertyChanged("PositionY");
-            }
-        }
 
         public Agent Owner { get; set; }
         public Agent Pilot { get; set; }
