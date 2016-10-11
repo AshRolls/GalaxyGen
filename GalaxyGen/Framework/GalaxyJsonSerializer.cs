@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
+using System.IO.Compression;
 
 namespace GalaxyGen.Framework
 {
@@ -14,14 +15,22 @@ namespace GalaxyGen.Framework
         {         
             JsonSerializer jsSer = new JsonSerializer();
             jsSer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+            jsSer.Formatting = Formatting.None;
+            jsSer.NullValueHandling = NullValueHandling.Ignore;
 
-            using (StreamWriter sw = new StreamWriter(saveFile))
+            using (FileStream stream = new FileStream(saveFile, FileMode.Create, FileAccess.Write)) 
             {
-                using (JsonWriter jsWriter = new JsonTextWriter(sw))
-                {                    
-                    jsSer.Serialize(jsWriter, gal);
-                }                                              
-            }            
+                using (GZipStream gzip = new GZipStream(stream, CompressionMode.Compress))
+                {
+                    using (StreamWriter sw = new StreamWriter(gzip))
+                    {
+                        using (JsonWriter jsWriter = new JsonTextWriter(sw))
+                        {
+                            jsSer.Serialize(jsWriter, gal);
+                        }
+                    }
+                }
+            }         
         }
 
 
@@ -30,14 +39,20 @@ namespace GalaxyGen.Framework
             Galaxy gal = null;
             if (File.Exists(saveFile))
             {
-                using (StreamReader sr = new StreamReader(saveFile))
+                using (FileStream stream = new FileStream(saveFile, FileMode.Open, FileAccess.Read))
                 {
-                    using (JsonReader jr = new JsonTextReader(sr))
+                    using (GZipStream gzip = new GZipStream(stream, CompressionMode.Compress))
                     {
-                        JsonSerializer jsSer = new JsonSerializer();
-                        jsSer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
-                        jsSer.Converters.Add(new GalaxyConverter());
-                        gal = jsSer.Deserialize<Galaxy>(jr);
+                        using (StreamReader sr = new StreamReader(saveFile))
+                        {
+                            using (JsonReader jr = new JsonTextReader(sr))
+                            {
+                                JsonSerializer jsSer = new JsonSerializer();
+                                jsSer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+                                jsSer.Converters.Add(new GalaxyConverter());
+                                gal = jsSer.Deserialize<Galaxy>(jr);
+                            }
+                        }
                     }
                 }
             }
