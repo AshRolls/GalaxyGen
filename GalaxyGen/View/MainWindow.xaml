@@ -22,7 +22,6 @@
             <ColumnDefinition Width="3*" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />
@@ -46,8 +45,20 @@
         </DockPanel>
         <local:AgentControl Grid.Column="5" Grid.Row="0" AgentVm="{Binding SelectedAgent}" />
 
-        
-        <StackPanel Orientation="Vertical" Grid.Row="0" Grid.Column="6">
+
+
+
+        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="5" Background="Black" Margin="10, 10, 0, 10">
+            <ItemsControl ItemsSource="{Binding TextOutput.ConsoleLines, Mode=OneWay}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Foreground="White" FontFamily="Consolas"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="6" Margin="10">
             <Button Command="{Binding RunMaxEngineCommand}" Content="RUN MAX" />
             <Button Command="{Binding RunEngineCommand}" Content="RUN" />
             <Button Command="{Binding StopEngineCommand}" Content="STOP" />
@@ -67,15 +78,5 @@
                 <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Galaxy.TicksPerSecond}" />
             </Grid>
         </StackPanel>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="7" Background="Black">
-            <ItemsControl ItemsSource="{Binding TextOutput.ConsoleLines, Mode=OneWay}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" Foreground="White" FontFamily="Consolas"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
     </Grid>
 </Window>
