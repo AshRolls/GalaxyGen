@@ -142,7 +142,6 @@
     <Compile Include="Model\IReadOnlyAgent.cs" />
     <Compile Include="Model\IStoreLocation.cs" />
     <Compile Include="Model\IAgentLocation.cs" />
-    <Compile Include="Model\ModelNotifyBase.cs" />
     <Compile Include="Model\Ship.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Model\Producer.cs" />

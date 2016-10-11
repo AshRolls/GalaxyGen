@@ -56,8 +56,10 @@ namespace GalaxyGen.Engine
             switch (_currentState)
             {
                 case InternalAgentState.Planetside:
-                case InternalAgentState.Piloting:
                 case InternalAgentState.PilotingAwaitingUndockingResponse:
+                    break;
+                case InternalAgentState.Piloting:
+                    message = pilotingShip();                
                     break;
                 case InternalAgentState.PilotingDockedShip:
                     message = pilotingDockedShip(tick);
@@ -65,7 +67,7 @@ namespace GalaxyGen.Engine
             }
 
             return message;
-        }
+        }        
 
         private bool isPilotingShip()
         {
@@ -78,6 +80,7 @@ namespace GalaxyGen.Engine
             {
                 Ship s = (Ship)_model.Location;                
                 _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
+                _actorTextOutput.Tell("Agent Requesting Undock");
                 return new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, s.ShipId);
             }
             return null;
@@ -90,6 +93,7 @@ namespace GalaxyGen.Engine
                 if (msg.Response == true)
                 {
                     _currentState = InternalAgentState.Piloting;
+                    _actorTextOutput.Tell("Agent Undock Granted");
                 }
                 else
                 {
@@ -97,6 +101,12 @@ namespace GalaxyGen.Engine
                 }
             }
         }
-        
+
+        private object pilotingShip()
+        {
+            //_actorTextOutput.Tell("Agent Piloting Ship");
+            return null;
+        }
+
     }
 }
