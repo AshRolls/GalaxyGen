@@ -43,7 +43,7 @@ namespace GalaxyGen.Framework
                 {
                     using (GZipStream gzip = new GZipStream(stream, CompressionMode.Decompress))
                     {
-                        using (StreamReader sr = new StreamReader(saveFile))
+                        using (StreamReader sr = new StreamReader(gzip))
                         {
                             using (JsonReader jr = new JsonTextReader(sr))
                             {
