@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenTests", "..\Galaxy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenAgentClient", "..\GalaxyGenAgentClient\GalaxyGenAgentClient.csproj", "{376458BA-0453-4A7B-B8D1-8FEF4F69C172}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenCore", "GalaxyGenCore\GalaxyGenCore.csproj", "{C9AA7A47-80F4-47F9-A222-C94CC4EABE3A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenCore", "..\GalaxyGenCore\GalaxyGenCore.csproj", "{C9AA7A47-80F4-47F9-A222-C94CC4EABE3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

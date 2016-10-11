@@ -249,7 +249,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="GalaxyGenCore\GalaxyGenCore.csproj">
+    <ProjectReference Include="..\GalaxyGenCore\GalaxyGenCore.csproj">
       <Project>{c9aa7a47-80f4-47f9-a222-c94cc4eabe3a}</Project>
       <Name>GalaxyGenCore</Name>
     </ProjectReference>
