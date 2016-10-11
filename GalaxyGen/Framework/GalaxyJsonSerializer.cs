@@ -2,12 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalaxyGen.Framework
 {
@@ -16,21 +11,35 @@ namespace GalaxyGen.Framework
         public const string saveFile = @"C:\Space\galDbJson.gal";
 
         public static void SerializeAndSave(Galaxy gal)
-        {            
-            JsonSerializerSettings settings = new JsonSerializerSettings() { PreserveReferencesHandling = PreserveReferencesHandling.Objects };
-            string ser = JsonConvert.SerializeObject(gal, Formatting.Indented, settings); // TODO change formatting when we think we need a touch of extra speed
-            File.WriteAllText(saveFile,ser);
+        {         
+            JsonSerializer jsSer = new JsonSerializer();
+            jsSer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+
+            using (StreamWriter sw = new StreamWriter(saveFile))
+            {
+                using (JsonWriter jsWriter = new JsonTextWriter(sw))
+                {                    
+                    jsSer.Serialize(jsWriter, gal);
+                }                                              
+            }            
         }
+
 
         public static Galaxy Deserialize()
         {
             Galaxy gal = null;
             if (File.Exists(saveFile))
             {
-                String json = File.ReadAllText(saveFile);
-                JsonSerializerSettings settings = new JsonSerializerSettings() { PreserveReferencesHandling = PreserveReferencesHandling.Objects };
-                settings.Converters.Add(new GalaxyConverter());
-                gal = JsonConvert.DeserializeObject<Galaxy>(json, settings);                
+                using (StreamReader sr = new StreamReader(saveFile))
+                {
+                    using (JsonReader jr = new JsonTextReader(sr))
+                    {
+                        JsonSerializer jsSer = new JsonSerializer();
+                        jsSer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+                        jsSer.Converters.Add(new GalaxyConverter());
+                        gal = jsSer.Deserialize<Galaxy>(jr);
+                    }
+                }
             }
             return gal;
         }
