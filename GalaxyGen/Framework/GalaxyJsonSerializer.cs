@@ -41,7 +41,7 @@ namespace GalaxyGen.Framework
             {
                 using (FileStream stream = new FileStream(saveFile, FileMode.Open, FileAccess.Read))
                 {
-                    using (GZipStream gzip = new GZipStream(stream, CompressionMode.Compress))
+                    using (GZipStream gzip = new GZipStream(stream, CompressionMode.Decompress))
                     {
                         using (StreamReader sr = new StreamReader(saveFile))
                         {

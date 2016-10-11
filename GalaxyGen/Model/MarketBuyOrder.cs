@@ -1,4 +1,5 @@
 ﻿using GalaxyGen.Engine;
+using GalaxyGenCore;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

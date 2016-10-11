@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GalaxyGen.Model;
 using Ninject;
 using GalaxyGen.Framework;
+using GalaxyGenCore;
 
 namespace GalaxyGen.Engine
 {
@@ -53,7 +54,7 @@ namespace GalaxyGen.Engine
 
             gal.SolarSystems.Add(ss);
 
-            for (int i = 0; i < 15000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 SolarSystem ss1 = this.GetSolarSystem(i.ToString());
                 Planet p1 = this.GetPlanet(i.ToString(), 150000000d, 365);                

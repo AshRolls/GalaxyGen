@@ -1,18 +1,22 @@
-﻿using GalaxyGen.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GalaxyGen.Engine
+namespace GalaxyGenCore
 {
     public enum ResourceTypeEnum
     {
         NotSet = 0,
         Spice = 1,
         Platinum = 2
+    }
+
+    public struct ResourceQuantity
+    {
+        public ResourceTypeEnum Type { get; set; }
+        public UInt64 Quantity { get; set; }
     }
 
     public class ResourceType
@@ -41,17 +45,17 @@ namespace GalaxyGen.Engine
 
         public static ResourceType GetResource(ResourceTypeEnum resType)
         {
-            int resIdx = (int)resType;            
+            int resIdx = (int)resType;
             return types_Var[resIdx];
         }
     }
 
     public class ResourceTypeInitialiser
-    {                        
+    {
         public ResourceTypeInitialiser()
         {
             // pull these in from XML eventually
-            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = getResource(ResourceTypeEnum.Spice, "Spice", 10, 5); 
+            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = getResource(ResourceTypeEnum.Spice, "Spice", 10, 5);
             ResourceTypes.Types[(int)ResourceTypeEnum.Platinum] = getResource(ResourceTypeEnum.Platinum, "Platinum", 0.5, 25);
         }
 

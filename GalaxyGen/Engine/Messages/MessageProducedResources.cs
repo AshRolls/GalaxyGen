@@ -1,4 +1,5 @@
 ﻿using GalaxyGen.Model;
+using GalaxyGenCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
 ﻿using GalaxyGen.Model;
+using GalaxyGenCore;
 using System.Collections.Generic;
 
 namespace GalaxyGen.Engine

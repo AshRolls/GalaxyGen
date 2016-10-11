@@ -2,6 +2,7 @@
 using GalaxyGen.Engine;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
+using GalaxyGenCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

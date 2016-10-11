@@ -116,23 +116,22 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
-    <Compile Include="Engine\BluePrints.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
     <Compile Include="Engine\Controllers\AgentController.cs" />
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
-    <Compile Include="Engine\Message.cs" />
-    <Compile Include="Engine\MessageEngineAgCompletedCommand.cs" />
-    <Compile Include="Engine\MessageEngineSSCompletedCommand.cs" />
-    <Compile Include="Engine\MessageShipResponse.cs" />
-    <Compile Include="Engine\MessageShipCommand.cs" />
-    <Compile Include="Engine\MessageProducerCommand.cs" />
-    <Compile Include="Engine\MessageProducedResources.cs" />
-    <Compile Include="Engine\MessageRequestResources.cs" />
-    <Compile Include="Engine\MessageResources.cs" />
-    <Compile Include="Engine\MessageTick.cs" />
-    <Compile Include="Engine\MessageEngineCommand.cs" />
+    <Compile Include="Engine\Messages\Message.cs" />
+    <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
+    <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
+    <Compile Include="Engine\Messages\MessageShipResponse.cs" />
+    <Compile Include="Engine\Messages\MessageShipCommand.cs" />
+    <Compile Include="Engine\Messages\MessageProducerCommand.cs" />
+    <Compile Include="Engine\Messages\MessageProducedResources.cs" />
+    <Compile Include="Engine\Messages\MessageRequestResources.cs" />
+    <Compile Include="Engine\Messages\MessageResources.cs" />
+    <Compile Include="Engine\Messages\MessageTick.cs" />
+    <Compile Include="Engine\Messages\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Framework\GalaxyJsonSerializer.cs" />
@@ -143,13 +142,11 @@
     <Compile Include="Model\IAgentLocation.cs" />
     <Compile Include="Model\ModelNotifyBase.cs" />
     <Compile Include="Model\Ship.cs" />
-    <Compile Include="Model\ResourceQuantity.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Model\Producer.cs" />
     <Compile Include="Model\Agent.cs" />
     <Compile Include="Model\Galaxy.cs" />
     <Compile Include="Model\MarketBuyOrder.cs" />
-    <Compile Include="Engine\ResourceTypes.cs" />
     <Compile Include="Model\SolarSystem.cs" />
     <Compile Include="Model\TypeEnum.cs" />
     <Compile Include="ViewModel\IAgentViewModel.cs" />
@@ -251,7 +248,12 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="GalaxyGenCore\GalaxyGenCore.csproj">
+      <Project>{c9aa7a47-80f4-47f9-a222-c94cc4eabe3a}</Project>
+      <Name>GalaxyGenCore</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

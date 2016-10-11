@@ -1,13 +1,11 @@
-﻿using GalaxyGen.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GalaxyGen.Engine
+namespace GalaxyGenCore
 {
     public enum BluePrintEnum
     {
@@ -43,7 +41,7 @@ namespace GalaxyGen.Engine
             get
             {
                 if (typesReadOnly_Var == null)
-                {                    
+                {
                     ReadOnlyCollection<BluePrint> typesReadOnly_Var = new ReadOnlyCollection<BluePrint>(types_Var);
                 }
                 return typesReadOnly_Var;
@@ -56,7 +54,7 @@ namespace GalaxyGen.Engine
 
         public static BluePrint GetBluePrint(BluePrintEnum bpType)
         {
-            int bpIdx = (int)bpType;            
+            int bpIdx = (int)bpType;
             return types_Var[bpIdx];
         }
 
@@ -86,5 +84,5 @@ namespace GalaxyGen.Engine
             BluePrint bp = new BluePrint(type, name, produces, consumes, baseTicks);
             return bp;
         }
-    }   
+    }
 }
