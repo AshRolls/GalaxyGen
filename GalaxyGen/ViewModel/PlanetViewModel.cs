@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Model;
+using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -61,7 +62,8 @@ namespace GalaxyGen.ViewModel
 
         private void updateFromModel()
         {
-            Name = model_Var.Name;
+            ScPlanet p = StarChart.GetPlanet(model_Var.StarChartId);
+            name_Var = p.Name;
             //Population = model_Var.Population;           
             societyVm_Var.Model = model_Var.Society;
 
@@ -71,22 +73,13 @@ namespace GalaxyGen.ViewModel
                 prodVm.Model = prod;
                 producers_Var.Add(prodVm);
             }
-        }   
+        }
 
+        private string name_Var;
         public String Name
         {
             get {
-                if (model_Var != null)
-                    return model_Var.Name;
-                else
-                    return null;
-            }
-            set {
-                if (model_Var != null)
-                {
-                    model_Var.Name = value;
-                    OnPropertyChanged("Name");
-                }
+                return name_Var;
             }
         }
 

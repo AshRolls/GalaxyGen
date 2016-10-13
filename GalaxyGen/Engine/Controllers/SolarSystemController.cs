@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
+using GalaxyGenCore.StarChart;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace GalaxyGen.Engine
         private Dictionary<Int64, PlanetController> _planetCs;
         private IEnumerable _planetValues;
         private Dictionary<Int64,ShipController> _shipCs;
-        private IActorRef _actorTextOutput;             
+        private IActorRef _actorTextOutput;
 
         public SolarSystemController(SolarSystem ss, IActorRef actorTextOutput)
         {
@@ -42,8 +43,7 @@ namespace GalaxyGen.Engine
         }
 
         public void Tick(MessageTick tick)
-        {
-            movePlanetXY(tick);            
+        {                       
             updatePlanets(tick);
         }
         
@@ -52,16 +52,6 @@ namespace GalaxyGen.Engine
             foreach (PlanetController pc in _planetValues)
             {
                 pc.Tick(tick);
-            }
-        }
-
-        private void movePlanetXY(MessageTick tick)
-        {
-            foreach (Planet p in _model.Planets)
-            {
-                PointD pt = OrbitalUtils.CalcPositionFromTick(tick.Tick, p.OrbitDays, p.OrbitKm);
-                p.PositionX = pt.X;
-                p.PositionY = pt.Y;
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Model;
+using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +60,8 @@ namespace GalaxyGen.Engine
             initStr.Append(" [");
             if (_model.ShipState == ShipStateEnum.Docked)
             {
-                initStr.Append(_model.DockedPlanet.Name);
+                ScPlanet p = StarChart.GetPlanet(_model.DockedPlanet.StarChartId);
+                initStr.Append(p.Name);
             }
             else
             {

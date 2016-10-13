@@ -3,6 +3,7 @@ using GalaxyGen.Engine;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore;
+using GalaxyGenCore.StarChart;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace GalaxyGen.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
     {        
-        IGalaxyCreator _galaxyCreator;
+        IGalaxyPopulator _galaxyCreator;
         ITickEngine _tickEngine;
 
         IGalaxyViewModelFactory _galaxyViewModelFactory;
@@ -28,7 +29,7 @@ namespace GalaxyGen.ViewModel
         // should improve this system don't need them hanging around
         ResourceTypeInitialiser _resourceTypeInitialiser;  
         
-        public MainGalaxyViewModel(IGalaxyCreator initGalaxyCreator, 
+        public MainGalaxyViewModel(IGalaxyPopulator initGalaxyCreator, 
                                     IGalaxyViewModelFactory initGalaxyViewModelFactory, 
                                     ISolarSystemViewModelFactory initSolarSystemViewModelFactory, 
                                     IPlanetViewModelFactory initPlanetViewModelFactory, 
@@ -44,9 +45,9 @@ namespace GalaxyGen.ViewModel
 
             TextOutput = initTextOutputViewModel;
 
+            StarChart.InitialiseStarChart();
             _resourceTypeInitialiser = new ResourceTypeInitialiser(); // TODO modify resources to use same sys as bp
             BluePrints.initialiseBluePrints();
-
 
             loadOrCreateGalaxy();
             initialiseEngine();
@@ -56,12 +57,12 @@ namespace GalaxyGen.ViewModel
 
         private void loadOrCreateGalaxy()
         {
-            Galaxy gal = GalaxyJsonSerializer.Deserialize();
+            Galaxy gal = GalaxyLoader.Load();
             if (gal == null)
             {
                 IdUtils.currentId = 100;
                 gal = _galaxyCreator.GetFullGalaxy();
-                GalaxyJsonSerializer.SerializeAndSave(gal);
+                GalaxyLoader.Save(gal);
             }
             else
             {
@@ -75,7 +76,7 @@ namespace GalaxyGen.ViewModel
         private void saveGalaxy()
         {
             galaxyViewModel_Var.Model.MaxId = IdUtils.currentId;
-            GalaxyJsonSerializer.SerializeAndSave(galaxyViewModel_Var.Model);
+            GalaxyLoader.Save(galaxyViewModel_Var.Model);
         }
 
         private void initialiseEngine()

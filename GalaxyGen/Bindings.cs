@@ -41,7 +41,7 @@ namespace GalaxyGen
 
             // Engine bindings
             kernel.Bind<ITickEngine>().To<TickEngine>();
-            kernel.Bind<IGalaxyCreator>().To<GalaxyCreator>();
+            kernel.Bind<IGalaxyPopulator>().To<GalaxyPopulator>();
 
             // Framework bindings
            
