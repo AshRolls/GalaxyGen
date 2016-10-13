@@ -21,7 +21,7 @@ namespace GalaxyGen.Engine
         private IReadOnlyAgent _model;
         private IActorRef _actorTextOutput;
         private InternalAgentState _currentState;
-  
+        private Ship _currentShip;      
 
         public AgentDefaultController(IReadOnlyAgent ag, IActorRef actorTextOutput)
         {
@@ -36,10 +36,10 @@ namespace GalaxyGen.Engine
         {
             if (isPilotingShip())
             {
-                Ship s = (Ship)_model.Location;
-                if (s.ShipState == ShipStateEnum.Docked)
+                _currentShip = (Ship)_model.Location;
+                if (_currentShip.ShipState == ShipStateEnum.Docked)
                     _currentState = InternalAgentState.PilotingDockedShip;
-                else if (s.ShipState == ShipStateEnum.Cruising)
+                else if (_currentShip.ShipState == ShipStateEnum.Cruising)
                     _currentState = InternalAgentState.Piloting;
             }
             else
@@ -77,11 +77,10 @@ namespace GalaxyGen.Engine
         private object pilotingDockedShip(MessageTick tick)
         {
             if (isPilotingShip())
-            {
-                Ship s = (Ship)_model.Location;                
+            {                
                 _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
                 _actorTextOutput.Tell("Agent Requesting Undock");
-                return new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, s.ShipId);
+                return new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, _currentShip.ShipId);
             }
             return null;
         }
@@ -104,7 +103,12 @@ namespace GalaxyGen.Engine
 
         private object pilotingShip()
         {
-            //_actorTextOutput.Tell("Agent Piloting Ship");
+            if (isPilotingShip())
+            {
+                double x = _currentShip.PositionX;
+                double y = _currentShip.PositionY;
+                //_actorTextOutput.Tell("Agent Piloting Ship");
+            }
             return null;
         }
 
