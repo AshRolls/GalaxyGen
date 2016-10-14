@@ -25,7 +25,7 @@ namespace GalaxyGen.Engine
                 SolarSystem ss = getSolarSystemFromStarChartSS(chartSS);
                 ss.StarChartId = StarChart.GetIdForObject(chartSS);
 
-                Agent ag = this.GetAgent("Agent " + chartSS.Name);
+                Agent ag = this.GetAgent("Agent " + chartSS.Name);                
                 ss.Agents.Add(ag);
 
                 foreach (ScPlanet chartP in chartSS.Planets)
@@ -112,6 +112,7 @@ namespace GalaxyGen.Engine
         private Agent GetAgent(String seedName)
         {
             Agent ag = new Agent();
+            ag.Memory = "";
             ag.Name = seedName;
             return ag;
         }

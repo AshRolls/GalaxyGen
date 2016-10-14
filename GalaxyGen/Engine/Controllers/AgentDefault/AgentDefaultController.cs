@@ -38,6 +38,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private void setupInitialStateFromModel()
         {
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_model.Memory);
+            if (_memory == null) _memory = new AgentDefaultMemory();
 
             if (isPilotingShip())
             {
