@@ -22,10 +22,14 @@ namespace GalaxyGenCreator
                 int.TryParse(args[0], out numberOfSystems);                
             }
 
+            Console.Out.WriteLine("Creating galaxy with {0} Solarsystems...", numberOfSystems.ToString());
+
             GalaxyCreator gc = new GalaxyCreator();            
             ScGalaxy gal = gc.GenerateGalaxy(numberOfSystems);
 
             GeneralJsonSerializer.SerializeAndSave(gal, Globals.GALAXY_CORE_DB);
+
+            Console.Out.WriteLine("Json saved as {0}", Globals.GALAXY_CORE_DB);
         }
 
         public static void SerializeAndSave(ScGalaxy gal)
