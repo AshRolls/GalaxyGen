@@ -48,18 +48,15 @@ namespace GalaxyGenCore.Resources
             int resIdx = (int)resType;
             return types_Var[resIdx];
         }
-    }
 
-    public class ResourceTypeInitialiser
-    {
-        public ResourceTypeInitialiser()
+        public static void InitialiseResourceTypes()
         {
-            // pull these in from XML eventually
-            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = getResource(ResourceTypeEnum.Spice, "Spice", 10, 5);
-            ResourceTypes.Types[(int)ResourceTypeEnum.Platinum] = getResource(ResourceTypeEnum.Platinum, "Platinum", 0.5, 25);
+            // TODO Json ify ?
+            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = createResource(ResourceTypeEnum.Spice, "Spice", 10, 5);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Platinum] = createResource(ResourceTypeEnum.Platinum, "Platinum", 0.5, 25);
         }
 
-        private ResourceType getResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)
+        private static ResourceType createResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)
         {
             ResourceType res = new ResourceType();
             res.Type = type;
