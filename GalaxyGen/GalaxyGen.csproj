@@ -116,9 +116,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
+    <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
-    <Compile Include="Engine\Controllers\AgentDefaultController.cs" />
+    <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultController.cs" />
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />

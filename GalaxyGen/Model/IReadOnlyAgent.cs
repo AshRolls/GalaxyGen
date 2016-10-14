@@ -14,5 +14,8 @@ namespace GalaxyGen.Model
         SolarSystem SolarSystem { get;  }
         ICollection<Store> Stores { get; }
         AgentTypeEnum Type { get;  }
+
+        // an agent is allowed to change it's own memory
+        String Memory { get; set; }
     }
 }

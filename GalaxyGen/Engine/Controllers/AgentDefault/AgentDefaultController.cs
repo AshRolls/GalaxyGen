@@ -1,12 +1,11 @@
-﻿using Akka.Actor;
+﻿using System;
+using Akka.Actor;
+using GalaxyGen.Engine.Controllers;
 using GalaxyGen.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GalaxyGenCore.StarChart;
+using Newtonsoft.Json;
 
-namespace GalaxyGen.Engine
+namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultController : IAgentController
     {
@@ -21,7 +20,8 @@ namespace GalaxyGen.Engine
         private IReadOnlyAgent _model;
         private IActorRef _actorTextOutput;
         private InternalAgentState _currentState;
-        private Ship _currentShip;      
+        private Ship _currentShip;
+        private AgentDefaultMemory _memory;
 
         public AgentDefaultController(IReadOnlyAgent ag, IActorRef actorTextOutput)
         {
@@ -29,11 +29,12 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;
 
             setupInitialStateFromModel();
-
         }
 
         private void setupInitialStateFromModel()
         {
+            _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_model.Memory);
+
             if (isPilotingShip())
             {
                 _currentShip = (Ship)_model.Location;
@@ -77,12 +78,18 @@ namespace GalaxyGen.Engine
         private object pilotingDockedShip(MessageTick tick)
         {
             if (isPilotingShip())
-            {                
+            {
+                chooseNewDestination();                             
                 _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
                 _actorTextOutput.Tell("Agent Requesting Undock");
                 return new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, _currentShip.ShipId);
             }
             return null;
+        }
+
+        private void chooseNewDestination()
+        {
+            
         }
 
         public void ReceiveShipResponse(MessageShipResponse msg)
@@ -106,10 +113,15 @@ namespace GalaxyGen.Engine
             if (isPilotingShip())
             {
                 double x = _currentShip.PositionX;
-                double y = _currentShip.PositionY;
+                double y = _currentShip.PositionY;                
                 //_actorTextOutput.Tell("Agent Piloting Ship");
             }
             return null;
+        }
+
+        private void saveMemory()
+        {
+            _model.Memory = JsonConvert.SerializeObject(_memory);
         }
 
     }

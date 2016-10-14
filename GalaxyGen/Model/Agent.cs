@@ -47,6 +47,8 @@ namespace GalaxyGen.Model
         public IAgentLocation Location { get; set; }
         public SolarSystem SolarSystem { get; set; }
 
+        public String Memory { get; set; }
+
         [JsonIgnore]
         public IActorRef Actor { get; set; }
     }
