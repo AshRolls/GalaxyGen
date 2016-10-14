@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Model;
+using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -68,13 +69,7 @@ namespace GalaxyGen.ViewModel
 
         private void updateFromModel()
         {
-            Name = model_Var.Name;       
-            foreach(SolarSystem ss in model_Var.SolarSystems)
-            {
-                ISolarSystemViewModel ssVm = solarSystemViewModelFactory.CreateSolarSystemViewModel();
-                ssVm.Model = ss;
-                solarSystems_Var.Add(ssVm);
-            }            
+            Name = model_Var.Name;                
         }
 
         public String Name
@@ -132,13 +127,12 @@ namespace GalaxyGen.ViewModel
             }
         }
 
-        private ObservableCollection<ISolarSystemViewModel> solarSystems_Var = new ObservableCollection<ISolarSystemViewModel>();
-        public ObservableCollection<ISolarSystemViewModel> SolarSystems
+        public ICollection<ScSolarSystem> ScSolarSystems
         {
             get
             {
-                return solarSystems_Var;
-            }            
+                return StarChart.SolarSystems.Values;
+            }
         }
 
         private ObservableCollection<IResourceTypeViewModel> resourceTypes_Var = new ObservableCollection<IResourceTypeViewModel>();

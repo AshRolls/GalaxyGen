@@ -98,33 +98,87 @@ namespace GalaxyGen.ViewModel
         }
 
         private ISolarSystemViewModel selectedSolarSystem_Var;
-        public ISolarSystemViewModel SelectedSolarSystem
+        public ISolarSystemViewModel SelectedSolarSystemVm
         {
             get
             {
                 return selectedSolarSystem_Var;
             }
-            set
+            private set
             {
                 selectedSolarSystem_Var = value;
-                OnPropertyChanged("SelectedSolarSystem");
+                OnPropertyChanged("SelectedSolarSystemVm");
             }
         }
 
-        private IPlanetViewModel selectedPlanet_Var;
-        public IPlanetViewModel SelectedPlanet
+        private ScSolarSystem selectedScSolarSystem_Var;
+        public ScSolarSystem SelectedScSolarSystem
         {
             get
             {
-                return selectedPlanet_Var;
+                return selectedScSolarSystem_Var;
             }
             set
             {
-                selectedPlanet_Var = value;
-                OnPropertyChanged("SelectedPlanet");                
+                selectedScSolarSystem_Var = value;
+                createSsVmFromSelectedScSS();
+
+                OnPropertyChanged("SelectedScSolarSystem");
             }
         }
 
+        private void createSsVmFromSelectedScSS()
+        {
+            Int64 scId = StarChart.GetIdForObject(selectedScSolarSystem_Var);
+            SolarSystem ss = Galaxy.Model.SolarSystems.Where(x => x.StarChartId == scId).FirstOrDefault();
+            if (ss != null)
+            {
+                ISolarSystemViewModel ssVm = _solarSystemViewModelFactory.CreateSolarSystemViewModel();
+                ssVm.Model = ss;
+                SelectedSolarSystemVm = ssVm;
+            }
+        }
+
+        private IPlanetViewModel selectedPlanetVm_Var;
+        public IPlanetViewModel SelectedPlanetVm
+        {
+            get
+            {
+                return selectedPlanetVm_Var;
+            }
+            private set
+            {
+                selectedPlanetVm_Var = value;
+                OnPropertyChanged("SelectedPlanetVm");
+            }
+        }
+
+        private ScPlanet selectedScPlanet_Var;
+        public ScPlanet SelectedScPlanet
+        {
+            get
+            {
+                return selectedScPlanet_Var;
+            }
+            set
+            {
+                selectedScPlanet_Var = value;
+                createPVmFromSelectedScP();
+                OnPropertyChanged("SelectedScPlanet");                
+            }
+        }
+
+        private void createPVmFromSelectedScP()
+        {
+            Int64 pId = StarChart.GetIdForObject(selectedScPlanet_Var);
+            Planet p = SelectedSolarSystemVm.Planets.Select(x => x.Model).Where(x => x.StarChartId == pId).FirstOrDefault();
+            if (p != null)
+            {
+                IPlanetViewModel pVm = _planetViewModelFactory.CreatePlanetViewModel();
+                pVm.Model = p;
+                SelectedPlanetVm = pVm;
+            }
+        }
 
         private IAgentViewModel selectedAgent_Var;
         public IAgentViewModel SelectedAgent
