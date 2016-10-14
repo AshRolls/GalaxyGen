@@ -2,6 +2,7 @@
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore;
+using GalaxyGenCore.Resources;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,7 @@
 ﻿using GalaxyGen.Engine;
 using GalaxyGen.Framework;
 using GalaxyGenCore;
+using GalaxyGenCore.Resources;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

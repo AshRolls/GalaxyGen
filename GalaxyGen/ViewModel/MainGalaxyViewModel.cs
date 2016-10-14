@@ -3,6 +3,8 @@ using GalaxyGen.Engine;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore;
+using GalaxyGenCore.BluePrints;
+using GalaxyGenCore.Resources;
 using GalaxyGenCore.StarChart;
 using Newtonsoft.Json;
 using System;
@@ -26,8 +28,7 @@ namespace GalaxyGen.ViewModel
         ISolarSystemViewModelFactory _solarSystemViewModelFactory;
         IPlanetViewModelFactory _planetViewModelFactory;        
         
-        // should improve this system don't need them hanging around
-        ResourceTypeInitialiser _resourceTypeInitialiser;  
+        
         
         public MainGalaxyViewModel(IGalaxyPopulator initGalaxyCreator, 
                                     IGalaxyViewModelFactory initGalaxyViewModelFactory, 
@@ -46,7 +47,7 @@ namespace GalaxyGen.ViewModel
             TextOutput = initTextOutputViewModel;
 
             StarChart.InitialiseStarChart();
-            _resourceTypeInitialiser = new ResourceTypeInitialiser(); // TODO modify resources to use same sys as bp
+            ResourceTypeInitialiser _resourceTypeInitialiser = new ResourceTypeInitialiser(); // TODO modify resources to use same sys as bp
             BluePrints.initialiseBluePrints();
 
             loadOrCreateGalaxy();

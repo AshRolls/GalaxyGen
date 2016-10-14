@@ -44,7 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BluePrints.cs" />
+    <Compile Include="BluePrints\BluePrints.cs" />
     <Compile Include="Framework\GeneralJsonSerializer.cs" />
     <Compile Include="Framework\Globals.cs" />
     <Compile Include="StarChart\ScGalaxy.cs" />
@@ -52,7 +52,7 @@
     <Compile Include="StarChart\ScSolarSystem.cs" />
     <Compile Include="StarChart\StarChart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResourceTypes.cs" />
+    <Compile Include="Resources\ResourceTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

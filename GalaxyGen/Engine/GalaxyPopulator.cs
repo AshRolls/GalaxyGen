@@ -8,6 +8,8 @@ using Ninject;
 using GalaxyGen.Framework;
 using GalaxyGenCore;
 using GalaxyGenCore.StarChart;
+using GalaxyGenCore.BluePrints;
+using GalaxyGenCore.Resources;
 
 namespace GalaxyGen.Engine
 {
