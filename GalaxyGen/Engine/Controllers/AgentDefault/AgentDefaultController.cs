@@ -4,6 +4,8 @@ using GalaxyGen.Engine.Controllers;
 using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
 using Newtonsoft.Json;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
@@ -22,11 +24,13 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private InternalAgentState _currentState;
         private Ship _currentShip;
         private AgentDefaultMemory _memory;
+        private static Random _random;
 
         public AgentDefaultController(IReadOnlyAgent ag, IActorRef actorTextOutput)
         {
             _model = ag;
             _actorTextOutput = actorTextOutput;
+            _random = new Random();
 
             setupInitialStateFromModel();
         }
@@ -79,7 +83,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             if (isPilotingShip())
             {
-                chooseNewDestination();                             
+                setNewDestinationFromDocked();                                             
                 _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
                 _actorTextOutput.Tell("Agent Requesting Undock");
                 return new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, _currentShip.ShipId);
@@ -87,9 +91,19 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return null;
         }
 
-        private void chooseNewDestination()
+        private void setNewDestinationFromDocked()
         {
-            
+            // choose randomly
+            ScPlanet curDest = null;            
+            if (_memory.CurrentDestinationScId != 0)
+            {
+                curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+            }
+
+            List<Int64> planetsToChooseFrom = _model.SolarSystem.Planets.Select(x => x.StarChartId).Where(x => x != _currentShip.DockedPlanet.StarChartId).ToList();
+            int index = _random.Next(planetsToChooseFrom.Count);
+            _memory.CurrentDestinationScId = planetsToChooseFrom[index];
+            saveMemory();
         }
 
         public void ReceiveShipResponse(MessageShipResponse msg)

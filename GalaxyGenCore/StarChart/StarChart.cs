@@ -17,7 +17,7 @@ namespace GalaxyGenCore.StarChart
             // read from json and initialise _starChart
             ScGalaxy gal = GeneralJsonSerializer.Deserialize<ScGalaxy>(Globals.GALAXY_CORE_DB, null);
 
-            Int64 i = 0;
+            Int64 i = 1;
             Int64 j = 10000000;
             foreach (ScSolarSystem ss in gal.SolarSystems)
             {
