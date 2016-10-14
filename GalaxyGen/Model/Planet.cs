@@ -26,16 +26,12 @@ namespace GalaxyGen.Model
         }
 
         public Int64 PlanetId { get; set; }
+        public Int64 StarChartId { get; set; }
         public TypeEnum GalType { get; set; }
 
-        public Double OrbitKm { get; set; }
-        public Double OrbitDays { get; set; }
         public Double PositionX { get; set; }
         public Double PositionY { get; set; }
 
-
-        [StringLength(60)]
-        public String Name { get; set; }
         public Int64 Population { get; set; }
 
 

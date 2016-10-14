@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Model;
+using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,8 +18,7 @@ namespace GalaxyGen.ViewModel
         String Name { get; set; }
         Int64 CurrentTick { get; }
         Int64 TicksPerSecond { get; }
-        ObservableCollection<ISolarSystemViewModel> SolarSystems { get; }
-        ObservableCollection<IResourceTypeViewModel> ResourceTypes { get; }
+        ICollection<ScSolarSystem> ScSolarSystems { get; }
     }
 
     public interface IGalaxyViewModelFactory

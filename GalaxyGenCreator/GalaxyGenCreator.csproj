@@ -4,15 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C9AA7A47-80F4-47F9-A222-C94CC4EABE3A}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{2B48CCA0-C262-4016-B4DC-142544DC35C7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GalaxyGenCore</RootNamespace>
-    <AssemblyName>GalaxyGenCore</AssemblyName>
+    <RootNamespace>GalaxyGenCreator</RootNamespace>
+    <AssemblyName>GalaxyGenCreator</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -44,18 +47,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BluePrints\BluePrints.cs" />
-    <Compile Include="Framework\GeneralJsonSerializer.cs" />
-    <Compile Include="Framework\Globals.cs" />
-    <Compile Include="StarChart\ScGalaxy.cs" />
-    <Compile Include="StarChart\ScPlanet.cs" />
-    <Compile Include="StarChart\ScSolarSystem.cs" />
-    <Compile Include="StarChart\StarChart.cs" />
+    <Compile Include="GalaxyCreator.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\ResourceTypes.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GalaxyGenCore\GalaxyGenCore.csproj">
+      <Project>{c9aa7a47-80f4-47f9-a222-c94cc4eabe3a}</Project>
+      <Name>GalaxyGenCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

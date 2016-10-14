@@ -13,7 +13,7 @@ namespace GalaxyGen.ViewModel
     public interface IPlanetViewModel : INotifyPropertyChanged
     {
         Planet Model { get; set; }
-        String Name { get; set; }
+        String Name { get; }
         //Int64 Population { get; set; }
         Double PositionX { get; }
         Double PositionY { get; }

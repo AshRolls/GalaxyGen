@@ -1,6 +1,9 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore;
+using GalaxyGenCore.Resources;
+using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +17,13 @@ namespace GalaxyGen.Engine
         private Planet _model;
         private HashSet<ProducerController> _producerCs;
         private IActorRef _actorTextOutput;
+        private ScPlanet _scPlanet;
 
         public PlanetController(Planet p, IActorRef actorTextOutput)
         {
             _model = p;
             _actorTextOutput = actorTextOutput;
+            _scPlanet = StarChart.GetPlanet(_model.StarChartId);
 
             _producerCs = new HashSet<ProducerController>();
             // create child controllers for each producer in planet
@@ -32,7 +37,15 @@ namespace GalaxyGen.Engine
 
         public void Tick(MessageTick tick)
         {
+            movePlanetXY(tick);
             updateProducers(tick);
+        }
+
+        private void movePlanetXY(MessageTick tick)
+        {
+            PointD pt = OrbitalUtils.CalcPositionFromTick(tick.Tick, _scPlanet.OrbitDays, _scPlanet.OrbitKm);
+            _model.PositionX = pt.X;
+            _model.PositionY = pt.Y;
         }
 
         private void updateProducers(MessageTick tick)

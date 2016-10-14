@@ -3,6 +3,9 @@ using GalaxyGen.Engine;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore;
+using GalaxyGenCore.BluePrints;
+using GalaxyGenCore.Resources;
+using GalaxyGenCore.StarChart;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,17 +21,16 @@ namespace GalaxyGen.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
     {        
-        IGalaxyCreator _galaxyCreator;
+        IGalaxyPopulator _galaxyCreator;
         ITickEngine _tickEngine;
 
         IGalaxyViewModelFactory _galaxyViewModelFactory;
         ISolarSystemViewModelFactory _solarSystemViewModelFactory;
         IPlanetViewModelFactory _planetViewModelFactory;        
         
-        // should improve this system don't need them hanging around
-        ResourceTypeInitialiser _resourceTypeInitialiser;  
         
-        public MainGalaxyViewModel(IGalaxyCreator initGalaxyCreator, 
+        
+        public MainGalaxyViewModel(IGalaxyPopulator initGalaxyCreator, 
                                     IGalaxyViewModelFactory initGalaxyViewModelFactory, 
                                     ISolarSystemViewModelFactory initSolarSystemViewModelFactory, 
                                     IPlanetViewModelFactory initPlanetViewModelFactory, 
@@ -44,9 +46,9 @@ namespace GalaxyGen.ViewModel
 
             TextOutput = initTextOutputViewModel;
 
-            _resourceTypeInitialiser = new ResourceTypeInitialiser(); // TODO modify resources to use same sys as bp
+            StarChart.InitialiseStarChart();
+            ResourceTypeInitialiser _resourceTypeInitialiser = new ResourceTypeInitialiser(); // TODO modify resources to use same sys as bp
             BluePrints.initialiseBluePrints();
-
 
             loadOrCreateGalaxy();
             initialiseEngine();
@@ -56,12 +58,12 @@ namespace GalaxyGen.ViewModel
 
         private void loadOrCreateGalaxy()
         {
-            Galaxy gal = GalaxyJsonSerializer.Deserialize();
+            Galaxy gal = GalaxyLoader.Load();
             if (gal == null)
             {
                 IdUtils.currentId = 100;
                 gal = _galaxyCreator.GetFullGalaxy();
-                GalaxyJsonSerializer.SerializeAndSave(gal);
+                GalaxyLoader.Save(gal);
             }
             else
             {
@@ -75,7 +77,7 @@ namespace GalaxyGen.ViewModel
         private void saveGalaxy()
         {
             galaxyViewModel_Var.Model.MaxId = IdUtils.currentId;
-            GalaxyJsonSerializer.SerializeAndSave(galaxyViewModel_Var.Model);
+            GalaxyLoader.Save(galaxyViewModel_Var.Model);
         }
 
         private void initialiseEngine()
@@ -97,33 +99,87 @@ namespace GalaxyGen.ViewModel
         }
 
         private ISolarSystemViewModel selectedSolarSystem_Var;
-        public ISolarSystemViewModel SelectedSolarSystem
+        public ISolarSystemViewModel SelectedSolarSystemVm
         {
             get
             {
                 return selectedSolarSystem_Var;
             }
-            set
+            private set
             {
                 selectedSolarSystem_Var = value;
-                OnPropertyChanged("SelectedSolarSystem");
+                OnPropertyChanged("SelectedSolarSystemVm");
             }
         }
 
-        private IPlanetViewModel selectedPlanet_Var;
-        public IPlanetViewModel SelectedPlanet
+        private ScSolarSystem selectedScSolarSystem_Var;
+        public ScSolarSystem SelectedScSolarSystem
         {
             get
             {
-                return selectedPlanet_Var;
+                return selectedScSolarSystem_Var;
             }
             set
             {
-                selectedPlanet_Var = value;
-                OnPropertyChanged("SelectedPlanet");                
+                selectedScSolarSystem_Var = value;
+                createSsVmFromSelectedScSS();
+
+                OnPropertyChanged("SelectedScSolarSystem");
             }
         }
 
+        private void createSsVmFromSelectedScSS()
+        {
+            Int64 scId = StarChart.GetIdForObject(selectedScSolarSystem_Var);
+            SolarSystem ss = Galaxy.Model.SolarSystems.Where(x => x.StarChartId == scId).FirstOrDefault();
+            if (ss != null)
+            {
+                ISolarSystemViewModel ssVm = _solarSystemViewModelFactory.CreateSolarSystemViewModel();
+                ssVm.Model = ss;
+                SelectedSolarSystemVm = ssVm;
+            }
+        }
+
+        private IPlanetViewModel selectedPlanetVm_Var;
+        public IPlanetViewModel SelectedPlanetVm
+        {
+            get
+            {
+                return selectedPlanetVm_Var;
+            }
+            private set
+            {
+                selectedPlanetVm_Var = value;
+                OnPropertyChanged("SelectedPlanetVm");
+            }
+        }
+
+        private ScPlanet selectedScPlanet_Var;
+        public ScPlanet SelectedScPlanet
+        {
+            get
+            {
+                return selectedScPlanet_Var;
+            }
+            set
+            {
+                selectedScPlanet_Var = value;
+                createPVmFromSelectedScP();
+                OnPropertyChanged("SelectedScPlanet");                
+            }
+        }
+
+        private void createPVmFromSelectedScP()
+        {
+            Int64 pId = StarChart.GetIdForObject(selectedScPlanet_Var);
+            Planet p = SelectedSolarSystemVm.Planets.Select(x => x.Model).Where(x => x.StarChartId == pId).FirstOrDefault();
+            if (p != null)
+            {
+                IPlanetViewModel pVm = _planetViewModelFactory.CreatePlanetViewModel();
+                pVm.Model = p;
+                SelectedPlanetVm = pVm;
+            }
+        }
 
         private IAgentViewModel selectedAgent_Var;
         public IAgentViewModel SelectedAgent

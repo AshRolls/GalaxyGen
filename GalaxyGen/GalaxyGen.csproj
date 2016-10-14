@@ -135,14 +135,13 @@
     <Compile Include="Engine\Messages\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
-    <Compile Include="Framework\GalaxyJsonSerializer.cs" />
+    <Compile Include="Framework\GalaxyLoader.cs" />
     <Compile Include="Framework\IdUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
     <Compile Include="Framework\CommonStructs.cs" />
     <Compile Include="Model\IReadOnlyAgent.cs" />
     <Compile Include="Model\IStoreLocation.cs" />
     <Compile Include="Model\IAgentLocation.cs" />
-    <Compile Include="Model\ModelNotifyBase.cs" />
     <Compile Include="Model\Ship.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Model\Producer.cs" />
@@ -196,8 +195,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bindings.cs" />
-    <Compile Include="Engine\GalaxyCreator.cs" />
-    <Compile Include="Engine\IGalaxyCreator.cs" />
+    <Compile Include="Engine\GalaxyPopulator.cs" />
+    <Compile Include="Engine\IGalaxyPopulator.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

@@ -29,19 +29,19 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Column="0" Grid.Row="0">
             <TextBlock Text="Solarsystems" DockPanel.Dock="Top" />
-            <ListBox  ItemsSource="{Binding Galaxy.SolarSystems}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedSolarSystem}" />    
+            <ListBox  ItemsSource="{Binding Galaxy.ScSolarSystems}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedScSolarSystem}" />    
         </DockPanel>
         <DockPanel Grid.Column="1" Grid.Row="0">
             <TextBlock Text="Planets" DockPanel.Dock="Top" />
-            <ListBox ItemsSource="{Binding SelectedSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedPlanet}" />
+            <ListBox ItemsSource="{Binding SelectedScSolarSystem.Planets}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedScPlanet}" />
         </DockPanel>
 
-        <local:SolarSystemControl Grid.Column="2" Grid.Row="0" SolarSystemVm="{Binding SelectedSolarSystem}" PlanetVm="{Binding SelectedPlanet}" />
+        <local:SolarSystemControl Grid.Column="2" Grid.Row="0" SolarSystemVm="{Binding SelectedSolarSystemVm}" PlanetVm="{Binding SelectedPlanetVm}" />
 
-        <local:SocietyControl Grid.Column="3" Grid.Row="0" SocietyVm="{Binding SelectedPlanet.Society}" />
+        <local:SocietyControl Grid.Column="3" Grid.Row="0" SocietyVm="{Binding SelectedPlanetVm.Society}" />
         <DockPanel Grid.Column="4" Grid.Row="0">
             <TextBlock Text="Agents" DockPanel.Dock="Top" />
-            <ListBox ItemsSource="{Binding SelectedSolarSystem.Agents}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedAgent}" />
+            <ListBox ItemsSource="{Binding SelectedSolarSystemVm.Agents}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedAgent}" />
         </DockPanel>
         <local:AgentControl Grid.Column="5" Grid.Row="0" AgentVm="{Binding SelectedAgent}" />
 

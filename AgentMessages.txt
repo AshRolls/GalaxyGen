@@ -1,0 +1,10 @@
+FROM SOLARSYSTEM 
+
+	MessageTick - Basic tick for progression of time.
+	MessageShipResponse - bool - Sent acknowledging success of previously issued MessageShipCommand
+	
+TO SOLARSYSTEM
+
+	MessageEngineAgCompletedCommand - Sent automatically after all agents this tick are complete
+	MessageShipCommand - Sent to command ship in some way
+	

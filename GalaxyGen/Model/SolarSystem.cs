@@ -22,6 +22,7 @@ namespace GalaxyGen.Model
         }
 
         public Int64 SolarSystemId { get; set; }
+        public Int64 StarChartId { get; set; }
 
         [StringLength(60)]
         public String Name { get; set; }

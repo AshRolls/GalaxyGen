@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GalaxyGenCore;
+using GalaxyGenCore.BluePrints;
 
 namespace GalaxyGen.Model
 {

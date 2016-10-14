@@ -2,6 +2,7 @@
 using GalaxyGen.Engine;
 using GalaxyGen.Model;
 using GalaxyGenCore;
+using GalaxyGenCore.BluePrints;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

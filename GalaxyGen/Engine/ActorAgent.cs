@@ -38,6 +38,7 @@ namespace GalaxyGen.Engine
             }
 
             Receive<MessageTick>(msg => receiveDefaultTick(msg));
+            Receive<MessageShipResponse>(msg => receiveShipResponse(msg));
         }
 
         private void receiveDefaultTick(MessageTick tick)
@@ -46,6 +47,11 @@ namespace GalaxyGen.Engine
             if (message != null)
                 Sender.Tell(message);
             sendAgentCompletedMessage(tick);
+        }
+
+        private void receiveShipResponse(MessageShipResponse msg)
+        {
+            _agentC.ReceiveShipResponse(msg);
         }
 
         private void sendAgentCompletedMessage(MessageTick msg)
