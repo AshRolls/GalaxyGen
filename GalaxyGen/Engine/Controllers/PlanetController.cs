@@ -153,11 +153,16 @@ namespace GalaxyGen.Engine.Controllers
             return hasResources;
         }
 
-        internal void UndockShip(long shipId)
+        internal void UndockShip(Int64 shipId)
         {
             Ship s = _model.DockedShips.Where(x => x.ShipId == shipId).FirstOrDefault();
             if (s != null)
                 _model.DockedShips.Remove(s);
+        }
+
+        internal void DockShip(Ship s)
+        {
+            _model.DockedShips.Add(s);
         }
     }
 }

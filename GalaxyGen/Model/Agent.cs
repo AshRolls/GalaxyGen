@@ -49,7 +49,7 @@ namespace GalaxyGen.Model
 
         public String Memory { get; set; }
 
-        [JsonIgnore]
-        public IActorRef Actor { get; set; }
+        //[JsonIgnore]
+        //public IActorRef Actor { get; set; }
     }
 }

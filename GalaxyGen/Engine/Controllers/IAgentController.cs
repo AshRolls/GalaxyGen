@@ -11,5 +11,6 @@ namespace GalaxyGen.Engine.Controllers
     {
         object Tick(MessageTick tick);
         void ReceiveShipResponse(MessageShipResponse msg);
+        object ReceiveShipDestinationReached(MessageAgentDestinationReached msg);
     }
 }

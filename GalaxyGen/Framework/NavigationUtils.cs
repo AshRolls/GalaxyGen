@@ -15,9 +15,9 @@ namespace GalaxyGen.Framework
             Vector2 bV = new Vector2(bX, bY);
             Vector2 abV = aV - bV;
             double length = abV.Length;
+            if (length < distance) return new PointD(bX, bY); // don't overshoot
             abV /= length;
             abV *= distance;
-            Console.WriteLine("vC=" + abV);
             return new PointD(abV.X + aX, abV.Y + aY);
         }
 

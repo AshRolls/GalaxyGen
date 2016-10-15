@@ -22,7 +22,7 @@ namespace GalaxyGen.Engine
 
             ShipType shipT = new ShipType();
             shipT.Name = "Basic Ship";
-            shipT.MaxCruisingSpeedKmH = 150000;
+            shipT.MaxCruisingSpeedKmH = 300000;
             gal.ShipTypes.Add(shipT);
                         
             foreach (ScSolarSystem chartSS in StarChart.SolarSystems.Values)

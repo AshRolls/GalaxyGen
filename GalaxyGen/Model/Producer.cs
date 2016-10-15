@@ -34,8 +34,5 @@ namespace GalaxyGen.Model
         public virtual Agent Owner { get; set; }
 
         public virtual Planet Planet { get; set; }
-
-        [JsonIgnore]
-        public IActorRef Actor { get; set; }
     }
 }

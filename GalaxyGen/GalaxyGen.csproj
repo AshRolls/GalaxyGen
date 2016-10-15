@@ -127,7 +127,8 @@
     <Compile Include="Engine\Messages\Message.cs" />
     <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
-    <Compile Include="Engine\Messages\MessageShipDestination.cs" />
+    <Compile Include="Engine\Messages\MessageAgentDestinationReached.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetDestination.cs" />
     <Compile Include="Engine\Messages\MessageShipBasic.cs" />
     <Compile Include="Engine\Messages\MessageShipResponse.cs" />
     <Compile Include="Engine\Messages\MessageShipCommand.cs" />

@@ -23,8 +23,5 @@ namespace GalaxyGen.Model
         public String Name { get; set; }
         
         public virtual Planet Planet { get; set; }
-
-        [JsonIgnore]
-        public IActorRef Actor { get; set; }
     }
 }

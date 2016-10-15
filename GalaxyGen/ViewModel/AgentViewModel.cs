@@ -21,17 +21,6 @@ namespace GalaxyGen.ViewModel
             _ssVmFactory = initSsVmFactory;                      
         }
 
-        public IActorRef Actor
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Actor;
-                else
-                    return null;
-            }
-        }
-
         private Agent model_Var;
         public Agent Model
         {

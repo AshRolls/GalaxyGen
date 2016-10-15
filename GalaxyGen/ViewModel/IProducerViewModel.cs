@@ -16,7 +16,6 @@ namespace GalaxyGen.ViewModel
     public interface IProducerViewModel : INotifyPropertyChanged
     {
         Producer Model { get; set; }
-        IActorRef Actor { get; }
         string Name { get; set; }
         Agent Owner { get; set; }
         Planet Planet { get; set; }
