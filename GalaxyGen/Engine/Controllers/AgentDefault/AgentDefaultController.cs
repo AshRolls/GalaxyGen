@@ -46,7 +46,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 _currentShip = (Ship)_model.Location;
                 if (_currentShip.ShipState == ShipStateEnum.Docked)
                     _currentState = InternalAgentState.PilotingDockedShip;
-                else if (_currentShip.ShipState == ShipStateEnum.Cruising)
+                else if (_currentShip.ShipState == ShipStateEnum.SpaceCruising)
                     _currentState = InternalAgentState.Piloting;
             }
             else

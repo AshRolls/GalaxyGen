@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using GalaxyGen.Engine.Messages;
+using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
 using System;
@@ -15,6 +16,7 @@ namespace GalaxyGen.Engine.Controllers
         private Ship _model;
         private SolarSystemController _solarSystemC;
         private IActorRef _actorTextOutput;
+        private Planet _destination;
         
 
         public ShipController(Ship s, SolarSystemController ssc, IActorRef actorTextOutput)
@@ -26,7 +28,13 @@ namespace GalaxyGen.Engine.Controllers
 
         public void Tick(MessageTick tick)
         {
-
+            if (_model.ShipState == ShipStateEnum.SpaceCruising && _model.DestinationScId != 0)
+            {
+                // move ship towards destination
+                PointD newPoint = NavigationUtils.GetNewPointForShip(_model.Type.MaxCruisingSpeedKmH, _model.PositionX, _model.PositionY, _destination.PositionX, _destination.PositionY);
+                _model.PositionX = newPoint.X;
+                _model.PositionY = newPoint.Y;
+            }
         }
 
         internal bool checkValidUndockCommand(MessageShipCommand msg)
@@ -52,7 +60,7 @@ namespace GalaxyGen.Engine.Controllers
             _model.PositionX = _model.DockedPlanet.PositionX;
             _model.PositionY = _model.DockedPlanet.PositionY;
             _model.DockedPlanet = null;
-            _model.ShipState = ShipStateEnum.Cruising;           
+            _model.ShipState = ShipStateEnum.SpaceCruising;           
         }
 
         internal Planet DockedPlanet
@@ -83,9 +91,10 @@ namespace GalaxyGen.Engine.Controllers
             return initStr.ToString();
         }
 
-        internal void SetDestination(long destinationScId)
+        internal void SetDestination(Int64 destinationScId)
         {            
             _model.DestinationScId = destinationScId;
+            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
         }
     }
 }

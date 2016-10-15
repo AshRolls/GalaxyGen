@@ -16,7 +16,8 @@ namespace GalaxyGen.Model
     public enum ShipStateEnum
     {
         Docked,        
-        Cruising
+        SpaceCruising,
+        SpaceStopped
     }
 
     public class Ship : IAgentLocation, IStoreLocation
