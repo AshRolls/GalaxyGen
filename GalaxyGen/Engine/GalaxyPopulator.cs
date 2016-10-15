@@ -56,6 +56,28 @@ namespace GalaxyGen.Engine
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
 
+                for (int i = 0; i< 100; i++)
+                {
+
+                    ag = this.GetAgent("Agent " + i);
+                    ss.Agents.Add(ag);
+                    ag.SolarSystem = ss;                  
+
+                    s = this.GetShip("Ship" + i, shipT);
+                    s.Owner = ag;
+                    s.ShipState = ShipStateEnum.Docked;
+                    s.Agents.Add(ag);
+                    ag.Location = s;
+                    s.Pilot = ag;
+                    ag.AgentState = AgentStateEnum.PilotingShip;
+                    s.DockedPlanet = ss.Planets.First();
+                    ss.Planets.First().DockedShips.Add(s);
+                    ag.ShipsOwned.Add(s);
+                    addNewCargoStoreToShip(s, ag);
+                    s.SolarSystem = ss;
+                    ss.Ships.Add(s);
+                }
+
                 gal.SolarSystems.Add(ss);
             }                      
 

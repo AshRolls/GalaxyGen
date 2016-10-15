@@ -89,7 +89,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             {
                 setNewDestinationFromDocked();                                             
                 _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
-                _actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
+                //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
                 return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _currentShip.ShipId);
             }
             return null;
@@ -117,7 +117,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 if (msg.Response == true)
                 {
                     _currentState = InternalAgentState.Piloting;
-                    _actorTextOutput.Tell("Agent Undock Granted");
+                    //_actorTextOutput.Tell("Agent Undock Granted");
                 }
                 else
                 {
@@ -129,7 +129,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 if (msg.Response == true)
                 {
                     _currentState = InternalAgentState.PilotingDockedShip;
-                    _actorTextOutput.Tell("Agent Dock Granted");
+                    //_actorTextOutput.Tell("Agent Dock Granted");
                     _memory.CurrentDestinationScId = 0;
                 }
             }
@@ -140,8 +140,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             if (isPilotingShip())
             {
                 _currentState = InternalAgentState.PilotingAwaitingDockingResponse;
-                _actorTextOutput.Tell("Agent Requesting dock from " + StarChart.GetPlanet(_memory.CurrentDestinationScId).Name);
-                 return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), msg.TickSent, _currentShip.ShipId);
+                //_actorTextOutput.Tell("Agent Requesting dock from " + StarChart.GetPlanet(_memory.CurrentDestinationScId).Name);
+                return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), msg.TickSent, _currentShip.ShipId);
             }
             return null;
         }
@@ -155,7 +155,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                     IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
                     MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _currentShip.ShipId);                    
                     ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-                    _actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+                    //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
                     return msc;
                 }
             }
