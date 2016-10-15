@@ -14,11 +14,13 @@ namespace GalaxyGen.ViewModel
     {
         IPlanetViewModelFactory planetViewModelFactory;
         IAgentViewModelFactory agentViewModelFactory;
+        IShipViewModelFactory shipViewModelFactory;
 
-        public SolarSystemViewModel(IPlanetViewModelFactory initPlanetViewModelFactory, IAgentViewModelFactory initAgentViewModelFactory)
+        public SolarSystemViewModel(IPlanetViewModelFactory initPlanetViewModelFactory, IAgentViewModelFactory initAgentViewModelFactory, IShipViewModelFactory initShipViewModelFactory)
         {
             planetViewModelFactory = initPlanetViewModelFactory;
             agentViewModelFactory = initAgentViewModelFactory;
+            shipViewModelFactory = initShipViewModelFactory;
         }
 
         public IActorRef Actor
@@ -110,6 +112,30 @@ namespace GalaxyGen.ViewModel
                     IAgentViewModel agVm = agentViewModelFactory.CreateAgentViewModel();
                     agVm.Model = ag;
                     agents_Var.Add(agVm);
+                }
+            }
+        }
+
+        private ObservableCollection<IShipViewModel> ships_Var;
+        public ObservableCollection<IShipViewModel> Ships
+        {
+            get
+            {
+                if (ships_Var == null) initialiseShips();
+                return ships_Var;
+            }
+        }
+
+        private void initialiseShips()
+        {
+            ships_Var = new ObservableCollection<IShipViewModel>();
+            if (model_Var != null)
+            {
+                foreach (Ship s in model_Var.Ships)
+                {
+                    IShipViewModel sVm = shipViewModelFactory.CreateShipViewModel();
+                    sVm.Model = s;
+                    ships_Var.Add(sVm);
                 }
             }
         }

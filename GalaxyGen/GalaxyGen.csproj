@@ -157,6 +157,7 @@
     <Compile Include="Model\SolarSystem.cs" />
     <Compile Include="Model\TypeEnum.cs" />
     <Compile Include="ViewModel\IAgentViewModel.cs" />
+    <Compile Include="ViewModel\IShipViewModel.cs" />
     <Compile Include="ViewModel\IResourceQuantityViewModel.cs" />
     <Compile Include="ViewModel\IStoreViewModel.cs" />
     <Compile Include="ViewModel\IResourceTypeViewModel.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="ViewModel\GalaxyViewModel.cs" />
     <Compile Include="Engine\ActorAgent.cs" />
     <Compile Include="ViewModel\AgentViewModel.cs" />
+    <Compile Include="ViewModel\ShipViewModel.cs" />
     <Compile Include="ViewModel\StoreViewModel.cs" />
     <Compile Include="ViewModel\ResourceQuantityViewModel.cs" />
     <Compile Include="ViewModel\ResourceTypeViewModel.cs" />

@@ -63,6 +63,8 @@ namespace GalaxyGen
             kernel.Bind<IProducerViewModelFactory>().ToFactory();
             kernel.Bind<IResourceTypeViewModel>().To<ResourceTypeViewModel>();
             kernel.Bind<IResourceTypeViewModelFactory>().ToFactory();
+            kernel.Bind<IShipViewModel>().To<ShipViewModel>();
+            kernel.Bind<IShipViewModelFactory>().ToFactory();
 
             return kernel;
         }

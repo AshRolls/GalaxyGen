@@ -10,21 +10,18 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.ViewModel
 {
-    public interface IPlanetViewModel : INotifyPropertyChanged
+    public interface IShipViewModel : INotifyPropertyChanged
     {
-        Planet Model { get; set; }
+        Ship Model { get; set; }
         String Name { get; }
-        //Int64 Population { get; set; }
         Double PositionX { get; }
         Double PositionY { get; }
         int PosX800 { get; }
         int PosY800 { get; }
-        ISocietyViewModel Society { get; }
-        ObservableCollection<IProducerViewModel> Producers { get; }
     }
 
-    public interface IPlanetViewModelFactory
+    public interface IShipViewModelFactory
     {
-        IPlanetViewModel CreatePlanetViewModel();
+        IShipViewModel CreateShipViewModel();
     }
 }
