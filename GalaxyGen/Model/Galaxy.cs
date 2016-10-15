@@ -16,6 +16,7 @@ namespace GalaxyGen.Model
         public Galaxy()
         {
             SolarSystems = new HashSet<SolarSystem>();
+            ShipTypes = new HashSet<ShipType>();
             GalaxyId = IdUtils.GetId();
         }
 
@@ -28,7 +29,9 @@ namespace GalaxyGen.Model
 
         public Int64 MaxId { get; set; }
 
-        public virtual ICollection<SolarSystem> SolarSystems { get; set; }
+        public ICollection<SolarSystem> SolarSystems { get; set; }
+
+        public ICollection<ShipType> ShipTypes { get; set; }
 
         [JsonIgnore]
         public Int64 TicksPerSecond { get; set; }

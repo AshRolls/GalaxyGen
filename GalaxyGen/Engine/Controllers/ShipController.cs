@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Engine.Messages;
 using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
 using System;
@@ -28,9 +29,18 @@ namespace GalaxyGen.Engine.Controllers
 
         }
 
-        internal bool checkValidCommand(MessageShipCommand msg)
+        internal bool checkValidUndockCommand(MessageShipCommand msg)
+        {            
+            if (msg.Command.CommandType == ShipCommandEnum.Undock && _model.DockedPlanet != null && _model.ShipState == ShipStateEnum.Docked)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        internal bool checkValidSetDestinationCommand(MessageShipCommand msg)
         {
-            if (msg.Command == ShipCommandEnum.Undock && _model.DockedPlanet != null && _model.ShipState == ShipStateEnum.Docked)
+            if (msg.Command.CommandType == ShipCommandEnum.SetDestination)
             {
                 return true;
             }
@@ -71,6 +81,11 @@ namespace GalaxyGen.Engine.Controllers
             }
             initStr.Append("]");
             return initStr.ToString();
+        }
+
+        internal void SetDestination(long destinationScId)
+        {            
+            _model.DestinationScId = destinationScId;
         }
     }
 }

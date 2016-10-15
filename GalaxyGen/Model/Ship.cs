@@ -31,20 +31,23 @@ namespace GalaxyGen.Model
 
         public Int64 ShipId { get; set; }
         public TypeEnum GalType { get; set; }
-      
+
         [StringLength(60)]
         public String Name { get; set; }
+        public ShipType Type { get; set; }
 
         public ShipStateEnum ShipState { get; set; }
         public Double PositionX { get; set; }
         public Double PositionY { get; set; }
-
 
         public Agent Owner { get; set; }
         public Agent Pilot { get; set; }
         public Dictionary<Int64, Store> Stores { get; set; }
         public SolarSystem SolarSystem { get; set; }
         public Planet DockedPlanet { get; set; }
+
         public ICollection<Agent> Agents { get; set; }
+
+        public Int64 DestinationScId {get; set;}
     }
 }

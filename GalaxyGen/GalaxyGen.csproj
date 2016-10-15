@@ -123,9 +123,12 @@
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
+    <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
     <Compile Include="Engine\Messages\Message.cs" />
     <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
+    <Compile Include="Engine\Messages\MessageShipDestination.cs" />
+    <Compile Include="Engine\Messages\MessageShipBasic.cs" />
     <Compile Include="Engine\Messages\MessageShipResponse.cs" />
     <Compile Include="Engine\Messages\MessageShipCommand.cs" />
     <Compile Include="Engine\Messages\MessageProducerCommand.cs" />
@@ -138,12 +141,14 @@
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Framework\GalaxyLoader.cs" />
     <Compile Include="Framework\IdUtils.cs" />
+    <Compile Include="Framework\NavigationUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
     <Compile Include="Framework\CommonStructs.cs" />
     <Compile Include="Model\IReadOnlyAgent.cs" />
     <Compile Include="Model\IStoreLocation.cs" />
     <Compile Include="Model\IAgentLocation.cs" />
     <Compile Include="Model\Ship.cs" />
+    <Compile Include="Model\ShipType.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Model\Producer.cs" />
     <Compile Include="Model\Agent.cs" />

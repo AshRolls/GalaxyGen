@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine.Messages
 {
-    public abstract class Message
+    public interface IMessageShipCommandData
     {
-        public Int64 TickSent { get; protected set; }
+        ShipCommandEnum CommandType { get; set; }
     }
 }

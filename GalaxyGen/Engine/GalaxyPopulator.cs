@@ -19,7 +19,12 @@ namespace GalaxyGen.Engine
         {
             Galaxy gal = this.GetGalaxy();
             gal.MaxId = 100;
-            
+
+            ShipType shipT = new ShipType();
+            shipT.Name = "Basic Ship";
+            shipT.MaxCruisingSpeedKmH = 100000;
+            gal.ShipTypes.Add(shipT);
+                        
             foreach (ScSolarSystem chartSS in StarChart.SolarSystems.Values)
             {
                 SolarSystem ss = getSolarSystemFromStarChartSS(chartSS);
@@ -37,7 +42,7 @@ namespace GalaxyGen.Engine
                     ss.Planets.Add(p);
                 }
 
-                Ship s = this.GetShip("Ship" + chartSS.Name);
+                Ship s = this.GetShip("Ship" + chartSS.Name, shipT);
                 s.Owner = ag;
                 s.ShipState = ShipStateEnum.Docked;
                 s.Agents.Add(ag);
@@ -140,9 +145,10 @@ namespace GalaxyGen.Engine
             s.StoredResources.Add(ResourceTypeEnum.Spice, 10);
         }
 
-        private Ship GetShip(String seedName)
+        private Ship GetShip(String seedName, ShipType shipT)
         {
             Ship s = new Ship();
+            s.Type = shipT;
             s.Name = seedName;                        
             return s;
         }

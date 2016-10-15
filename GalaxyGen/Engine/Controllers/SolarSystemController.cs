@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Engine.Messages;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
@@ -60,14 +61,39 @@ namespace GalaxyGen.Engine.Controllers
             bool success = false;
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
-            if (sc.checkValidCommand(msg))
+
+            if (msg.Command.CommandType == ShipCommandEnum.Undock)
             {
-                if (msg.Command == ShipCommandEnum.Undock)
-                {
-                    _planetCs[sc.DockedPlanet.PlanetId].UndockShip(msg.ShipId);
-                    sc.Undock();
-                    success = true;
-                }                
+                success = ShipUndock(msg, sc);
+            }
+            if (msg.Command.CommandType == ShipCommandEnum.SetDestination)
+            {
+                success = ShipSetDestination(msg, sc);
+            }
+
+            return success;
+        }       
+
+        private bool ShipUndock(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidUndockCommand(msg))
+            {
+                _planetCs[sc.DockedPlanet.PlanetId].UndockShip(msg.ShipId);
+                sc.Undock();
+                success = true;
+            }
+            return success;
+        }
+
+        private static bool ShipSetDestination(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidSetDestinationCommand(msg))
+            {
+                MessageShipDestination msd = (MessageShipDestination)msg.Command;
+                sc.SetDestination(msd.DestinationScId);
+                success = true;
             }
             return success;
         }

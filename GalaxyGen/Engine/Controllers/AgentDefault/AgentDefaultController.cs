@@ -6,6 +6,7 @@ using GalaxyGenCore.StarChart;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
+using GalaxyGen.Engine.Messages;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
@@ -65,7 +66,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 case InternalAgentState.PilotingAwaitingUndockingResponse:
                     break;
                 case InternalAgentState.Piloting:
-                    message = pilotingShip();                
+                    message = pilotingShip(tick);                
                     break;
                 case InternalAgentState.PilotingDockedShip:
                     message = pilotingDockedShip(tick);
@@ -87,7 +88,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 setNewDestinationFromDocked();                                             
                 _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
                 _actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-                return new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, _currentShip.ShipId);
+                return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _currentShip.ShipId);
             }
             return null;
         }
@@ -109,7 +110,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public void ReceiveShipResponse(MessageShipResponse msg)
         {
-            if (msg.SentCommand.Command == ShipCommandEnum.Undock)
+            if (msg.SentCommand.Command.CommandType == ShipCommandEnum.Undock)
             {
                 if (msg.Response == true)
                 {
@@ -123,14 +124,18 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             }
         }
 
-        private object pilotingShip()
+        private object pilotingShip(MessageTick tick)
         {
             if (isPilotingShip())
             {
-                double x = _currentShip.PositionX;
-                double y = _currentShip.PositionY;
-                ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-                _actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+                if (_currentShip.DestinationScId != _memory.CurrentDestinationScId)
+                {
+                    IMessageShipCommandData msd = new MessageShipDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
+                    MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _currentShip.ShipId);                    
+                    ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+                    _actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+                    return msc;
+                }
             }
             return null;
         }
