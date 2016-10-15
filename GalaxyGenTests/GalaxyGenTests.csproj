@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GalaxyGenTests.cs" />
+    <Compile Include="UT_NavigationUtils.cs" />
     <Compile Include="UT_Galaxy.cs" />
   </ItemGroup>
   <ItemGroup>
