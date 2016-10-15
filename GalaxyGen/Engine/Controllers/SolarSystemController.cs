@@ -17,6 +17,7 @@ namespace GalaxyGen.Engine.Controllers
         private SolarSystem _model;
         private Dictionary<Int64, PlanetController> _planetCs;
         private IEnumerable _planetValues;
+        private IEnumerable _shipValues;
         private Dictionary<Int64,ShipController> _shipCs;
         private IActorRef _actorTextOutput;
 
@@ -41,11 +42,13 @@ namespace GalaxyGen.Engine.Controllers
                 ShipController sc = new ShipController(s, this, actorTextOutput);
                 _shipCs.Add(s.ShipId, sc);
             }
+            _shipValues = _shipCs.Values;
         }
 
         public void Tick(MessageTick tick)
         {                       
             updatePlanets(tick);
+            updateShips(tick);
         }
         
         private void updatePlanets(MessageTick tick)
@@ -53,6 +56,14 @@ namespace GalaxyGen.Engine.Controllers
             foreach (PlanetController pc in _planetValues)
             {
                 pc.Tick(tick);
+            }
+        }
+
+        private void updateShips(MessageTick tick)
+        {
+            foreach (ShipController sc in _shipValues)
+            {
+                sc.Tick(tick);
             }
         }
 
