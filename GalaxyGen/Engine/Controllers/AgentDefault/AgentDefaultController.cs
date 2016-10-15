@@ -86,7 +86,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             {
                 setNewDestinationFromDocked();                                             
                 _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
-                _actorTextOutput.Tell("Agent Requesting Undock");
+                _actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
                 return new MessageShipCommand(ShipCommandEnum.Undock, tick.Tick, _currentShip.ShipId);
             }
             return null;
@@ -128,8 +128,9 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             if (isPilotingShip())
             {
                 double x = _currentShip.PositionX;
-                double y = _currentShip.PositionY;                
-                //_actorTextOutput.Tell("Agent Piloting Ship");
+                double y = _currentShip.PositionY;
+                ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+                _actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
             }
             return null;
         }

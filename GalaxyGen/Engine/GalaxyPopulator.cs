@@ -27,6 +27,7 @@ namespace GalaxyGen.Engine
 
                 Agent ag = this.GetAgent("Agent " + chartSS.Name);                
                 ss.Agents.Add(ag);
+                ag.SolarSystem = ss;
 
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
@@ -71,8 +72,7 @@ namespace GalaxyGen.Engine
 
         private SolarSystem getSolarSystemFromStarChartSS(ScSolarSystem chartSS)
         {
-            SolarSystem ss = new SolarSystem();
-            ss.Name = chartSS.Name;
+            SolarSystem ss = new SolarSystem(chartSS.Name);            
             return ss;
         }
 
@@ -86,7 +86,7 @@ namespace GalaxyGen.Engine
 
         private Planet GetPlanet(ScPlanet chartP)
         {
-            Planet plan = new Planet();
+            Planet plan = new Planet(chartP.Name, chartP.OrbitKm, chartP.OrbitDays);
             plan.Population = 10000;
 
             Society soc = new Society();
