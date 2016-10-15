@@ -18,9 +18,14 @@ namespace GalaxyGenCreator
                 ScSolarSystem ss = new ScSolarSystem();                
                 ss.Planets = new HashSet<ScPlanet>();
                 ss.Name = "Sol";
-                ss.Planets.Add(getPlanet("Earth", 150000000d, 365));
-                ss.Planets.Add(getPlanet("Mars", 227000000d, 687));
-
+                ss.Planets.Add(getPlanet("Mercury", 57.9, 87.96));
+                ss.Planets.Add(getPlanet("Earth", 108.2, 224.68));
+                ss.Planets.Add(getPlanet("Earth", 149.6, 365.26));
+                ss.Planets.Add(getPlanet("Mars", 227.9, 686.98));
+                ss.Planets.Add(getPlanet("Jupiter", 778.3, 4332.7));
+                ss.Planets.Add(getPlanet("Saturn", 1427, 10759.1));
+                ss.Planets.Add(getPlanet("Uranus", 2871, 30707.4));
+                ss.Planets.Add(getPlanet("Neptune", 4497.1, 60198.5));
                 gal.SolarSystems.Add(ss);                
             }
             else
@@ -30,20 +35,20 @@ namespace GalaxyGenCreator
                     ScSolarSystem ss = new ScSolarSystem();
                     ss.Planets = new HashSet<ScPlanet>();
                     ss.Name = "SolarSystem" + i.ToString();
-                    ss.Planets.Add(getPlanet("P1", 100000000d, 100));
-                    ss.Planets.Add(getPlanet("P2", 150000000d, 200));
-                    ss.Planets.Add(getPlanet("P3", 200000000d, 300));
-                    ss.Planets.Add(getPlanet("P4", 250000000d, 400));
+                    ss.Planets.Add(getPlanet("P1", 100, 100));
+                    ss.Planets.Add(getPlanet("P2", 150, 200));
+                    ss.Planets.Add(getPlanet("P3", 200, 300));
+                    ss.Planets.Add(getPlanet("P4", 250, 400));
                     gal.SolarSystems.Add(ss);
                 }
             }
             return gal;
         }
 
-        private ScPlanet getPlanet(string name, Double orbitalKm, Double orbitalDays)
+        private ScPlanet getPlanet(string name, Double orbitalMKm, Double orbitalDays)
         {
             ScPlanet plan = new ScPlanet();
-            plan.OrbitKm = orbitalKm;
+            plan.OrbitKm = orbitalMKm * 1000000d;
             plan.OrbitDays = orbitalDays;
             plan.Name = name;
             return plan;
