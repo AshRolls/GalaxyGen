@@ -115,6 +115,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Engine\ActorAgentCompleteListener.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\AgentControllerState.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />

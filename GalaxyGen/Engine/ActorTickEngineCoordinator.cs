@@ -52,7 +52,7 @@ namespace GalaxyGen.Engine
             _numberOfIncompleteSS = _state.SolarSystems.Count();
             foreach (SolarSystem ss in _state.SolarSystems)
             {
-                Props ssProps = Props.Create<ActorSolarSystem>(Self, _actorTextOutput, ss);
+                Props ssProps = Props.Create<ActorSolarSystem>(Self, _actorTextOutput, ss, _state.CurrentTick);
                 IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ss.SolarSystemId.ToString());
                 _subscribedActorSolarSystems.Add(actor);
             }
