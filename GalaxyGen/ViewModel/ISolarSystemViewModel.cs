@@ -17,6 +17,7 @@ namespace GalaxyGen.ViewModel
         String Name { get; set; }
         ObservableCollection<IPlanetViewModel> Planets { get; }
         ObservableCollection<IAgentViewModel> Agents { get; }
+        ObservableCollection<IShipViewModel> Ships { get; }
     }
 
     public interface ISolarSystemViewModelFactory

@@ -10,5 +10,6 @@ namespace GalaxyGenCore.Framework
     {
         public static string SERVER_SAVE_FILE = @"C:\Space\galDbJson.gal";
         public static string GALAXY_CORE_DB = @"C:\Space\galStarChartJson.json";
+        public static double DAYS_TO_TICKS_FACTOR = 24;
     }
 }

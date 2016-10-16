@@ -116,15 +116,21 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
+    <Compile Include="Engine\AgentControllerState.cs" />
+    <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
-    <Compile Include="Engine\Controllers\AgentDefaultController.cs" />
+    <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultController.cs" />
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
+    <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
     <Compile Include="Engine\Messages\Message.cs" />
     <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
+    <Compile Include="Engine\Messages\MessageAgentDestinationReached.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetDestination.cs" />
+    <Compile Include="Engine\Messages\MessageShipBasic.cs" />
     <Compile Include="Engine\Messages\MessageShipResponse.cs" />
     <Compile Include="Engine\Messages\MessageShipCommand.cs" />
     <Compile Include="Engine\Messages\MessageProducerCommand.cs" />
@@ -137,12 +143,13 @@
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
     <Compile Include="Framework\GalaxyLoader.cs" />
     <Compile Include="Framework\IdUtils.cs" />
+    <Compile Include="Framework\NavigationUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
     <Compile Include="Framework\CommonStructs.cs" />
-    <Compile Include="Model\IReadOnlyAgent.cs" />
     <Compile Include="Model\IStoreLocation.cs" />
     <Compile Include="Model\IAgentLocation.cs" />
     <Compile Include="Model\Ship.cs" />
+    <Compile Include="Model\ShipType.cs" />
     <Compile Include="Model\Store.cs" />
     <Compile Include="Model\Producer.cs" />
     <Compile Include="Model\Agent.cs" />
@@ -151,6 +158,7 @@
     <Compile Include="Model\SolarSystem.cs" />
     <Compile Include="Model\TypeEnum.cs" />
     <Compile Include="ViewModel\IAgentViewModel.cs" />
+    <Compile Include="ViewModel\IShipViewModel.cs" />
     <Compile Include="ViewModel\IResourceQuantityViewModel.cs" />
     <Compile Include="ViewModel\IStoreViewModel.cs" />
     <Compile Include="ViewModel\IResourceTypeViewModel.cs" />
@@ -168,6 +176,7 @@
     <Compile Include="ViewModel\GalaxyViewModel.cs" />
     <Compile Include="Engine\ActorAgent.cs" />
     <Compile Include="ViewModel\AgentViewModel.cs" />
+    <Compile Include="ViewModel\ShipViewModel.cs" />
     <Compile Include="ViewModel\StoreViewModel.cs" />
     <Compile Include="ViewModel\ResourceQuantityViewModel.cs" />
     <Compile Include="ViewModel\ResourceTypeViewModel.cs" />

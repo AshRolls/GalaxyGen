@@ -59,7 +59,7 @@ namespace GalaxyGenCore.BluePrints
             return types_Var[bpIdx];
         }
 
-        public static void initialiseBluePrints()
+        public static void InitialiseBluePrints()
         {
             // pull these in from XML eventually
             ResourceQuantity prod = new ResourceQuantity();

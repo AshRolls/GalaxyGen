@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Engine.Messages;
 using GalaxyGen.Model;
 using GalaxyGen.ViewModel;
 using System;
@@ -90,7 +91,7 @@ namespace GalaxyGen.Engine
             else if (msg.RunCommand == EngineRunCommand.RunPulse && _runState != TickEngineRunState.Running)
             {
                 _runState = TickEngineRunState.Running;
-                _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 20, Self, pulse, ActorRefs.Nobody);
+                _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 5, Self, pulse, ActorRefs.Nobody);
                 startTicksTimer();
                 receiveTick(pulse);
             }

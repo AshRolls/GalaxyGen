@@ -24,7 +24,7 @@ namespace GalaxyGen.Model
         Trader
     }
 
-    public class Agent : IReadOnlyAgent
+    public class Agent
     {      
         public Agent()
         {
@@ -47,7 +47,9 @@ namespace GalaxyGen.Model
         public IAgentLocation Location { get; set; }
         public SolarSystem SolarSystem { get; set; }
 
-        [JsonIgnore]
-        public IActorRef Actor { get; set; }
+        public String Memory { get; set; }
+
+        //[JsonIgnore]
+        //public IActorRef Actor { get; set; }
     }
 }

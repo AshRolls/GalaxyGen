@@ -45,6 +45,7 @@ namespace GalaxyGenCore.Framework
                             {
                                 JsonSerializer jsSer = new JsonSerializer();
                                 jsSer.PreserveReferencesHandling = PreserveReferencesHandling.Objects;
+                                jsSer.NullValueHandling = NullValueHandling.Ignore;
                                 if (converter != null)
                                     jsSer.Converters.Add(converter);
                                 obj = jsSer.Deserialize<T>(jr);

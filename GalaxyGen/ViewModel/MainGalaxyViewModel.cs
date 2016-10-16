@@ -27,9 +27,7 @@ namespace GalaxyGen.ViewModel
         IGalaxyViewModelFactory _galaxyViewModelFactory;
         ISolarSystemViewModelFactory _solarSystemViewModelFactory;
         IPlanetViewModelFactory _planetViewModelFactory;        
-        
-        
-        
+                       
         public MainGalaxyViewModel(IGalaxyPopulator initGalaxyCreator, 
                                     IGalaxyViewModelFactory initGalaxyViewModelFactory, 
                                     ISolarSystemViewModelFactory initSolarSystemViewModelFactory, 
@@ -47,8 +45,8 @@ namespace GalaxyGen.ViewModel
             TextOutput = initTextOutputViewModel;
 
             StarChart.InitialiseStarChart();
-            ResourceTypeInitialiser _resourceTypeInitialiser = new ResourceTypeInitialiser(); // TODO modify resources to use same sys as bp
-            BluePrints.initialiseBluePrints();
+            ResourceTypes.InitialiseResourceTypes();
+            BluePrints.InitialiseBluePrints();
 
             loadOrCreateGalaxy();
             initialiseEngine();

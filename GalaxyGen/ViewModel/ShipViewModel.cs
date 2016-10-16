@@ -12,16 +12,12 @@ using System.Timers;
 
 namespace GalaxyGen.ViewModel
 {
-    public class PlanetViewModel : IPlanetViewModel
-    {
-        private IProducerViewModelFactory _producerVmFactory;
+    public class ShipViewModel : IShipViewModel
+    {        
         private Timer _refreshTimer;
 
-        public PlanetViewModel(ISocietyViewModelFactory initSocietyViewModelFactory, IProducerViewModelFactory initProducerVmFactory)
+        public ShipViewModel()
         {            
-            _producerVmFactory = initProducerVmFactory;
-            ISocietyViewModelFactory societyViewModelFactory = initSocietyViewModelFactory;
-            this.Society = societyViewModelFactory.CreateSocietyViewModel();
             setupAndStartTimer();
         }
 
@@ -46,8 +42,8 @@ namespace GalaxyGen.ViewModel
         }
 
 
-        private Planet model_Var;
-        public Planet Model
+        private Ship model_Var;
+        public Ship Model
         {
             get { return model_Var; }
             set
@@ -62,17 +58,7 @@ namespace GalaxyGen.ViewModel
 
         private void updateFromModel()
         {
-            ScPlanet p = StarChart.GetPlanet(model_Var.StarChartId);
-            name_Var = p.Name;
-            //Population = model_Var.Population;           
-            societyVm_Var.Model = model_Var.Society;
-
-            foreach (Producer prod in model_Var.Producers)
-            {
-                IProducerViewModel prodVm = _producerVmFactory.CreateProducerViewModel();
-                prodVm.Model = prod;
-                producers_Var.Add(prodVm);
-            }
+            name_Var = model_Var.Name;     
         }
 
         private string name_Var;
@@ -82,25 +68,6 @@ namespace GalaxyGen.ViewModel
                 return name_Var;
             }
         }
-
-        //public Int64 Population
-        //{
-        //    get
-        //    {
-        //        if (model_Var != null)
-        //            return model_Var.Population;
-        //        else
-        //            return 0;
-        //    }
-        //    set
-        //    {
-        //        if (model_Var != null)
-        //        { 
-        //            model_Var.Population = value;
-        //            OnPropertyChanged("Population");
-        //        }
-        //    }
-        //}
 
         public Double PositionX
         {
@@ -162,29 +129,6 @@ namespace GalaxyGen.ViewModel
             {
                 posY800_Var = value;
                 OnPropertyChanged("PosY800");
-            }
-        }
-
-        private ISocietyViewModel societyVm_Var;
-        public ISocietyViewModel Society
-        {
-            get
-            {
-                return societyVm_Var;
-            }
-            private set
-            {
-                societyVm_Var = value;
-                OnPropertyChanged("Society");
-            }
-        }
-
-        private ObservableCollection<IProducerViewModel> producers_Var = new ObservableCollection<IProducerViewModel>();
-        public ObservableCollection<IProducerViewModel> Producers
-        {
-            get
-            {
-                return producers_Var;
             }
         }
 

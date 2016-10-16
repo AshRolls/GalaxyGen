@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GalaxyGen.Engine
+namespace GalaxyGen.Engine.Messages
 {
     internal class MessageEngineAgCompletedCommand
     {

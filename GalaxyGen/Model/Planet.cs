@@ -20,20 +20,21 @@ namespace GalaxyGen.Model
             PlanetId = IdUtils.GetId();
             GalType = TypeEnum.Planet;
             Producers = new HashSet<Producer>();
-            Stores = new Dictionary<Int64,Store>();
+            Stores = new Dictionary<Int64, Store>();
             DockedShips = new List<Ship>();
             Agents = new List<Agent>();
         }
 
+        public String Name { get; set; }
+
         public Int64 PlanetId { get; set; }
         public Int64 StarChartId { get; set; }
         public TypeEnum GalType { get; set; }
-
+               
         public Double PositionX { get; set; }
         public Double PositionY { get; set; }
 
         public Int64 Population { get; set; }
-
 
         public Society Society { get; set; }
 
@@ -41,7 +42,6 @@ namespace GalaxyGen.Model
         public Dictionary<Int64,Store> Stores { get; set; }
         public ICollection<Ship> DockedShips { get; set; }
         public ICollection<Agent> Agents { get; set; }
-
         public SolarSystem SolarSystem { get; set; }
 
         //public IMarket Market { get; set; }

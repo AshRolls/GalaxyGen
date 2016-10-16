@@ -5,19 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GalaxyGen"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="800" d:DesignWidth="800"
              x:Name="uc">
     <Grid x:Name="SolarSystemLayoutRoot">
         <ItemsControl ItemsSource="{Binding ElementName=uc,Path=SolarSystemVm.Planets}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Width="300" Height="300" Background="Black" />
+                    <Canvas Width="800" Height="800" Background="Black" />
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemContainerStyle>
                 <Style TargetType="ContentPresenter">
-                    <Setter Property="Canvas.Left" Value="{Binding PosX300}"/>
-                    <Setter Property="Canvas.Top" Value="{Binding PosY300}"/>
+                    <Setter Property="Canvas.Left" Value="{Binding PosX800}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding PosY800}"/>
                 </Style>
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
@@ -26,6 +26,25 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <ItemsControl ItemsSource="{Binding ElementName=uc,Path=SolarSystemVm.Ships}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas Width="800" Height="800" Background="Transparent" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="Canvas.Left" Value="{Binding PosX800}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding PosY800}"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Ellipse Fill="Red" Height="3" Width="3" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text=" X : " Foreground="White" />
@@ -37,7 +56,7 @@
             </StackPanel>
         </StackPanel>
         <Canvas>
-            <Ellipse Fill="Yellow" Height="5" Width="5" Canvas.Top="148" Canvas.Left="148"/>
+            <Ellipse Fill="Yellow" Height="5" Width="5" Canvas.Top="398" Canvas.Left="398"/>
         </Canvas>
     </Grid>
 </UserControl>

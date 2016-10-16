@@ -19,14 +19,20 @@ namespace GalaxyGen.Engine
         {
             Galaxy gal = this.GetGalaxy();
             gal.MaxId = 100;
-            
+
+            ShipType shipT = new ShipType();
+            shipT.Name = "Basic Ship";
+            shipT.MaxCruisingSpeedKmH = 300000;
+            gal.ShipTypes.Add(shipT);
+                        
             foreach (ScSolarSystem chartSS in StarChart.SolarSystems.Values)
             {
                 SolarSystem ss = getSolarSystemFromStarChartSS(chartSS);
                 ss.StarChartId = StarChart.GetIdForObject(chartSS);
 
-                Agent ag = this.GetAgent("Agent " + chartSS.Name);
+                Agent ag = this.GetAgent("Agent " + chartSS.Name);                
                 ss.Agents.Add(ag);
+                ag.SolarSystem = ss;
 
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
@@ -36,7 +42,7 @@ namespace GalaxyGen.Engine
                     ss.Planets.Add(p);
                 }
 
-                Ship s = this.GetShip("Ship" + chartSS.Name);
+                Ship s = this.GetShip("Ship" + chartSS.Name, shipT);
                 s.Owner = ag;
                 s.ShipState = ShipStateEnum.Docked;
                 s.Agents.Add(ag);
@@ -49,6 +55,28 @@ namespace GalaxyGen.Engine
                 addNewCargoStoreToShip(s, ag);
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
+
+                for (int i = 0; i < 100; i++)
+                {
+
+                    ag = this.GetAgent("Agent " + i);
+                    ss.Agents.Add(ag);
+                    ag.SolarSystem = ss;
+
+                    s = this.GetShip("Ship" + i, shipT);
+                    s.Owner = ag;
+                    s.ShipState = ShipStateEnum.Docked;
+                    s.Agents.Add(ag);
+                    ag.Location = s;
+                    s.Pilot = ag;
+                    ag.AgentState = AgentStateEnum.PilotingShip;
+                    s.DockedPlanet = ss.Planets.First();
+                    ss.Planets.First().DockedShips.Add(s);
+                    ag.ShipsOwned.Add(s);
+                    addNewCargoStoreToShip(s, ag);
+                    s.SolarSystem = ss;
+                    ss.Ships.Add(s);
+                }
 
                 gal.SolarSystems.Add(ss);
             }                      
@@ -72,7 +100,7 @@ namespace GalaxyGen.Engine
         private SolarSystem getSolarSystemFromStarChartSS(ScSolarSystem chartSS)
         {
             SolarSystem ss = new SolarSystem();
-            ss.Name = chartSS.Name;
+            ss.Name = chartSS.Name;           
             return ss;
         }
 
@@ -87,6 +115,7 @@ namespace GalaxyGen.Engine
         private Planet GetPlanet(ScPlanet chartP)
         {
             Planet plan = new Planet();
+            plan.Name = chartP.Name;
             plan.Population = 10000;
 
             Society soc = new Society();
@@ -112,6 +141,7 @@ namespace GalaxyGen.Engine
         private Agent GetAgent(String seedName)
         {
             Agent ag = new Agent();
+            ag.Memory = "";
             ag.Name = seedName;
             return ag;
         }
@@ -139,9 +169,10 @@ namespace GalaxyGen.Engine
             s.StoredResources.Add(ResourceTypeEnum.Spice, 10);
         }
 
-        private Ship GetShip(String seedName)
+        private Ship GetShip(String seedName, ShipType shipT)
         {
             Ship s = new Ship();
+            s.Type = shipT;
             s.Name = seedName;                        
             return s;
         }

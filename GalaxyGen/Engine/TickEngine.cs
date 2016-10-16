@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
+using GalaxyGen.Engine.Messages;
 
 namespace GalaxyGen.Engine
 {

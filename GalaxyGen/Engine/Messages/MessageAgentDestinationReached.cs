@@ -10,14 +10,11 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine.Messages
 {
-    public class MessageResources : Message
+    public class MessageAgentDestinationReached : Message
     {
-        public MessageResources(List<ResourceQuantity> resources, Int64 tickSent)
+        public MessageAgentDestinationReached(Int64 tickSent)
         {
-            Resources = resources;
             TickSent = tickSent;
-        }
-
-        public List<ResourceQuantity> Resources { get; private set; }
+        }        
     }
 }

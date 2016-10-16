@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Engine.Messages;
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
@@ -9,19 +10,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GalaxyGen.Engine
+namespace GalaxyGen.Engine.Controllers
 {
     public class SolarSystemController
     {
         private SolarSystem _model;
         private Dictionary<Int64, PlanetController> _planetCs;
-        private IEnumerable _planetValues;
+        private IEnumerable _planetValues;        
         private Dictionary<Int64,ShipController> _shipCs;
+        private IEnumerable _shipValues;
         private IActorRef _actorTextOutput;
+        private ActorSolarSystem _parentActor;
 
-        public SolarSystemController(SolarSystem ss, IActorRef actorTextOutput)
+        public SolarSystemController(SolarSystem ss, ActorSolarSystem parentActor, IActorRef actorTextOutput)
         {
-            _model = ss;                        
+            _model = ss;
+            _parentActor = parentActor;
             _actorTextOutput = actorTextOutput;
 
             // create child controller for each planet in ss
@@ -40,11 +44,13 @@ namespace GalaxyGen.Engine
                 ShipController sc = new ShipController(s, this, actorTextOutput);
                 _shipCs.Add(s.ShipId, sc);
             }
+            _shipValues = _shipCs.Values;
         }
 
         public void Tick(MessageTick tick)
         {                       
             updatePlanets(tick);
+            updateShips(tick);
         }
         
         private void updatePlanets(MessageTick tick)
@@ -55,19 +61,70 @@ namespace GalaxyGen.Engine
             }
         }
 
-        internal bool ReceiveShipCommand(MessageShipCommand msg)
+        private void updateShips(MessageTick tick)
+        {
+            foreach (ShipController sc in _shipValues)
+            {
+                sc.Tick(tick);
+            }
+        }
+
+        internal bool ReceiveCommandForShip(MessageShipCommand msg)
         {
             bool success = false;
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
-            if (sc.checkValidCommand(msg))
+
+            if (msg.Command.CommandType == ShipCommandEnum.Undock)
             {
-                if (msg.Command == ShipCommandEnum.Undock)
-                {
-                    _planetCs[sc.DockedPlanet.PlanetId].UndockShip(msg.ShipId);
-                    sc.Undock();
-                    success = true;
-                }                
+                success = ShipUndock(msg, sc);
+            }
+            else if (msg.Command.CommandType == ShipCommandEnum.SetDestination)
+            {
+                success = ShipSetDestination(msg, sc);
+            }
+            else if (msg.Command.CommandType == ShipCommandEnum.Dock)
+            {
+                success = ShipDock(msg, sc);
+            }
+
+            return success;
+        }
+       
+
+        private bool ShipUndock(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidUndockCommand(msg))
+            {
+                _planetCs[sc.DockedPlanet.PlanetId].UndockShip(msg.ShipId);
+                sc.Undock();
+                success = true;
+            }
+            return success;
+        }
+
+        private bool ShipDock(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidDockCommand(msg))
+            {
+                Ship s = _model.Ships.Where(x => x.ShipId == msg.ShipId).First();
+                _planetCs[sc.GetDestination.PlanetId].DockShip(s);                
+                sc.Dock();
+                success = true;
+            }
+            return success;
+        }
+
+        private static bool ShipSetDestination(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidSetDestinationCommand(msg))
+            {
+                MessageShipSetDestination msd = (MessageShipSetDestination)msg.Command;
+                sc.SetDestination(msd.DestinationScId);
+                success = true;
             }
             return success;
         }
@@ -78,6 +135,11 @@ namespace GalaxyGen.Engine
             {
                 return _model.SolarSystemId;
             }
+        }
+
+        internal void SendMessageToAgent(Int64 agentId, object msg)
+        {
+            _parentActor.SendMessageToAgent(agentId, msg);
         }
     }
 }
