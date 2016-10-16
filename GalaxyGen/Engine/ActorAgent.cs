@@ -4,24 +4,27 @@ using GalaxyGen.Engine.Controllers.AgentDefault;
 using GalaxyGen.Engine.Messages;
 using GalaxyGen.Model;
 using System;
+using System.Linq;
 
 namespace GalaxyGen.Engine
 {
-    // AGENT SHOULD NEVER CHANGE IT'S OWN STATE. IT SHOULD TELL SOLARSYSTEM AND THAT WILL MANAGE THE STATE CHANGES.
+    // AGENT SHOULD NEVER CHANGE IT'S OWN MODEL STATE. IT SHOULD TELL SOLARSYSTEM AND THAT WILL MANAGE THE STATE CHANGES.    
 
     public class ActorAgent : ReceiveActor
     {
         IActorRef _actorTextOutput;
         IActorRef _actorSolarSystem;
-        IReadOnlyAgent _agent;
+        Agent _agent;
         IAgentController _agentC;
 
-        public ActorAgent(IActorRef actorTextOutput, IReadOnlyAgent ag, IActorRef actorSolarSystem)
+        public ActorAgent(IActorRef actorTextOutput, Agent ag, IActorRef actorSolarSystem)
         {
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
             _agent = ag;
-            //_agent.Actor = Self;
+            _agent.SolarSystem.Planets.First().Name = "blah";
+
+            AgentControllerState stateForAgent = new AgentControllerState(ag);
             
             switch(_agent.Type)
             {
@@ -29,7 +32,7 @@ namespace GalaxyGen.Engine
                 //    _agentC = new AgentTraderController(ag, _actorTextOutput);
                 //    break;
                 default:
-                    _agentC = new AgentDefaultController(ag, _actorTextOutput);
+                    _agentC = new AgentDefaultController(stateForAgent, _actorTextOutput);
                     break;
             }
 

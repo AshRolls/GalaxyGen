@@ -15,6 +15,7 @@ namespace GalaxyGen.Model
 {
     public enum ShipStateEnum
     {
+        Unpiloted,
         Docked,        
         SpaceCruising,
         SpaceStopped

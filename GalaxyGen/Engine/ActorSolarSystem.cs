@@ -78,7 +78,7 @@ namespace GalaxyGen.Engine
             MessageEngineSSCompletedCommand tickCompleteCmd = new MessageEngineSSCompletedCommand(_solarSystemC.SolarSystemId, _curTick);
             _actorEngine.Tell(tickCompleteCmd);
         }
-
+        
         private void receiveCommandForShip(MessageShipCommand msg)
         {
             bool success = _solarSystemC.ReceiveCommandForShip(msg);

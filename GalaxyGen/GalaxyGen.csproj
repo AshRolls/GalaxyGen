@@ -116,6 +116,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
+    <Compile Include="Engine\AgentControllerState.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
@@ -145,7 +146,6 @@
     <Compile Include="Framework\NavigationUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
     <Compile Include="Framework\CommonStructs.cs" />
-    <Compile Include="Model\IReadOnlyAgent.cs" />
     <Compile Include="Model\IStoreLocation.cs" />
     <Compile Include="Model\IAgentLocation.cs" />
     <Compile Include="Model\Ship.cs" />

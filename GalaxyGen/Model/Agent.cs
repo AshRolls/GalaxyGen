@@ -24,7 +24,7 @@ namespace GalaxyGen.Model
         Trader
     }
 
-    public class Agent : IReadOnlyAgent
+    public class Agent
     {      
         public Agent()
         {
