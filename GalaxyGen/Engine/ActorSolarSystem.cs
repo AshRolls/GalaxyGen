@@ -81,12 +81,12 @@ namespace GalaxyGen.Engine
 
         private void receiveCommandForShip(MessageShipCommand msg)
         {
-            bool success = _solarSystemC.ReceiveShipCommand(msg);
+            bool success = _solarSystemC.ReceiveCommandForShip(msg);
             MessageShipResponse msr = new MessageShipResponse(success, msg, _curTick);
             Sender.Tell(msr);
         }
 
-        internal void MessageAgentCommand(Int64 agentId, object msg)
+        internal void SendMessageToAgent(Int64 agentId, object msg)
         {
             _subscribedActorAgents[agentId].Tell(msg);
         }

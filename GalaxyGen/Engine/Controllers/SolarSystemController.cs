@@ -16,9 +16,9 @@ namespace GalaxyGen.Engine.Controllers
     {
         private SolarSystem _model;
         private Dictionary<Int64, PlanetController> _planetCs;
-        private IEnumerable _planetValues;
-        private IEnumerable _shipValues;
+        private IEnumerable _planetValues;        
         private Dictionary<Int64,ShipController> _shipCs;
+        private IEnumerable _shipValues;
         private IActorRef _actorTextOutput;
         private ActorSolarSystem _parentActor;
 
@@ -69,7 +69,7 @@ namespace GalaxyGen.Engine.Controllers
             }
         }
 
-        internal bool ReceiveShipCommand(MessageShipCommand msg)
+        internal bool ReceiveCommandForShip(MessageShipCommand msg)
         {
             bool success = false;
             ShipController sc = _shipCs[msg.ShipId];
@@ -90,7 +90,6 @@ namespace GalaxyGen.Engine.Controllers
 
             return success;
         }
-
        
 
         private bool ShipUndock(MessageShipCommand msg, ShipController sc)
@@ -138,9 +137,9 @@ namespace GalaxyGen.Engine.Controllers
             }
         }
 
-        internal void MessageAgentCommand(Int64 agentId, object msg)
+        internal void SendMessageToAgent(Int64 agentId, object msg)
         {
-            _parentActor.MessageAgentCommand(agentId, msg);
+            _parentActor.SendMessageToAgent(agentId, msg);
         }
     }
 }

@@ -38,7 +38,7 @@ namespace GalaxyGen.Engine.Controllers
                 {
                     // we are at our destination.
                     MessageAgentDestinationReached msg = new MessageAgentDestinationReached(tick.Tick);
-                    _solarSystemC.MessageAgentCommand(_model.Pilot.AgentId, msg);
+                    _solarSystemC.SendMessageToAgent(_model.Pilot.AgentId, msg);
                 }
             }
         }

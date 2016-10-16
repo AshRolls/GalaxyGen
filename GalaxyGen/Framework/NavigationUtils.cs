@@ -8,7 +8,9 @@ using System.Threading.Tasks;
 namespace GalaxyGen.Framework
 {    
     public static class NavigationUtils
-    {        
+    {
+        // http://stackoverflow.com/a/12550458/771034
+        // Length function is slow (sqrt!) Use approx 
         public static PointD GetNewPointForShip(Double distance, Double aX, Double aY, Double bX, Double bY)
         {
             Vector2 aV = new Vector2(aX, aY);
