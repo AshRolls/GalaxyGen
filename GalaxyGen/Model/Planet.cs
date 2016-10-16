@@ -15,30 +15,21 @@ namespace GalaxyGen.Model
 {   
     public class Planet : IAgentLocation, IStoreLocation
     {
-        public Planet(String name, Double orbitKm, Double orbitDays)
+        public Planet()
         {
-            Name = name;
-            OrbitKm = orbitKm;
-            OrbitDays = orbitDays;
             PlanetId = IdUtils.GetId();
             GalType = TypeEnum.Planet;
             Producers = new HashSet<Producer>();
-            Stores = new Dictionary<Int64,Store>();
+            Stores = new Dictionary<Int64, Store>();
             DockedShips = new List<Ship>();
             Agents = new List<Agent>();
         }
 
-        [JsonIgnore]
         public String Name { get; set; }
 
         public Int64 PlanetId { get; set; }
         public Int64 StarChartId { get; set; }
         public TypeEnum GalType { get; set; }
-
-        [JsonIgnore]
-        public Double OrbitKm { get; set; }
-        [JsonIgnore]
-        public Double OrbitDays { get; set; }
                
         public Double PositionX { get; set; }
         public Double PositionY { get; set; }

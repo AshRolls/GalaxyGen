@@ -29,7 +29,6 @@ namespace GalaxyGen.Model
         public Int64 MaxId { get; set; }
 
         public ICollection<SolarSystem> SolarSystems { get; set; }
-
         public ICollection<ShipType> ShipTypes { get; set; }
 
         [JsonIgnore]

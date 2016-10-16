@@ -56,12 +56,12 @@ namespace GalaxyGen.Engine
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
 
-                for (int i = 0; i< 100; i++)
+                for (int i = 0; i < 100; i++)
                 {
 
                     ag = this.GetAgent("Agent " + i);
                     ss.Agents.Add(ag);
-                    ag.SolarSystem = ss;                  
+                    ag.SolarSystem = ss;
 
                     s = this.GetShip("Ship" + i, shipT);
                     s.Owner = ag;
@@ -99,7 +99,8 @@ namespace GalaxyGen.Engine
 
         private SolarSystem getSolarSystemFromStarChartSS(ScSolarSystem chartSS)
         {
-            SolarSystem ss = new SolarSystem(chartSS.Name);            
+            SolarSystem ss = new SolarSystem();
+            ss.Name = chartSS.Name;           
             return ss;
         }
 
@@ -113,7 +114,8 @@ namespace GalaxyGen.Engine
 
         private Planet GetPlanet(ScPlanet chartP)
         {
-            Planet plan = new Planet(chartP.Name, chartP.OrbitKm, chartP.OrbitDays);
+            Planet plan = new Planet();
+            plan.Name = chartP.Name;
             plan.Population = 10000;
 
             Society soc = new Society();

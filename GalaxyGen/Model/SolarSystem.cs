@@ -13,9 +13,8 @@ namespace GalaxyGen.Model
 {
     public class SolarSystem
     {
-        public SolarSystem(String name)
+        public SolarSystem()
         {
-            Name = name;
             SolarSystemId = IdUtils.GetId();
             Planets = new List<Planet>();
             Agents = new List<Agent>();
