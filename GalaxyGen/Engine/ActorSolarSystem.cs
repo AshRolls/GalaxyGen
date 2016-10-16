@@ -5,10 +5,11 @@ using GalaxyGen.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
-    public class ActorSolarSystem : ReceiveActor
+    public class ActorSolarSystem : ReceiveActor, IWithUnboundedStash
     {
         IActorRef _actorEngine;
         IActorRef _actorTextOutput;
@@ -16,7 +17,7 @@ namespace GalaxyGen.Engine
         private Dictionary<Int64, IActorRef> _subscribedActorAgents;
         private IEnumerable<IActorRef> _actorAgentValues;
         private Int64 _curTick;
-        private int _numberOfIncompleteAg;   
+        private int _numberOfIncompleteAg;        
 
         public ActorSolarSystem(IActorRef actorEngine, IActorRef actorTextOutput, SolarSystem ss)
         {
@@ -27,11 +28,40 @@ namespace GalaxyGen.Engine
 
             setupChildAgentActors(ss);
 
-            Receive<MessageTick>(msg => receiveTick(msg));
-            Receive<MessageShipCommand>(msg => receiveCommandForShip(msg));
-            Receive<MessageEngineAgCompletedCommand>(msg => receiveAgentCompletedMessage(msg));
+            Ready();
 
             //_actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
+        }
+
+        public IStash Stash { get; set; }
+
+        private void Ready()
+        {
+            Receive<MessageTick>(msg =>
+                {
+                    var self = Self;
+                    Task.Run(() => receiveTick(msg)).ContinueWith(x =>
+                        {
+                            return new MessageFinished();
+                        },TaskContinuationOptions.ExecuteSynchronously).PipeTo(self);
+                    Become(Working);
+                }
+            );
+
+            Receive<MessageShipCommand>(msg => receiveCommandForShip(msg));
+            Receive<MessageEngineAgCompletedCommand>(msg => receiveAgentCompletedMessage(msg));
+        }
+
+        private void Working()
+        {
+            Receive<MessageFinished>(f => BecomeReady());
+            ReceiveAny(o => Stash.Stash());
+        }
+
+        private void BecomeReady()
+        {
+            Stash.UnstashAll();
+            Become(Ready);
         }
 
         private void setupChildAgentActors(SolarSystem ss)

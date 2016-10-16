@@ -137,6 +137,7 @@
     <Compile Include="Engine\Messages\MessageProducedResources.cs" />
     <Compile Include="Engine\Messages\MessageRequestResources.cs" />
     <Compile Include="Engine\Messages\MessageResources.cs" />
+    <Compile Include="Engine\Messages\MessageFinished.cs" />
     <Compile Include="Engine\Messages\MessageTick.cs" />
     <Compile Include="Engine\Messages\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
