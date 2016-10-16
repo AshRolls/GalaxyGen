@@ -171,7 +171,6 @@
     <Compile Include="ViewModel\ISocietyViewModel.cs" />
     <Compile Include="ViewModel\ITextOutputViewModel.cs" />
     <Compile Include="ViewModel\MainGalaxyViewModel.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\MarketViewModel.cs" />
     <Compile Include="ViewModel\GalaxyViewModel.cs" />
     <Compile Include="Engine\ActorAgent.cs" />
@@ -185,7 +184,6 @@
     <Compile Include="ViewModel\SocietyViewModel.cs" />
     <Compile Include="ViewModel\PlanetViewModel.cs" />
     <Compile Include="ViewModel\TextOutputViewModel.cs" />
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="View\AgentControl.xaml.cs">
       <DependentUpon>AgentControl.xaml</DependentUpon>
     </Compile>
