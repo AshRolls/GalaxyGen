@@ -33,7 +33,6 @@ namespace GalaxyGen.Model
         public Int64 ShipId { get; set; }
         public TypeEnum GalType { get; set; }
 
-        [StringLength(60)]
         public String Name { get; set; }
         public ShipType Type { get; set; }
 

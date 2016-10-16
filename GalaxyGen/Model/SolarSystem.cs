@@ -24,17 +24,14 @@ namespace GalaxyGen.Model
 
         public Int64 SolarSystemId { get; set; }
         public Int64 StarChartId { get; set; }
-        
+
+        public virtual ICollection<Planet> Planets { get; set; }
         public virtual ICollection<Agent> Agents { get; set; }
         public virtual ICollection<Ship> Ships { get; set; }
 
         [JsonIgnore]
         public String Name { get; set; }
 
-        [JsonIgnore]
-        public virtual ICollection<Planet> Planets { get; set; }
-
-        [JsonIgnore]
         public virtual Galaxy Galaxy { get; set; }
 
         [JsonIgnore]

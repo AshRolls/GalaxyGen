@@ -23,9 +23,9 @@ namespace GalaxyGenCreator
                 ss.Planets.Add(getPlanet("Earth", 149.6, 365.26));
                 ss.Planets.Add(getPlanet("Mars", 227.9, 686.98));
                 ss.Planets.Add(getPlanet("Jupiter", 778.3, 4332.7));
-                //ss.Planets.Add(getPlanet("Saturn", 1427, 10759.1));
-                //ss.Planets.Add(getPlanet("Uranus", 2871, 30707.4));
-                //ss.Planets.Add(getPlanet("Neptune", 4497.1, 60198.5));
+                ss.Planets.Add(getPlanet("Saturn", 1427, 10759.1));
+                ss.Planets.Add(getPlanet("Uranus", 2871, 30707.4));
+                ss.Planets.Add(getPlanet("Neptune", 4497.1, 60198.5));
                 gal.SolarSystems.Add(ss);                
             }
             else

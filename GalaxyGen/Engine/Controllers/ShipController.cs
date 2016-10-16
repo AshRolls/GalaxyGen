@@ -22,7 +22,8 @@ namespace GalaxyGen.Engine.Controllers
         {
             _model = s;
             _solarSystemC = ssc;
-            _actorTextOutput = actorTextOutput; 
+            _actorTextOutput = actorTextOutput;
+            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == _model.DestinationScId).FirstOrDefault();
         }
 
         public void Tick(MessageTick tick)

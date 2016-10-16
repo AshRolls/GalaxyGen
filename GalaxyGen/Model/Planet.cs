@@ -51,8 +51,6 @@ namespace GalaxyGen.Model
         public Dictionary<Int64,Store> Stores { get; set; }
         public ICollection<Ship> DockedShips { get; set; }
         public ICollection<Agent> Agents { get; set; }
-
-        [JsonIgnore]
         public SolarSystem SolarSystem { get; set; }
 
         //public IMarket Market { get; set; }

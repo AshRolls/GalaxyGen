@@ -22,7 +22,6 @@ namespace GalaxyGen.Model
 
         public Int64 GalaxyId { get; set; }
 
-        [StringLength(60)]
         public String Name { get; set; }
         
         public Int64 CurrentTick { get; set; }
