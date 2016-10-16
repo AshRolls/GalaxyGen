@@ -56,7 +56,7 @@ namespace GalaxyGen.Engine
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
 
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 50; i++)
                 {
 
                     ag = this.GetAgent("Agent " + i);

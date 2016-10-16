@@ -74,6 +74,7 @@ namespace GalaxyGen.ViewModel
 
         private void saveGalaxy()
         {
+            stopEngine();
             galaxyViewModel_Var.Model.MaxId = IdUtils.currentId;
             GalaxyLoader.Save(galaxyViewModel_Var.Model);
         }
