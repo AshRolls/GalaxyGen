@@ -126,6 +126,8 @@
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
     <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
     <Compile Include="Engine\Messages\Message.cs" />
+    <Compile Include="Engine\Messages\MessageAggregatedReply.cs" />
+    <Compile Include="Engine\Messages\MessageAggregator.cs" />
     <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageAgentDestinationReached.cs" />
