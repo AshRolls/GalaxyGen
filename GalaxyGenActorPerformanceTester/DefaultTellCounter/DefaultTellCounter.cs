@@ -79,10 +79,14 @@ namespace GalaxyGenActorPerformanceTester.DefaultTellCounter
         private int _numberOfChildren;
         private int _numberOfIncompleteChildren;
         private IActorRef _parent;
+        private TestComplete _msgComplete;
+        private TestMessage _msg;
 
         public ActorAggregator(List<int> children, IActorRef parent)
         {
             _parent = parent;
+            _msgComplete = new TestComplete();
+            _msg = new TestMessage();
 
             if (children.Count > 1)
             {
@@ -106,18 +110,18 @@ namespace GalaxyGenActorPerformanceTester.DefaultTellCounter
 
 
             Receive<TestMessage>(msg => receive());
-            Receive<TestComplete>(msg => receiveCompletedMessage(msg));
+            Receive<TestComplete>(msg => receiveCompletedMessage());
         }
 
         internal void receive()
         {
             foreach (IActorRef child in _childActors)
             {
-                child.Tell(new TestMessage());
+                child.Tell(_msg);
             }
         }
 
-        private void receiveCompletedMessage(TestComplete msg)
+        private void receiveCompletedMessage()
         {
             _numberOfIncompleteChildren--;
             if (_numberOfIncompleteChildren <= 0)
@@ -129,20 +133,22 @@ namespace GalaxyGenActorPerformanceTester.DefaultTellCounter
 
         private void sendCompletedMessage()
         {
-            _parent.Tell(new TestComplete());
+            _parent.Tell(_msgComplete);
         }
     }
 
     internal class ActorChild : ReceiveActor
     {
+        private TestComplete _msgComplete;
         public ActorChild()
         {
             Receive<TestMessage>(msg => receive());
+            _msgComplete = new TestComplete();
         }
 
         internal void receive()
         {
-            Sender.Tell(new TestComplete());
+            Sender.Tell(_msgComplete);
         }
     }
 }

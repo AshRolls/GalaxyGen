@@ -13,6 +13,7 @@ namespace GalaxyGenActorPerformanceTester
     {
         static void Main(string[] args)
         {
+            Console.ReadLine();
             DefaultTell dt = new DefaultTell();
             dt.Run();
             Console.ReadLine();
