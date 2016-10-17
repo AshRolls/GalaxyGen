@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenCore", "..\GalaxyG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenCreator", "..\GalaxyGenCreator\GalaxyGenCreator.csproj", "{2B48CCA0-C262-4016-B4DC-142544DC35C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenActorPerformanceTester", "..\GalaxyGenActorPerformanceTester\GalaxyGenActorPerformanceTester.csproj", "{CC63ED5B-4A9D-48D8-B2D8-FEC82F6EF525}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{2B48CCA0-C262-4016-B4DC-142544DC35C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B48CCA0-C262-4016-B4DC-142544DC35C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B48CCA0-C262-4016-B4DC-142544DC35C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC63ED5B-4A9D-48D8-B2D8-FEC82F6EF525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC63ED5B-4A9D-48D8-B2D8-FEC82F6EF525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC63ED5B-4A9D-48D8-B2D8-FEC82F6EF525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC63ED5B-4A9D-48D8-B2D8-FEC82F6EF525}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
