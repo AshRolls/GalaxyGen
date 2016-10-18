@@ -16,7 +16,8 @@ namespace GalaxyGen.Engine
         private Dictionary<Int64, IActorRef> _subscribedActorAgents;
         private IEnumerable<IActorRef> _actorAgentValues;
         private Int64 _curTick;
-        private int _numberOfIncompleteAg;   
+        private int _numberOfIncompleteAg;
+        private MessageEngineSSCompletedCommand _tickCompleteCmd;
 
         public ActorSolarSystem(IActorRef actorEngine, IActorRef actorTextOutput, SolarSystem ss)
         {
@@ -24,6 +25,7 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;
             ss.Actor = Self;
             _solarSystemC = new SolarSystemController(ss, this, actorTextOutput);
+            _tickCompleteCmd = new MessageEngineSSCompletedCommand(_solarSystemC.SolarSystemId);
 
             setupChildAgentActors(ss);
 
@@ -62,21 +64,17 @@ namespace GalaxyGen.Engine
 
         private void receiveAgentCompletedMessage(MessageEngineAgCompletedCommand msg)
         {
-            if (msg.Tick == _curTick)
+            _numberOfIncompleteAg--;
+            if (_numberOfIncompleteAg <= 0)
             {
-                _numberOfIncompleteAg--;
-                if (_numberOfIncompleteAg <= 0)
-                {
-                    _numberOfIncompleteAg = _subscribedActorAgents.Count();
-                    sendSSCompletedMessage();
-                }
+                _numberOfIncompleteAg = _subscribedActorAgents.Count();
+                sendSSCompletedMessage();
             }
         }
 
         private void sendSSCompletedMessage()
         {
-            MessageEngineSSCompletedCommand tickCompleteCmd = new MessageEngineSSCompletedCommand(_solarSystemC.SolarSystemId, _curTick);
-            _actorEngine.Tell(tickCompleteCmd);
+            _actorEngine.Tell(_tickCompleteCmd);
         }
         
         private void receiveCommandForShip(MessageShipCommand msg)

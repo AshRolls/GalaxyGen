@@ -127,15 +127,12 @@ namespace GalaxyGen.Engine
         {
             if (_runState == TickEngineRunState.RunningMax)
             {
-                if (msg.Tick == _state.CurrentTick)
+                _numberOfIncompleteSS--;
+                if (_numberOfIncompleteSS <= 0)
                 {
-                    _numberOfIncompleteSS--;
-                    if (_numberOfIncompleteSS <= 0)
-                    {
-                        _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
-                        receiveTick(null);
-                    }
-                }
+                    _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
+                    receiveTick(null);
+                }                
             }            
         }
 
