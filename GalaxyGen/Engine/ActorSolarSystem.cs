@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Engine;
 using GalaxyGen.Engine.Controllers;
 using GalaxyGen.Engine.Messages;
 using GalaxyGen.Model;
@@ -12,6 +13,7 @@ namespace GalaxyGen.Engine
     {
         IActorRef _actorEngine;
         IActorRef _actorTextOutput;
+        IActorRef _actorAggregatorCount;
         private SolarSystemController _solarSystemC;
         private Dictionary<Int64, IActorRef> _subscribedActorAgents;
         private IEnumerable<IActorRef> _actorAgentValues;
@@ -29,7 +31,7 @@ namespace GalaxyGen.Engine
 
             Receive<MessageTick>(msg => receiveTick(msg));
             Receive<MessageShipCommand>(msg => receiveCommandForShip(msg));
-            Receive<MessageEngineAgCompletedCommand>(msg => receiveAgentCompletedMessage(msg));
+            Receive<MessageCountCompletedReply>(msg => sendSSCompletedMessage());
 
             //_actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
         }
@@ -48,28 +50,19 @@ namespace GalaxyGen.Engine
             _actorAgentValues = _subscribedActorAgents.Values;
         }
 
+        
         private void receiveTick(MessageTick tick)
         {
             _curTick = tick.Tick;
-            _solarSystemC.Tick(tick);   
-            foreach(IActorRef agentActor in _actorAgentValues)
+            _solarSystemC.Tick(tick);
+            if (_subscribedActorAgents.Any())
             {
-                agentActor.Tell(tick);
+                Props agProps = Props.Create<ActorMessageCountAggregator<MessageEngineAgCompletedCommand>>(_actorAgentValues.ToList(), Self);
+                _actorAggregatorCount = Context.ActorOf(agProps);
             }
-            if (!_subscribedActorAgents.Any())
-                sendSSCompletedMessage();        
-        }
-
-        private void receiveAgentCompletedMessage(MessageEngineAgCompletedCommand msg)
-        {
-            if (msg.Tick == _curTick)
+            else
             {
-                _numberOfIncompleteAg--;
-                if (_numberOfIncompleteAg <= 0)
-                {
-                    _numberOfIncompleteAg = _subscribedActorAgents.Count();
-                    sendSSCompletedMessage();
-                }
+                sendSSCompletedMessage();        
             }
         }
 

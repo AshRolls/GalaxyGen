@@ -1,18 +1,19 @@
 ﻿using Akka.Actor;
+using GalaxyGen.Engine.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GalaxyGen.Engine.Messages
+namespace GalaxyGen.Engine
 {
-    class MessageAggregator<T> : ReceiveActor
+    class ActorMessageAggregator<T> : ReceiveActor
     {
         private IActorRef originalSender;
         private ISet<IActorRef> refs;
 
-        public MessageAggregator(ISet<IActorRef> refs)
+        public ActorMessageAggregator(ISet<IActorRef> refs)
         {
             this.refs = refs;
             // this operation will finish after 30 sec of inactivity

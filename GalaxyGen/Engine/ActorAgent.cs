@@ -45,7 +45,7 @@ namespace GalaxyGen.Engine
         {
             Object message = _agentC.Tick(tick);
             if (message != null)
-                Sender.Tell(message);
+                _actorSolarSystem.Tell(message);
             sendAgentCompletedMessage(tick);
         }
 
@@ -63,8 +63,8 @@ namespace GalaxyGen.Engine
 
         private void sendAgentCompletedMessage(MessageTick msg)
         {
-            MessageEngineAgCompletedCommand tickCompleteCmd = new MessageEngineAgCompletedCommand(_agent.AgentId, msg.Tick);
-            _actorSolarSystem.Tell(tickCompleteCmd);
+            MessageEngineAgCompletedCommand tickCompleteCmd = new MessageEngineAgCompletedCommand();
+            Sender.Tell(tickCompleteCmd);
         }
 
 
