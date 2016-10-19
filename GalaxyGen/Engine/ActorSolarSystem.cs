@@ -57,8 +57,10 @@ namespace GalaxyGen.Engine
             _solarSystemC.Tick(tick);
             if (_subscribedActorAgents.Any())
             {
-                Props agProps = Props.Create<ActorMessageCountAggregator<MessageEngineAgCompletedCommand>>(_actorAgentValues.ToList(), Self);
-                _actorAggregatorCount = Context.ActorOf(agProps);
+                //Props agProps = Props.Create<ActorMessageCountAggregator<MessageEngineAgCompletedCommand>>(_actorAgentValues.ToList(), Self);
+
+                _actorAggregatorCount = Context.ActorOf(Engine.ActorMessageCountAggregator<MessageEngineAgCompletedCommand>.Props<MessageEngineAgCompletedCommand>(_actorAgentValues.ToList(), Self));
+                _actorAggregatorCount.Tell(tick);
             }
             else
             {

@@ -13,9 +13,9 @@ namespace GalaxyGen.Engine
         private IActorRef _replyActor;
         private int refCount;
 
-        public ActorMessageCountAggregator(ISet<IActorRef> refs, IActorRef replyActor)
+        public ActorMessageCountAggregator(IEnumerable<IActorRef> refs, IActorRef replyActor)
         {
-            this.refCount = refs.Count;
+            this.refCount = refs.Count();
             _replyActor = replyActor;
             //Context.SetReceiveTimeout(TimeSpan.FromMilliseconds(timeoutMillisecs));
             ReceiveAny(msg =>
@@ -26,6 +26,11 @@ namespace GalaxyGen.Engine
                 }
                 Become(Counting);
             });
+        }
+
+        public static Props Props<pT>(IEnumerable<IActorRef> refs, IActorRef replyActor)
+        {
+            return Akka.Actor.Props.Create(() => new ActorMessageCountAggregator<pT>(refs, replyActor));
         }
 
         private void Counting()
