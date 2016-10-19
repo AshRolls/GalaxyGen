@@ -23,7 +23,6 @@ namespace GalaxyGen.Engine
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
             _agent = ag;
-            _agent.SolarSystem.Planets.First().Name = "blah";
             _tickCompleteCmd = new MessageEngineAgCompletedCommand(_agent.AgentId);
 
             AgentControllerState stateForAgent = new AgentControllerState(ag);
