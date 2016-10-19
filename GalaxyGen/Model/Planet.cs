@@ -44,7 +44,7 @@ namespace GalaxyGen.Model
         public ICollection<Agent> Agents { get; set; }
         public SolarSystem SolarSystem { get; set; }
 
-        //public IMarket Market { get; set; }
+        public Market Market { get; set; }
 
     }
 }

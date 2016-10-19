@@ -13,8 +13,9 @@ namespace GalaxyGen.Engine
         IActorRef _actorEngine;
         IActorRef _actorTextOutput;
         private SolarSystemController _solarSystemC;
-        private Dictionary<Int64, IActorRef> _subscribedActorAgents;
+        private Dictionary<Int64, IActorRef> _subscribedActorAgents; // key agent id
         private IEnumerable<IActorRef> _actorAgentValues;
+        private Dictionary<Int64, IActorRef> _subscribedActorMarkets; // key planetScId        
         private Int64 _curTick;
         private int _numberOfIncompleteAg;
         private MessageEngineSSCompletedCommand _tickCompleteCmd;
@@ -27,6 +28,7 @@ namespace GalaxyGen.Engine
             _solarSystemC = new SolarSystemController(ss, this, actorTextOutput);
             _tickCompleteCmd = new MessageEngineSSCompletedCommand(_solarSystemC.SolarSystemId);
 
+            setupChildMarketActors(ss);
             setupChildAgentActors(ss);
 
             Receive<MessageTick>(msg => receiveTick(msg));
@@ -34,6 +36,18 @@ namespace GalaxyGen.Engine
             Receive<MessageEngineAgCompletedCommand>(msg => receiveAgentCompletedMessage(msg));
 
             //_actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
+        }
+
+        private void setupChildMarketActors(SolarSystem ss)
+        {
+            _subscribedActorMarkets = new Dictionary<Int64, IActorRef>();
+            foreach (Planet p in ss.Planets)
+            {
+                // TODO only create market actors for planets with an active market
+                Props marketProps = Props.Create<ActorMarket>(_actorTextOutput, p.Market);
+                IActorRef actor = Context.ActorOf(marketProps, "Market" + p.StarChartId.ToString());
+                _subscribedActorMarkets.Add(p.StarChartId, actor);
+            }
         }
 
         private void setupChildAgentActors(SolarSystem ss)
