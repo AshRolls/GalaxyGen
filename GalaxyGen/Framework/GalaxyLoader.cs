@@ -36,14 +36,18 @@ namespace GalaxyGen.Framework
                 target = (object)serializer.ReferenceResolver.ResolveReference(serializer, id);
                 if (target.GetType() == typeof(Planet)) return (Planet)target;
                 else if (target.GetType() == typeof(Ship)) return (Ship)target;
+                else if (target.GetType() == typeof(Agent)) return (Agent)target;
             }
             else
             {
                 if (jo["GalType"].Value<Int64>() == (Int64)TypeEnum.Planet)
                     return jo.ToObject<Planet>(serializer);
 
-                if (jo["GalType"].Value<Int64>() == (Int64)TypeEnum.Ship)
+                else if (jo["GalType"].Value<Int64>() == (Int64)TypeEnum.Ship)
                     return jo.ToObject<Ship>(serializer);
+
+                else if (jo["GalType"].Value<Int64>() == (Int64)TypeEnum.Agent)
+                    return jo.ToObject<Agent>(serializer);
             }
 
             return null;

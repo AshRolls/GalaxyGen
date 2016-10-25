@@ -142,8 +142,17 @@ namespace GalaxyGen.Engine
         {
             Agent ag = new Agent();
             ag.Memory = "";
+            ag.Account = getAccount();
+            ag.Account.Owner = ag;            
             ag.Name = seedName;
             return ag;
+        }
+
+        private Account getAccount()
+        {
+            Account ac = new Account();
+            ac.Balance = 1000000;
+            return ac;
         }
 
         private Producer GetProducer(String seedName, BluePrintEnum bpType)
