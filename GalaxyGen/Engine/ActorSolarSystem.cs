@@ -44,7 +44,7 @@ namespace GalaxyGen.Engine
             foreach (Planet p in ss.Planets)
             {
                 // TODO only create market actors for planets with an active market
-                Props marketProps = Props.Create<ActorMarket>(_actorTextOutput, p.Market);
+                Props marketProps = Props.Create<ActorMarket>(_actorTextOutput, p.Market, ss.Actor);
                 IActorRef actor = Context.ActorOf(marketProps, "Market" + p.StarChartId.ToString());
                 _subscribedActorMarkets.Add(p.StarChartId, actor);
             }
