@@ -9,7 +9,7 @@ namespace GalaxyGen.Model
 {
     public class Market
     { 
-        public Int64 Id { get; set; }
+        public Int64 MarketId { get; set; }
 
         public ICollection<MarketBuyOrder> BuyOrders { get; set; }
 

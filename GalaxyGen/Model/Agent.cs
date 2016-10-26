@@ -24,7 +24,7 @@ namespace GalaxyGen.Model
         Trader
     }
 
-    public class Agent
+    public class Agent : IAccountOwner
     {      
         public Agent()
         {
@@ -48,6 +48,8 @@ namespace GalaxyGen.Model
         public SolarSystem SolarSystem { get; set; }
 
         public String Memory { get; set; }
+
+        public Account Account { get; set; }
 
         //[JsonIgnore]
         //public IActorRef Actor { get; set; }

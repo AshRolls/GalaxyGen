@@ -9,6 +9,7 @@ namespace GalaxyGen.Model
     public enum TypeEnum
     {
         Planet,
-        Ship
+        Ship,
+        Agent
     }
 }

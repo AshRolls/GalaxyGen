@@ -11,6 +11,7 @@ namespace GalaxyGenCreator
     {
         public ScGalaxy GenerateGalaxy(int numberOfSystems)
         {
+            Random _rand = new Random();
             ScGalaxy gal = new ScGalaxy();
             gal.SolarSystems = new HashSet<ScSolarSystem>();
             if (numberOfSystems == 1)
@@ -35,10 +36,10 @@ namespace GalaxyGenCreator
                     ScSolarSystem ss = new ScSolarSystem();
                     ss.Planets = new HashSet<ScPlanet>();
                     ss.Name = "SolarSystem" + i.ToString();
-                    ss.Planets.Add(getPlanet("P1", 100, 100));
-                    ss.Planets.Add(getPlanet("P2", 150, 200));
-                    ss.Planets.Add(getPlanet("P3", 200, 300));
-                    ss.Planets.Add(getPlanet("P4", 250, 400));
+                    ss.Planets.Add(getPlanet("P1", _rand.Next(100), _rand.Next(100)+100));
+                    ss.Planets.Add(getPlanet("P2", _rand.Next(200) + 100, _rand.Next(100)+500));
+                    ss.Planets.Add(getPlanet("P3", _rand.Next(200) + 300, _rand.Next(100)+1000));
+                    ss.Planets.Add(getPlanet("P4", _rand.Next(500) + 500, _rand.Next(100)+4000));
                     gal.SolarSystems.Add(ss);
                 }
             }

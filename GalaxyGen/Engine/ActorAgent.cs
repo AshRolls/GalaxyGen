@@ -12,17 +12,18 @@ namespace GalaxyGen.Engine
 
     public class ActorAgent : ReceiveActor
     {
-        IActorRef _actorTextOutput;
-        IActorRef _actorSolarSystem;
-        Agent _agent;
-        IAgentController _agentC;
+        private IActorRef _actorTextOutput;
+        private IActorRef _actorSolarSystem;
+        private Agent _agent;
+        private IAgentController _agentC;
+        private MessageEngineAgCompletedCommand _tickCompleteCmd;
 
         public ActorAgent(IActorRef actorTextOutput, Agent ag, IActorRef actorSolarSystem)
         {
             _actorTextOutput = actorTextOutput;
             _actorSolarSystem = actorSolarSystem;
             _agent = ag;
-            _agent.SolarSystem.Planets.First().Name = "blah";
+            _tickCompleteCmd = new MessageEngineAgCompletedCommand(_agent.AgentId);
 
             AgentControllerState stateForAgent = new AgentControllerState(ag);
             
@@ -46,7 +47,7 @@ namespace GalaxyGen.Engine
             Object message = _agentC.Tick(tick);
             if (message != null)
                 Sender.Tell(message);
-            sendAgentCompletedMessage(tick);
+            sendAgentCompletedMessage();
         }
 
         private void receiveShipResponse(MessageShipResponse msg)
@@ -61,10 +62,9 @@ namespace GalaxyGen.Engine
                 Sender.Tell(message);
         }
 
-        private void sendAgentCompletedMessage(MessageTick msg)
-        {
-            MessageEngineAgCompletedCommand tickCompleteCmd = new MessageEngineAgCompletedCommand(_agent.AgentId, msg.Tick);
-            _actorSolarSystem.Tell(tickCompleteCmd);
+        private void sendAgentCompletedMessage()
+        {            
+            _actorSolarSystem.Tell(_tickCompleteCmd);
         }
 
 

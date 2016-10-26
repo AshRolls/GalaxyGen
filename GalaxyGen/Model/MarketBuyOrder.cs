@@ -13,8 +13,8 @@ namespace GalaxyGen.Model
 
         public ResourceTypeEnum Type {get; set;}
         public Int64 Quantity { get; set; }
+        public Int64 Price { get; set; }
 
-        public Agent Owner { get; set; }        
-
+        public Account OwnerAccount { get; set; }      
     }
 }
