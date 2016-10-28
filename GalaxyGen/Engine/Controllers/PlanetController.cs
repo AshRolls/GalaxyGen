@@ -27,7 +27,7 @@ namespace GalaxyGen.Engine.Controllers
             _model = p;
             _actorTextOutput = actorTextOutput;
             _scPlanet = StarChart.GetPlanet(_model.StarChartId);
-            _orbitHours = _scPlanet.OrbitDays * Globals.DAYS_TO_TICKS_FACTOR;
+            _orbitHours = _scPlanet.OrbitDays * (double)Globals.DAYS_TO_TICKS_FACTOR;
 
             _producerCs = new HashSet<ProducerController>();
             // create child controllers for each producer in planet

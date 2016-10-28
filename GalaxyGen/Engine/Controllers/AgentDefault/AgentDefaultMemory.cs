@@ -8,6 +8,12 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultMemory
     {
+        public AgentDefaultMemory()
+        {
+            MarketLastCheckedTick = new Dictionary<Int64, Int64>();
+        }
+
         public Int64 CurrentDestinationScId { get; set; }
+        public Dictionary<Int64,Int64> MarketLastCheckedTick { get; set; }
     }
 }

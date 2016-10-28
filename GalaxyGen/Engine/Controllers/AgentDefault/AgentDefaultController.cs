@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
 using GalaxyGen.Engine.Messages;
+using GalaxyGenCore.Framework;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
@@ -14,18 +15,21 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
     {
         private enum InternalAgentState
         {
-            Planetside,
+            PlanetsideIdle,
+            PlanetsideCheckingMarket,
             Piloting,
             PilotingDockedShip,
             PilotingAwaitingUndockingResponse,
             PilotingAwaitingDockingResponse
         }
 
+
+        private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _model;
         private IActorRef _actorTextOutput;
         private InternalAgentState _currentState;
         private AgentDefaultMemory _memory;
-        private static Random _random;
+        private static Random _random;        
 
         public AgentDefaultController(AgentControllerState ag, IActorRef actorTextOutput)
         {
@@ -50,7 +54,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             }
             else
             {
-                _currentState = InternalAgentState.Planetside;
+                _currentState = InternalAgentState.PlanetsideIdle;
             }
 
         }
@@ -61,7 +65,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
             switch (_currentState)
             {
-                case InternalAgentState.Planetside:
+                case InternalAgentState.PlanetsideIdle:
+                case InternalAgentState.PlanetsideCheckingMarket:
                 case InternalAgentState.PilotingAwaitingUndockingResponse:
                 case InternalAgentState.PilotingAwaitingDockingResponse:
                     break;
@@ -85,12 +90,53 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             if (isPilotingShip())
             {
-                setNewDestinationFromDocked();                                             
-                _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
-                //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-                return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _model.CurrentShipId);
+                if (checkLeaveShip(tick))
+                {
+                    return requestPlanetside(tick);
+                }
+                else
+                {
+                    return requestUndock(tick);
+                }
             }
             return null;
+        }
+
+        private bool checkLeaveShip(MessageTick tick)
+        {
+            // do i need to place a place / fulfil a market order, if so leave ship to interact with market            
+            Int64 curPlanet = _model.CurrentShipDockedPlanetScId;
+            if (checkOverMinimumTimeForMarketCheck(curPlanet, tick.Tick))
+            {
+                return true;
+            }
+            return false;            
+        }
+
+        private bool checkOverMinimumTimeForMarketCheck(Int64 planetScId, Int64 tick)
+        {
+            if (!_memory.MarketLastCheckedTick.ContainsKey(planetScId))
+            {
+                return true;
+            }
+            else
+            {
+                Int64 tickForMinNextMarketCheck = _memory.MarketLastCheckedTick[planetScId] + (DAYS_BEFORE_MARKET_RECHECK * Globals.DAYS_TO_TICKS_FACTOR);
+                return tick >= tickForMinNextMarketCheck;
+            }
+        }
+
+        private object requestPlanetside(MessageTick tick)
+        {
+            throw new NotImplementedException();
+        }
+
+        private object requestUndock(MessageTick tick)
+        {
+            setNewDestinationFromDocked();
+            _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
+            //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
+            return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _model.CurrentShipId);
         }
 
         private void setNewDestinationFromDocked()
