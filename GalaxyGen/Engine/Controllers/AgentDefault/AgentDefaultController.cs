@@ -90,6 +90,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             if (isPilotingShip())
             {
+                checkMarket(tick);          
                 if (checkLeaveShip(tick))
                 {
                     return requestPlanetside(tick);
@@ -102,17 +103,29 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return null;
         }
 
-        private bool checkLeaveShip(MessageTick tick)
+        // scan the local market and decide if there is an order we want to place / fulfil
+        private void checkMarket(MessageTick tick)
         {
             // do i need to place a place / fulfil a market order, if so leave ship to interact with market            
             Int64 curPlanet = _model.CurrentShipDockedPlanetScId;
             if (checkOverMinimumTimeForMarketCheck(curPlanet, tick.Tick))
             {
-                return true;
+                checkMarketPlaceOrder(tick);
             }
-            return false;            
         }
 
+        private void checkMarketPlaceOrder(MessageTick tick)
+        {
+            // check stock and decide what we need (everywhere) and don't need (at this location)
+                              
+            // get prices at current location for needs
+            // buy any with reasonable price
+
+            // get prices at current location for dont needs
+            // sell any at reasonable price
+        }
+
+        // make sure we haven't recently scanned market
         private bool checkOverMinimumTimeForMarketCheck(Int64 planetScId, Int64 tick)
         {
             if (!_memory.MarketLastCheckedTick.ContainsKey(planetScId))
@@ -124,6 +137,12 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 Int64 tickForMinNextMarketCheck = _memory.MarketLastCheckedTick[planetScId] + (DAYS_BEFORE_MARKET_RECHECK * Globals.DAYS_TO_TICKS_FACTOR);
                 return tick >= tickForMinNextMarketCheck;
             }
+        }
+
+        // do we need to go planetside?
+        private bool checkLeaveShip(MessageTick tick)
+        {
+            return false;
         }
 
         private object requestPlanetside(MessageTick tick)
