@@ -16,13 +16,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private enum InternalAgentState
         {
             PlanetsideIdle,
-            PlanetsideCheckingMarket,
             Piloting,
             PilotingDockedShip,
             PilotingAwaitingUndockingResponse,
             PilotingAwaitingDockingResponse
         }
-
 
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _model;
@@ -66,7 +64,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             switch (_currentState)
             {
                 case InternalAgentState.PlanetsideIdle:
-                case InternalAgentState.PlanetsideCheckingMarket:
                 case InternalAgentState.PilotingAwaitingUndockingResponse:
                 case InternalAgentState.PilotingAwaitingDockingResponse:
                     break;
@@ -90,12 +87,12 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             if (isPilotingShip())
             {
-                checkMarket(tick);          
+                checkMarkets(tick);          
                 if (checkLeaveShip(tick))
                 {
                     return requestPlanetside(tick);
                 }
-                else
+                else if (checkUndock(tick))
                 {
                     return requestUndock(tick);
                 }
@@ -103,8 +100,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return null;
         }
 
-        // scan the local market and decide if there is an order we want to place / fulfil
-        private void checkMarket(MessageTick tick)
+        // scan the local and system markets and decide if there is an order we want to place / fulfil
+        private void checkMarkets(MessageTick tick)
         {
             // do i need to place a place / fulfil a market order, if so leave ship to interact with market            
             Int64 curPlanet = _model.CurrentShipDockedPlanetScId;
@@ -148,6 +145,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private object requestPlanetside(MessageTick tick)
         {
             throw new NotImplementedException();
+        }
+
+        private bool checkUndock(MessageTick tick)
+        {
+            return true;
         }
 
         private object requestUndock(MessageTick tick)
