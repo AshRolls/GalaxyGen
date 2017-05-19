@@ -33,12 +33,16 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
             _tree = builder
                         .Selector("AgentDefaultControllerRoot")
-                            .Selector("Piloting")
-                                .Do("PilotingCruising", t => pilotingCruisingShip())
-                                .Do("PilotingDocked", t => pilotingDockedShip())
+                            .Sequence("Piloting")
+                                .Do("Piloting", t => piloting())
+                                .Selector("Piloting")
+                                    .Do("PilotingCruising", t => pilotingCruisingShip())
+                                    .Do("PilotingDocked", t => pilotingDockedShip())
+                                .End()
                             .End()
-                        .End()
-                    .Build();
+                            .Do("Planetside", t => planetside())
+                        .End()                        
+                        .Build();
         }
 
         public List<Object> Tick(MessageTick tick)
@@ -52,9 +56,14 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return _messages;
         }
 
+        private BehaviourTreeStatus piloting()
+        {
+            return _model.IsPilotingShip ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure;
+        }
+
         private BehaviourTreeStatus pilotingCruisingShip()
         {
-            if (_model.IsPilotingShip && !_model.CurrentShipIsDocked)
+            if (!_model.CurrentShipIsDocked)
             {
                 // new destination
                 if (_model.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
@@ -84,21 +93,17 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             object msg = null;
 
-            if (_model.IsPilotingShip && _model.CurrentShipIsDocked)
+            checkMarkets(_curTick);
+            if (checkLeaveShip(_curTick))
             {
-                checkMarkets(_curTick);
-                if (checkLeaveShip(_curTick))
-                {
-                    msg = requestPlanetside(_curTick);
-                }
-                else if (checkUndock(_curTick))
-                {
-                    msg = requestUndock(_curTick);
-                }
-                if (msg != null) _messages.Add(msg);
-                return BehaviourTreeStatus.Success;
+                msg = requestPlanetside(_curTick);
             }
-            return BehaviourTreeStatus.Failure;
+            else if (checkUndock(_curTick))
+            {
+                msg = requestUndock(_curTick);
+            }
+            if (msg != null) _messages.Add(msg);
+            return BehaviourTreeStatus.Success;
         }
 
         // scan the local and system markets and decide if there is an order we want to place / fulfil
@@ -141,6 +146,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private bool checkLeaveShip(MessageTick tick)
         {
             return false;
+        }
+
+        private BehaviourTreeStatus planetside()
+        {
+            throw new NotImplementedException();
         }
 
         private object requestPlanetside(MessageTick tick)
