@@ -10,7 +10,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
     {
         public AgentDefaultMemory()
         {
-            MarketLastCheckedTick = new Dictionary<Int64, Int64>();
+            MarketLastCheckedTick = new Dictionary<Int64, Int64>();  // key = planetscid, value = tick
         }
 
         public Int64 CurrentDestinationScId { get; set; }

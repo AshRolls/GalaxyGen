@@ -69,26 +69,24 @@ namespace GalaxyGen.Engine.Controllers
             }
         }
 
-        internal bool ReceiveCommandForShip(MessageShipCommand msg)
+        internal void ReceiveCommandForShip(MessageShipCommand msg)
         {
-            bool success = false;
+           
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
 
             if (msg.Command.CommandType == ShipCommandEnum.Undock)
             {
-                success = ShipUndock(msg, sc);
+                ShipUndock(msg, sc);
             }
             else if (msg.Command.CommandType == ShipCommandEnum.SetDestination)
             {
-                success = ShipSetDestination(msg, sc);
+                ShipSetDestination(msg, sc);
             }
             else if (msg.Command.CommandType == ShipCommandEnum.Dock)
             {
-                success = ShipDock(msg, sc);
+                ShipDock(msg, sc);
             }
-
-            return success;
         }
        
 

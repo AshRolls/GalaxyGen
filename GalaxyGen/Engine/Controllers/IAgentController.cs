@@ -10,7 +10,5 @@ namespace GalaxyGen.Engine.Controllers
     public interface IAgentController
     {
         object Tick(MessageTick tick);
-        void ReceiveShipResponse(MessageShipResponse msg);
-        object ReceiveShipDestinationReached(MessageAgentDestinationReached msg);
     }
 }

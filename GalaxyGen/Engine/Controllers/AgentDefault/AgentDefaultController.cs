@@ -13,19 +13,9 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultController : IAgentController
     {
-        private enum InternalAgentState
-        {
-            PlanetsideIdle,
-            Piloting,
-            PilotingDockedShip,
-            PilotingAwaitingUndockingResponse,
-            PilotingAwaitingDockingResponse
-        }
-
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _model;
         private IActorRef _actorTextOutput;
-        private InternalAgentState _currentState;
         private AgentDefaultMemory _memory;
         private static Random _random;        
 
@@ -34,68 +24,35 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _model = ag;
             _actorTextOutput = actorTextOutput;
             _random = new Random();
-
-            setupInitialStateFromModel();
-        }
-
-        private void setupInitialStateFromModel()
-        {
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_model.Memory);
-            if (_memory == null) _memory = new AgentDefaultMemory();
-
-            if (isPilotingShip())
-            {                
-                if (_model.CurrentShipState == ShipStateEnum.Docked)
-                    _currentState = InternalAgentState.PilotingDockedShip;
-                else if (_model.CurrentShipState == ShipStateEnum.SpaceCruising)
-                    _currentState = InternalAgentState.Piloting;
-            }
-            else
-            {
-                _currentState = InternalAgentState.PlanetsideIdle;
-            }
-
+            if (_memory == null) _memory = new AgentDefaultMemory();            
         }
 
         public object Tick(MessageTick tick)
         {
             object message = null;
 
-            switch (_currentState)
+            if (_model.IsPilotingShip)
             {
-                case InternalAgentState.PlanetsideIdle:
-                case InternalAgentState.PilotingAwaitingUndockingResponse:
-                case InternalAgentState.PilotingAwaitingDockingResponse:
-                    break;
-                case InternalAgentState.Piloting:
-                    message = pilotingShip(tick);                
-                    break;
-                case InternalAgentState.PilotingDockedShip:
-                    message = pilotingDockedShip(tick);
-                    break;                                    
-            }
-
+                if (_model.CurrentShipIsDocked)
+                    message = pilotingDockedShip(tick);                
+                else
+                    message = pilotingShip(tick);
+            }               
+            
             return message;
         }        
 
-        private bool isPilotingShip()
-        {
-            return _model.AgentState == AgentStateEnum.PilotingShip;                                      
-        }
-
         private object pilotingDockedShip(MessageTick tick)
         {
-            if (isPilotingShip())
+            checkMarkets(tick);          
+            if (checkLeaveShip(tick))
             {
-                checkMarkets(tick);          
-                if (checkLeaveShip(tick))
-                {
-                    return requestPlanetside(tick);
-                }
-                else if (checkUndock(tick))
-                {
-                    return requestUndock(tick);
-                }
+                return requestPlanetside(tick);
+            }
+            else if (checkUndock(tick))
+            {
+                return requestUndock(tick);
             }
             return null;
         }
@@ -155,7 +112,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private object requestUndock(MessageTick tick)
         {
             setNewDestinationFromDocked();
-            _currentState = InternalAgentState.PilotingAwaitingUndockingResponse;
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
             return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _model.CurrentShipId);
         }
@@ -175,55 +131,24 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             saveMemory();
         }
 
-        public void ReceiveShipResponse(MessageShipResponse msg)
-        {
-            if (msg.SentCommand.Command.CommandType == ShipCommandEnum.Undock)
-            {
-                if (msg.Response == true)
-                {
-                    _currentState = InternalAgentState.Piloting;
-                    //_actorTextOutput.Tell("Agent Undock Granted");
-                }
-                else
-                {
-                    _currentState = InternalAgentState.PilotingDockedShip;
-                }
-            }
-            else if (msg.SentCommand.Command.CommandType == ShipCommandEnum.Dock)
-            {
-                if (msg.Response == true)
-                {
-                    _currentState = InternalAgentState.PilotingDockedShip;
-                    //_actorTextOutput.Tell("Agent Dock Granted");
-                    _memory.CurrentDestinationScId = 0;
-                }
-            }
-        }
-
-        public object ReceiveShipDestinationReached(MessageAgentDestinationReached msg)
-        {
-            if (isPilotingShip())
-            {
-                _currentState = InternalAgentState.PilotingAwaitingDockingResponse;
-                //_actorTextOutput.Tell("Agent Requesting dock from " + StarChart.GetPlanet(_memory.CurrentDestinationScId).Name);
-                return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), msg.TickSent, _model.CurrentShipId);
-            }
-            return null;
-        }
-
         private object pilotingShip(MessageTick tick)
         {
-            if (isPilotingShip())
+            // new destination
+            if (_model.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
             {
-                if (_model.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
-                {
-                    IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
-                    MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _model.CurrentShipId);                    
-                    ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-                    //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
-                    return msc;
-                }
+                IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
+                MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _model.CurrentShipId);                    
+                ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+                //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+                return msc;
             }
+
+            // Am I at my current destination
+            if (_model.CurrentShipAtDestination)
+            {
+                return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), tick.Tick, _model.CurrentShipId);
+            }
+            
             return null;
         }
 

@@ -93,9 +93,7 @@ namespace GalaxyGen.Engine
         
         private void receiveCommandForShip(MessageShipCommand msg)
         {
-            bool success = _solarSystemC.ReceiveCommandForShip(msg);
-            MessageShipResponse msr = new MessageShipResponse(success, msg, _curTick);
-            Sender.Tell(msr);
+            _solarSystemC.ReceiveCommandForShip(msg);            
         }
 
         internal void SendMessageToAgent(Int64 agentId, object msg)

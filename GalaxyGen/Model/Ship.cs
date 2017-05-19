@@ -17,8 +17,7 @@ namespace GalaxyGen.Model
     {
         Unpiloted,
         Docked,        
-        SpaceCruising,
-        SpaceStopped
+        SpaceCruising
     }
 
     public class Ship : IAgentLocation, IStoreLocation

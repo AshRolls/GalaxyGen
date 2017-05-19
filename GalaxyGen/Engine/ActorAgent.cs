@@ -38,8 +38,6 @@ namespace GalaxyGen.Engine
             }
 
             Receive<MessageTick>(msg => receiveDefaultTick(msg));
-            Receive<MessageShipResponse>(msg => receiveShipResponse(msg));
-            Receive<MessageAgentDestinationReached>(msg => receiveShipDestinationReached(msg));
         }
 
         private void receiveDefaultTick(MessageTick tick)
@@ -50,23 +48,9 @@ namespace GalaxyGen.Engine
             sendAgentCompletedMessage();
         }
 
-        private void receiveShipResponse(MessageShipResponse msg)
-        {
-            _agentC.ReceiveShipResponse(msg);
-        }
-
-        private void receiveShipDestinationReached(MessageAgentDestinationReached msg)
-        {
-            Object message = _agentC.ReceiveShipDestinationReached(msg);
-            if (message != null)
-                Sender.Tell(message);
-        }
-
         private void sendAgentCompletedMessage()
-        {            
+        {
             _actorSolarSystem.Tell(_tickCompleteCmd);
         }
-
-
     }
 }
