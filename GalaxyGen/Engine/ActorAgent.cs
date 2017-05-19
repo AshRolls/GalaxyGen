@@ -4,6 +4,7 @@ using GalaxyGen.Engine.Controllers.AgentDefault;
 using GalaxyGen.Engine.Messages;
 using GalaxyGen.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GalaxyGen.Engine
@@ -42,9 +43,9 @@ namespace GalaxyGen.Engine
 
         private void receiveDefaultTick(MessageTick tick)
         {
-            Object message = _agentC.Tick(tick);
-            if (message != null)
-                Sender.Tell(message);
+            List<Object> messages = _agentC.Tick(tick);
+            foreach(Object msg in messages)
+                Sender.Tell(msg);
             sendAgentCompletedMessage();
         }
 

@@ -263,6 +263,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FluentBehaviourTree\fluent-behaviour-tree.csproj">
+      <Project>{41e64a25-7890-4edd-b405-d907badcf7ee}</Project>
+      <Name>fluent-behaviour-tree</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GalaxyGenCore\GalaxyGenCore.csproj">
       <Project>{c9aa7a47-80f4-47f9-a222-c94cc4eabe3a}</Project>
       <Name>GalaxyGenCore</Name>

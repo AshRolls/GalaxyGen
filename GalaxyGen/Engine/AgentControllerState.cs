@@ -93,10 +93,10 @@ namespace GalaxyGen.Engine
                 {
                     Ship s = (Ship)_model.Location;
                     Planet p = s.SolarSystem.Planets.Where(x => x.StarChartId == s.DestinationScId).FirstOrDefault();
-                    if (s.PositionX == p.PositionX && s.PositionY == p.PositionY)
+                    if (p != null && s.PositionX == p.PositionX && s.PositionY == p.PositionY)
                     {
                         return true;
-                    }
+                    }                  
                 }
                 return false;
             }

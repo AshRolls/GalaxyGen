@@ -1,13 +1,12 @@
 ﻿using System;
 using Akka.Actor;
-using GalaxyGen.Engine.Controllers;
-using GalaxyGen.Model;
-using GalaxyGenCore.StarChart;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
+using GalaxyGenCore.StarChart;
 using GalaxyGen.Engine.Messages;
 using GalaxyGenCore.Framework;
+using FluentBehaviourTree;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
@@ -17,7 +16,10 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private AgentControllerState _model;
         private IActorRef _actorTextOutput;
         private AgentDefaultMemory _memory;
-        private static Random _random;        
+        private static Random _random;
+        private IBehaviourTreeNode _tree;
+        private MessageTick _curTick;
+        private List<Object> _messages;
 
         public AgentDefaultController(AgentControllerState ag, IActorRef actorTextOutput)
         {
@@ -25,36 +27,78 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _actorTextOutput = actorTextOutput;
             _random = new Random();
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_model.Memory);
-            if (_memory == null) _memory = new AgentDefaultMemory();            
+            if (_memory == null) _memory = new AgentDefaultMemory();
+            _messages = new List<Object>();
+
+            BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
+            _tree = builder
+                        .Selector("AgentDefaultControllerRoot")
+                            .Selector("Piloting")
+                                .Do("PilotingCruising", t => pilotingCruisingShip())
+                                .Do("PilotingDocked", t => pilotingDockedShip())
+                            .End()
+                        .End()
+                    .Build();
         }
 
-        public object Tick(MessageTick tick)
+        public List<Object> Tick(MessageTick tick)
         {
             object message = null;
 
-            if (_model.IsPilotingShip)
-            {
-                if (_model.CurrentShipIsDocked)
-                    message = pilotingDockedShip(tick);                
-                else
-                    message = pilotingShip(tick);
-            }               
+            _curTick = tick;
+            _messages.Clear();
+            _tree.Tick(new TimeData(tick.Tick));
             
-            return message;
-        }        
+            return _messages;
+        }
 
-        private object pilotingDockedShip(MessageTick tick)
+        private BehaviourTreeStatus pilotingCruisingShip()
         {
-            checkMarkets(tick);          
-            if (checkLeaveShip(tick))
+            if (_model.IsPilotingShip && !_model.CurrentShipIsDocked)
             {
-                return requestPlanetside(tick);
+                // new destination
+                if (_model.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
+                {
+                    IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
+                    MessageShipCommand msc = new MessageShipCommand(msd, _curTick.Tick, _model.CurrentShipId);
+                    ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+                    //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+                    _messages.Add(msc);
+                }
+
+                // Am I at my current destination
+                if (_model.CurrentShipAtDestination)
+                {
+                    // request docking
+                    MessageShipCommand msc = new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), _curTick.Tick, _model.CurrentShipId);
+                    _messages.Add(msc);
+                }
+                return BehaviourTreeStatus.Success;
             }
-            else if (checkUndock(tick))
+
+            return BehaviourTreeStatus.Failure;
+        }
+
+
+        private BehaviourTreeStatus pilotingDockedShip()
+        {
+            object msg = null;
+
+            if (_model.IsPilotingShip && _model.CurrentShipIsDocked)
             {
-                return requestUndock(tick);
+                checkMarkets(_curTick);
+                if (checkLeaveShip(_curTick))
+                {
+                    msg = requestPlanetside(_curTick);
+                }
+                else if (checkUndock(_curTick))
+                {
+                    msg = requestUndock(_curTick);
+                }
+                if (msg != null) _messages.Add(msg);
+                return BehaviourTreeStatus.Success;
             }
-            return null;
+            return BehaviourTreeStatus.Failure;
         }
 
         // scan the local and system markets and decide if there is an order we want to place / fulfil
@@ -131,26 +175,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             saveMemory();
         }
 
-        private object pilotingShip(MessageTick tick)
-        {
-            // new destination
-            if (_model.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
-            {
-                IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
-                MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _model.CurrentShipId);                    
-                ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-                //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
-                return msc;
-            }
-
-            // Am I at my current destination
-            if (_model.CurrentShipAtDestination)
-            {
-                return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), tick.Tick, _model.CurrentShipId);
-            }
-            
-            return null;
-        }
 
         private void saveMemory()
         {

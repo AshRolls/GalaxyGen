@@ -5,11 +5,11 @@
     /// </summary>
     public struct TimeData
     {
-        public TimeData(float deltaTime)
+        public TimeData(long deltaTime)
         {
             this.deltaTime = deltaTime;
         }
 
-        public float deltaTime;
+        public long deltaTime;
     }
 }

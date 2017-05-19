@@ -9,6 +9,6 @@ namespace GalaxyGen.Engine.Controllers
 {
     public interface IAgentController
     {
-        object Tick(MessageTick tick);
+        List<Object> Tick(MessageTick tick);
     }
 }
