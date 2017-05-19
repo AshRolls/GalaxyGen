@@ -43,8 +43,8 @@ namespace GalaxyGen.Engine
 
         private void receiveDefaultTick(MessageTick tick)
         {
-            List<Object> messages = _agentC.Tick(tick);
-            foreach(Object msg in messages)
+            Object msg = _agentC.Tick(tick);
+            if (msg != null)
                 Sender.Tell(msg);
             sendAgentCompletedMessage();
         }
