@@ -14,6 +14,7 @@ namespace GalaxyGen.Engine
 
         public AgentControllerState(Agent ag)
         {
+            if (ag == null) throw new Exception("Agent must not be null");
             _model = ag;
         }
 
@@ -54,6 +55,14 @@ namespace GalaxyGen.Engine
             }
         }
 
+        public bool IsPilotingShip
+        {
+            get
+            {
+                return _model.AgentState == AgentStateEnum.PilotingShip;
+            }
+        }
+
         public ShipStateEnum CurrentShipState
         {
             get
@@ -66,6 +75,30 @@ namespace GalaxyGen.Engine
                 {
                     return ShipStateEnum.Unpiloted;
                 }
+            }
+        }
+        public bool CurrentShipIsDocked
+        {
+            get
+            {
+                return CurrentShipState == ShipStateEnum.Docked;
+            }
+        }
+
+        public bool CurrentShipAtDestination
+        {
+            get
+            {
+                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
+                {
+                    Ship s = (Ship)_model.Location;
+                    Planet p = s.SolarSystem.Planets.Where(x => x.StarChartId == s.DestinationScId).FirstOrDefault();
+                    if (s.PositionX == p.PositionX && s.PositionY == p.PositionY)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
