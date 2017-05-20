@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using GalaxyGenCore.StarChart;
 using GalaxyGen.Engine.Messages;
 using GalaxyGenCore.Framework;
-using FluentBehaviourTree;
+using GalaxyGen.Framework;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
@@ -16,13 +16,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private AgentControllerState _state;
         private IActorRef _actorTextOutput;
         private AgentDefaultMemory _memory;
-        private static Random _random;
 
         public AgentDefaultController(AgentControllerState ag, IActorRef actorTextOutput)
         {
             _state = ag;
             _actorTextOutput = actorTextOutput;
-            _random = new Random();
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
         }
@@ -150,7 +148,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             }
 
             List<Int64> planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.Where(x => x != _state.CurrentShipDockedPlanetScId).ToList();
-            int index = _random.Next(planetsToChooseFrom.Count);
+            int index = RandomUtils.Random(planetsToChooseFrom.Count);
             _memory.CurrentDestinationScId = planetsToChooseFrom[index];
             saveMemory();
         }

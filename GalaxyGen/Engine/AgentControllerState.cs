@@ -96,7 +96,7 @@ namespace GalaxyGen.Engine
                 if (_model.AgentState == AgentStateEnum.PilotingShip)
                 {
                     Ship s = (Ship)_model.Location;
-                    if (s.DestinationScId != lastDestinationScId)
+                    if (s.DestinationScId != lastDestinationScId) // if we have a new destination, cache the planet so we only need to look it up once.
                     {
                         currentDestinationPlanet = s.SolarSystem.Planets.Where(x => x.StarChartId == s.DestinationScId).FirstOrDefault();
                         lastDestinationScId = s.DestinationScId;
@@ -105,6 +105,10 @@ namespace GalaxyGen.Engine
                     {
                         return true;
                     }                  
+                }
+                else
+                {
+                    throw new Exception("Invalid State Query");
                 }
                 return false;
             }

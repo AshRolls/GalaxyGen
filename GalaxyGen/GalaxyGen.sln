@@ -4,9 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGen", "GalaxyGen.csproj", "{72D8F1D5-D690-419D-8079-E239742E0C55}"
-	ProjectSection(ProjectDependencies) = postProject
-		{41E64A25-7890-4EDD-B405-D907BADCF7EE} = {41E64A25-7890-4EDD-B405-D907BADCF7EE}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenTests", "..\GalaxyGenTests\GalaxyGenTests.csproj", "{E4290B94-4FAB-4D76-9D5A-487D9992CAF3}"
 EndProject
@@ -15,8 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenCore", "..\GalaxyGenCore\GalaxyGenCore.csproj", "{C9AA7A47-80F4-47F9-A222-C94CC4EABE3A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGenCreator", "..\GalaxyGenCreator\GalaxyGenCreator.csproj", "{2B48CCA0-C262-4016-B4DC-142544DC35C7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fluent-behaviour-tree", "..\FluentBehaviourTree\fluent-behaviour-tree.csproj", "{41E64A25-7890-4EDD-B405-D907BADCF7EE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,10 +39,6 @@ Global
 		{2B48CCA0-C262-4016-B4DC-142544DC35C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B48CCA0-C262-4016-B4DC-142544DC35C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B48CCA0-C262-4016-B4DC-142544DC35C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{41E64A25-7890-4EDD-B405-D907BADCF7EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{41E64A25-7890-4EDD-B405-D907BADCF7EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{41E64A25-7890-4EDD-B405-D907BADCF7EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{41E64A25-7890-4EDD-B405-D907BADCF7EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
