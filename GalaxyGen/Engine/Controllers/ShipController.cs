@@ -34,10 +34,6 @@ namespace GalaxyGen.Engine.Controllers
                 PointD newPoint = NavigationUtils.GetNewPointForShip(_model.Type.MaxCruisingSpeedKmH, _model.PositionX, _model.PositionY, _destination.PositionX, _destination.PositionY);
                 _model.PositionX = newPoint.X;
                 _model.PositionY = newPoint.Y;
-                //if (_model.PositionX == _destination.PositionX && _model.PositionY == _destination.PositionY)
-                //{
-                //    // we are at our destination.
-                //}
             }
         }
 

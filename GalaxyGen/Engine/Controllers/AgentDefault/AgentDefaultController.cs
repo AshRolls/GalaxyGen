@@ -13,41 +13,27 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
     public class AgentDefaultController : IAgentController
     {
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
-        private AgentControllerState _model;
+        private AgentControllerState _state;
         private IActorRef _actorTextOutput;
         private AgentDefaultMemory _memory;
         private static Random _random;
 
         public AgentDefaultController(AgentControllerState ag, IActorRef actorTextOutput)
         {
-            _model = ag;
+            _state = ag;
             _actorTextOutput = actorTextOutput;
             _random = new Random();
-            _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_model.Memory);
+            _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
-
-            //BehaviourTreeBuilder builder = new BehaviourTreeBuilder();
-            //_tree = builder
-            //            .Selector("AgentDefaultControllerRoot")
-            //                .Sequence("Piloting")
-            //                    .Do("Piloting", t => piloting())
-            //                    .Selector("Piloting")
-            //                        .Do("PilotingCruising", t => pilotingCruisingShip())
-            //                        .Do("PilotingDocked", t => pilotingDockedShip())
-            //                    .End()
-            //                .End()
-            //                .Do("Planetside", t => planetside())
-            //            .End()                        
-            //            .Build();
         }
 
         public Object Tick(MessageTick tick)
         {
             object message = null;
 
-            if (_model.IsPilotingShip)
+            if (_state.IsPilotingShip)
             {
-                if (!_model.CurrentShipIsDocked) return pilotingCruisingShip(tick);
+                if (!_state.CurrentShipIsDocked) return pilotingCruisingShip(tick);
                 else return pilotingDockedShip(tick);
             }
                         
@@ -56,29 +42,25 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         private object pilotingCruisingShip(MessageTick tick)
         {
-            if (!_model.CurrentShipIsDocked)
+            // new destination
+            if (_state.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
             {
-                // new destination
-                if (_model.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
-                {
-                    IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
-                    MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _model.CurrentShipId);
-                    ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-                    //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
-                    return msc;
-                }
-
-                // Am I at my current destination
-                if (_model.CurrentShipAtDestination)
-                {
-                    // request docking
-                    MessageShipCommand msc = new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), tick.Tick, _model.CurrentShipId);
-                    return msc;
-                }
-                return true;
+                IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
+                MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _state.CurrentShipId);
+                //ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+                //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+                return msc;
             }
 
-            return false;
+            // Am I at my current destination
+            if (_state.CurrentShipAtDestination)
+            {
+                // request docking
+                MessageShipCommand msc = new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), tick.Tick, _state.CurrentShipId);
+                return msc;
+            }
+
+            return null;
         }
 
 
@@ -103,7 +85,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private void checkMarkets(MessageTick tick)
         {
             // do i need to place a place / fulfil a market order, if so leave ship to interact with market            
-            Int64 curPlanet = _model.CurrentShipDockedPlanetScId;
+            Int64 curPlanet = _state.CurrentShipDockedPlanetScId;
             if (checkOverMinimumTimeForMarketCheck(curPlanet, tick.Tick))
             {
                 checkMarketPlaceOrder(tick);
@@ -155,7 +137,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             setNewDestinationFromDocked();
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-            return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _model.CurrentShipId);
+            return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _state.CurrentShipId);
         }
 
         private void setNewDestinationFromDocked()
@@ -167,7 +149,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
             }
 
-            List<Int64> planetsToChooseFrom = _model.PlanetsInSolarSystemScIds.Where(x => x != _model.CurrentShipDockedPlanetScId).ToList();
+            List<Int64> planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.Where(x => x != _state.CurrentShipDockedPlanetScId).ToList();
             int index = _random.Next(planetsToChooseFrom.Count);
             _memory.CurrentDestinationScId = planetsToChooseFrom[index];
             saveMemory();
@@ -176,7 +158,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         private void saveMemory()
         {
-            _model.Memory = JsonConvert.SerializeObject(_memory);
+            _state.Memory = JsonConvert.SerializeObject(_memory);
         }
 
     }

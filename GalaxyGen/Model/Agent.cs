@@ -50,8 +50,5 @@ namespace GalaxyGen.Model
         public String Memory { get; set; }
 
         public Account Account { get; set; }
-
-        //[JsonIgnore]
-        //public IActorRef Actor { get; set; }
     }
 }
