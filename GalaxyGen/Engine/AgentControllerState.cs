@@ -10,7 +10,8 @@ namespace GalaxyGen.Engine
 {
     public class AgentControllerState
     {
-        private Agent _model; 
+        // TRY AND AVOID STORING STATE IN THIS CLASS WHEREEVER POSSIBLE
+        private Agent _model;        
 
         public AgentControllerState(Agent ag)
         {
@@ -85,6 +86,9 @@ namespace GalaxyGen.Engine
             }
         }
 
+
+        private Int64 lastDestinationScId;
+        private Planet currentDestinationPlanet;
         public bool CurrentShipAtDestination
         {
             get
@@ -92,8 +96,12 @@ namespace GalaxyGen.Engine
                 if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
                 {
                     Ship s = (Ship)_model.Location;
-                    Planet p = s.SolarSystem.Planets.Where(x => x.StarChartId == s.DestinationScId).FirstOrDefault();
-                    if (p != null && s.PositionX == p.PositionX && s.PositionY == p.PositionY)
+                    if (s.DestinationScId != lastDestinationScId)
+                    {
+                        currentDestinationPlanet = s.SolarSystem.Planets.Where(x => x.StarChartId == s.DestinationScId).FirstOrDefault();
+                        lastDestinationScId = s.DestinationScId;
+                    }
+                    if (currentDestinationPlanet != null && s.PositionX == currentDestinationPlanet.PositionX && s.PositionY == currentDestinationPlanet.PositionY)
                     {
                         return true;
                     }                  
@@ -134,7 +142,7 @@ namespace GalaxyGen.Engine
             {
                 if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
                 {
-                    Ship s = (Ship)_model.Location;                    
+                    Ship s = (Ship)_model.Location;
                     return s.DestinationScId;
                 }
                 return 0;
