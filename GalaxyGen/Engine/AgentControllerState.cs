@@ -68,7 +68,7 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
+                if (_model.AgentState == AgentStateEnum.PilotingShip)
                 {
                     return ((Ship)_model.Location).ShipState;
                 }
@@ -93,7 +93,7 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
+                if (_model.AgentState == AgentStateEnum.PilotingShip)
                 {
                     Ship s = (Ship)_model.Location;
                     if (s.DestinationScId != lastDestinationScId)
@@ -114,11 +114,11 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
+                if (_model.AgentState == AgentStateEnum.PilotingShip)
                 {
                     return ((Ship)_model.Location).ShipId;
                 }
-                return 0;
+                throw new Exception("Invalid State Query");
             }
         }
 
@@ -126,13 +126,12 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
+                if (_model.AgentState == AgentStateEnum.PilotingShip)
                 {
                     Ship s = (Ship)_model.Location;
-                    if (s.DockedPlanet != null)
-                        return s.DockedPlanet.StarChartId;
+                    return s.DockedPlanet.StarChartId;
                 }
-                return 0;
+                throw new Exception("Invalid State Query");
             }
         }
 
@@ -140,12 +139,12 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
+                if (_model.AgentState == AgentStateEnum.PilotingShip)
                 {
                     Ship s = (Ship)_model.Location;
                     return s.DestinationScId;
                 }
-                return 0;
+                throw new Exception("Invalid State Query");
             }
         }
     }
