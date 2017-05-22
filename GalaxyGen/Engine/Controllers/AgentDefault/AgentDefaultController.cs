@@ -92,13 +92,13 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         private void checkMarketPlaceOrder(MessageTick tick)
         {
-            // check stock and decide what we need (everywhere) and don't need (at this location)
+            // TODO check stock and decide what we need (everywhere) and don't need (at this location)
                               
             // get prices at current location for needs
-            // buy any with reasonable price
+            // buy TODO buy any with reasonable price
 
             // get prices at current location for dont needs
-            // sell any at reasonable price
+            // sell TODO sell any at reasonable price
         }
 
         // make sure we haven't recently scanned market

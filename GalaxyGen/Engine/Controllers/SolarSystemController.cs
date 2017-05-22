@@ -89,7 +89,6 @@ namespace GalaxyGen.Engine.Controllers
             }
         }
        
-
         private bool ShipUndock(MessageShipCommand msg, ShipController sc)
         {
             bool success = false;
@@ -125,6 +124,11 @@ namespace GalaxyGen.Engine.Controllers
                 success = true;
             }
             return success;
+        }
+
+        internal void ReceiveCommandForMarket(MessageMarketCommand msg)
+        {
+            _planetCs[msg.PlanetId].ReceiveCommandForMarket(msg);
         }
 
         internal Int64 SolarSystemId

@@ -37,6 +37,8 @@ namespace GalaxyGen.Engine.Controllers
                 _producerCs.Add(pc);
             }
 
+            // TODO create a controller for market.
+
         }
 
         public void Tick(MessageTick tick)
@@ -151,7 +153,7 @@ namespace GalaxyGen.Engine.Controllers
             }
 
             return hasResources;
-        }
+        }    
 
         internal void UndockShip(Int64 shipId)
         {
@@ -163,6 +165,11 @@ namespace GalaxyGen.Engine.Controllers
         internal void DockShip(Ship s)
         {
             _model.DockedShips.Add(s);
+        }
+
+        internal void ReceiveCommandForMarket(MessageMarketCommand msg)
+        {
+            throw new NotImplementedException();
         }
     }
 }

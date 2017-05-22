@@ -119,7 +119,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\ActorMarket.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\AgentControllerState.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
@@ -129,10 +128,13 @@
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
+    <Compile Include="Engine\Messages\IMessageMarketCommandData.cs" />
     <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
     <Compile Include="Engine\Messages\Message.cs" />
     <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
+    <Compile Include="Engine\Messages\MessageMarketCommand.cs" />
+    <Compile Include="Engine\Messages\MessageMarketBasic.cs" />
     <Compile Include="Engine\Messages\MessageShipResponse.cs" />
     <Compile Include="Engine\Messages\MessageShipSetDestination.cs" />
     <Compile Include="Engine\Messages\MessageShipBasic.cs" />
