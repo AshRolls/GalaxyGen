@@ -17,7 +17,7 @@ namespace GalaxyGen.Engine.Ai.Goap
         private HashSet<GoapAction> availableActions;
         private Queue<GoapAction> currentActions;
 
-        private IGoap dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
+        public IGoap dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
 
         private GoapPlanner planner;
 

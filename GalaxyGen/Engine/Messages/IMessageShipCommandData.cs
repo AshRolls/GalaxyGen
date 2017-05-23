@@ -9,5 +9,7 @@ namespace GalaxyGen.Engine.Messages
     public interface IMessageShipCommandData
     {
         ShipCommandEnum CommandType { get; set; }
+
+        Int64 TargetId { get; set; }
     }
 }

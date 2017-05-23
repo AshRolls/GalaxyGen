@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaxyGen.Engine.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,8 +41,16 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
 
         public override bool perform(object agent)
         {
-            _docked = false;
-            return true;
+            GoapAgent ag = (GoapAgent)agent;
+            if (ag.dataProvider.RequestUndock())
+            {
+                _docked = false;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

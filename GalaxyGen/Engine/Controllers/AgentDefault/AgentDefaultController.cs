@@ -16,74 +16,66 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
     {
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _state;
+        private IActorRef _actorSolarSystem;
         private IActorRef _actorTextOutput;
         private AgentDefaultMemory _memory;
         private GoapAgent _goapAgent;
 
-        public AgentDefaultController(AgentControllerState ag, IActorRef actorTextOutput)
+        public AgentDefaultController(AgentControllerState ag, IActorRef actorSolarSystem, IActorRef actorTextOutput)
         {
             _state = ag;
-            _goapAgent = new GoapAgent(this);
+            _actorSolarSystem = actorSolarSystem;
             _actorTextOutput = actorTextOutput;
+            _goapAgent = new GoapAgent(this);            
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
         }
 
-        public Object Tick(MessageTick tick)
+        public void Tick(MessageTick tick)
         {
             _goapAgent.Tick();
-
-            object message = null;
-
-            //if (_state.IsPilotingShip)
-            //{
-            //    if (!_state.CurrentShipIsDocked) return pilotingCruisingShip(tick);
-            //    else return pilotingDockedShip(tick);
-            //}
-
-            return message;
         }
 
-        private object pilotingCruisingShip(MessageTick tick)
-        {
-            // new destination
-            if (_state.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
-            {
-                IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
-                MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _state.CurrentShipId);
-                //ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-                //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
-                return msc;
-            }
+        //private object pilotingCruisingShip(MessageTick tick)
+        //{
+        //    // new destination
+        //    if (_state.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
+        //    {
+        //        IMessageShipCommandData msd = new MessageShipBasic(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
+        //        MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _state.CurrentShipId);
+        //        //ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+        //        //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+        //        return msc;
+        //    }
 
-            // Am I at my current destination
-            if (_state.CurrentShipAtDestination)
-            {
-                // request docking
-                MessageShipCommand msc = new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), tick.Tick, _state.CurrentShipId);
-                return msc;
-            }
+        //    // Am I at my current destination
+        //    if (_state.CurrentShipAtDestination)
+        //    {
+        //        // request docking
+        //        MessageShipCommand msc = new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock,_), tick.Tick, _state.CurrentShipId);
+        //        return msc;
+        //    }
 
-            return null;
-        }
+        //    return null;
+        //}
 
 
-        private object pilotingDockedShip(MessageTick tick)
-        {
-            object msg = null;
+        //private object pilotingDockedShip(MessageTick tick)
+        //{
+        //    object msg = null;
 
-            checkMarkets(tick);
-            if (checkLeaveShip(tick))
-            {
-                msg = requestPlanetside(tick);
-            }
-            else if (checkUndock(tick))
-            {
-                msg = requestUndock(tick);
-            }
+        //    checkMarkets(tick);
+        //    if (checkLeaveShip(tick))
+        //    {
+        //        msg = requestPlanetside(tick);
+        //    }
+        //    else if (checkUndock(tick))
+        //    {
+        //        msg = requestUndock(tick);
+        //    }
 
-            return msg;
-        }
+        //    return msg;
+        //}
 
         // scan the local and system markets and decide if there is an order we want to place / fulfil
         private void checkMarkets(MessageTick tick)
@@ -138,12 +130,21 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return true;
         }
 
-        private object requestUndock(MessageTick tick)
+        public bool RequestUndock()
         {
-            setNewDestinationFromDocked();
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-            return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _state.CurrentShipId);
+            setNewDestinationFromDocked();
+            _actorSolarSystem.Ask(new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10, _state.CurrentShipId),TimeSpan.FromSeconds(60));
+            return true;
         }
+
+        public bool RequestDock()
+        {
+            //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
+            _actorSolarSystem.Ask(new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), 10, _state.CurrentShipId), TimeSpan.FromSeconds(60));
+            return true;
+        }
+
 
         private void setNewDestinationFromDocked()
         {

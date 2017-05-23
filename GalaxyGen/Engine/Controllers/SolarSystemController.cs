@@ -107,7 +107,7 @@ namespace GalaxyGen.Engine.Controllers
             if (sc.checkValidDockCommand(msg))
             {
                 Ship s = _model.Ships.Where(x => x.ShipId == msg.ShipId).First();
-                _planetCs[sc.GetDestination.PlanetId].DockShip(s);                
+                _planetCs[msg.Command.TargetId].DockShip(s);                
                 sc.Dock();
                 success = true;
             }
@@ -119,8 +119,8 @@ namespace GalaxyGen.Engine.Controllers
             bool success = false;
             if (sc.checkValidSetDestinationCommand(msg))
             {
-                MessageShipSetDestination msd = (MessageShipSetDestination)msg.Command;
-                sc.SetDestination(msd.DestinationScId);
+                MessageShipBasic msd = (MessageShipBasic)msg.Command;
+                sc.SetDestination(msd.TargetId);
                 success = true;
             }
             return success;

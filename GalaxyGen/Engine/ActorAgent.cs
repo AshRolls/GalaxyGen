@@ -34,7 +34,7 @@ namespace GalaxyGen.Engine
                 //    _agentC = new AgentTraderController(ag, _actorTextOutput);
                 //    break;
                 default:
-                    _agentC = new AgentDefaultController(stateForAgent, _actorTextOutput);
+                    _agentC = new AgentDefaultController(stateForAgent, _actorSolarSystem, _actorTextOutput);
                     break;
             }
 
@@ -43,9 +43,7 @@ namespace GalaxyGen.Engine
 
         private void receiveDefaultTick(MessageTick tick)
         {
-            Object msg = _agentC.Tick(tick);
-            if (msg != null)
-                Sender.Tell(msg);
+            _agentC.Tick(tick);
             sendAgentCompletedMessage();
         }
 
