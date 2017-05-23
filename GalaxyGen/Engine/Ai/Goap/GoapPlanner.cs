@@ -46,7 +46,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             if (!success)
             {
                 // oh no, we didn't get a plan
-                Console.WriteLine("NO PLAN");
+                // Console.Writeline("NO PLAN");
                 return null;
             }
 
@@ -106,7 +106,7 @@ namespace GalaxyGen.Engine.Ai.Goap
 
                     // apply the action's effects to the parent state
                     HashSet<KeyValuePair<string, object>> currentState = populateState(parent.state, action.Effects);
-                    Console.WriteLine(GoapAgent.prettyPrint(currentState));
+                    // Console.Writeline(GoapAgent.prettyPrint(currentState));
                     Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
 
                     if (inState(goal, currentState))

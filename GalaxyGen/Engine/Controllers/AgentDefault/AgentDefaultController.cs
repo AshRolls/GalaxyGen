@@ -193,13 +193,13 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         public void planFound(HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
-            Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.prettyPrint(actions));
+            // Console.Writeline("<color=green>Plan found</color> " + GoapAgent.prettyPrint(actions));
         }
 
         public void actionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
-            Console.WriteLine("<color=blue>Actions completed</color>");
+            // Console.Writeline("<color=blue>Actions completed</color>");
         }
 
         public void planAborted(GoapAction aborter)
@@ -207,7 +207,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             // An action bailed out of the plan. State has been reset to plan again.
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
-            Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
+            // Console.Writeline("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
         }
 
         public bool moveAgent(GoapAction nextAction)
