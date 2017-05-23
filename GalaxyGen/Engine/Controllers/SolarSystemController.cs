@@ -74,15 +74,16 @@ namespace GalaxyGen.Engine.Controllers
            
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
+            // TODO Switch statement
 
-            if (msg.Command.CommandType == ShipCommandEnum.Undock)
+            if (msg.Command.CommandType == ShipCommandEnum.SetXY)
+            {
+                ShipSetXY(msg, sc);
+            }
+            else if (msg.Command.CommandType == ShipCommandEnum.Undock)
             {
                 ShipUndock(msg, sc);
-            }
-            else if (msg.Command.CommandType == ShipCommandEnum.SetDestination)
-            {
-                ShipSetDestination(msg, sc);
-            }
+            }            
             else if (msg.Command.CommandType == ShipCommandEnum.Dock)
             {
                 ShipDock(msg, sc);
@@ -107,20 +108,21 @@ namespace GalaxyGen.Engine.Controllers
             if (sc.checkValidDockCommand(msg))
             {
                 Ship s = _model.Ships.Where(x => x.ShipId == msg.ShipId).First();
-                _planetCs[msg.Command.TargetId].DockShip(s);                
-                sc.Dock();
+                Planet p = _model.Planets.Where(x => x.StarChartId == ((MessageShipDocking)msg.Command).DockingTargetId).FirstOrDefault();
+                _planetCs[p.PlanetId].DockShip(s);                
+                sc.Dock(p);
                 success = true;
             }
             return success;
         }
 
-        private static bool ShipSetDestination(MessageShipCommand msg, ShipController sc)
+        private static bool ShipSetXY(MessageShipCommand msg, ShipController sc)
         {
             bool success = false;
-            if (sc.checkValidSetDestinationCommand(msg))
+            if (sc.checkValidSetXYCommand(msg))
             {
-                MessageShipBasic msd = (MessageShipBasic)msg.Command;
-                sc.SetDestination(msd.TargetId);
+                MessageShipSetXY msd = (MessageShipSetXY)msg.Command;
+                sc.SetXY(msd.X, msd.Y);
                 success = true;
             }
             return success;

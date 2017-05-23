@@ -137,8 +137,10 @@
     <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageMarketCommand.cs" />
     <Compile Include="Engine\Messages\MessageMarketBasic.cs" />
-    <Compile Include="Engine\Messages\MessageShipResponse.cs" />
     <Compile Include="Engine\Messages\MessageShipBasic.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetXY.cs" />
+    <Compile Include="Engine\Messages\MessageShipResponse.cs" />
+    <Compile Include="Engine\Messages\MessageShipDocking.cs" />
     <Compile Include="Engine\Messages\MessageShipCommand.cs" />
     <Compile Include="Engine\Messages\MessageProducerCommand.cs" />
     <Compile Include="Engine\Messages\MessageProducedResources.cs" />

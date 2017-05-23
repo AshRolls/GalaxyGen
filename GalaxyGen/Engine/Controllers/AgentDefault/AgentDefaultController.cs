@@ -134,14 +134,14 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
             setNewDestinationFromDocked();
-            _actorSolarSystem.Ask(new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10, _state.CurrentShipId),TimeSpan.FromSeconds(60));
+            _actorSolarSystem.Ask(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10, _state.CurrentShipId),TimeSpan.FromSeconds(60));
             return true;
         }
 
         public bool RequestDock()
         {
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-            _actorSolarSystem.Ask(new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), 10, _state.CurrentShipId), TimeSpan.FromSeconds(60));
+            _actorSolarSystem.Ask(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), 10, _state.CurrentShipId), TimeSpan.FromSeconds(60));
             return true;
         }
 
@@ -212,6 +212,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public bool moveAgent(GoapAction nextAction)
         {
+            PointD newPoint = NavigationUtils.GetNewPointForShip(_state.CurrentShipCruisingSpeed, _state.CurrentShipX, _state.CurrentShipY, _state.DestinationX(_memory.CurrentDestinationScId), _state.DestinationY(_memory.CurrentDestinationScId));
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetXY(ShipCommandEnum.SetXY, newPoint.X, newPoint.Y), 10, _state.CurrentShipId));
             //// move towards the NextAction's target
             //float step = moveSpeed * Time.deltaTime;
             //gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, nextAction.target.transform.position, step);
@@ -232,7 +234,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             GoapAction[] actions = new GoapAction[2];
             actions[0] = new GoapUndockAction();
-            actions[1] = new GoapDockAction();          
+            actions[1] = new GoapDockAction();                      
             return actions;
         }
 

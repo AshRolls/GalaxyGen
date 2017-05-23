@@ -12,7 +12,7 @@ namespace GalaxyGen.Engine.Messages
     {
         Undock,
         Dock,
-        SetDestination
+        SetXY
     }
 
     public class MessageShipCommand : Message

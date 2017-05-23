@@ -88,41 +88,45 @@ namespace GalaxyGen.Engine
 
 
         private Int64 lastDestinationScId;
-        private Planet currentDestinationPlanet;
-        public bool CurrentShipAtDestination
+        private Planet destinationPlanet;
+        private void updateCachedPlanet(Int64 destinationScId)
         {
-            get
+            if (destinationScId != lastDestinationScId) // if we have a new destination, cache the planet so we only need to look it up once.
             {
-                if (_model.AgentState == AgentStateEnum.PilotingShip)
-                {
-                    Ship s = (Ship)_model.Location;
-                    if (s.DestinationScId != lastDestinationScId) // if we have a new destination, cache the planet so we only need to look it up once.
-                    {
-                        currentDestinationPlanet = s.SolarSystem.Planets.Where(x => x.StarChartId == s.DestinationScId).FirstOrDefault();
-                        lastDestinationScId = s.DestinationScId;
-                    }
-                    if (currentDestinationPlanet != null && s.PositionX == currentDestinationPlanet.PositionX && s.PositionY == currentDestinationPlanet.PositionY)
-                    {
-                        return true;
-                    }                  
-                }
-                else
-                {
-                    throw new Exception("Invalid State Query");
-                }
-                return false;
+                destinationPlanet = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
+                lastDestinationScId = destinationScId;
             }
         }
 
+        public Double DestinationX(Int64 destinationScId)
+        {
+            updateCachedPlanet(destinationScId);
+            return destinationPlanet.PositionX;            
+        }
+
+        public Double DestinationY(Int64 destinationScId)
+        {
+            updateCachedPlanet(destinationScId);
+            return destinationPlanet.PositionY;
+        }
+
+        public bool CurrentShipAtDestination(Int64 destinationScId)
+        {
+            Ship s = (Ship)_model.Location;
+            updateCachedPlanet(destinationScId);
+
+            if (destinationPlanet != null && s.PositionX == destinationPlanet.PositionX && s.PositionY == destinationPlanet.PositionY)
+            {
+                return true;
+            }
+            return false;
+        }
+        
         public Int64 CurrentShipId
         {
             get
             {
-                if (_model.AgentState == AgentStateEnum.PilotingShip)
-                {
-                    return ((Ship)_model.Location).ShipId;
-                }
-                throw new Exception("Invalid State Query");
+                return ((Ship)_model.Location).ShipId;
             }
         }
 
@@ -130,25 +134,33 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.AgentState == AgentStateEnum.PilotingShip)
-                {
-                    Ship s = (Ship)_model.Location;
-                    return s.DockedPlanet.StarChartId;
-                }
-                throw new Exception("Invalid State Query");
+                Ship s = (Ship)_model.Location;
+                return s.DockedPlanet.StarChartId;
             }
         }
 
-        public Int64 CurrentShipDestinationScId
+        public Double CurrentShipCruisingSpeed
         {
             get
             {
-                if (_model.AgentState == AgentStateEnum.PilotingShip)
-                {
-                    Ship s = (Ship)_model.Location;
-                    return s.DestinationScId;
-                }
-                throw new Exception("Invalid State Query");
+                return ((Ship)_model.Location).Type.MaxCruisingSpeedKmH;
+            }
+        }
+
+        public Double CurrentShipX
+        {
+            get
+            {
+                return ((Ship)_model.Location).PositionX;
+            }
+        }
+
+
+        public Double CurrentShipY
+        {
+            get
+            {
+                return ((Ship)_model.Location).PositionY;
             }
         }
     }
