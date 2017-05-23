@@ -121,7 +121,18 @@ namespace GalaxyGen.Engine
             }
             return false;
         }
-        
+
+        public bool XYAtDestination(Int64 destinationScId, Double X, Double Y)
+        {
+            updateCachedPlanet(destinationScId);
+
+            if (destinationPlanet != null && X == destinationPlanet.PositionX && Y == destinationPlanet.PositionY)
+            {
+                return true;
+            }
+            return false;
+        }
+
         public Int64 CurrentShipId
         {
             get

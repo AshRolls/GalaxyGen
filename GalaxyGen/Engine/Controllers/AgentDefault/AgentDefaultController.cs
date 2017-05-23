@@ -214,19 +214,15 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             PointD newPoint = NavigationUtils.GetNewPointForShip(_state.CurrentShipCruisingSpeed, _state.CurrentShipX, _state.CurrentShipY, _state.DestinationX(_memory.CurrentDestinationScId), _state.DestinationY(_memory.CurrentDestinationScId));
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetXY(ShipCommandEnum.SetXY, newPoint.X, newPoint.Y), 10, _state.CurrentShipId));
-            //// move towards the NextAction's target
-            //float step = moveSpeed * Time.deltaTime;
-            //gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, nextAction.target.transform.position, step);
-
-            //if (gameObject.transform.position.Equals(nextAction.target.transform.position))
-            //{
-            //    // we are at the target location, we are done
-            //    nextAction.setInRange(true);
-            //    return true;
-            //}
-            //else
-            //    return false;
-            return true;
+            if (_state.XYAtDestination(_memory.CurrentDestinationScId, newPoint.X, newPoint.Y))            
+            {
+                nextAction.setInRange(true);
+                return true;
+            }
+            else
+            {                
+                return false;
+            }
         }
 
         // actions this agent is capable of

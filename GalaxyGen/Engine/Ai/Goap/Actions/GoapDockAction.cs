@@ -13,7 +13,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
 
         public GoapDockAction()
         {
-            addPrecondition("isDocked", false); // we need a tool to do this            
+            addPrecondition("isDocked", false);   
             addEffect("isDocked", true);
         }
 
@@ -30,12 +30,12 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
 
         public override bool requiresInRange()
         {
-            return false; 
+            return true; 
         }
 
         public override bool checkProceduralPrecondition(object agent)
         {
-            // set target?
+            target = 4;
             return true;
         }
 
