@@ -7,19 +7,23 @@ using GalaxyGenCore.StarChart;
 using GalaxyGen.Engine.Messages;
 using GalaxyGenCore.Framework;
 using GalaxyGen.Framework;
+using GalaxyGen.Engine.Ai.Goap;
+using GalaxyGen.Engine.Ai.Goap.Actions;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
-    public class AgentDefaultController : IAgentController
+    public class AgentDefaultController : IAgentController, IGoap
     {
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _state;
         private IActorRef _actorTextOutput;
         private AgentDefaultMemory _memory;
+        private GoapAgent _goapAgent;
 
         public AgentDefaultController(AgentControllerState ag, IActorRef actorTextOutput)
         {
             _state = ag;
+            _goapAgent = new GoapAgent(this);
             _actorTextOutput = actorTextOutput;
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
@@ -27,14 +31,16 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public Object Tick(MessageTick tick)
         {
+            _goapAgent.Tick();
+
             object message = null;
 
-            if (_state.IsPilotingShip)
-            {
-                if (!_state.CurrentShipIsDocked) return pilotingCruisingShip(tick);
-                else return pilotingDockedShip(tick);
-            }
-                        
+            //if (_state.IsPilotingShip)
+            //{
+            //    if (!_state.CurrentShipIsDocked) return pilotingCruisingShip(tick);
+            //    else return pilotingDockedShip(tick);
+            //}
+
             return message;
         }
 
@@ -76,7 +82,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 msg = requestUndock(tick);
             }
 
-            return msg;           
+            return msg;
         }
 
         // scan the local and system markets and decide if there is an order we want to place / fulfil
@@ -93,7 +99,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private void checkMarketPlaceOrder(MessageTick tick)
         {
             // TODO check stock and decide what we need (everywhere) and don't need (at this location)
-                              
+
+
             // get prices at current location for needs
             // buy TODO buy any with reasonable price
 
@@ -141,7 +148,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private void setNewDestinationFromDocked()
         {
             // choose randomly
-            ScPlanet curDest = null;            
+            ScPlanet curDest = null;
             if (_memory.CurrentDestinationScId != 0)
             {
                 curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
@@ -157,6 +164,75 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         private void saveMemory()
         {
             _state.Memory = JsonConvert.SerializeObject(_memory);
+        }
+
+        public HashSet<KeyValuePair<string, object>> getWorldState()
+        {
+            HashSet<KeyValuePair<string, object>> worldData = new HashSet<KeyValuePair<string, object>>();
+
+            worldData.Add(new KeyValuePair<string, object>("isDocked", (_state.CurrentShipIsDocked)));
+
+            return worldData;
+        }
+
+        public HashSet<KeyValuePair<string, object>> createGoalState()
+        {
+            HashSet<KeyValuePair<string, object>> goalState = new HashSet<KeyValuePair<string, object>>();
+            
+            goalState.Add(new KeyValuePair<string, object>("isDocked", !_state.CurrentShipIsDocked));
+
+            return goalState;
+        }
+
+        public void planFailed(HashSet<KeyValuePair<string, object>> failedGoal)
+        {
+
+        }
+
+        public void planFound(HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions)
+        {
+            // Yay we found a plan for our goal
+            Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.prettyPrint(actions));
+        }
+
+        public void actionsFinished()
+        {
+            // Everything is done, we completed our actions for this gool. Hooray!
+            Console.WriteLine("<color=blue>Actions completed</color>");
+        }
+
+        public void planAborted(GoapAction aborter)
+        {
+            // An action bailed out of the plan. State has been reset to plan again.
+            // Take note of what happened and make sure if you run the same goal again
+            // that it can succeed.
+            Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
+        }
+
+        public bool moveAgent(GoapAction nextAction)
+        {
+            //// move towards the NextAction's target
+            //float step = moveSpeed * Time.deltaTime;
+            //gameObject.transform.position = Vector3.MoveTowards(gameObject.transform.position, nextAction.target.transform.position, step);
+
+            //if (gameObject.transform.position.Equals(nextAction.target.transform.position))
+            //{
+            //    // we are at the target location, we are done
+            //    nextAction.setInRange(true);
+            //    return true;
+            //}
+            //else
+            //    return false;
+            return true;
+        }
+
+        // actions this agent is capable of
+        public GoapAction[] GetActions()
+        {
+            GoapAction[] actions = new GoapAction[2];
+            actions[0] = new GoapUndockAction();
+            actions[1] = new GoapDockAction();          
+            return actions;
         }
 
     }

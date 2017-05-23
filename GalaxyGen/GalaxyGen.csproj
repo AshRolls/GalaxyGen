@@ -121,6 +121,8 @@
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\AgentControllerState.cs" />
+    <Compile Include="Engine\Ai\Goap\Actions\GoapDockAction.cs" />
+    <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
@@ -147,7 +149,13 @@
     <Compile Include="Engine\Messages\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
+    <Compile Include="Engine\Ai\Fsm\FSM.cs" />
+    <Compile Include="Engine\Ai\Fsm\FSMState.cs" />
     <Compile Include="Framework\GalaxyLoader.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapAction.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapAgent.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapPlanner.cs" />
+    <Compile Include="Engine\Ai\Goap\IGoap.cs" />
     <Compile Include="Framework\IdUtils.cs" />
     <Compile Include="Framework\NavigationUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
