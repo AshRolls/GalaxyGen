@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using GalaxyGen.Framework;
+using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
@@ -155,6 +156,15 @@ namespace GalaxyGen.Engine
             get
             {
                 return ((Ship)_model.Location).Type.MaxCruisingSpeedKmH;
+            }
+        }
+
+        public PointD CurrentShipXY
+        {
+            get
+            {
+                Ship s = (Ship)_model.Location;
+                return new PointD(s.PositionX, s.PositionY);
             }
         }
 

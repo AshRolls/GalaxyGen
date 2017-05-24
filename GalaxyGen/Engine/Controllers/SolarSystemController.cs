@@ -63,10 +63,10 @@ namespace GalaxyGen.Engine.Controllers
 
         private void updateShips(MessageTick tick)
         {
-            foreach (ShipController sc in _shipValues)
-            {
-                sc.Tick(tick);
-            }
+            //foreach (ShipController sc in _shipValues)
+            //{
+            //    sc.Tick(tick);
+            //}
         }
 
         internal void ReceiveCommandForShip(MessageShipCommand msg)
