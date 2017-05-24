@@ -10,9 +10,11 @@ namespace GalaxyGen.Engine.Messages
 {
     public enum ShipCommandEnum
     {
+        SetXY,
         Undock,
         Dock,
-        SetXY
+        SetDestination,
+        SetAutopilot
     }
 
     public class MessageShipCommand : Message

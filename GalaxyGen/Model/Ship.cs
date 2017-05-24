@@ -17,7 +17,8 @@ namespace GalaxyGen.Model
     {
         Unpiloted,
         Docked,        
-        SpaceCruising
+        SpaceManual,
+        SpaceAutopilot
     }
 
     public class Ship : IAgentLocation, IStoreLocation
@@ -47,5 +48,9 @@ namespace GalaxyGen.Model
         public Planet DockedPlanet { get; set; }
 
         public ICollection<Agent> Agents { get; set; }
+
+        public Int64 DestinationScId { get; set; }
+
+        public bool AutopilotActive { get; set; }
     }
 }

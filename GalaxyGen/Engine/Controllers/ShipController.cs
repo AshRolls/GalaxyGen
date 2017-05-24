@@ -16,23 +16,25 @@ namespace GalaxyGen.Engine.Controllers
         private Ship _model;
         private SolarSystemController _solarSystemC;
         private IActorRef _actorTextOutput;
+        private Planet _destination;
         
         public ShipController(Ship s, SolarSystemController ssc, IActorRef actorTextOutput)
         {
             _model = s;
             _solarSystemC = ssc;
             _actorTextOutput = actorTextOutput;
+            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == _model.DestinationScId).FirstOrDefault();
         }
 
         public void Tick(MessageTick tick)
         {
-            //if (_model.ShipState == ShipStateEnum.SpaceCruising)
-            //{
-            //    // move ship towards destination
-            //    PointD newPoint = NavigationUtils.GetNewPointForShip(_model.Type.MaxCruisingSpeedKmH, _model.PositionX, _model.PositionY, _destination.PositionX, _destination.PositionY);
-            //    _model.PositionX = newPoint.X;
-            //    _model.PositionY = newPoint.Y;
-            //}
+            if (_model.ShipState == ShipStateEnum.SpaceAutopilot)
+            {
+                // move ship towards destination
+                PointD newPoint = NavigationUtils.GetNewPointForShip(_model.Type.MaxCruisingSpeedKmH, _model.PositionX, _model.PositionY, _destination.PositionX, _destination.PositionY);
+                _model.PositionX = newPoint.X;
+                _model.PositionY = newPoint.Y;
+            }
         }
 
         internal bool checkValidUndockCommand(MessageShipCommand msg)
@@ -63,17 +65,39 @@ namespace GalaxyGen.Engine.Controllers
             return false;
         }
 
+        internal bool checkValidSetDestinationCommand(MessageShipCommand msg)
+        {
+            if (msg.Command.CommandType == ShipCommandEnum.SetDestination)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        internal bool checkValidSetAutopilotCommand(MessageShipCommand msg)
+        {
+            if (msg.Command.CommandType == ShipCommandEnum.SetAutopilot)
+            {
+                return true;
+            }
+
+            // TODO check we have a destination and are in space
+            return false;
+        }
+
         internal void Undock()
         {
             _model.PositionX = _model.DockedPlanet.PositionX;
             _model.PositionY = _model.DockedPlanet.PositionY;
             _model.DockedPlanet = null;
-            _model.ShipState = ShipStateEnum.SpaceCruising;           
+            _model.AutopilotActive = false;
+            _model.ShipState = ShipStateEnum.SpaceManual;           
         }
 
         internal void Dock(Planet p)
         {
             _model.DockedPlanet = p;
+            _model.AutopilotActive = false;
             _model.ShipState = ShipStateEnum.Docked;
         }
 
@@ -111,9 +135,26 @@ namespace GalaxyGen.Engine.Controllers
             _model.PositionY = Y;
         }
 
-        //internal Planet GetDestination
-        //{            
-        //    get { return _destination; }            
-        //}
+        internal void SetDestination(Int64 destinationScId)
+        {
+            _model.DestinationScId = destinationScId;
+            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
+        }
+
+        internal void SetAutopilot(bool active)
+        {
+            _model.AutopilotActive = active;
+            if (active)
+                _model.ShipState = ShipStateEnum.SpaceAutopilot;
+            else
+                _model.ShipState = ShipStateEnum.SpaceManual; 
+        }
+
+        internal Planet GetDestination
+        {
+            get { return _destination; }
+        }
+
+
     }
 }

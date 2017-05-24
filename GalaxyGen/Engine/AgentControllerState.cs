@@ -176,12 +176,27 @@ namespace GalaxyGen.Engine
             }
         }
 
-
         public Double CurrentShipY
         {
             get
             {
                 return ((Ship)_model.Location).PositionY;
+            }
+        }
+
+        public bool CurrentShipAutopilotActive
+        {
+            get
+            {
+                return ((Ship)_model.Location).AutopilotActive;
+            }
+        }
+
+        public bool CurrentShipHasDestination
+        {
+            get
+            {
+                return ((Ship)_model.Location).DestinationScId != 0;
             }
         }
     }

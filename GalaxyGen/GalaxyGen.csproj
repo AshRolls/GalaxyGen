@@ -138,6 +138,8 @@
     <Compile Include="Engine\Messages\MessageMarketCommand.cs" />
     <Compile Include="Engine\Messages\MessageMarketBasic.cs" />
     <Compile Include="Engine\Messages\MessageShipBasic.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetAutopilot.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetDestination.cs" />
     <Compile Include="Engine\Messages\MessageShipSetXY.cs" />
     <Compile Include="Engine\Messages\MessageShipResponse.cs" />
     <Compile Include="Engine\Messages\MessageShipDocking.cs" />

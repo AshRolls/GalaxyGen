@@ -93,7 +93,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 else
                 {
                     // ugh, we couldn't get a plan
-                    // Console.Writeline("<color=orange>Failed Plan:</color>" + prettyPrint(goal));
+                    // Console.WriteLine("<color=orange>Failed Plan:</color>" + prettyPrint(goal));
                     dataProvider.planFailed(goal);
                     fsm.popState(); // move back to IdleAction state
                     fsm.pushState(idleState);
@@ -111,7 +111,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 GoapAction action = currentActions.Peek();
                 if (action.requiresInRange() && action.target == null)
                 {
-                    // Console.Writeline("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
+                    // Console.WriteLine("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
                     fsm.popState(); // move
                     fsm.popState(); // perform
                     fsm.pushState(idleState);
@@ -126,7 +126,7 @@ namespace GalaxyGen.Engine.Ai.Goap
 
                 /*MovableComponent movable = (MovableComponent) gameObj.GetComponent(typeof(MovableComponent));
                 if (movable == null) {
-                    // Console.Writeline("<color=red>Fatal error:</color> Trying to move an Agent that doesn't have a MovableComponent. Please give it one.");
+                    // Console.WriteLine("<color=red>Fatal error:</color> Trying to move an Agent that doesn't have a MovableComponent. Please give it one.");
                     fsm.popState(); // move
                     fsm.popState(); // perform
                     fsm.pushState(idleState);
@@ -154,7 +154,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 if (!hasActionPlan())
                 {
                     // no actions to perform
-                    // Console.Writeline("<color=red>Done actions</color>");
+                    // Console.WriteLine("<color=red>Done actions</color>");
                     fsm.popState();
                     fsm.pushState(idleState);
                     dataProvider.actionsFinished();
@@ -213,7 +213,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             {
                 availableActions.Add(a);
             }
-            //// Console.Writeline("Found actions: " + prettyPrint(actions));
+            //// Console.WriteLine("Found actions: " + prettyPrint(actions));
         }
 
         public static string prettyPrint(HashSet<KeyValuePair<string, object>> state)

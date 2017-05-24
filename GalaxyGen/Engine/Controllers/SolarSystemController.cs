@@ -63,10 +63,10 @@ namespace GalaxyGen.Engine.Controllers
 
         private void updateShips(MessageTick tick)
         {
-            //foreach (ShipController sc in _shipValues)
-            //{
-            //    sc.Tick(tick);
-            //}
+            foreach (ShipController sc in _shipValues)
+            {
+                sc.Tick(tick);
+            }
         }
 
         internal void ReceiveCommandForShip(MessageShipCommand msg)
@@ -74,20 +74,29 @@ namespace GalaxyGen.Engine.Controllers
            
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
-            // TODO Switch statement
+       
+            switch (msg.Command.CommandType)
+            {
+                case ShipCommandEnum.SetXY:
+                    ShipSetXY(msg, sc);
+                    break;
+                case ShipCommandEnum.Undock:
+                    ShipUndock(msg, sc);
+                    break;
+                case ShipCommandEnum.Dock:
+                    ShipDock(msg, sc);
+                    break;
+                case ShipCommandEnum.SetDestination:
+                    ShipSetDestination(msg, sc);
+                    break;
+                case ShipCommandEnum.SetAutopilot:
+                    ShipSetAutopilot(msg, sc);
+                    break;
+                default:
+                    throw new Exception("Unknown Ship Command");
+                    break;
+            }
 
-            if (msg.Command.CommandType == ShipCommandEnum.SetXY)
-            {
-                ShipSetXY(msg, sc);
-            }
-            else if (msg.Command.CommandType == ShipCommandEnum.Undock)
-            {
-                ShipUndock(msg, sc);
-            }            
-            else if (msg.Command.CommandType == ShipCommandEnum.Dock)
-            {
-                ShipDock(msg, sc);
-            }
         }
        
         private bool ShipUndock(MessageShipCommand msg, ShipController sc)
@@ -123,6 +132,30 @@ namespace GalaxyGen.Engine.Controllers
             {
                 MessageShipSetXY msd = (MessageShipSetXY)msg.Command;
                 sc.SetXY(msd.X, msd.Y);
+                success = true;
+            }
+            return success;
+        }
+
+        private static bool ShipSetDestination(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidSetDestinationCommand(msg))
+            {
+                MessageShipSetDestination msd = (MessageShipSetDestination)msg.Command;
+                sc.SetDestination(msd.DestinationScId);
+                success = true;
+            }
+            return success;
+        }
+
+        private static bool ShipSetAutopilot(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidSetAutopilotCommand(msg))
+            {
+                MessageShipSetAutopilot msd = (MessageShipSetAutopilot)msg.Command;
+                sc.SetAutopilot(msd.Active);
                 success = true;
             }
             return success;
