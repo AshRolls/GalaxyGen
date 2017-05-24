@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System;
 using GalaxyGen.Engine.Ai.Fsm;
+using GalaxyGen.Engine.Controllers;
 
 namespace GalaxyGen.Engine.Ai.Goap
 {
@@ -17,18 +18,22 @@ namespace GalaxyGen.Engine.Ai.Goap
         private HashSet<GoapAction> availableActions;
         private Queue<GoapAction> currentActions;
 
-        public IGoap dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
+        private IGoap _dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
+        public IAgentActions actionProvider; // this is the class that will perform actions from the goap
+        public IAgentControllerState stateProvider;
 
         private GoapPlanner planner;
 
 
-        public GoapAgent(IGoap provider)
+        public GoapAgent(IGoap provider, IAgentActions actions, IAgentControllerState state)
         {
+            _dataProvider = provider;
+            actionProvider = actions;
+            stateProvider = state;
             stateMachine = new FSM();
             availableActions = new HashSet<GoapAction>();
             currentActions = new Queue<GoapAction>();
-            planner = new GoapPlanner();
-            dataProvider = provider;
+            planner = new GoapPlanner();            
             createIdleState();
             createMoveToState();
             createPerformActionState();
@@ -75,8 +80,8 @@ namespace GalaxyGen.Engine.Ai.Goap
                 // GOAP planning
 
                 // get the world state and the goal we want to plan for
-                HashSet<KeyValuePair<string, object>> worldState = dataProvider.getWorldState();
-                HashSet<KeyValuePair<string, object>> goal = dataProvider.createGoalState();
+                HashSet<KeyValuePair<string, object>> worldState = _dataProvider.getWorldState();
+                HashSet<KeyValuePair<string, object>> goal = _dataProvider.createGoalState();
 
                 // Plan
                 Queue<GoapAction> plan = planner.plan(this, availableActions, worldState, goal);
@@ -84,7 +89,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 {
                     // we have a plan, hooray!
                     currentActions = plan;
-                    dataProvider.planFound(goal, plan);
+                    _dataProvider.planFound(goal, plan);
 
                     fsm.popState(); // move to PerformAction state
                     fsm.pushState(performActionState);
@@ -94,7 +99,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 {
                     // ugh, we couldn't get a plan
                     // Console.WriteLine("<color=orange>Failed Plan:</color>" + prettyPrint(goal));
-                    dataProvider.planFailed(goal);
+                    _dataProvider.planFailed(goal);
                     fsm.popState(); // move back to IdleAction state
                     fsm.pushState(idleState);
                 }
@@ -119,7 +124,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 }
 
                 // get the agent to move itself
-                if (dataProvider.moveAgent(action))
+                if (_dataProvider.moveAgent(action))
                 {
                     fsm.popState();
                 }
@@ -157,7 +162,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                     // Console.WriteLine("<color=red>Done actions</color>");
                     fsm.popState();
                     fsm.pushState(idleState);
-                    dataProvider.actionsFinished();
+                    _dataProvider.actionsFinished();
                     return;
                 }
 
@@ -184,7 +189,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                             // action failed, we need to plan again
                             fsm.popState();
                             fsm.pushState(idleState);
-                            dataProvider.planAborted(action);
+                            _dataProvider.planAborted(action);
                         }
                     }
                     else
@@ -200,7 +205,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                     // no actions left, move to Plan state
                     fsm.popState();
                     fsm.pushState(idleState);
-                    dataProvider.actionsFinished();
+                    _dataProvider.actionsFinished();
                 }
 
             };
@@ -208,7 +213,7 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         private void loadActions()
         {
-            GoapAction[] actions = dataProvider.GetActions();
+            GoapAction[] actions = _dataProvider.GetActions();
             foreach (GoapAction a in actions)
             {
                 availableActions.Add(a);

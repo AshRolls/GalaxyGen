@@ -62,9 +62,5 @@ namespace GalaxyGen.Engine.Ai.Goap
         bool moveAgent(GoapAction nextAction);
 
         GoapAction[] GetActions();
-
-        bool RequestUndock();
-
-        bool RequestDock();
     }
 }

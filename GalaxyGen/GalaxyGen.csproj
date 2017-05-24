@@ -124,12 +124,14 @@
     <Compile Include="Engine\Ai\Goap\Actions\GoapDockAction.cs" />
     <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
+    <Compile Include="Engine\Controllers\IAgentActions.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultController.cs" />
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
+    <Compile Include="Engine\IAgentControllerState.cs" />
     <Compile Include="Engine\Messages\IMessageMarketCommandData.cs" />
     <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
     <Compile Include="Engine\Messages\Message.cs" />

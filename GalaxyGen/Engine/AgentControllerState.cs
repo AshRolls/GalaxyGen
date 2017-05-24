@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
-    public class AgentControllerState
+    public class AgentControllerState : IAgentControllerState
     {
         // TRY AND AVOID STORING STATE IN THIS CLASS WHEREEVER POSSIBLE
         private Agent _model;        
@@ -46,14 +46,6 @@ namespace GalaxyGen.Engine
             get
             {
                 return _model.SolarSystem.Planets.Select(x => x.StarChartId);
-            }
-        }
-
-        public AgentStateEnum AgentState
-        {
-            get
-            {
-                return _model.AgentState;
             }
         }
 

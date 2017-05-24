@@ -10,6 +10,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
     public class GoapDockAction : GoapAction
     {
         private bool _docked = false;
+        private bool _requestSent = false;
 
         public GoapDockAction()
         {
@@ -20,6 +21,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         public override void reset()
         {
             _docked = false;
+            _requestSent = false;
         }
 
         public override bool isDone()
@@ -42,15 +44,15 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         public override bool perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
-            if (ag.dataProvider.RequestDock())
-            {
+            if (ag.stateProvider.CurrentShipIsDocked)
                 _docked = true;
-                return true;
-            }
-            else
+            else if (ag.stateProvider.CurrentShipIsDocked && !_requestSent)
             {
-                return false;
+                ag.actionProvider.RequestDock();
+                _requestSent = true;
             }
+
+            return true;
         }
     }
 }

@@ -9,6 +9,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
 {
     public class GoapUndockAction : GoapAction
     {
+        private bool _requestSent = false;
         private bool _docked = true;
 
         public GoapUndockAction()
@@ -19,6 +20,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
 
         public override void reset()
         {
+            _requestSent = false;
             _docked = true;
         }
 
@@ -42,15 +44,17 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         public override bool perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
-            if (ag.dataProvider.RequestUndock())
-            {
+
+            if (!ag.stateProvider.CurrentShipIsDocked)
                 _docked = false;
-                return true;
-            }
-            else
+            else if (ag.stateProvider.CurrentShipIsDocked && !_requestSent)
             {
-                return false;
+                _requestSent = true;
+                ag.actionProvider.RequestUndock();
             }
+
+            // TODO add a number of count before retry undock 
+            return true;
         }
     }
 }

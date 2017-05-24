@@ -12,7 +12,7 @@ using GalaxyGen.Engine.Ai.Goap.Actions;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
-    public class AgentDefaultController : IAgentController, IGoap
+    public class AgentDefaultController : IAgentController, IGoap, IAgentActions
     {
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _state;
@@ -26,7 +26,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _state = ag;
             _actorSolarSystem = actorSolarSystem;
             _actorTextOutput = actorTextOutput;
-            _goapAgent = new GoapAgent(this);            
+            _goapAgent = new GoapAgent(this, this, _state);            
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
         }
@@ -130,19 +130,17 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return true;
         }
 
-        public bool RequestUndock()
+        public void RequestUndock()
         {
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
             setNewDestination();
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10, _state.CurrentShipId));
-            return true;
         }
 
-        public bool RequestDock()
+        public void RequestDock()
         {
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), 10, _state.CurrentShipId));
-            return true;
         }
 
 
