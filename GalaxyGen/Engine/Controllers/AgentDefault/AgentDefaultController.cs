@@ -1,67 +1,87 @@
 ﻿using System;
 using Akka.Actor;
-using GalaxyGen.Engine.Controllers;
-using GalaxyGen.Model;
-using GalaxyGenCore.StarChart;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
+using GalaxyGenCore.StarChart;
 using GalaxyGen.Engine.Messages;
 using GalaxyGenCore.Framework;
+using GalaxyGen.Framework;
+using GalaxyGen.Engine.Ai.Goap;
+using GalaxyGen.Engine.Ai.Goap.Actions;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
-    public class AgentDefaultController : IAgentController
+    public class AgentDefaultController : IAgentController, IGoap, IAgentActions
     {
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
-        private AgentControllerState _model;
+        private AgentControllerState _state;
+        private IActorRef _actorSolarSystem;
         private IActorRef _actorTextOutput;
         private AgentDefaultMemory _memory;
-        private static Random _random;        
+        private GoapAgent _goapAgent;
 
-        public AgentDefaultController(AgentControllerState ag, IActorRef actorTextOutput)
+        public AgentDefaultController(AgentControllerState ag, IActorRef actorSolarSystem, IActorRef actorTextOutput)
         {
-            _model = ag;
+            _state = ag;
+            _actorSolarSystem = actorSolarSystem;
             _actorTextOutput = actorTextOutput;
-            _random = new Random();
-            _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_model.Memory);
-            if (_memory == null) _memory = new AgentDefaultMemory();            
+            _goapAgent = new GoapAgent(this, this, _state);            
+            _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
+            if (_memory == null) _memory = new AgentDefaultMemory();
         }
 
-        public object Tick(MessageTick tick)
+        public void Tick(MessageTick tick)
         {
-            object message = null;
-
-            if (_model.IsPilotingShip)
-            {
-                if (_model.CurrentShipIsDocked)
-                    message = pilotingDockedShip(tick);                
-                else
-                    message = pilotingShip(tick);
-            }               
-            
-            return message;
-        }        
-
-        private object pilotingDockedShip(MessageTick tick)
-        {
-            checkMarkets(tick);          
-            if (checkLeaveShip(tick))
-            {
-                return requestPlanetside(tick);
-            }
-            else if (checkUndock(tick))
-            {
-                return requestUndock(tick);
-            }
-            return null;
+            _goapAgent.Tick();
         }
+
+        //private object pilotingCruisingShip(MessageTick tick)
+        //{
+        //    // new destination
+        //    if (_state.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
+        //    {
+        //        IMessageShipCommandData msd = new MessageShipBasic(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
+        //        MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _state.CurrentShipId);
+        //        //ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
+        //        //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
+        //        return msc;
+        //    }
+
+        //    // Am I at my current destination
+        //    if (_state.CurrentShipAtDestination)
+        //    {
+        //        // request docking
+        //        MessageShipCommand msc = new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock,_), tick.Tick, _state.CurrentShipId);
+        //        return msc;
+        //    }
+
+        //    return null;
+        //}
+
+
+        //private object pilotingDockedShip(MessageTick tick)
+        //{
+        //    object msg = null;
+
+        //    checkMarkets(tick);
+        //    if (checkLeaveShip(tick))
+        //    {
+        //        msg = requestPlanetside(tick);
+        //    }
+        //    else if (checkUndock(tick))
+        //    {
+        //        msg = requestUndock(tick);
+        //    }
+
+        //    return msg;
+        //}
 
         // scan the local and system markets and decide if there is an order we want to place / fulfil
         private void checkMarkets(MessageTick tick)
         {
             // do i need to place a place / fulfil a market order, if so leave ship to interact with market            
-            Int64 curPlanet = _model.CurrentShipDockedPlanetScId;
+            Int64 curPlanet = _state.CurrentShipDockedPlanetScId;
             if (checkOverMinimumTimeForMarketCheck(curPlanet, tick.Tick))
             {
                 checkMarketPlaceOrder(tick);
@@ -70,13 +90,14 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         private void checkMarketPlaceOrder(MessageTick tick)
         {
-            // check stock and decide what we need (everywhere) and don't need (at this location)
-                              
+            // TODO check stock and decide what we need (everywhere) and don't need (at this location)
+
+
             // get prices at current location for needs
-            // buy any with reasonable price
+            // buy TODO buy any with reasonable price
 
             // get prices at current location for dont needs
-            // sell any at reasonable price
+            // sell TODO sell any at reasonable price
         }
 
         // make sure we haven't recently scanned market
@@ -109,52 +130,137 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return true;
         }
 
-        private object requestUndock(MessageTick tick)
+        public void RequestUndock()
         {
-            setNewDestinationFromDocked();
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-            return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Undock), tick.Tick, _model.CurrentShipId);
+            setNewDestination();
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10, _state.CurrentShipId));
         }
 
-        private void setNewDestinationFromDocked()
+        public void RequestDock()
         {
-            // choose randomly
-            ScPlanet curDest = null;            
-            if (_memory.CurrentDestinationScId != 0)
-            {
-                curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-            }
+            //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), 10, _state.CurrentShipId));
+        }
 
-            List<Int64> planetsToChooseFrom = _model.PlanetsInSolarSystemScIds.Where(x => x != _model.CurrentShipDockedPlanetScId).ToList();
-            int index = _random.Next(planetsToChooseFrom.Count);
+
+        private void setNewDestination()
+        {
+            // choose randomly        
+            List<Int64> planetsToChooseFrom;
+            if (_state.CurrentShipIsDocked)
+                planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.Where(x => x != _state.CurrentShipDockedPlanetScId).ToList();
+            else
+                planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.ToList();
+
+            int index = RandomUtils.Random(planetsToChooseFrom.Count);
             _memory.CurrentDestinationScId = planetsToChooseFrom[index];
             saveMemory();
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetDestination(ShipCommandEnum.SetDestination,_memory.CurrentDestinationScId), 10, _state.CurrentShipId));
         }
 
-        private object pilotingShip(MessageTick tick)
-        {
-            // new destination
-            if (_model.CurrentShipDestinationScId != _memory.CurrentDestinationScId)
-            {
-                IMessageShipCommandData msd = new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId);
-                MessageShipCommand msc = new MessageShipCommand(msd, tick.Tick, _model.CurrentShipId);                    
-                ScPlanet curDest = StarChart.GetPlanet(_memory.CurrentDestinationScId);
-                //_actorTextOutput.Tell("Agent Piloting Ship towards " + curDest.Name);
-                return msc;
-            }
-
-            // Am I at my current destination
-            if (_model.CurrentShipAtDestination)
-            {
-                return new MessageShipCommand(new MessageShipBasic(ShipCommandEnum.Dock), tick.Tick, _model.CurrentShipId);
-            }
-            
-            return null;
-        }
 
         private void saveMemory()
         {
-            _model.Memory = JsonConvert.SerializeObject(_memory);
+            _state.Memory = JsonConvert.SerializeObject(_memory);
+        }
+
+        public HashSet<KeyValuePair<string, object>> getWorldState()
+        {
+            HashSet<KeyValuePair<string, object>> worldData = new HashSet<KeyValuePair<string, object>>();
+
+            worldData.Add(new KeyValuePair<string, object>("isDocked", (_state.CurrentShipIsDocked)));
+
+            return worldData;
+        }
+
+        public HashSet<KeyValuePair<string, object>> createGoalState()
+        {
+            HashSet<KeyValuePair<string, object>> goalState = new HashSet<KeyValuePair<string, object>>();
+            
+            goalState.Add(new KeyValuePair<string, object>("isDocked", !_state.CurrentShipIsDocked));
+
+            return goalState;
+        }
+
+        public void planFailed(HashSet<KeyValuePair<string, object>> failedGoal)
+        {
+
+        }
+
+        public void planFound(HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions)
+        {
+            // Yay we found a plan for our goal
+            // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.prettyPrint(actions));
+        }
+
+        public void actionsFinished()
+        {
+            // Everything is done, we completed our actions for this gool. Hooray!
+            // Console.WriteLine("<color=blue>Actions completed</color>");
+        }
+
+        public void planAborted(GoapAction aborter)
+        {
+            // An action bailed out of the plan. State has been reset to plan again.
+            // Take note of what happened and make sure if you run the same goal again
+            // that it can succeed.
+            // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
+        }
+
+        public bool moveAgent(GoapAction nextAction)
+        {
+            if (_state.CurrentShipHasDestination)
+            {
+                if (!_state.CurrentShipAutopilotActive)
+                {
+                    _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetAutopilot(ShipCommandEnum.SetAutopilot, true), 10, _state.CurrentShipId));
+                    return false;
+                }
+                else
+                {
+                    if (_state.CurrentShipAtDestination(_memory.CurrentDestinationScId))
+                    {
+                        nextAction.setInRange(true);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                setNewDestination();
+            }
+
+            //else
+            //{
+            //    // this code will never be reached at the moment as we use autopilot to move
+            //    PointD curPoint = _state.CurrentShipXY;
+            //    PointD newPoint = NavigationUtils.GetNewPointForShip(_state.CurrentShipCruisingSpeed, curPoint.X, curPoint.Y, _state.DestinationX(_memory.CurrentDestinationScId), _state.DestinationY(_memory.CurrentDestinationScId));
+            //    _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetXY(ShipCommandEnum.SetXY, newPoint.X, newPoint.Y), 10, _state.CurrentShipId));
+            //    if (_state.XYAtDestination(_memory.CurrentDestinationScId, newPoint.X, newPoint.Y))
+            //    {
+            //        nextAction.setInRange(true);
+            //        return true;
+            //    }
+            //    else
+            //    {
+            //        return false;
+            //    }
+            //}
+            return false;
+        }
+
+        // actions this agent is capable of
+        public GoapAction[] GetActions()
+        {
+            GoapAction[] actions = new GoapAction[2];
+            actions[0] = new GoapUndockAction();
+            actions[1] = new GoapDockAction();                      
+            return actions;
         }
 
     }

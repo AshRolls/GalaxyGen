@@ -1,5 +1,0 @@
-C:\Space\Dev\GalaxyGen\FluentBehaviourTree\obj\Debug\fluent-behaviour-tree.csprojResolveAssemblyReference.cache
-C:\Space\Dev\GalaxyGen\FluentBehaviourTree\bin\Debug\FluentBehaviourTree.dll
-C:\Space\Dev\GalaxyGen\FluentBehaviourTree\bin\Debug\FluentBehaviourTree.pdb
-C:\Space\Dev\GalaxyGen\FluentBehaviourTree\obj\Debug\FluentBehaviourTree.dll
-C:\Space\Dev\GalaxyGen\FluentBehaviourTree\obj\Debug\FluentBehaviourTree.pdb

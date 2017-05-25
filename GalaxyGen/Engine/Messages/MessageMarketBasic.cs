@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine.Messages
 {
-    public class MessageShipBasic : IMessageShipCommandData
+    public class MessageMarketBasic : IMessageMarketCommandData
     {
-        public MessageShipBasic(ShipCommandEnum type, Int64 targetId)
+        public MessageMarketBasic(MarketCommandEnum type, Int64 targetId, Int64 quantity)
         {
             CommandType = type;
-            TargetId = targetId;
         }
 
-        public ShipCommandEnum CommandType { get; set; }
-
+        public MarketCommandEnum CommandType { get; set; }
         public Int64 TargetId { get; set; }
+        public Int64 Quantity { get; set; }
+
     }
 }

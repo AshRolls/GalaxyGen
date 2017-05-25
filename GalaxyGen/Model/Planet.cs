@@ -43,7 +43,6 @@ namespace GalaxyGen.Model
         public ICollection<Ship> DockedShips { get; set; }
         public ICollection<Agent> Agents { get; set; }
         public SolarSystem SolarSystem { get; set; }
-
         public Market Market { get; set; }
 
     }

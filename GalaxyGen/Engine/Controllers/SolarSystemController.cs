@@ -74,22 +74,31 @@ namespace GalaxyGen.Engine.Controllers
            
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
+       
+            switch (msg.Command.CommandType)
+            {
+                case ShipCommandEnum.SetXY:
+                    ShipSetXY(msg, sc);
+                    break;
+                case ShipCommandEnum.Undock:
+                    ShipUndock(msg, sc);
+                    break;
+                case ShipCommandEnum.Dock:
+                    ShipDock(msg, sc);
+                    break;
+                case ShipCommandEnum.SetDestination:
+                    ShipSetDestination(msg, sc);
+                    break;
+                case ShipCommandEnum.SetAutopilot:
+                    ShipSetAutopilot(msg, sc);
+                    break;
+                default:
+                    throw new Exception("Unknown Ship Command");
+                    break;
+            }
 
-            if (msg.Command.CommandType == ShipCommandEnum.Undock)
-            {
-                ShipUndock(msg, sc);
-            }
-            else if (msg.Command.CommandType == ShipCommandEnum.SetDestination)
-            {
-                ShipSetDestination(msg, sc);
-            }
-            else if (msg.Command.CommandType == ShipCommandEnum.Dock)
-            {
-                ShipDock(msg, sc);
-            }
         }
        
-
         private bool ShipUndock(MessageShipCommand msg, ShipController sc)
         {
             bool success = false;
@@ -108,8 +117,21 @@ namespace GalaxyGen.Engine.Controllers
             if (sc.checkValidDockCommand(msg))
             {
                 Ship s = _model.Ships.Where(x => x.ShipId == msg.ShipId).First();
-                _planetCs[sc.GetDestination.PlanetId].DockShip(s);                
-                sc.Dock();
+                Planet p = _model.Planets.Where(x => x.StarChartId == ((MessageShipDocking)msg.Command).DockingTargetId).FirstOrDefault();
+                _planetCs[p.PlanetId].DockShip(s);                
+                sc.Dock(p);
+                success = true;
+            }
+            return success;
+        }
+
+        private static bool ShipSetXY(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidSetXYCommand(msg))
+            {
+                MessageShipSetXY msd = (MessageShipSetXY)msg.Command;
+                sc.SetXY(msd.X, msd.Y);
                 success = true;
             }
             return success;
@@ -125,6 +147,23 @@ namespace GalaxyGen.Engine.Controllers
                 success = true;
             }
             return success;
+        }
+
+        private static bool ShipSetAutopilot(MessageShipCommand msg, ShipController sc)
+        {
+            bool success = false;
+            if (sc.checkValidSetAutopilotCommand(msg))
+            {
+                MessageShipSetAutopilot msd = (MessageShipSetAutopilot)msg.Command;
+                sc.SetAutopilot(msd.Active);
+                success = true;
+            }
+            return success;
+        }
+
+        internal void ReceiveCommandForMarket(MessageMarketCommand msg)
+        {
+            _planetCs[msg.PlanetId].ReceiveCommandForMarket(msg);
         }
 
         internal Int64 SolarSystemId

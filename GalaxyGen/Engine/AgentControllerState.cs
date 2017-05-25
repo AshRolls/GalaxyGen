@@ -1,4 +1,5 @@
-﻿using GalaxyGen.Model;
+﻿using GalaxyGen.Framework;
+using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine
 {
-    public class AgentControllerState
+    public class AgentControllerState : IAgentControllerState
     {
-        private Agent _model; 
+        // TRY AND AVOID STORING STATE IN THIS CLASS WHEREEVER POSSIBLE
+        private Agent _model;        
 
         public AgentControllerState(Agent ag)
         {
@@ -47,14 +49,6 @@ namespace GalaxyGen.Engine
             }
         }
 
-        public AgentStateEnum AgentState
-        {
-            get
-            {
-                return _model.AgentState;
-            }
-        }
-
         public bool IsPilotingShip
         {
             get
@@ -67,7 +61,7 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
+                if (_model.AgentState == AgentStateEnum.PilotingShip)
                 {
                     return ((Ship)_model.Location).ShipState;
                 }
@@ -85,32 +79,58 @@ namespace GalaxyGen.Engine
             }
         }
 
-        public bool CurrentShipAtDestination
+
+        private Int64 lastDestinationScId;
+        private Planet destinationPlanet;
+        private void updateCachedPlanet(Int64 destinationScId)
         {
-            get
+            if (destinationScId != lastDestinationScId) // if we have a new destination, cache the planet so we only need to look it up once.
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
-                {
-                    Ship s = (Ship)_model.Location;
-                    Planet p = s.SolarSystem.Planets.Where(x => x.StarChartId == s.DestinationScId).FirstOrDefault();
-                    if (s.PositionX == p.PositionX && s.PositionY == p.PositionY)
-                    {
-                        return true;
-                    }
-                }
-                return false;
+                destinationPlanet = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
+                lastDestinationScId = destinationScId;
             }
+        }
+
+        public Double DestinationX(Int64 destinationScId)
+        {
+            updateCachedPlanet(destinationScId);
+            return destinationPlanet.PositionX;            
+        }
+
+        public Double DestinationY(Int64 destinationScId)
+        {
+            updateCachedPlanet(destinationScId);
+            return destinationPlanet.PositionY;
+        }
+
+        public bool CurrentShipAtDestination(Int64 destinationScId)
+        {
+            Ship s = (Ship)_model.Location;
+            updateCachedPlanet(destinationScId);
+
+            if (destinationPlanet != null && s.PositionX == destinationPlanet.PositionX && s.PositionY == destinationPlanet.PositionY)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool XYAtDestination(Int64 destinationScId, Double X, Double Y)
+        {
+            updateCachedPlanet(destinationScId);
+
+            if (destinationPlanet != null && X == destinationPlanet.PositionX && Y == destinationPlanet.PositionY)
+            {
+                return true;
+            }
+            return false;
         }
 
         public Int64 CurrentShipId
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
-                {
-                    return ((Ship)_model.Location).ShipId;
-                }
-                return 0;
+                return ((Ship)_model.Location).ShipId;
             }
         }
 
@@ -118,26 +138,57 @@ namespace GalaxyGen.Engine
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
-                {
-                    Ship s = (Ship)_model.Location;
-                    if (s.DockedPlanet != null)
-                        return s.DockedPlanet.StarChartId;
-                }
-                return 0;
+                Ship s = (Ship)_model.Location;
+                return s.DockedPlanet.StarChartId;
             }
         }
 
-        public Int64 CurrentShipDestinationScId
+        public Double CurrentShipCruisingSpeed
         {
             get
             {
-                if (_model.Location != null && _model.Location.GalType == TypeEnum.Ship)
-                {
-                    Ship s = (Ship)_model.Location;                    
-                    return s.DestinationScId;
-                }
-                return 0;
+                return ((Ship)_model.Location).Type.MaxCruisingSpeedKmH;
+            }
+        }
+
+        public PointD CurrentShipXY
+        {
+            get
+            {
+                Ship s = (Ship)_model.Location;
+                return new PointD(s.PositionX, s.PositionY);
+            }
+        }
+
+        public Double CurrentShipX
+        {
+            get
+            {
+                return ((Ship)_model.Location).PositionX;
+            }
+        }
+
+        public Double CurrentShipY
+        {
+            get
+            {
+                return ((Ship)_model.Location).PositionY;
+            }
+        }
+
+        public bool CurrentShipAutopilotActive
+        {
+            get
+            {
+                return ((Ship)_model.Location).AutopilotActive;
+            }
+        }
+
+        public bool CurrentShipHasDestination
+        {
+            get
+            {
+                return ((Ship)_model.Location).DestinationScId != 0;
             }
         }
     }

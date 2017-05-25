@@ -17,7 +17,7 @@
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -119,23 +119,32 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\ActorMarket.cs" />
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\AgentControllerState.cs" />
+    <Compile Include="Engine\Ai\Goap\Actions\GoapDockAction.cs" />
+    <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
+    <Compile Include="Engine\Controllers\IAgentActions.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />
     <Compile Include="Engine\Controllers\ShipController.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultController.cs" />
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
+    <Compile Include="Engine\IAgentControllerState.cs" />
+    <Compile Include="Engine\Messages\IMessageMarketCommandData.cs" />
     <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
     <Compile Include="Engine\Messages\Message.cs" />
     <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
     <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
-    <Compile Include="Engine\Messages\MessageShipResponse.cs" />
-    <Compile Include="Engine\Messages\MessageShipSetDestination.cs" />
+    <Compile Include="Engine\Messages\MessageMarketCommand.cs" />
+    <Compile Include="Engine\Messages\MessageMarketBasic.cs" />
     <Compile Include="Engine\Messages\MessageShipBasic.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetAutopilot.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetDestination.cs" />
+    <Compile Include="Engine\Messages\MessageShipSetXY.cs" />
+    <Compile Include="Engine\Messages\MessageShipResponse.cs" />
+    <Compile Include="Engine\Messages\MessageShipDocking.cs" />
     <Compile Include="Engine\Messages\MessageShipCommand.cs" />
     <Compile Include="Engine\Messages\MessageProducerCommand.cs" />
     <Compile Include="Engine\Messages\MessageProducedResources.cs" />
@@ -145,11 +154,18 @@
     <Compile Include="Engine\Messages\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
+    <Compile Include="Engine\Ai\Fsm\FSM.cs" />
+    <Compile Include="Engine\Ai\Fsm\FSMState.cs" />
     <Compile Include="Framework\GalaxyLoader.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapAction.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapAgent.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapPlanner.cs" />
+    <Compile Include="Engine\Ai\Goap\IGoap.cs" />
     <Compile Include="Framework\IdUtils.cs" />
     <Compile Include="Framework\NavigationUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
     <Compile Include="Framework\CommonStructs.cs" />
+    <Compile Include="Framework\RandomUtils.cs" />
     <Compile Include="Model\IAccountOwner.cs" />
     <Compile Include="Model\IStoreLocation.cs" />
     <Compile Include="Model\IAgentLocation.cs" />

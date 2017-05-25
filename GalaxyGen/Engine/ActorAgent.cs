@@ -4,6 +4,7 @@ using GalaxyGen.Engine.Controllers.AgentDefault;
 using GalaxyGen.Engine.Messages;
 using GalaxyGen.Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GalaxyGen.Engine
@@ -33,7 +34,7 @@ namespace GalaxyGen.Engine
                 //    _agentC = new AgentTraderController(ag, _actorTextOutput);
                 //    break;
                 default:
-                    _agentC = new AgentDefaultController(stateForAgent, _actorTextOutput);
+                    _agentC = new AgentDefaultController(stateForAgent, _actorSolarSystem, _actorTextOutput);
                     break;
             }
 
@@ -42,9 +43,7 @@ namespace GalaxyGen.Engine
 
         private void receiveDefaultTick(MessageTick tick)
         {
-            Object message = _agentC.Tick(tick);
-            if (message != null)
-                Sender.Tell(message);
+            _agentC.Tick(tick);
             sendAgentCompletedMessage();
         }
 

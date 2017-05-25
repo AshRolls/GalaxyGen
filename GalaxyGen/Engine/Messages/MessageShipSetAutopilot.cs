@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine.Messages
 {
-    public class MessageShipSetDestination : IMessageShipCommandData
+    public class MessageShipSetAutopilot : IMessageShipCommandData
     {
-        public MessageShipSetDestination(ShipCommandEnum type, Int64 desinationScId)
+        public MessageShipSetAutopilot(ShipCommandEnum type, bool active)
         {
             CommandType = type;
-            DestinationScId = desinationScId;
+            Active = active;
         }
 
         public ShipCommandEnum CommandType { get; set; }
 
-        public Int64 DestinationScId { get; set; }
+        public bool Active { get; set; }
     }
 }
