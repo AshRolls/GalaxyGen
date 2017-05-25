@@ -9,53 +9,53 @@ namespace GalaxyGen.Engine.Ai.Goap
     public sealed class GoapAgent
     {
 
-        private FSM stateMachine;
+        private FSM _stateMachine;
 
-        private FSM.FSMState idleState; // finds something to do
-        private FSM.FSMState moveToState; // moves to a target
-        private FSM.FSMState performActionState; // performs an action
+        private FSM.FSMState _idleState; // finds something to do
+        private FSM.FSMState _moveToState; // moves to a target
+        private FSM.FSMState _performActionState; // performs an action
 
-        private HashSet<GoapAction> availableActions;
-        private Queue<GoapAction> currentActions;
+        private HashSet<GoapAction> _availableActions;
+        private Queue<GoapAction> _currentActions;
 
         private IGoap _dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
-        public IAgentActions actionProvider; // this is the class that will perform actions from the goap
-        public IAgentControllerState stateProvider;
+        public IAgentActions ActionProvider; // this is the class that will perform actions from the goap
+        public IAgentControllerState StateProvider;
 
-        private GoapPlanner planner;
+        private GoapPlanner _planner;
 
 
         public GoapAgent(IGoap provider, IAgentActions actions, IAgentControllerState state)
         {
             _dataProvider = provider;
-            actionProvider = actions;
-            stateProvider = state;
-            stateMachine = new FSM();
-            availableActions = new HashSet<GoapAction>();
-            currentActions = new Queue<GoapAction>();
-            planner = new GoapPlanner();            
+            ActionProvider = actions;
+            StateProvider = state;
+            _stateMachine = new FSM();
+            _availableActions = new HashSet<GoapAction>();
+            _currentActions = new Queue<GoapAction>();
+            _planner = new GoapPlanner();            
             createIdleState();
             createMoveToState();
             createPerformActionState();
-            stateMachine.pushState(idleState);
+            _stateMachine.pushState(_idleState);
             loadActions();
         }
 
 
         public void Tick()
         {
-            stateMachine.Update(this);
+            _stateMachine.Update(this);
         }
 
 
-        public void addAction(GoapAction a)
+        public void AddAction(GoapAction a)
         {
-            availableActions.Add(a);
+            _availableActions.Add(a);
         }
 
-        public GoapAction getAction(Type action)
+        public GoapAction GetAction(Type action)
         {
-            foreach (GoapAction g in availableActions)
+            foreach (GoapAction g in _availableActions)
             {
                 if (g.GetType().Equals(action))
                     return g;
@@ -63,19 +63,19 @@ namespace GalaxyGen.Engine.Ai.Goap
             return null;
         }
 
-        public void removeAction(GoapAction action)
+        public void RemoveAction(GoapAction action)
         {
-            availableActions.Remove(action);
+            _availableActions.Remove(action);
         }
 
         private bool hasActionPlan()
         {
-            return currentActions.Count > 0;
+            return _currentActions.Count > 0;
         }
 
         private void createIdleState()
         {
-            idleState = (fsm, gameObj) =>
+            _idleState = (fsm, gameObj) =>
             {
                 // GOAP planning
 
@@ -84,24 +84,24 @@ namespace GalaxyGen.Engine.Ai.Goap
                 HashSet<KeyValuePair<string, object>> goal = _dataProvider.createGoalState();
 
                 // Plan
-                Queue<GoapAction> plan = planner.plan(this, availableActions, worldState, goal);
+                Queue<GoapAction> plan = _planner.plan(this, _availableActions, worldState, goal);
                 if (plan != null)
                 {
                     // we have a plan, hooray!
-                    currentActions = plan;
+                    _currentActions = plan;
                     _dataProvider.planFound(goal, plan);
 
                     fsm.popState(); // move to PerformAction state
-                    fsm.pushState(performActionState);
+                    fsm.pushState(_performActionState);
 
                 }
                 else
                 {
                     // ugh, we couldn't get a plan
-                    // Console.WriteLine("<color=orange>Failed Plan:</color>" + prettyPrint(goal));
+                    // Console.WriteLine("<color=orange>Failed Plan:</color>" + PrettyPrint(goal));
                     _dataProvider.planFailed(goal);
                     fsm.popState(); // move back to IdleAction state
-                    fsm.pushState(idleState);
+                    fsm.pushState(_idleState);
                 }
 
             };
@@ -109,17 +109,17 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         private void createMoveToState()
         {
-            moveToState = (fsm, gameObj) =>
+            _moveToState = (fsm, gameObj) =>
             {
                 // move the game object
 
-                GoapAction action = currentActions.Peek();
+                GoapAction action = _currentActions.Peek();
                 if (action.requiresInRange() && action.target == null)
                 {
                     // Console.WriteLine("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
                     fsm.popState(); // move
                     fsm.popState(); // perform
-                    fsm.pushState(idleState);
+                    fsm.pushState(_idleState);
                     return;
                 }
 
@@ -152,7 +152,7 @@ namespace GalaxyGen.Engine.Ai.Goap
         private void createPerformActionState()
         {
 
-            performActionState = (fsm, gameObj) =>
+            _performActionState = (fsm, gameObj) =>
             {
                 // perform the action
 
@@ -161,22 +161,22 @@ namespace GalaxyGen.Engine.Ai.Goap
                     // no actions to perform
                     // Console.WriteLine("<color=red>Done actions</color>");
                     fsm.popState();
-                    fsm.pushState(idleState);
+                    fsm.pushState(_idleState);
                     _dataProvider.actionsFinished();
                     return;
                 }
 
-                GoapAction action = currentActions.Peek();
+                GoapAction action = _currentActions.Peek();
                 if (action.isDone())
                 {
                     // the action is done. Remove it so we can perform the next one
-                    currentActions.Dequeue();
+                    _currentActions.Dequeue();
                 }
 
                 if (hasActionPlan())
                 {
                     // perform the next action
-                    action = currentActions.Peek();
+                    action = _currentActions.Peek();
                     bool inRange = action.requiresInRange() ? action.isInRange() : true;
 
                     if (inRange)
@@ -188,7 +188,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                         {
                             // action failed, we need to plan again
                             fsm.popState();
-                            fsm.pushState(idleState);
+                            fsm.pushState(_idleState);
                             _dataProvider.planAborted(action);
                         }
                     }
@@ -196,7 +196,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                     {
                         // we need to move there first
                         // push moveTo state
-                        fsm.pushState(moveToState);
+                        fsm.pushState(_moveToState);
                     }
 
                 }
@@ -204,7 +204,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 {
                     // no actions left, move to Plan state
                     fsm.popState();
-                    fsm.pushState(idleState);
+                    fsm.pushState(_idleState);
                     _dataProvider.actionsFinished();
                 }
 
@@ -216,12 +216,12 @@ namespace GalaxyGen.Engine.Ai.Goap
             GoapAction[] actions = _dataProvider.GetActions();
             foreach (GoapAction a in actions)
             {
-                availableActions.Add(a);
+                _availableActions.Add(a);
             }
             //// Console.WriteLine("Found actions: " + prettyPrint(actions));
         }
 
-        public static string prettyPrint(HashSet<KeyValuePair<string, object>> state)
+        public static string PrettyPrint(HashSet<KeyValuePair<string, object>> state)
         {
             String s = "";
             foreach (KeyValuePair<string, object> kvp in state)
@@ -232,7 +232,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             return s;
         }
 
-        public static string prettyPrint(Queue<GoapAction> actions)
+        public static string PrettyPrint(Queue<GoapAction> actions)
         {
             String s = "";
             foreach (GoapAction a in actions)

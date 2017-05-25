@@ -133,7 +133,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         public void RequestUndock()
         {
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-            setNewDestination();
+            //setNewDestination();
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10, _state.CurrentShipId));
         }
 
@@ -144,7 +144,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         }
 
 
-        private void setNewDestination()
+        private Int64 chooseRandomDestinationScId()
         {
             // choose randomly        
             List<Int64> planetsToChooseFrom;
@@ -152,11 +152,15 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.Where(x => x != _state.CurrentShipDockedPlanetScId).ToList();
             else
                 planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.ToList();
-
             int index = RandomUtils.Random(planetsToChooseFrom.Count);
-            _memory.CurrentDestinationScId = planetsToChooseFrom[index];
+            return planetsToChooseFrom[index];
+        }
+
+        private void setNewDestination(Int64 destinationScId)
+        {
+            _memory.CurrentDestinationScId = destinationScId;
             saveMemory();
-            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetDestination(ShipCommandEnum.SetDestination,_memory.CurrentDestinationScId), 10, _state.CurrentShipId));
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId), 10, _state.CurrentShipId));
         }
 
 
@@ -169,7 +173,16 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             HashSet<KeyValuePair<string, object>> worldData = new HashSet<KeyValuePair<string, object>>();
 
-            worldData.Add(new KeyValuePair<string, object>("isDocked", (_state.CurrentShipIsDocked)));
+            if (_state.CurrentShipIsDocked)
+            {
+                worldData.Add(new KeyValuePair<string, object>("isDocked", true));
+                worldData.Add(new KeyValuePair<string, object>("DockedAt", _state.CurrentShipDockedPlanetScId));
+            }
+            else
+            {
+                worldData.Add(new KeyValuePair<string, object>("isDocked", false));
+                worldData.Add(new KeyValuePair<string, object>("DockedAt", 0));
+            }
 
             return worldData;
         }
@@ -178,7 +191,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             HashSet<KeyValuePair<string, object>> goalState = new HashSet<KeyValuePair<string, object>>();
             
-            goalState.Add(new KeyValuePair<string, object>("isDocked", !_state.CurrentShipIsDocked));
+            goalState.Add(new KeyValuePair<string, object>("isDocked", true));
+            goalState.Add(new KeyValuePair<string, object>("DockedAt", chooseRandomDestinationScId()));
 
             return goalState;
         }
@@ -191,7 +205,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         public void planFound(HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
-            // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.prettyPrint(actions));
+            // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
         }
 
         public void actionsFinished()
@@ -210,16 +224,21 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public bool moveAgent(GoapAction nextAction)
         {
-            if (_state.CurrentShipHasDestination)
+            Int64 destinationScId = (Int64)nextAction.target;
+            if (!_state.CurrentShipHasDestination || _state.CurrentShipDestinationScID != destinationScId) // set destination based on action if we don't have one or it has changed
             {
-                if (!_state.CurrentShipAutopilotActive)
+                setNewDestination(destinationScId);
+            }
+            else
+            { 
+                if (!_state.CurrentShipAutopilotActive) // turn on autopilot if off
                 {
                     _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetAutopilot(ShipCommandEnum.SetAutopilot, true), 10, _state.CurrentShipId));
                     return false;
                 }
                 else
                 {
-                    if (_state.CurrentShipAtDestination(_memory.CurrentDestinationScId))
+                    if (_state.CurrentShipAtDestination(_memory.CurrentDestinationScId)) // check if we are there
                     {
                         nextAction.setInRange(true);
                         return true;
@@ -230,10 +249,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                     }
                 }
             }
-            else
-            {
-                setNewDestination();
-            }
+
 
             //else
             //{
@@ -253,13 +269,21 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             //}
             return false;
         }
-
+        
         // actions this agent is capable of
         public GoapAction[] GetActions()
         {
-            GoapAction[] actions = new GoapAction[2];
-            actions[0] = new GoapUndockAction();
-            actions[1] = new GoapDockAction();                      
+            List<GoapAction> actionsList = new List<GoapAction>();
+
+            actionsList.Add(new GoapUndockAction());
+
+            // TODO limit number of destination actions we add to avoid combinatorial explosion
+            foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
+            {
+                actionsList.Add(new GoapDockAction(destScId));
+            }
+
+            GoapAction[] actions = actionsList.ToArray();
             return actions;
         }
 

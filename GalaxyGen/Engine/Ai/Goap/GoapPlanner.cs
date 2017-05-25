@@ -106,7 +106,7 @@ namespace GalaxyGen.Engine.Ai.Goap
 
                     // apply the action's effects to the parent state
                     HashSet<KeyValuePair<string, object>> currentState = populateState(parent.state, action.Effects);
-                    // Console.WriteLine(GoapAgent.prettyPrint(currentState));
+                    // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
                     Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
 
                     if (inState(goal, currentState))

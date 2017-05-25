@@ -16,6 +16,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         {
             addPrecondition("isDocked", true); // we need a tool to do this            
             addEffect("isDocked", false);
+            addEffect("DockedAt", 0);
         }
 
         public override void reset()
@@ -45,12 +46,12 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         {
             GoapAgent ag = (GoapAgent)agent;
 
-            if (!ag.stateProvider.CurrentShipIsDocked)
+            if (!ag.StateProvider.CurrentShipIsDocked)
                 _docked = false;
-            else if (ag.stateProvider.CurrentShipIsDocked && !_requestSent)
+            else if (ag.StateProvider.CurrentShipIsDocked && !_requestSent)
             {
                 _requestSent = true;
-                ag.actionProvider.RequestUndock();
+                ag.ActionProvider.RequestUndock();
             }
 
             // TODO add a number of count before retry undock 

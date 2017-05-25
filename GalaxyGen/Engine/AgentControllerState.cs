@@ -191,5 +191,13 @@ namespace GalaxyGen.Engine
                 return ((Ship)_model.Location).DestinationScId != 0;
             }
         }
+
+        public Int64 CurrentShipDestinationScID
+        {
+            get
+            {
+                return ((Ship)_model.Location).DestinationScId;
+            }
+        }
     }
 }
