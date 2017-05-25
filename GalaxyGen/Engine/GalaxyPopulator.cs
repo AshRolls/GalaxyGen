@@ -39,9 +39,18 @@ namespace GalaxyGen.Engine
                 {
                     Planet p = this.GetPlanet(chartP);
                     p.StarChartId = StarChart.GetIdForObject(chartP);
-                    addNewStoreToPlanet(p, ag);
-                    if (j % 2 == 0) addMetalProducerToPlanet(ag, p);
-                    else addSpiceProducerToPlanet(ag, p);
+
+                    if (j % 2 == 0)
+                    {
+                        //addMetalProducerToPlanet(ag, p);
+                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
+                    }
+                    else
+                    {
+                        //addSpiceProducerToPlanet(ag, p);
+                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 10) });
+                    }
+
                     j++;
                     ss.Planets.Add(p);
                 }
@@ -60,27 +69,27 @@ namespace GalaxyGen.Engine
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
 
-                for (int i = 0; i < 1000; i++)
-                {
+                //for (int i = 0; i < 1000; i++)
+                //{
 
-                    ag = this.GetAgent("Agent " + i);
-                    ss.Agents.Add(ag);
-                    ag.SolarSystem = ss;
+                //    ag = this.GetAgent("Agent " + i);
+                //    ss.Agents.Add(ag);
+                //    ag.SolarSystem = ss;
 
-                    s = this.GetShip("Ship" + i, shipT);
-                    s.Owner = ag;
-                    s.ShipState = ShipStateEnum.Docked;
-                    s.Agents.Add(ag);
-                    ag.Location = s;
-                    s.Pilot = ag;
-                    ag.AgentState = AgentStateEnum.PilotingShip;
-                    s.DockedPlanet = ss.Planets.First();
-                    ss.Planets.First().DockedShips.Add(s);
-                    ag.ShipsOwned.Add(s);
-                    addNewCargoStoreToShip(s, ag);
-                    s.SolarSystem = ss;
-                    ss.Ships.Add(s);
-                }
+                //    s = this.GetShip("Ship" + i, shipT);
+                //    s.Owner = ag;
+                //    s.ShipState = ShipStateEnum.Docked;
+                //    s.Agents.Add(ag);
+                //    ag.Location = s;
+                //    s.Pilot = ag;
+                //    ag.AgentState = AgentStateEnum.PilotingShip;
+                //    s.DockedPlanet = ss.Planets.First();
+                //    ss.Planets.First().DockedShips.Add(s);
+                //    ag.ShipsOwned.Add(s);
+                //    addNewCargoStoreToShip(s, ag);
+                //    s.SolarSystem = ss;
+                //    ss.Ships.Add(s);
+                //}
 
                 gal.SolarSystems.Add(ss);
             }                      
@@ -134,7 +143,7 @@ namespace GalaxyGen.Engine
             return plan;
         }
 
-        private void addNewStoreToPlanet(Planet p, Agent o)
+        private void addNewStoreToPlanet(Planet p, Agent o, List<ResourceQuantity> resourcesToSeed)
         {
             Store s = new Store();
             s.Owner = o;
@@ -142,9 +151,10 @@ namespace GalaxyGen.Engine
             p.Stores.Add(o.AgentId,s);
             o.Stores.Add(s);
 
-             // seed with basic starter resource
-            s.StoredResources.Add(ResourceTypeEnum.Spice, 10);
-            s.StoredResources.Add(ResourceTypeEnum.Platinum, 10);            
+            foreach(ResourceQuantity resQ in resourcesToSeed)
+            {
+                s.StoredResources.Add(resQ.Type, resQ.Quantity);
+            }                        
         }
 
         private Agent GetAgent(String seedName)

@@ -94,7 +94,6 @@ namespace GalaxyGen.Engine.Controllers
                     break;
                 default:
                     throw new Exception("Unknown Ship Command");
-                    break;
             }
 
         }

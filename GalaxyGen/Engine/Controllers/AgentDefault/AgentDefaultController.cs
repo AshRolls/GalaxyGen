@@ -198,8 +198,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
             //goalState.Add(new KeyValuePair<string, object>("isDocked", true));
             //goalState.Add(new KeyValuePair<string, object>("DockedAt", chooseRandomDestinationScId()));
-
-            goalState.Add(new KeyValuePair<string, object>("HasResource", new ResourceQuantity(ResourceTypeEnum.Platinum,100)));
+            ResourceQuantity resQ = new ResourceQuantity(ResourceTypeEnum.Platinum, 10);
+            goalState.Add(new KeyValuePair<string, object>("HasResource"+resQ.Type, resQ.Quantity));
 
             return goalState;
         }
@@ -287,7 +287,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             actionsList.Add(new GoapUndockAction());
 
             // TODO limit number of destination actions we add to avoid combinatorial explosion
-            int i = 8;
             foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
             {
                 actionsList.Add(new GoapDockAction(destScId));
@@ -296,7 +295,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 {
                     actionsList.Add(new GoapLoadShipAction(destScId, resQ));
                 }                
-                i++;
             }
 
             GoapAction[] actions = actionsList.ToArray();
