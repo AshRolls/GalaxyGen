@@ -2,6 +2,8 @@
 using GalaxyGen.Framework;
 using GalaxyGen.Model;
 using GalaxyGenCore.StarChart;
+using GalaxyGenCore.Resources;
+using System;
 
 namespace GalaxyGen.Engine
 {
@@ -21,10 +23,12 @@ namespace GalaxyGen.Engine
         string Memory { get; set; }
         IEnumerable<ScPlanet> PlanetsInSolarSystem { get; }
         IEnumerable<long> PlanetsInSolarSystemScIds { get; }
-
         bool CurrentShipAtDestination(long destinationScId);
+        UInt64 CurrentShipResourceQuantity(ResourceTypeEnum resType);
         double DestinationX(long destinationScId);
         double DestinationY(long destinationScId);
         bool XYAtDestination(long destinationScId, double X, double Y);
+        UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res);
+        List<ResourceQuantity> PlanetResources(Int64 planetScId);
     }
 }

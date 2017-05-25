@@ -121,6 +121,7 @@
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\AgentControllerState.cs" />
+    <Compile Include="Engine\Ai\Goap\Actions\GoapLoadShipAction.cs" />
     <Compile Include="Engine\Ai\Goap\Actions\GoapDockAction.cs" />
     <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />

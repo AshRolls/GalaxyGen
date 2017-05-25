@@ -9,6 +9,7 @@ using GalaxyGenCore.Framework;
 using GalaxyGen.Framework;
 using GalaxyGen.Engine.Ai.Goap;
 using GalaxyGen.Engine.Ai.Goap.Actions;
+using GalaxyGenCore.Resources;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
@@ -143,6 +144,10 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), 10, _state.CurrentShipId));
         }
 
+        public void RequestLoadShip(ResourceQuantity resQ)
+        {
+            _actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);
+        }
 
         private Int64 chooseRandomDestinationScId()
         {
@@ -182,7 +187,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             {
                 worldData.Add(new KeyValuePair<string, object>("isDocked", false));
                 worldData.Add(new KeyValuePair<string, object>("DockedAt", 0));
-            }
+            }            
 
             return worldData;
         }
@@ -190,9 +195,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         public HashSet<KeyValuePair<string, object>> createGoalState()
         {
             HashSet<KeyValuePair<string, object>> goalState = new HashSet<KeyValuePair<string, object>>();
-            
-            goalState.Add(new KeyValuePair<string, object>("isDocked", true));
-            goalState.Add(new KeyValuePair<string, object>("DockedAt", chooseRandomDestinationScId()));
+
+            //goalState.Add(new KeyValuePair<string, object>("isDocked", true));
+            //goalState.Add(new KeyValuePair<string, object>("DockedAt", chooseRandomDestinationScId()));
+
+            goalState.Add(new KeyValuePair<string, object>("HasResource", new ResourceQuantity(ResourceTypeEnum.Platinum,100)));
 
             return goalState;
         }
@@ -206,11 +213,13 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
+            _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
         }
 
         public void actionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
+            _actorTextOutput.Tell("Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
@@ -220,6 +229,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
             // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
+            _actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
         }
 
         public bool moveAgent(GoapAction nextAction)
@@ -250,7 +260,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 }
             }
 
-
             //else
             //{
             //    // this code will never be reached at the moment as we use autopilot to move
@@ -278,9 +287,16 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             actionsList.Add(new GoapUndockAction());
 
             // TODO limit number of destination actions we add to avoid combinatorial explosion
+            int i = 8;
             foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
             {
                 actionsList.Add(new GoapDockAction(destScId));
+                List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                foreach (ResourceQuantity resQ in resources)
+                {
+                    actionsList.Add(new GoapLoadShipAction(destScId, resQ));
+                }                
+                i++;
             }
 
             GoapAction[] actions = actionsList.ToArray();

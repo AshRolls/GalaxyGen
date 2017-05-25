@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaxyGenCore.Resources;
 
 namespace GalaxyGen.Engine.Controllers
 {
@@ -10,6 +11,6 @@ namespace GalaxyGen.Engine.Controllers
     {
         void RequestUndock();
         void RequestDock();
-
+        void RequestLoadShip(ResourceQuantity resQ);
     }
 }
