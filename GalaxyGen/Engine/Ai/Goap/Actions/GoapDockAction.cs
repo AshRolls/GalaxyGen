@@ -44,9 +44,10 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         public override bool perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
+
             if (ag.stateProvider.CurrentShipIsDocked)
                 _docked = true;
-            else if (ag.stateProvider.CurrentShipIsDocked && !_requestSent)
+            else if (!ag.stateProvider.CurrentShipIsDocked && !_requestSent)
             {
                 ag.actionProvider.RequestDock();
                 _requestSent = true;
