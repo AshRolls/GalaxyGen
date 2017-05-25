@@ -34,14 +34,15 @@ namespace GalaxyGen.Engine
                 ss.Agents.Add(ag);
                 ag.SolarSystem = ss;
 
-                int i = 0;
+                int j = 0;
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
                     Planet p = this.GetPlanet(chartP);
                     p.StarChartId = StarChart.GetIdForObject(chartP);
                     addNewStoreToPlanet(p, ag);
-                    if (i % 2 == 0) addMetalProducerToPlanet(ag, p);
+                    if (j % 2 == 0) addMetalProducerToPlanet(ag, p);
                     else addSpiceProducerToPlanet(ag, p);
+                    j++;
                     ss.Planets.Add(p);
                 }
 
@@ -59,27 +60,27 @@ namespace GalaxyGen.Engine
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
 
-                //for (int i = 0; i < 1000; i++)
-                //{
+                for (int i = 0; i < 1000; i++)
+                {
 
-                //    ag = this.GetAgent("Agent " + i);
-                //    ss.Agents.Add(ag);
-                //    ag.SolarSystem = ss;
+                    ag = this.GetAgent("Agent " + i);
+                    ss.Agents.Add(ag);
+                    ag.SolarSystem = ss;
 
-                //    s = this.GetShip("Ship" + i, shipT);
-                //    s.Owner = ag;
-                //    s.ShipState = ShipStateEnum.Docked;
-                //    s.Agents.Add(ag);
-                //    ag.Location = s;
-                //    s.Pilot = ag;
-                //    ag.AgentState = AgentStateEnum.PilotingShip;
-                //    s.DockedPlanet = ss.Planets.First();
-                //    ss.Planets.First().DockedShips.Add(s);
-                //    ag.ShipsOwned.Add(s);
-                //    addNewCargoStoreToShip(s, ag);
-                //    s.SolarSystem = ss;
-                //    ss.Ships.Add(s);
-                //}
+                    s = this.GetShip("Ship" + i, shipT);
+                    s.Owner = ag;
+                    s.ShipState = ShipStateEnum.Docked;
+                    s.Agents.Add(ag);
+                    ag.Location = s;
+                    s.Pilot = ag;
+                    ag.AgentState = AgentStateEnum.PilotingShip;
+                    s.DockedPlanet = ss.Planets.First();
+                    ss.Planets.First().DockedShips.Add(s);
+                    ag.ShipsOwned.Add(s);
+                    addNewCargoStoreToShip(s, ag);
+                    s.SolarSystem = ss;
+                    ss.Ships.Add(s);
+                }
 
                 gal.SolarSystems.Add(ss);
             }                      

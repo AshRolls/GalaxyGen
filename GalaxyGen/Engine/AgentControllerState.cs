@@ -223,11 +223,14 @@ namespace GalaxyGen.Engine
         public List<ResourceQuantity> PlanetResources(Int64 planetScId)
         {
             Planet p = _model.SolarSystem.Planets.Where(x => x.StarChartId == planetScId).FirstOrDefault();
-            Store s = p.Stores[_model.AgentId];
             List<ResourceQuantity> resources = new List<ResourceQuantity>();
-            foreach(KeyValuePair<ResourceTypeEnum,UInt64> kvp in s.StoredResources)
+            if (p.Stores.ContainsKey(_model.AgentId))
             {
-                resources.Add(new ResourceQuantity(kvp.Key, kvp.Value));
+                Store s = p.Stores[_model.AgentId];             
+                foreach (KeyValuePair<ResourceTypeEnum, UInt64> kvp in s.StoredResources)
+                {
+                    resources.Add(new ResourceQuantity(kvp.Key, kvp.Value));
+                }
             }
             return resources;
         }
