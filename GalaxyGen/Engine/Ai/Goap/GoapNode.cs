@@ -14,23 +14,23 @@ namespace GalaxyGen.Engine.Ai.Goap
         public GoapNode parent;
         public float runningCost;
         public Dictionary<string, object> state;
+        public Dictionary<Int64, Int64> resources;
         public float weight;
 
-        public GoapNode(GoapNode parent, float runningCost, float weight, Dictionary<string, object> state,
-            GoapAction action)
+        public GoapNode(GoapNode parent, float runningCost, float weight, Dictionary<string, object> state, Dictionary<Int64, Int64> resources, GoapAction action)
         {
             ID = MaxID++;
-            ReInit(parent, runningCost, weight, state, action);
+            ReInit(parent, runningCost, weight, state, resources, action);
         }
 
-        public void ReInit(GoapNode parent, float runningCost, float weight, Dictionary<string, object> state,
-            GoapAction action)
+        public void ReInit(GoapNode parent, float runningCost, float weight, Dictionary<string, object> state, Dictionary<Int64, Int64> resources, GoapAction action)
         {
             Clear();
             this.parent = parent;
             this.runningCost = runningCost;
             this.weight = weight;
             this.state = state;
+            this.resources = resources;
             this.action = action;
         }
 
@@ -40,6 +40,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             this.runningCost = 0;
             this.weight = 0;
             this.state = null;
+            this.resources = null;
             this.action = null;
         }
 

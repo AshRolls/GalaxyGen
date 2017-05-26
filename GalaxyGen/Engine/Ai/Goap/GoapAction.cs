@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Generic;
 
 namespace GalaxyGen.Engine.Ai.Goap
@@ -7,6 +8,7 @@ namespace GalaxyGen.Engine.Ai.Goap
     {
         private Dictionary<string, object> preconditions;
         private Dictionary<string, object> effects;
+        private Dictionary<Int64, Int64> resources;
 
         private bool inRange = false;
 
@@ -37,6 +39,7 @@ namespace GalaxyGen.Engine.Ai.Goap
         {
             preconditions = new Dictionary<string, object>();
             effects = new Dictionary<string, object>();
+            resources = new Dictionary<Int64, Int64>();
         }
 
         public void doReset()
@@ -117,6 +120,18 @@ namespace GalaxyGen.Engine.Ai.Goap
                 effects.Remove(key);
         }
 
+        public void addResource(Int64 key, Int64 value)
+        {
+            resources.Add(key, value);
+        }
+
+
+        public void removeResource(Int64 key, Int64 value)
+        {
+            if (resources.ContainsKey(key))
+                resources.Remove(key);
+        }
+
 
         public Dictionary<string, object> Preconditions
         {
@@ -131,6 +146,14 @@ namespace GalaxyGen.Engine.Ai.Goap
             get
             {
                 return effects;
+            }
+        }
+
+        public Dictionary<Int64, Int64> Resources
+        {
+            get
+            {
+                return resources;
             }
         }
     }

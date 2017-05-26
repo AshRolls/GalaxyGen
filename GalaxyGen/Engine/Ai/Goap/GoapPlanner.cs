@@ -15,7 +15,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          * Returns null if a plan could not be found, or a list of the actions
          * that must be performed, in order, to fulfill the goal.
          */
-        public Queue<GoapAction> Plan(object agent, HashSet<GoapAction> availableActions, Dictionary<string, object> worldState, Dictionary<string, object> goal)
+        public Queue<GoapAction> Plan(object agent, HashSet<GoapAction> availableActions, Dictionary<string, object> worldState, Dictionary<Int64, Int64> resourceState, Dictionary<string, object> goal, Dictionary<Int64, Int64> resourceGoal)
         {
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
@@ -37,8 +37,8 @@ namespace GalaxyGen.Engine.Ai.Goap
             List<GoapNode> leaves = new List<GoapNode>();
 
             // build graph
-            GoapNode start = new GoapNode(null, 0, 0, worldState, null);
-            bool success = buildGraph(start, leaves, usableActions, goal);
+            GoapNode start = new GoapNode(null, 0, 0, worldState, resourceState, null);
+            bool success = buildGraph(start, leaves, usableActions, goal, resourceGoal);
 
             if (!success)
             {
@@ -89,7 +89,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          * 'runningCost' value where the lowest cost will be the best action
          * sequence.
          */
-        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, Dictionary<string, object> goal)
+        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, Dictionary<string, object> goal, Dictionary<Int64, Int64> resourceGoal)
         {
             bool foundOne = false;
 
@@ -100,18 +100,27 @@ namespace GalaxyGen.Engine.Ai.Goap
                 // if the parent state has the conditions for this action's preconditions, we can use it here
                 if (inState(action.Preconditions, parent.state))
                 {
-
                     // apply the action's effects to the parent state
                     Dictionary<string, object> currentState = populateState(parent.state, action.Effects);
+                    Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
+
                     // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
-                    GoapNode node = new GoapNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, action);
+                    GoapNode node = new GoapNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, currentResources, action);
 
                     //force child.precondition in parent.effects or child.precondition is empty.
-                    if (action.Preconditions.Count == 0 && parent.action != null ||
-                        parent.action != null && !CondRelation(action.Preconditions, parent.action.Effects))
-                        continue;
+                    //if (action.Preconditions.Count == 0 && parent.action != null ||
+                    //    parent.action != null && !CondRelation(action.Preconditions, parent.action.Effects))
+                    //    continue;
 
-                    if (inState(goal, currentState))
+                    // TODO check negative resources and reject
+
+                    Int64 qty;
+                    if (currentResources.ContainsKey(2))
+                    {
+                        qty = currentResources[2];
+                    }
+
+                    if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
                     {
                         // we found a solution!
                         leaves.Add(node);
@@ -121,7 +130,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                     {
                         // not at a solution yet, so test all the remaining actions and branch out the tree
                         HashSet<GoapAction> subset = actionSubset(usableActions, action);
-                        bool found = buildGraph(node, leaves, subset, goal);
+                        bool found = buildGraph(node, leaves, subset, goal, resourceGoal);
                         if (found)
                             foundOne = true;
                     }
@@ -164,6 +173,22 @@ namespace GalaxyGen.Engine.Ai.Goap
             return allMatch;
         }
 
+        private bool inResources(Dictionary<Int64, Int64> resourceGoal, Dictionary<Int64, Int64> currentResources)
+        {
+            var allMatch = true;
+            foreach (var t in resourceGoal)
+            {
+                var match = currentResources.ContainsKey(t.Key) && currentResources[t.Key] >= t.Value;
+                if (!match)
+                {
+                    allMatch = false;
+                    break;
+                }
+            }
+            return allMatch;
+        }
+
+
         //if there is one true relationship
         private bool CondRelation(Dictionary<string, object> preconditions
                                 , Dictionary<string, object> effects)
@@ -183,7 +208,6 @@ namespace GalaxyGen.Engine.Ai.Goap
         private Dictionary<string, object> populateState(Dictionary<string, object> currentState, Dictionary<string, object> stateChange)
         {
             Dictionary<string, object> state = new Dictionary<string, object>();
-            state.Clear();
             foreach (var s in currentState)
             {
                 state.Add(s.Key, s.Value);
@@ -201,7 +225,32 @@ namespace GalaxyGen.Engine.Ai.Goap
                     state.Add(change.Key, change.Value);
                 }
             }
+
             return state;
+        }
+
+        private Dictionary<Int64, Int64> populateResource(Dictionary<Int64, Int64> currentResource, Dictionary<Int64, Int64> resourceChange)
+        {
+            Dictionary<Int64, Int64> resources = new Dictionary<Int64, Int64>();
+
+            foreach (var res in currentResource)
+            {
+                resources.Add(res.Key, res.Value);
+            }
+
+            foreach (var res in resourceChange)
+            {
+                if (!resources.ContainsKey(res.Key))
+                {
+                    resources.Add(res.Key, res.Value);
+                }
+                else
+                {
+                    resources[res.Key] += res.Value;
+                }
+            }
+
+            return resources;
         }
 
     }

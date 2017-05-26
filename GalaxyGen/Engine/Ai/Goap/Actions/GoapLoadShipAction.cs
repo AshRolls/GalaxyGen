@@ -18,7 +18,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         {
             addPrecondition("isDocked", true);
             addPrecondition("DockedAt", dockScId);
-            addEffect("HasResource"+resQ.Type, resQ.Quantity);
+            addResource((Int64)resQ.Type, (Int64)resQ.Quantity);
             _resourceQ = resQ;           
         }
 

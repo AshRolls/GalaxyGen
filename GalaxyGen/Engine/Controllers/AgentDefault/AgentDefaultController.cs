@@ -146,7 +146,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public void RequestLoadShip(ResourceQuantity resQ)
         {
-            //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);
+            _actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);
         }
 
         private Int64 chooseRandomDestinationScId()
@@ -192,34 +192,50 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return worldData;
         }
 
+        public Dictionary<Int64, Int64> GetResourceState()
+        {
+            Dictionary<Int64, Int64> resourceData = new Dictionary<Int64, Int64>();            
+
+            // no resources
+
+            return resourceData;
+        }
+
         public Dictionary<string, object> CreateGoalState()
         {
             Dictionary<string, object> goalState = new Dictionary<string, object>();
 
-            goalState.Add("isDocked", true);
-            goalState.Add("DockedAt", chooseRandomDestinationScId());
-            //ResourceQuantity resQ = new ResourceQuantity(ResourceTypeEnum.Platinum, 10);
-            //goalState.Add("HasResource"+resQ.Type, resQ.Quantity);
+            //goalState.Add("isDocked", true);
+            //goalState.Add("DockedAt", chooseRandomDestinationScId());
 
             return goalState;
         }
 
+        public Dictionary<Int64, Int64> CreateResourceGoal()
+        {
+            Dictionary<Int64, Int64> resourceGoal = new Dictionary<Int64, Int64>();
+
+            resourceGoal.Add((Int64)ResourceTypeEnum.Platinum, 10);
+
+            return resourceGoal;
+        }
+
         public void PlanFailed(Dictionary<string, object> failedGoal)
         {
-            //_actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
+            _actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
         }
 
         public void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            //_actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
+            _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
         }
 
         public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
-            //_actorTextOutput.Tell("Plan Completed");
+            _actorTextOutput.Tell("Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
@@ -229,7 +245,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
             // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
-            //_actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
+            _actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
         }
 
         public bool MoveAgent(GoapAction nextAction)
