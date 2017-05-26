@@ -24,7 +24,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             }
 
             // check what actions can run using their checkProceduralPrecondition
-            HashSet<GoapAction> usableActions = NodeManager.GetFreeActionSet();
+            HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
             foreach (GoapAction a in availableActions)
             {
                 if (a.checkProceduralPrecondition(agent))
@@ -37,7 +37,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             List<GoapNode> leaves = new List<GoapNode>();
 
             // build graph
-            GoapNode start = NodeManager.GetFreeNode(null, 0, 0, worldState, null);
+            GoapNode start = new GoapNode(null, 0, 0, worldState, null);
             bool success = buildGraph(start, leaves, usableActions, goal);
 
             if (!success)
@@ -71,8 +71,6 @@ namespace GalaxyGen.Engine.Ai.Goap
                 }
                 n = n.parent;
             }
-
-            NodeManager.Release();
             // we now have this action list in correct order
 
             Queue<GoapAction> queue = new Queue<GoapAction>();
@@ -106,7 +104,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                     // apply the action's effects to the parent state
                     Dictionary<string, object> currentState = populateState(parent.state, action.Effects);
                     // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
-                    GoapNode node = NodeManager.GetFreeNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, action);
+                    GoapNode node = new GoapNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, action);
 
                     //force child.precondition in parent.effects or child.precondition is empty.
                     if (action.Preconditions.Count == 0 && parent.action != null ||
@@ -138,7 +136,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          */
         private HashSet<GoapAction> actionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
         {
-            HashSet<GoapAction> subset = NodeManager.GetFreeActionSet();
+            HashSet<GoapAction> subset = new HashSet<GoapAction>();
             foreach (GoapAction a in actions)
             {
                 if (!a.Equals(removeMe))
@@ -184,7 +182,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          */
         private Dictionary<string, object> populateState(Dictionary<string, object> currentState, Dictionary<string, object> stateChange)
         {
-            Dictionary<string, object> state = NodeManager.GetFreeState();
+            Dictionary<string, object> state = new Dictionary<string, object>();
             state.Clear();
             foreach (var s in currentState)
             {
