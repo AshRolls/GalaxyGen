@@ -48,13 +48,15 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         {
             GoapAgent ag = (GoapAgent)agent;
 
-            if (ag.StateProvider.CurrentShipResourceQuantity(_resourceQ.Type) >= _resourceQ.Quantity)            
-                _loaded = true;
-            else if (!_requestSent)
-            {
-                ag.ActionProvider.RequestLoadShip(_resourceQ);
-                _requestSent = true;
-            }
+            //if (ag.StateProvider.CurrentShipResourceQuantity(_resourceQ.Type) >= _resourceQ.Quantity)            
+            //    _loaded = true;
+            //else if (!_requestSent)
+            //{
+            //    ag.ActionProvider.RequestLoadShip(_resourceQ);
+            //    _requestSent = true;
+            //}
+            _loaded = true;
+            ag.ActionProvider.RequestLoadShip(_resourceQ);
 
             return true;
         }

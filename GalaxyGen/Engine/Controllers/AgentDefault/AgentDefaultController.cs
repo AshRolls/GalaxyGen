@@ -300,11 +300,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             List<GoapAction> actionsList = new List<GoapAction>();
 
-            actionsList.Add(new GoapUndockAction());
-
+           
             // TODO limit number of destination actions we add to avoid combinatorial explosion
             foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
             {
+                actionsList.Add(new GoapUndockAction(destScId));
                 actionsList.Add(new GoapDockAction(destScId));
                 List<ResourceQuantity> resources = _state.PlanetResources(destScId);
                 foreach (ResourceQuantity resQ in resources)

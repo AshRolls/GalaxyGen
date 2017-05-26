@@ -12,9 +12,10 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         private bool _requestSent = false;
         private bool _docked = true;
 
-        public GoapUndockAction()
+        public GoapUndockAction(Int64 undockScId)
         {
-            addPrecondition("isDocked", true); // we need a tool to do this            
+            addPrecondition("isDocked", true);
+            addPrecondition("DockedAt", undockScId);
             addEffect("isDocked", false);
             addEffect("DockedAt", 0);
         }
