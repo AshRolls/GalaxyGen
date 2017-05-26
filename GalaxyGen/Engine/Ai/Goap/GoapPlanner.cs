@@ -107,19 +107,6 @@ namespace GalaxyGen.Engine.Ai.Goap
                     // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
                     GoapNode node = new GoapNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, currentResources, action);
 
-                    //force child.precondition in parent.effects or child.precondition is empty.
-                    //if (action.Preconditions.Count == 0 && parent.action != null ||
-                    //    parent.action != null && !CondRelation(action.Preconditions, parent.action.Effects))
-                    //    continue;
-
-                    // TODO check negative resources and reject
-
-                    Int64 qty;
-                    if (currentResources.ContainsKey(2))
-                    {
-                        qty = currentResources[2];
-                    }
-
                     if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
                     {
                         // we found a solution!

@@ -51,14 +51,14 @@ namespace GalaxyGen.Engine.Ai.Goap
         /// <returns></returns>
         public bool BetterThan(GoapNode rh)
         {
-            //            return runningCost < rh.runningCost;
-            if (weight > rh.weight && runningCost < rh.runningCost)
-                return true;
-            if (weight < rh.weight && runningCost > rh.runningCost)
-                return false;
-            //make weight > cost
-            var better = (weight / rh.weight - 1) >= (runningCost / rh.runningCost - 1);
-            return better;
+            return runningCost < rh.runningCost;
+            //if (weight > rh.weight && runningCost < rh.runningCost)
+            //    return true;
+            //if (weight < rh.weight && runningCost > rh.runningCost)
+            //    return false;
+            ////make weight > cost
+            //var better = (weight / rh.weight - 1) >= (runningCost / rh.runningCost - 1);
+            //return better;
         }
     }
 }

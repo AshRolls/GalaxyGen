@@ -45,28 +45,7 @@ namespace GalaxyGen.Engine.Ai.Goap
         public void Tick()
         {
             _stateMachine.Update(this);
-        }
-
-
-        public void AddAction(GoapAction a)
-        {
-            _availableActions.Add(a);
-        }
-
-        public GoapAction GetAction(Type action)
-        {
-            foreach (GoapAction g in _availableActions)
-            {
-                if (g.GetType().Equals(action))
-                    return g;
-            }
-            return null;
-        }
-
-        public void RemoveAction(GoapAction action)
-        {
-            _availableActions.Remove(action);
-        }
+        }        
 
         private bool hasActionPlan()
         {
@@ -84,7 +63,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
                 Dictionary<string, object> goal = _dataProvider.CreateGoalState();
                 Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
-
+                loadActions();
 
                 // Plan
                 Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, resourceState, goal, resourceGoal);
@@ -217,6 +196,7 @@ namespace GalaxyGen.Engine.Ai.Goap
         private void loadActions()
         {
             GoapAction[] actions = _dataProvider.GetActions();
+            _availableActions.Clear();
             foreach (GoapAction a in actions)
             {
                 _availableActions.Add(a);
