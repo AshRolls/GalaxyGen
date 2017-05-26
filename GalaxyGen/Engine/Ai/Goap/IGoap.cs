@@ -22,36 +22,36 @@ namespace GalaxyGen.Engine.Ai.Goap
          * The starting state of the Agent and the world.
          * Supply what states are needed for actions to run.
          */
-        HashSet<KeyValuePair<string, object>> getWorldState();
+        Dictionary<string, object> GetWorldState();
 
         /**
          * Give the planner a new goal so it can figure out 
          * the actions needed to fulfill it.
          */
-        HashSet<KeyValuePair<string, object>> createGoalState();
+        Dictionary<string, object> CreateGoalState();
 
         /**
          * No sequence of actions could be found for the supplied goal.
          * You will need to try another goal
          */
-        void planFailed(HashSet<KeyValuePair<string, object>> failedGoal);
+        void PlanFailed(Dictionary<string, object> failedGoal);
 
         /**
          * A plan was found for the supplied goal.
          * These are the actions the Agent will perform, in order.
          */
-        void planFound(HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions);
+        void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions);
 
         /**
          * All actions are complete and the goal was reached. Hooray!
          */
-        void actionsFinished();
+        void ActionsFinished();
 
         /**
          * One of the actions caused the plan to abort.
          * That action is returned.
          */
-        void planAborted(GoapAction aborter);
+        void PlanAborted(GoapAction aborter);
 
         /**
          * Called during Update. Move the agent towards the target in order
@@ -59,7 +59,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          * Return true if the Agent is at the target and the next action can perform.
          * False if it is not there yet.
          */
-        bool moveAgent(GoapAction nextAction);
+        bool MoveAgent(GoapAction nextAction);
 
         GoapAction[] GetActions();
     }

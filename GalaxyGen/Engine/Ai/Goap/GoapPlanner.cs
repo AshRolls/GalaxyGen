@@ -15,10 +15,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          * Returns null if a plan could not be found, or a list of the actions
          * that must be performed, in order, to fulfill the goal.
          */
-        public Queue<GoapAction> plan(object agent,
-                                      HashSet<GoapAction> availableActions,
-                                      HashSet<KeyValuePair<string, object>> worldState,
-                                      HashSet<KeyValuePair<string, object>> goal)
+        public Queue<GoapAction> Plan(object agent, HashSet<GoapAction> availableActions, Dictionary<string, object> worldState, Dictionary<string, object> goal)
         {
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
@@ -27,7 +24,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             }
 
             // check what actions can run using their checkProceduralPrecondition
-            HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
+            HashSet<GoapAction> usableActions = NodeManager.GetFreeActionSet();
             foreach (GoapAction a in availableActions)
             {
                 if (a.checkProceduralPrecondition(agent))
@@ -37,10 +34,10 @@ namespace GalaxyGen.Engine.Ai.Goap
             // we now have all actions that can run, stored in usableActions
 
             // build up the tree and record the leaf nodes that provide a solution to the goal.
-            List<Node> leaves = new List<Node>();
+            List<GoapNode> leaves = new List<GoapNode>();
 
             // build graph
-            Node start = new Node(null, 0, worldState, null);
+            GoapNode start = NodeManager.GetFreeNode(null, 0, 0, worldState, null);
             bool success = buildGraph(start, leaves, usableActions, goal);
 
             if (!success)
@@ -51,21 +48,21 @@ namespace GalaxyGen.Engine.Ai.Goap
             }
 
             // get the cheapest leaf
-            Node cheapest = null;
-            foreach (Node leaf in leaves)
+            GoapNode cheapest = null;
+            foreach (GoapNode leaf in leaves)
             {
                 if (cheapest == null)
                     cheapest = leaf;
                 else
                 {
-                    if (leaf.runningCost < cheapest.runningCost)
+                    if (leaf.BetterThan(cheapest))
                         cheapest = leaf;
                 }
             }
 
             // get its node and work back through the parents
             List<GoapAction> result = new List<GoapAction>();
-            Node n = cheapest;
+            GoapNode n = cheapest;
             while (n != null)
             {
                 if (n.action != null)
@@ -74,6 +71,8 @@ namespace GalaxyGen.Engine.Ai.Goap
                 }
                 n = n.parent;
             }
+
+            NodeManager.Release();
             // we now have this action list in correct order
 
             Queue<GoapAction> queue = new Queue<GoapAction>();
@@ -92,7 +91,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          * 'runningCost' value where the lowest cost will be the best action
          * sequence.
          */
-        private bool buildGraph(Node parent, List<Node> leaves, HashSet<GoapAction> usableActions, HashSet<KeyValuePair<string, object>> goal)
+        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, Dictionary<string, object> goal)
         {
             bool foundOne = false;
 
@@ -105,9 +104,14 @@ namespace GalaxyGen.Engine.Ai.Goap
                 {
 
                     // apply the action's effects to the parent state
-                    HashSet<KeyValuePair<string, object>> currentState = populateState(parent.state, action.Effects);
+                    Dictionary<string, object> currentState = populateState(parent.state, action.Effects);
                     // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
-                    Node node = new Node(parent, parent.runningCost + action.cost, currentState, action);
+                    GoapNode node = NodeManager.GetFreeNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, action);
+
+                    //force child.precondition in parent.effects or child.precondition is empty.
+                    if (action.Preconditions.Count == 0 && parent.action != null ||
+                        parent.action != null && !CondRelation(action.Preconditions, parent.action.Effects))
+                        continue;
 
                     if (inState(goal, currentState))
                     {
@@ -134,7 +138,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          */
         private HashSet<GoapAction> actionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
         {
-            HashSet<GoapAction> subset = new HashSet<GoapAction>();
+            HashSet<GoapAction> subset = NodeManager.GetFreeActionSet();
             foreach (GoapAction a in actions)
             {
                 if (!a.Equals(removeMe))
@@ -147,84 +151,59 @@ namespace GalaxyGen.Engine.Ai.Goap
          * Check that all items in 'test' are in 'state'. If just one does not match or is not there
          * then this returns false.
          */
-        private bool inState(HashSet<KeyValuePair<string, object>> test, HashSet<KeyValuePair<string, object>> state)
+        private bool inState(Dictionary<string, object> test, Dictionary<string, object> state)
         {
-            bool allMatch = true;
-            foreach (KeyValuePair<string, object> t in test)
+            var allMatch = true;
+            foreach (var t in test)
             {
-                bool match = false;
-                foreach (KeyValuePair<string, object> s in state)
-                {
-                    if (s.Equals(t))
-                    {
-                        match = true;
-                        break;
-                    }
-                }
+                var match = state.ContainsKey(t.Key) && state[t.Key].Equals(t.Value);
                 if (!match)
+                {
                     allMatch = false;
+                    break;
+                }
             }
             return allMatch;
+        }
+
+        //if there is one true relationship
+        private bool CondRelation(Dictionary<string, object> preconditions
+                                , Dictionary<string, object> effects)
+        {
+            foreach (var t in preconditions)
+            {
+                var match = effects.ContainsKey(t.Key) && effects[t.Key].Equals(t.Value);
+                if (match)
+                    return true;
+            }
+            return false;
         }
 
         /**
          * Apply the stateChange to the currentState
          */
-        private HashSet<KeyValuePair<string, object>> populateState(HashSet<KeyValuePair<string, object>> currentState, HashSet<KeyValuePair<string, object>> stateChange)
+        private Dictionary<string, object> populateState(Dictionary<string, object> currentState, Dictionary<string, object> stateChange)
         {
-            HashSet<KeyValuePair<string, object>> state = new HashSet<KeyValuePair<string, object>>();
-            // copy the KVPs over as new objects
-            foreach (KeyValuePair<string, object> s in currentState)
+            Dictionary<string, object> state = NodeManager.GetFreeState();
+            state.Clear();
+            foreach (var s in currentState)
             {
-                state.Add(new KeyValuePair<string, object>(s.Key, s.Value));
+                state.Add(s.Key, s.Value);
             }
 
-            foreach (KeyValuePair<string, object> change in stateChange)
+            foreach (var change in stateChange)
             {
                 // if the key exists in the current state, update the Value
-                bool exists = false;
-
-                foreach (KeyValuePair<string, object> s in state)
+                if (state.ContainsKey(change.Key))
                 {
-                    if (s.Equals(change))
-                    {
-                        exists = true;
-                        break;
-                    }
+                    state[change.Key] = change.Value;
                 }
-
-                if (exists)
-                {
-                    state.RemoveWhere((KeyValuePair<string, object> kvp) => { return kvp.Key.Equals(change.Key); });
-                    KeyValuePair<string, object> updated = new KeyValuePair<string, object>(change.Key, change.Value);
-                    state.Add(updated);
-                }
-                // if it does not exist in the current state, add it
                 else
                 {
-                    state.Add(new KeyValuePair<string, object>(change.Key, change.Value));
+                    state.Add(change.Key, change.Value);
                 }
             }
             return state;
-        }
-
-        /**
-         * Used for building up the graph and holding the running costs of actions.
-         */
-        private class Node
-        {
-            public Node parent;
-            public float runningCost;
-            public HashSet<KeyValuePair<string, object>> state;
-            public GoapAction action;
-
-            public Node(Node parent, float runningCost, HashSet<KeyValuePair<string, object>> state, GoapAction action)
-            {
-                this.parent = parent;
-                this.runningCost = runningCost;
-                this.state = state;
-                this.action = action;
-            }
         }
 
     }

@@ -174,56 +174,56 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _state.Memory = JsonConvert.SerializeObject(_memory);
         }
 
-        public HashSet<KeyValuePair<string, object>> getWorldState()
+        public Dictionary<string, object> GetWorldState()
         {
-            HashSet<KeyValuePair<string, object>> worldData = new HashSet<KeyValuePair<string, object>>();
+            Dictionary<string, object> worldData = new Dictionary<string, object>();
 
             if (_state.CurrentShipIsDocked)
             {
-                worldData.Add(new KeyValuePair<string, object>("isDocked", true));
-                worldData.Add(new KeyValuePair<string, object>("DockedAt", _state.CurrentShipDockedPlanetScId));
+                worldData.Add("isDocked", true);
+                worldData.Add("DockedAt", _state.CurrentShipDockedPlanetScId);
             }
             else
             {
-                worldData.Add(new KeyValuePair<string, object>("isDocked", false));
-                worldData.Add(new KeyValuePair<string, object>("DockedAt", 0));
+                worldData.Add("isDocked", false);
+                worldData.Add("DockedAt", 0);
             }            
 
             return worldData;
         }
 
-        public HashSet<KeyValuePair<string, object>> createGoalState()
+        public Dictionary<string, object> CreateGoalState()
         {
-            HashSet<KeyValuePair<string, object>> goalState = new HashSet<KeyValuePair<string, object>>();
+            Dictionary<string, object> goalState = new Dictionary<string, object>();
 
-            //goalState.Add(new KeyValuePair<string, object>("isDocked", true));
-            //goalState.Add(new KeyValuePair<string, object>("DockedAt", chooseRandomDestinationScId()));
-            ResourceQuantity resQ = new ResourceQuantity(ResourceTypeEnum.Platinum, 10);
-            goalState.Add(new KeyValuePair<string, object>("HasResource"+resQ.Type, resQ.Quantity));
+            goalState.Add("isDocked", true);
+            goalState.Add("DockedAt", chooseRandomDestinationScId());
+            //ResourceQuantity resQ = new ResourceQuantity(ResourceTypeEnum.Platinum, 10);
+            //goalState.Add("HasResource"+resQ.Type, resQ.Quantity);
 
             return goalState;
         }
 
-        public void planFailed(HashSet<KeyValuePair<string, object>> failedGoal)
+        public void PlanFailed(Dictionary<string, object> failedGoal)
         {
-
+            _actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
         }
 
-        public void planFound(HashSet<KeyValuePair<string, object>> goal, Queue<GoapAction> actions)
+        public void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
             _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
         }
 
-        public void actionsFinished()
+        public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
             _actorTextOutput.Tell("Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
-        public void planAborted(GoapAction aborter)
+        public void PlanAborted(GoapAction aborter)
         {
             // An action bailed out of the plan. State has been reset to plan again.
             // Take note of what happened and make sure if you run the same goal again
@@ -232,7 +232,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
         }
 
-        public bool moveAgent(GoapAction nextAction)
+        public bool MoveAgent(GoapAction nextAction)
         {
             Int64 destinationScId = (Int64)nextAction.target;
             if (!_state.CurrentShipHasDestination || _state.CurrentShipDestinationScID != destinationScId) // set destination based on action if we don't have one or it has changed

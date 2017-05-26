@@ -80,16 +80,16 @@ namespace GalaxyGen.Engine.Ai.Goap
                 // GOAP planning
 
                 // get the world state and the goal we want to plan for
-                HashSet<KeyValuePair<string, object>> worldState = _dataProvider.getWorldState();
-                HashSet<KeyValuePair<string, object>> goal = _dataProvider.createGoalState();
+                Dictionary<string, object> worldState = _dataProvider.GetWorldState();
+                Dictionary<string, object> goal = _dataProvider.CreateGoalState();
 
                 // Plan
-                Queue<GoapAction> plan = _planner.plan(this, _availableActions, worldState, goal);
+                Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, goal);
                 if (plan != null)
                 {
                     // we have a plan, hooray!
                     _currentActions = plan;
-                    _dataProvider.planFound(goal, plan);
+                    _dataProvider.PlanFound(goal, plan);
 
                     fsm.popState(); // move to PerformAction state
                     fsm.pushState(_performActionState);
@@ -99,7 +99,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 {
                     // ugh, we couldn't get a plan
                     // Console.WriteLine("<color=orange>Failed Plan:</color>" + PrettyPrint(goal));
-                    _dataProvider.planFailed(goal);
+                    _dataProvider.PlanFailed(goal);
                     fsm.popState(); // move back to IdleAction state
                     fsm.pushState(_idleState);
                 }
@@ -124,7 +124,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 }
 
                 // get the agent to move itself
-                if (_dataProvider.moveAgent(action))
+                if (_dataProvider.MoveAgent(action))
                 {
                     fsm.popState();
                 }
@@ -162,7 +162,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                     // Console.WriteLine("<color=red>Done actions</color>");
                     fsm.popState();
                     fsm.pushState(_idleState);
-                    _dataProvider.actionsFinished();
+                    _dataProvider.ActionsFinished();
                     return;
                 }
 
@@ -189,7 +189,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                             // action failed, we need to plan again
                             fsm.popState();
                             fsm.pushState(_idleState);
-                            _dataProvider.planAborted(action);
+                            _dataProvider.PlanAborted(action);
                         }
                     }
                     else
@@ -205,7 +205,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                     // no actions left, move to Plan state
                     fsm.popState();
                     fsm.pushState(_idleState);
-                    _dataProvider.actionsFinished();
+                    _dataProvider.ActionsFinished();
                 }
 
             };
@@ -221,7 +221,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             //// Console.WriteLine("Found actions: " + prettyPrint(actions));
         }
 
-        public static string PrettyPrint(HashSet<KeyValuePair<string, object>> state)
+        public static string PrettyPrint(Dictionary<string, object> state)
         {
             String s = "";
             foreach (KeyValuePair<string, object> kvp in state)
