@@ -1,7 +1,7 @@
 using System.Collections;
 
 
-namespace GalaxyGen.Engine.Ai.Fsm
+namespace GalaxyGen.Engine.Goap.Fsm
 {
     public interface FSMState
     {

@@ -10,7 +10,7 @@ using System.Collections;
  */
 using System;
 
-namespace GalaxyGen.Engine.Ai.Fsm
+namespace GalaxyGen.Engine.Goap.Fsm
 {
     public class FSM
     {

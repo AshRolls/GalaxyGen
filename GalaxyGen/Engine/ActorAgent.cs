@@ -34,7 +34,7 @@ namespace GalaxyGen.Engine
                 //    _agentC = new AgentTraderController(ag, _actorTextOutput);
                 //    break;
                 default:
-                    _agentC = new AgentDefaultController(stateForAgent, _actorSolarSystem, _actorTextOutput);
+                    _agentC = new AgentDefaultController<string, object>(stateForAgent, _actorSolarSystem, _actorTextOutput);
                     break;
             }
 

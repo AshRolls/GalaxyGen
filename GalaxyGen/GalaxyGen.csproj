@@ -121,11 +121,6 @@
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\AgentControllerState.cs" />
-    <Compile Include="Engine\Ai\Goap\Actions\GoapLoadShipAction.cs" />
-    <Compile Include="Engine\Ai\Goap\Actions\GoapDockAction.cs" />
-    <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapManager.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapNode.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
     <Compile Include="Engine\Controllers\IAgentActions.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />
@@ -134,6 +129,25 @@
     <Compile Include="Engine\Controllers\ProducerController.cs" />
     <Compile Include="Engine\Controllers\PlanetController.cs" />
     <Compile Include="Engine\Controllers\SolarSystemController.cs" />
+    <Compile Include="Engine\Goap\Actions\GoapLoadResourceAction.cs" />
+    <Compile Include="Engine\Goap\Actions\ReGoapAction.cs" />
+    <Compile Include="Engine\Goap\Core\IReGoapAction.cs" />
+    <Compile Include="Engine\Goap\Core\IReGoapAgent.cs" />
+    <Compile Include="Engine\Goap\Core\IReGoapAgentHelper.cs" />
+    <Compile Include="Engine\Goap\Core\IReGoapGoal.cs" />
+    <Compile Include="Engine\Goap\Core\IReGoapMemory.cs" />
+    <Compile Include="Engine\Goap\Core\IReGoapSensor.cs" />
+    <Compile Include="Engine\Goap\Core\ReGoapActionState.cs" />
+    <Compile Include="Engine\Goap\Core\ReGoapState.cs" />
+    <Compile Include="Engine\Goap\Fsm\FSM.cs" />
+    <Compile Include="Engine\Goap\Fsm\FSMState.cs" />
+    <Compile Include="Engine\Goap\Planner\AStar.cs" />
+    <Compile Include="Engine\Goap\Planner\FastPriorityQueue.cs" />
+    <Compile Include="Engine\Goap\Planner\IGoapPlanner.cs" />
+    <Compile Include="Engine\Goap\Planner\ReGoapNode.cs" />
+    <Compile Include="Engine\Goap\Planner\ReGoapPlanner.cs" />
+    <Compile Include="Engine\Goap\Planner\ReGoapPlannerSettings.cs" />
+    <Compile Include="Engine\Goap\Utilities\ReGoapLogger.cs" />
     <Compile Include="Engine\IAgentControllerState.cs" />
     <Compile Include="Engine\Messages\IMessageMarketCommandData.cs" />
     <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
@@ -157,13 +171,7 @@
     <Compile Include="Engine\Messages\MessageEngineCommand.cs" />
     <Compile Include="Engine\ActorTextOutput.cs" />
     <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
-    <Compile Include="Engine\Ai\Fsm\FSM.cs" />
-    <Compile Include="Engine\Ai\Fsm\FSMState.cs" />
     <Compile Include="Framework\GalaxyLoader.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapAction.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapAgent.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapPlanner.cs" />
-    <Compile Include="Engine\Ai\Goap\IGoap.cs" />
     <Compile Include="Framework\IdUtils.cs" />
     <Compile Include="Framework\NavigationUtils.cs" />
     <Compile Include="Framework\OrbitalUtils.cs" />
@@ -287,6 +295,7 @@
       <Name>GalaxyGenCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
