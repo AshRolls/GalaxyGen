@@ -1,4 +1,5 @@
 ﻿using GalaxyGen.Engine.Goap.Core;
+using GalaxyGenCore.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,9 @@ namespace GalaxyGen.Engine.Goap.Actions
             settings = null;
             foreach (var pair in goalState.GetValues())
             {
-                if (pair.Key.StartsWith("collectedResource"))
+                if (pair.Key.StartsWith("loadedResource"))
                 {
-                    var resourceName = pair.Key.Substring(17);
+                    var resourceName = pair.Key.Substring(14);
                     settings = new LoadResourceSettings
                     {
                         ResourceName = resourceName
@@ -30,14 +31,13 @@ namespace GalaxyGen.Engine.Goap.Actions
         public override ReGoapState<string, object> GetEffects(ReGoapState<string, object> goalState, IReGoapAction<string, object> next = null)
         {
             effects.Clear();
-            effects.Set("isAtPosition", (Vector3?)Vector3.zero);
 
             foreach (var pair in goalState.GetValues())
             {
-                if (pair.Key.StartsWith("collectedResource"))
+                if (pair.Key.StartsWith("loadedResource"))
                 {
-                    var resourceName = pair.Key.Substring(17);
-                    effects.Set("collectedResource" + resourceName, true);
+                    var resourceName = pair.Key.Substring(14);
+                    effects.Set("loadedResource" + resourceName, true);
                     break;
                 }
             }
@@ -47,16 +47,13 @@ namespace GalaxyGen.Engine.Goap.Actions
 
         public override ReGoapState<string, object> GetPreconditions(ReGoapState<string, object> goalState, IReGoapAction<string, object> next = null)
         {
-            var bankPosition = agent.GetMemory().GetWorldState().Get("nearestBankPosition") as Vector3?;
-
             preconditions.Clear();
-            preconditions.Set("isAtPosition", bankPosition);
 
             foreach (var pair in goalState.GetValues())
             {
-                if (pair.Key.StartsWith("collectedResource"))
+                if (pair.Key.StartsWith("loadedResource"))
                 {
-                    var resourceName = pair.Key.Substring(17);
+                    var resourceName = pair.Key.Substring(14);
                     preconditions.Set("hasResource" + resourceName, true);
                     break;
                 }
@@ -70,15 +67,9 @@ namespace GalaxyGen.Engine.Goap.Actions
         {
             base.Run(previous, next, settings, goalState, done, fail);
             this.settings = (LoadResourceSettings)settings;
-            var bank = agent.GetMemory().GetWorldState().Get("nearestBank") as Bank;
-            if (bank != null && bank.AddResource(resourcesBag, ((LoadResourceSettings)settings).ResourceName))
-            {
-                done(this);
-            }
-            else
-            {
-                fail(this);
-            }
+            ResourceQuantity _resourceQ = new ResourceQuantity(ResourceTypeEnum.Spice,1);
+            agent.RequestLoadShip(_resourceQ);            
+            done(this);            
         }
 
         public override string ToString()

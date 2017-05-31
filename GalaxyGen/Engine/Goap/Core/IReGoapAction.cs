@@ -10,7 +10,6 @@ namespace GalaxyGen.Engine.Goap.Core
         // while being chosen from the planner, we save this information and give it back when we run the method
         IReGoapActionSettings<T, W> GetSettings(IReGoapAgent<T, W> goapAgent, ReGoapState<T, W> goalState);
         void Run(IReGoapAction<T, W> previousAction, IReGoapAction<T, W> nextAction, IReGoapActionSettings<T, W> settings, ReGoapState<T, W> goalState, Action<IReGoapAction<T, W>> done, Action<IReGoapAction<T, W>> fail);
-        //void Exit(IReGoapAction<T, W> nextAction);
         Dictionary<string, object> GetGenericValues();
         string GetName();
         void PostPlanCalculations(IReGoapAgent<T, W> goapAgent);

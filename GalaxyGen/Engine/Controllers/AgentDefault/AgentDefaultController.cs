@@ -26,7 +26,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         protected List<IReGoapGoal<T, W>> goals;
         protected List<IReGoapAction<T, W>> actions;
-        protected IReGoapMemory<T, W> memory;
+        protected IReGoapMemory<T, W> _goapMemory;
         protected IReGoapGoal<T, W> currentGoal;
 
         protected Dictionary<IReGoapGoal<T, W>, float> goalBlacklist;
@@ -44,7 +44,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         private IGoapPlanner<T, W> _planner;
 
-
         public AgentDefaultController(AgentControllerState ag, IActorRef actorSolarSystem, IActorRef actorTextOutput)
         {
             _state = ag;
@@ -52,6 +51,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _actorTextOutput = actorTextOutput;         
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
+
+            _goapMemory  = new ReGoapMemory<T, W>();
+            goals = new List<IReGoapGoal<T, W>>();
+            possibleGoalsDirty = true;
+            actions = new List<IReGoapAction<T, W>>();
         }
 
         public void Tick(MessageTick tick)
@@ -300,7 +304,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public virtual IReGoapMemory<T, W> GetMemory()
         {
-            return memory;
+            return _goapMemory;
         }
 
         public virtual IReGoapGoal<T, W> GetCurrentGoal()
@@ -341,9 +345,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 return;
             }
 
-            if (currentActionState != null)
-                currentActionState.Action.Exit(null);
-
             currentActionState = null;
             currentGoal = plan;
 
@@ -353,7 +354,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             {
                 actionState.Action.PostPlanCalculations(this);
             }
-            currentGoal.Run(WarnGoalEnd);
+            //currentGoal.Run(WarnGoalEnd);
             PushAction();
         }
 
@@ -388,6 +389,91 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             {
                 planValues.Clear();
             }
+        }
+
+        protected virtual void PushAction()
+        {
+            if (interruptOnNextTransition)
+            {
+                CalculateNewGoal();
+                return;
+            }
+            var plan = currentGoal.GetPlan();
+            if (plan.Count == 0)
+            {
+                if (currentActionState != null)
+                {
+                    currentActionState = null;
+                }
+                CalculateNewGoal();
+            }
+            else
+            {
+                var previous = currentActionState;
+                currentActionState = plan.Dequeue();
+                IReGoapAction<T, W> next = null;
+                if (plan.Count > 0)
+                    next = plan.Peek().Action;
+                currentActionState.Action.Run(previous != null ? previous.Action : null, next, currentActionState.Settings, currentGoal.GetGoalState(), WarnActionEnd, WarnActionFailure);
+            }
+        }
+
+        // TODO this shouldn't be threaded.
+        public virtual void WarnActionEnd(IReGoapAction<T, W> thisAction)
+        {
+            if (thisAction != currentActionState.Action)
+                return;
+            PushAction();
+        }
+
+        // TODO this shouldn't be threaded.
+        public virtual void WarnActionFailure(IReGoapAction<T, W> thisAction)
+        {
+            if (currentActionState != null && thisAction != currentActionState.Action)
+            {
+                ReGoapLogger.LogWarning(string.Format("[GoapAgent] Action {0} warned for failure but is not current action.", thisAction));
+                return;
+            }
+            if (BlackListGoalOnFailure)
+                goalBlacklist[currentGoal] = curTick + currentGoal.GetErrorDelay();
+            CalculateNewGoal(true);
+        }
+
+        public virtual Queue<ReGoapActionState<T, W>> GetStartingPlan()
+        {
+            return startingPlan;
+        }
+
+        public virtual W GetPlanValue(T key)
+        {
+            return planValues[key];
+        }
+
+        public virtual void SetPlanValue(T key, W value)
+        {
+            planValues[key] = value;
+        }
+
+        public virtual bool HasPlanValue(T key)
+        {
+            return planValues.ContainsKey(key);
+        }
+
+        public virtual List<IReGoapGoal<T, W>> GetGoalsSet()
+        {
+            if (possibleGoalsDirty)
+                UpdatePossibleGoals();
+            return possibleGoals;
+        }
+
+        public virtual List<IReGoapAction<T, W>> GetActionsSet()
+        {
+            return actions;
+        }
+
+        public virtual ReGoapState<T, W> InstantiateNewState()
+        {
+            return ReGoapState<T, W>.Instantiate();
         }
     }
 }

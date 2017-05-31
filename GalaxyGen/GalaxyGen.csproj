@@ -133,11 +133,11 @@
     <Compile Include="Engine\Goap\Actions\ReGoapAction.cs" />
     <Compile Include="Engine\Goap\Core\IReGoapAction.cs" />
     <Compile Include="Engine\Goap\Core\IReGoapAgent.cs" />
-    <Compile Include="Engine\Goap\Core\IReGoapAgentHelper.cs" />
     <Compile Include="Engine\Goap\Core\IReGoapGoal.cs" />
     <Compile Include="Engine\Goap\Core\IReGoapMemory.cs" />
     <Compile Include="Engine\Goap\Core\IReGoapSensor.cs" />
     <Compile Include="Engine\Goap\Core\ReGoapActionState.cs" />
+    <Compile Include="Engine\Goap\Core\ReGoapMemory.cs" />
     <Compile Include="Engine\Goap\Core\ReGoapState.cs" />
     <Compile Include="Engine\Goap\Fsm\FSM.cs" />
     <Compile Include="Engine\Goap\Fsm\FSMState.cs" />
