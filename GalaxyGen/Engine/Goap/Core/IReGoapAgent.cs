@@ -7,8 +7,6 @@ namespace GalaxyGen.Engine.Goap.Core
     {
         IReGoapMemory<T, W> GetMemory();
         IReGoapGoal<T, W> GetCurrentGoal();
-        // called from a goal when the goal is available
-        void WarnPossibleGoal(IReGoapGoal<T, W> goal);
         //bool IsActive();
         Queue<ReGoapActionState<T, W>> GetStartingPlan();
         W GetPlanValue(T key);

@@ -15,8 +15,6 @@ namespace GalaxyGen.Engine.Goap.Actions
         protected ReGoapState<T, W> effects;
         public float Cost = 1;
 
-        protected Action<IReGoapAction<T, W>> doneCallback;
-        protected Action<IReGoapAction<T, W>> failCallback;
         protected IReGoapAction<T, W> previousAction;
         protected IReGoapAction<T, W> nextAction;
 
@@ -79,16 +77,15 @@ namespace GalaxyGen.Engine.Goap.Actions
             return true;
         }
 
-        public virtual void Run(IReGoapAction<T, W> previous, IReGoapAction<T, W> next, IReGoapActionSettings<T, W> settings,
-            ReGoapState<T, W> goalState, Action<IReGoapAction<T, W>> done, Action<IReGoapAction<T, W>> fail)
+        public virtual bool Run(IReGoapAction<T, W> previous, IReGoapAction<T, W> next, IReGoapActionSettings<T, W> settings,
+            ReGoapState<T, W> goalState)
         {
             interruptWhenPossible = false;
-            doneCallback = done;
-            failCallback = fail;
             this.settings = settings;
 
             previousAction = previous;
             nextAction = next;
+            return true;
         }
 
         public virtual Dictionary<string, object> GetGenericValues()

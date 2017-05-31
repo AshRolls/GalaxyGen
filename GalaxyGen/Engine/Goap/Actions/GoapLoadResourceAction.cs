@@ -63,13 +63,13 @@ namespace GalaxyGen.Engine.Goap.Actions
         }
 
 
-        public override void Run(IReGoapAction<string, object> previous, IReGoapAction<string, object> next, IReGoapActionSettings<string, object> settings, ReGoapState<string, object> goalState, Action<IReGoapAction<string, object>> done, Action<IReGoapAction<string, object>> fail)
+        public override bool Run(IReGoapAction<string, object> previous, IReGoapAction<string, object> next, IReGoapActionSettings<string, object> settings, ReGoapState<string, object> goalState)
         {
-            base.Run(previous, next, settings, goalState, done, fail);
+            base.Run(previous, next, settings, goalState);
             this.settings = (LoadResourceSettings)settings;
             ResourceQuantity _resourceQ = new ResourceQuantity(ResourceTypeEnum.Spice,1);
             agent.RequestLoadShip(_resourceQ);            
-            done(this);            
+            return true;            
         }
 
         public override string ToString()

@@ -13,6 +13,7 @@ using GalaxyGenCore.Resources;
 using GalaxyGen.Engine.Goap.Core;
 using GalaxyGen.Engine.Goap.Planner;
 using GalaxyGen.Engine.Goap.Utilities;
+using GalaxyGen.Engine.Goap.Fsm;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
@@ -34,7 +35,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         protected bool possibleGoalsDirty;
         protected Queue<ReGoapActionState<T, W>> startingPlan;
         protected Dictionary<T, W> planValues;
-        protected ReGoapActionState<T, W> currentActionState;
         protected bool interruptOnNextTransition;
         public bool BlackListGoalOnFailure;
 
@@ -44,6 +44,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         private IGoapPlanner<T, W> _planner;
 
+        private FSM _stateMachine;
+        private FSM.FSMState _idleState; // finds something to do
+        private FSM.FSMState _moveToState; // moves to a target
+        private FSM.FSMState _performActionState; // performs an action
+
         public AgentDefaultController(AgentControllerState ag, IActorRef actorSolarSystem, IActorRef actorTextOutput)
         {
             _state = ag;
@@ -52,15 +57,23 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
 
+            _planner = new ReGoapPlanner<T, W>();
             _goapMemory  = new ReGoapMemory<T, W>();
             goals = new List<IReGoapGoal<T, W>>();
             possibleGoalsDirty = true;
             actions = new List<IReGoapAction<T, W>>();
+
+            _stateMachine = new FSM();
+            createIdleState();
+            createMoveToState();
+            createPerformActionState();
+            _stateMachine.pushState(_idleState);
         }
 
         public void Tick(MessageTick tick)
         {
             curTick = tick.Tick;
+            _stateMachine.Update(this);
         }       
 
         // scan the local and system markets and decide if there is an order we want to place / fulfil
@@ -205,33 +218,32 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         //    return resourceGoal;
         //}
 
-        //public void PlanFailed(Dictionary<string, object> failedGoal)
-        //{
-        //    //_actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
-        //}
+        public void PlanFailed(IReGoapGoal<T, W> plan)
+        {
+            _actorTextOutput.Tell("Plan failed " + plan.ToString());
+        }
 
-        //public void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions)
-        //{
-        //    // Yay we found a plan for our goal
-        //    // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-        //    //_actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
-        //}
+        public void PlanFound(IReGoapGoal<T, W> plan)
+        {
+            // Yay we found a plan for our goal
+            _actorTextOutput.Tell("Plan found " + plan.ToString());
+        }
 
-        //public void ActionsFinished()
-        //{
-        //    // Everything is done, we completed our actions for this gool. Hooray!
-        //    //_actorTextOutput.Tell("Plan Completed");
-        //    // Console.WriteLine("<color=blue>Actions completed</color>");
-        //}
+        public void ActionsFinished()
+        {
+            // Everything is done, we completed our actions for this gool. Hooray!
+            _actorTextOutput.Tell("Plan Completed");
+            // Console.WriteLine("<color=blue>Actions completed</color>");
+        }
 
-        //public void PlanAborted(GoapAction aborter)
-        //{
-        //    // An action bailed out of the plan. State has been reset to plan again.
-        //    // Take note of what happened and make sure if you run the same goal again
-        //    // that it can succeed.
-        //    // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
-        //    //_actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
-        //}
+        public void PlanAborted(IReGoapAction<T, W> plan)
+        {
+            // An action bailed out of the plan. State has been reset to plan again.
+            // Take note of what happened and make sure if you run the same goal again
+            // that it can succeed.
+            // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
+            _actorTextOutput.Tell("Plan Aborted " + plan.ToString());
+        }
 
         //public bool MoveAgent(GoapAction nextAction)
         //{
@@ -312,18 +324,18 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return currentGoal;
         }
 
-        public virtual void WarnPossibleGoal(IReGoapGoal<T, W> goal)
-        {
-            if ((currentGoal != null) && (goal.GetPriority() <= currentGoal.GetPriority()))
-                return;
-            if (currentActionState != null && !currentActionState.Action.IsInterruptable())
-            {
-                interruptOnNextTransition = true;
-                currentActionState.Action.AskForInterruption();
-            }
-            else
-                CalculateNewGoal();
-        }
+        //public virtual void WarnPossibleGoal(IReGoapGoal<T, W> goal)
+        //{
+        //    if ((currentGoal != null) && (goal.GetPriority() <= currentGoal.GetPriority()))
+        //        return;
+        //    if (currentActionState != null && !currentActionState.Action.IsInterruptable())
+        //    {
+        //        interruptOnNextTransition = true;
+        //        currentActionState.Action.AskForInterruption();
+        //    }
+        //    else
+        //        CalculateNewGoal();
+        //}
 
         protected virtual void CalculateNewGoal(bool forceStart = false)
         {
@@ -333,29 +345,6 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
             interruptOnNextTransition = false;
             UpdatePossibleGoals();
-            IReGoapGoal<T,W> plan = _planner.Plan(this, BlackListGoalOnFailure ? currentGoal : null,
-                currentGoal != null ? currentGoal.GetPlan() : null, null);
-
-            if (plan == null)
-            {
-                if (currentGoal == null)
-                {
-                    ReGoapLogger.LogWarning("GoapAgent " + this + " could not find a plan.");
-                }
-                return;
-            }
-
-            currentActionState = null;
-            currentGoal = plan;
-
-            startingPlan = currentGoal.GetPlan();
-            ClearPlanValues();
-            foreach (var actionState in startingPlan)
-            {
-                actionState.Action.PostPlanCalculations(this);
-            }
-            //currentGoal.Run(WarnGoalEnd);
-            PushAction();
         }
 
         protected virtual void UpdatePossibleGoals()
@@ -391,53 +380,26 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             }
         }
 
-        protected virtual void PushAction()
-        {
-            if (interruptOnNextTransition)
-            {
-                CalculateNewGoal();
-                return;
-            }
-            var plan = currentGoal.GetPlan();
-            if (plan.Count == 0)
-            {
-                if (currentActionState != null)
-                {
-                    currentActionState = null;
-                }
-                CalculateNewGoal();
-            }
-            else
-            {
-                var previous = currentActionState;
-                currentActionState = plan.Dequeue();
-                IReGoapAction<T, W> next = null;
-                if (plan.Count > 0)
-                    next = plan.Peek().Action;
-                currentActionState.Action.Run(previous != null ? previous.Action : null, next, currentActionState.Settings, currentGoal.GetGoalState(), WarnActionEnd, WarnActionFailure);
-            }
-        }
+        //// TODO this shouldn't be threaded.
+        //public virtual void WarnActionEnd(IReGoapAction<T, W> thisAction)
+        //{
+        //    if (thisAction != currentActionState.Action)
+        //        return;
+        //    //PushAction();
+        //}
 
-        // TODO this shouldn't be threaded.
-        public virtual void WarnActionEnd(IReGoapAction<T, W> thisAction)
-        {
-            if (thisAction != currentActionState.Action)
-                return;
-            PushAction();
-        }
-
-        // TODO this shouldn't be threaded.
-        public virtual void WarnActionFailure(IReGoapAction<T, W> thisAction)
-        {
-            if (currentActionState != null && thisAction != currentActionState.Action)
-            {
-                ReGoapLogger.LogWarning(string.Format("[GoapAgent] Action {0} warned for failure but is not current action.", thisAction));
-                return;
-            }
-            if (BlackListGoalOnFailure)
-                goalBlacklist[currentGoal] = curTick + currentGoal.GetErrorDelay();
-            CalculateNewGoal(true);
-        }
+        //// TODO this shouldn't be threaded.
+        //public virtual void WarnActionFailure(IReGoapAction<T, W> thisAction)
+        //{
+        //    if (currentActionState != null && thisAction != currentActionState.Action)
+        //    {
+        //        ReGoapLogger.LogWarning(string.Format("[GoapAgent] Action {0} warned for failure but is not current action.", thisAction));
+        //        return;
+        //    }
+        //    if (BlackListGoalOnFailure)
+        //        goalBlacklist[currentGoal] = curTick + currentGoal.GetErrorDelay();
+        //    CalculateNewGoal(true);
+        //}
 
         public virtual Queue<ReGoapActionState<T, W>> GetStartingPlan()
         {
@@ -475,5 +437,129 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             return ReGoapState<T, W>.Instantiate();
         }
+
+        private void createIdleState()
+        {
+            _idleState = (fsm, gameObj) =>
+            {
+                // GOAP planning
+
+
+                // Plan
+                IReGoapGoal<T, W> plan = _planner.Plan(this, BlackListGoalOnFailure ? currentGoal : null, currentGoal != null ? currentGoal.GetPlan() : null, null);
+                if (plan != null)
+                {
+                    // we have a plan, hooray!                    
+                    currentGoal = plan;
+                    startingPlan = currentGoal.GetPlan();
+                    ClearPlanValues();
+                    PlanFound(plan);
+
+                    fsm.popState(); // move to PerformAction state
+                    fsm.pushState(_performActionState);
+
+                    foreach (var actionState in startingPlan)
+                    {
+                        actionState.Action.PostPlanCalculations(this);
+                    }
+                }
+                else
+                {
+                    // ugh, we couldn't get a plan
+                    // Console.WriteLine("<color=orange>Failed Plan:</color>" + PrettyPrint(goal));
+                    PlanFailed(plan);
+                    fsm.popState(); // move back to IdleAction state
+                    fsm.pushState(_idleState);
+                }
+
+            };
+        }
+
+        private void createPerformActionState()
+        {
+            _performActionState = (fsm, gameObj) =>
+            {
+                // perform the action
+                var plan = currentGoal.GetPlan();
+                if (plan.Count == 0)
+                {
+                    // no actions to perform
+                    // Console.WriteLine("<color=red>Done actions</color>");
+                    fsm.popState();
+                    fsm.pushState(_idleState);
+                    ActionsFinished();
+                    return;
+                }
+
+                IReGoapAction<T, W> action = plan.Peek().Action;
+                if (action.isDone())
+                {
+                    // the action is done. Remove it so we can perform the next one
+                    plan.Dequeue();
+                }
+
+                if (plan.Count > 0)
+                {
+                    // perform the next action
+                    action = plan.Peek().Action;
+                    bool inRange = action.requiresInRange() ? action.isInRange() : true;
+
+                    if (inRange)
+                    {
+                        // we are in range, so perform the action
+                        bool success = action.Run(previous != null ? previous.Action : null, next, plan.Peek().Settings, currentGoal.GetGoalState());
+
+                        if (!success)
+                        {
+                            // action failed, we need to plan again
+                            fsm.popState();
+                            fsm.pushState(_idleState);
+                            PlanAborted(action);
+                        }
+                    }
+                    else
+                    {
+                        // we need to move there first
+                        // push moveTo state
+                        fsm.pushState(_moveToState);
+                    }
+
+                }
+                else
+                {
+                    // no actions left, move to Plan state
+                    fsm.popState();
+                    fsm.pushState(_idleState);
+                    ActionsFinished();
+                }
+
+            };
+        }
+
+        private void createMoveToState()
+        {
+            _moveToState = (fsm, gameObj) =>
+            {
+                // move the game object
+
+                GoapAction action = _currentActions.Peek();
+                if (action.requiresInRange() && action.target == null)
+                {
+                    // Console.WriteLine("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
+                    fsm.popState(); // move
+                    fsm.popState(); // perform
+                    fsm.pushState(_idleState);
+                    return;
+                }
+
+                // get the agent to move itself
+                if (_dataProvider.MoveAgent(action))
+                {
+                    fsm.popState();
+                }
+            };
+        }
+
+        
     }
 }
