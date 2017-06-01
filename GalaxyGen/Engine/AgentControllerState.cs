@@ -1,5 +1,6 @@
 ﻿using GalaxyGen.Framework;
 using GalaxyGen.Model;
+using GalaxyGenCore.Resources;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
@@ -190,6 +191,48 @@ namespace GalaxyGen.Engine
             {
                 return ((Ship)_model.Location).DestinationScId != 0;
             }
+        }
+
+        public Int64 CurrentShipDestinationScID
+        {
+            get
+            {
+                return ((Ship)_model.Location).DestinationScId;
+            }
+        }
+
+        public UInt64 CurrentShipResourceQuantity(ResourceTypeEnum res)
+        {
+            Store s = ((Ship)_model.Location).Stores[_model.AgentId];
+            if (s.StoredResources.ContainsKey(res))
+                return s.StoredResources[res];
+            else
+                return 0;
+        }
+
+        public UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res)
+        {
+            Planet p = _model.SolarSystem.Planets.Where(x => x.StarChartId == planetScId).FirstOrDefault();
+            Store s = p.Stores[_model.AgentId];
+            if (s.StoredResources.ContainsKey(res))
+                return s.StoredResources[res];
+            else
+                return 0;
+        }
+
+        public List<ResourceQuantity> PlanetResources(Int64 planetScId)
+        {
+            Planet p = _model.SolarSystem.Planets.Where(x => x.StarChartId == planetScId).FirstOrDefault();
+            List<ResourceQuantity> resources = new List<ResourceQuantity>();
+            if (p.Stores.ContainsKey(_model.AgentId))
+            {
+                Store s = p.Stores[_model.AgentId];             
+                foreach (KeyValuePair<ResourceTypeEnum, UInt64> kvp in s.StoredResources)
+                {
+                    resources.Add(new ResourceQuantity(kvp.Key, kvp.Value));
+                }
+            }
+            return resources;
         }
     }
 }

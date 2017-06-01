@@ -11,11 +11,14 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
     {
         private bool _docked = false;
         private bool _requestSent = false;
+        private Int64 _target;
 
-        public GoapDockAction()
+        public GoapDockAction(Int64 dockScId)
         {
             addPrecondition("isDocked", false);   
             addEffect("isDocked", true);
+            addEffect("DockedAt", dockScId);
+            _target = dockScId;
         }
 
         public override void reset()
@@ -37,7 +40,7 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
 
         public override bool checkProceduralPrecondition(object agent)
         {
-            target = 4;
+            target = _target;
             return true;
         }
 
@@ -45,11 +48,11 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         {
             GoapAgent ag = (GoapAgent)agent;
 
-            if (ag.stateProvider.CurrentShipIsDocked)
+            if (ag.StateProvider.CurrentShipIsDocked)
                 _docked = true;
-            else if (!ag.stateProvider.CurrentShipIsDocked && !_requestSent)
+            else if (!ag.StateProvider.CurrentShipIsDocked && !_requestSent)
             {
-                ag.actionProvider.RequestDock();
+                ag.ActionProvider.RequestDock();
                 _requestSent = true;
             }
 

@@ -121,8 +121,11 @@
     </ApplicationDefinition>
     <Compile Include="Engine\ActorSolarSystem.cs" />
     <Compile Include="Engine\AgentControllerState.cs" />
+    <Compile Include="Engine\Ai\Goap\Actions\GoapLoadShipAction.cs" />
     <Compile Include="Engine\Ai\Goap\Actions\GoapDockAction.cs" />
     <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapManager.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapNode.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
     <Compile Include="Engine\Controllers\IAgentActions.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />

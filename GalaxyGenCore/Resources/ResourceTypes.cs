@@ -15,6 +15,12 @@ namespace GalaxyGenCore.Resources
 
     public struct ResourceQuantity
     {
+        public ResourceQuantity(ResourceTypeEnum type, UInt64 qty)
+        {
+            Type = type;
+            Quantity = qty;
+        }
+
         public ResourceTypeEnum Type { get; set; }
         public UInt64 Quantity { get; set; }
     }

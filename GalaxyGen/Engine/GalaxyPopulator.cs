@@ -34,11 +34,24 @@ namespace GalaxyGen.Engine
                 ss.Agents.Add(ag);
                 ag.SolarSystem = ss;
 
+                int j = 0;
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
                     Planet p = this.GetPlanet(chartP);
                     p.StarChartId = StarChart.GetIdForObject(chartP);
-                    addProducersToPlanet(ag, p);
+
+                    if (j % 2 == 0)
+                    {
+                        //addMetalProducerToPlanet(ag, p);
+                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
+                    }
+                    else
+                    {
+                        //addSpiceProducerToPlanet(ag, p);
+                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
+                    }
+
+                    j++;
                     ss.Planets.Add(p);
                 }
 
@@ -56,7 +69,7 @@ namespace GalaxyGen.Engine
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 1000; i++)
                 {
 
                     ag = this.GetAgent("Agent " + i);
@@ -76,6 +89,22 @@ namespace GalaxyGen.Engine
                     addNewCargoStoreToShip(s, ag);
                     s.SolarSystem = ss;
                     ss.Ships.Add(s);
+
+                    foreach (Planet p in ss.Planets)
+                    {
+                        if (j % 2 == 0)
+                        {
+                            //addMetalProducerToPlanet(ag, p);
+                            addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
+                        }
+                        else
+                        {
+                            //addSpiceProducerToPlanet(ag, p);
+                            addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
+                        }
+
+                        j++;
+                    }
                 }
 
                 gal.SolarSystems.Add(ss);
@@ -84,18 +113,23 @@ namespace GalaxyGen.Engine
             return gal;
         }
 
-        private void addProducersToPlanet(Agent ag, Planet p)
+        private void addMetalProducerToPlanet(Agent ag, Planet p)
         {
-            addNewStoreToPlanet(p, ag);
             Producer prod = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
             prod.Owner = ag;
             ag.Producers.Add(prod);
+            p.Producers.Add(prod);
+
+        }
+
+        private void addSpiceProducerToPlanet(Agent ag, Planet p)
+        {           
             Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
             prod2.Owner = ag;
             ag.Producers.Add(prod2);
-            p.Producers.Add(prod);
             p.Producers.Add(prod2);
         }
+
 
         private SolarSystem getSolarSystemFromStarChartSS(ScSolarSystem chartSS)
         {
@@ -125,7 +159,7 @@ namespace GalaxyGen.Engine
             return plan;
         }
 
-        private void addNewStoreToPlanet(Planet p, Agent o)
+        private void addNewStoreToPlanet(Planet p, Agent o, List<ResourceQuantity> resourcesToSeed)
         {
             Store s = new Store();
             s.Owner = o;
@@ -133,9 +167,10 @@ namespace GalaxyGen.Engine
             p.Stores.Add(o.AgentId,s);
             o.Stores.Add(s);
 
-             // seed with basic starter resource
-            s.StoredResources.Add(ResourceTypeEnum.Spice, 100);
-            s.StoredResources.Add(ResourceTypeEnum.Platinum, 100);            
+            foreach(ResourceQuantity resQ in resourcesToSeed)
+            {
+                s.StoredResources.Add(resQ.Type, resQ.Quantity);
+            }                        
         }
 
         private Agent GetAgent(String seedName)
