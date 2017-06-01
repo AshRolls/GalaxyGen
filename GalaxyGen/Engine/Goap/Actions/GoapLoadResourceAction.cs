@@ -28,6 +28,27 @@ namespace GalaxyGen.Engine.Goap.Actions
             return settings;
         }
 
+        private bool _loaded = false;
+        private bool _requestSent = false;
+        private Int64 _target;
+
+        public override void reset()
+        {
+            _loaded = false;
+            _requestSent = false;            
+        }
+
+        public override bool isDone()
+        {
+            return _loaded == true;
+        }
+
+
+        public override bool requiresInRange()
+        {
+            return true;
+        }
+
         public override ReGoapState<string, object> GetEffects(ReGoapState<string, object> goalState, IReGoapAction<string, object> next = null)
         {
             effects.Clear();
@@ -63,11 +84,12 @@ namespace GalaxyGen.Engine.Goap.Actions
         }
 
 
-        public override bool Run(IReGoapAction<string, object> previous, IReGoapAction<string, object> next, IReGoapActionSettings<string, object> settings, ReGoapState<string, object> goalState)
+        public override bool Perform(IReGoapActionSettings<string, object> settings, ReGoapState<string, object> goalState)
         {
-            base.Run(previous, next, settings, goalState);
+            base.Perform(settings, goalState);
             this.settings = (LoadResourceSettings)settings;
             ResourceQuantity _resourceQ = new ResourceQuantity(ResourceTypeEnum.Spice,1);
+            _loaded = true;
             agent.RequestLoadShip(_resourceQ);            
             return true;            
         }
@@ -81,5 +103,6 @@ namespace GalaxyGen.Engine.Goap.Actions
     public class LoadResourceSettings : IReGoapActionSettings<string, object>
     {
         public string ResourceName;
+        public Int64 targetScId;
     }
 }

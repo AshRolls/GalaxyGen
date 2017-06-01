@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine.Goap.Actions
 {
-    public class ReGoapAction<T, W> : IReGoapAction<T,W>
+    public abstract class ReGoapAction<T, W> : IReGoapAction<T,W>
     {
         public string Name = "GoapAction";
 
@@ -15,14 +15,13 @@ namespace GalaxyGen.Engine.Goap.Actions
         protected ReGoapState<T, W> effects;
         public float Cost = 1;
 
-        protected IReGoapAction<T, W> previousAction;
-        protected IReGoapAction<T, W> nextAction;
-
         protected IReGoapAgent<T, W> agent;
         protected Dictionary<string, object> genericValues;
         protected bool interruptWhenPossible;
 
         protected IReGoapActionSettings<T, W> settings = null;
+
+        private bool inRange = false;
 
         public ReGoapAction()
         {
@@ -77,14 +76,10 @@ namespace GalaxyGen.Engine.Goap.Actions
             return true;
         }
 
-        public virtual bool Run(IReGoapAction<T, W> previous, IReGoapAction<T, W> next, IReGoapActionSettings<T, W> settings,
-            ReGoapState<T, W> goalState)
+        public virtual bool Perform(IReGoapActionSettings<T, W> settings, ReGoapState<T, W> goalState)
         {
             interruptWhenPossible = false;
             this.settings = settings;
-
-            previousAction = previous;
-            nextAction = next;
             return true;
         }
 
@@ -102,6 +97,42 @@ namespace GalaxyGen.Engine.Goap.Actions
         {
             return string.Format("GoapAction('{0}')", Name);
         }
+
+        /**
+        * Are we in range of the target?
+        * The MoveTo state will set this and it gets reset each time this action is performed.
+        */
+        public bool isInRange()
+        {
+            return inRange;
+        }
+
+        public void setInRange(bool inRange)
+        {
+            this.inRange = inRange;
+        }
+
+        /**
+        * Does this action need to be within range of a target game object?
+        * If not then the moveTo state will not need to run for this action.
+        */
+        public abstract bool requiresInRange();
+
+        /**
+        * Is the action done?
+        */
+        public abstract bool isDone();
+
+        /**
+        * Reset any variables that need to be reset before planning happens again.
+        */
+        public abstract void reset();
+
+        /**
+       * An action often has to perform on an object. This is that object. Can be null. */
+        public object target { get; set; }
+
+
     }
 }
 

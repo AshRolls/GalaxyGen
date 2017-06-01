@@ -507,7 +507,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                     if (inRange)
                     {
                         // we are in range, so perform the action
-                        bool success = action.Run(previous != null ? previous.Action : null, next, plan.Peek().Settings, currentGoal.GetGoalState());
+                        bool success = action.Perform(plan.Peek().Settings, currentGoal.GetGoalState());
 
                         if (!success)
                         {
@@ -541,8 +541,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _moveToState = (fsm, gameObj) =>
             {
                 // move the game object
-
-                GoapAction action = _currentActions.Peek();
+                var plan = currentGoal.GetPlan();
+                IReGoapAction<T, W> action = plan.Peek().Action;
                 if (action.requiresInRange() && action.target == null)
                 {
                     // Console.WriteLine("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
