@@ -10,24 +10,25 @@ using GalaxyGen.Framework;
 using GalaxyGen.Engine.Ai.Goap;
 using GalaxyGen.Engine.Ai.Goap.Actions;
 using GalaxyGenCore.Resources;
+using GalaxyGen.Engine.Goap.Core;
 
 namespace GalaxyGen.Engine.Controllers.AgentDefault
 {
-    public class AgentDefaultController : IAgentController, IGoap, IAgentActions
+    public class AgentDefaultController : IAgentController, IGoap<string, object>, IAgentActions
     {
         private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _state;
         private IActorRef _actorSolarSystem;
         private IActorRef _actorTextOutput;
         private AgentDefaultMemory _memory;
-        private GoapAgent _goapAgent;
+        private GoapAgent<string, object> _goapAgent;
 
         public AgentDefaultController(AgentControllerState ag, IActorRef actorSolarSystem, IActorRef actorTextOutput)
         {
             _state = ag;
             _actorSolarSystem = actorSolarSystem;
             _actorTextOutput = actorTextOutput;
-            _goapAgent = new GoapAgent(this, this, _state);            
+            _goapAgent = new GoapAgent<string, object>(this, this, _state);            
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
         }
@@ -201,35 +202,35 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return resourceData;
         }
 
-        public Dictionary<string, object> CreateGoalState()
+        public List<IReGoapGoal<string, object>> GetGoals()
         {
-            Dictionary<string, object> goalState = new Dictionary<string, object>();
+            List<IReGoapGoal<string, object>> goals = new List<IReGoapGoal<string, object>>();
 
             //goalState.Add("isDocked", true);
             //goalState.Add("DockedAt", chooseRandomDestinationScId());
 
-            return goalState;
+            return goals;
         }
 
-        public Dictionary<Int64, Int64> CreateResourceGoal()
+        //public Dictionary<Int64, Int64> CreateResourceGoal()
+        //{
+        //    Dictionary<Int64, Int64> resourceGoal = new Dictionary<Int64, Int64>();
+
+        //    resourceGoal.Add((Int64)ResourceTypeEnum.Platinum, 10);
+
+        //    return resourceGoal;
+        //}
+
+        public void PlanFailed(IReGoapGoal<string, object> plan)
         {
-            Dictionary<Int64, Int64> resourceGoal = new Dictionary<Int64, Int64>();
-
-            resourceGoal.Add((Int64)ResourceTypeEnum.Platinum, 10);
-
-            return resourceGoal;
+            _actorTextOutput.Tell("Plan failed " + plan.ToString());
         }
 
-        public void PlanFailed(Dictionary<string, object> failedGoal)
-        {
-            _actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
-        }
-
-        public void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions)
+        public void PlanFound(IReGoapGoal<string, object> plan)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
+            _actorTextOutput.Tell("Plan found " + plan.ToString());
         }
 
         public void ActionsFinished()
@@ -239,18 +240,19 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
-        public void PlanAborted(GoapAction aborter)
+        public void PlanAborted(ReGoapActionState<string, object> aborterAction)
         {
             // An action bailed out of the plan. State has been reset to plan again.
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
             // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
-            _actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
+            _actorTextOutput.Tell("Plan Aborted " + aborterAction);
         }
 
-        public bool MoveAgent(GoapAction nextAction)
+        public bool MoveAgent(ReGoapActionState<string, object> nextAction)
         {
-            Int64 destinationScId = (Int64)nextAction.target;
+            Int64 destinationScId = nextAction.Action.TargetScId;
+            if (destinationScId == 0) throw new Exception("No target set for action");
             if (!_state.CurrentShipHasDestination || _state.CurrentShipDestinationScID != destinationScId) // set destination based on action if we don't have one or it has changed
             {
                 setNewDestination(destinationScId);
@@ -266,7 +268,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
                 {
                     if (_state.CurrentShipAtDestination(_memory.CurrentDestinationScId)) // check if we are there
                     {
-                        nextAction.setInRange(true);
+                        nextAction.Action.SetInRange(true);
                         return true;
                     }
                     else
@@ -296,25 +298,24 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         }
         
         // actions this agent is capable of
-        public GoapAction[] GetActions()
+        public List<IReGoapAction<string, object>> GetActions()
         {
-            List<GoapAction> actionsList = new List<GoapAction>();
-
+            List<IReGoapAction<string, object>> actionsList = new List<IReGoapAction<string, object>>();
            
             // TODO limit number of destination actions we add to avoid combinatorial explosion
             foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
             {
-                actionsList.Add(new GoapUndockAction(destScId));
-                actionsList.Add(new GoapDockAction(destScId));
+                //actionsList.Add(new GoapUndockAction(destScId));
+                //actionsList.Add(new GoapDockAction(destScId));
                 List<ResourceQuantity> resources = _state.PlanetResources(destScId);
                 foreach (ResourceQuantity resQ in resources)
                 {
-                    actionsList.Add(new GoapLoadShipAction(destScId, resQ));
+                    //actionsList.Add(new GoapLoadShipAction(destScId, resQ));
                 }                
             }
 
-            GoapAction[] actions = actionsList.ToArray();
-            return actions;
+            //GoapAction[] actions = actionsList.ToArray();
+            return actionsList;
         }
 
     }

@@ -1,3 +1,4 @@
+using GalaxyGen.Engine.Goap.Core;
 using System;
 using System.Collections;
 
@@ -17,39 +18,21 @@ namespace GalaxyGen.Engine.Ai.Goap
      * It also provides an interface for the planner to give 
      * feedback to the Agent and report success/failure.
      */
-    public interface IGoap
+    public interface IGoap<T, W>
     {
-        /**
-         * The starting state of the Agent and the world.
-         * Supply what states are needed for actions to run.
-         */
-        Dictionary<string, object> GetWorldState();
-
-        /**
-         * The resources of the Agent.
-         * Supply the current resources of the agent.
-         */
-        Dictionary<Int64, Int64> GetResourceState();
-
-        /**
-         * Give the planner a new goal so it can figure out 
-         * the actions needed to fulfill it.
-         */
-        Dictionary<string, object> CreateGoalState();
-
-        Dictionary<Int64, Int64> CreateResourceGoal();
+        //Dictionary<Int64, Int64> CreateResourceGoal();
 
         /**
          * No sequence of actions could be found for the supplied goal.
          * You will need to try another goal
          */
-        void PlanFailed(Dictionary<string, object> failedGoal);
+        void PlanFailed(IReGoapGoal<T,W> plan);
 
         /**
          * A plan was found for the supplied goal.
          * These are the actions the Agent will perform, in order.
          */
-        void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions);
+        void PlanFound(IReGoapGoal<T,W> plan);
 
         /**
          * All actions are complete and the goal was reached. Hooray!
@@ -60,7 +43,7 @@ namespace GalaxyGen.Engine.Ai.Goap
          * One of the actions caused the plan to abort.
          * That action is returned.
          */
-        void PlanAborted(GoapAction aborter);
+        void PlanAborted(ReGoapActionState<T, W> aborterAction);
 
         /**
          * Called during Update. Move the agent towards the target in order
@@ -68,9 +51,10 @@ namespace GalaxyGen.Engine.Ai.Goap
          * Return true if the Agent is at the target and the next action can perform.
          * False if it is not there yet.
          */
-        bool MoveAgent(GoapAction nextAction);
+        bool MoveAgent(ReGoapActionState<T,W> nextAction);
 
-        GoapAction[] GetActions();
+        List<IReGoapGoal<T, W>> GetGoals();
+        List<IReGoapAction<T, W>> GetActions();
 
     }
 }

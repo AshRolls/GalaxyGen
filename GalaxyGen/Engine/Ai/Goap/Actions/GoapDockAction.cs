@@ -1,4 +1,6 @@
-﻿using GalaxyGen.Engine.Controllers;
+﻿using GalaxyGen.Engine.Ai.Goap;
+using GalaxyGen.Engine.Controllers;
+using GalaxyGen.Engine.Goap.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,56 +9,56 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine.Ai.Goap.Actions
 {
-    public class GoapDockAction : GoapAction
-    {
-        private bool _docked = false;
-        private bool _requestSent = false;
-        private Int64 _target;
+    //public class GoapDockAction<T, W> : GoapAction<T, W>
+    //{
+    //    private bool _docked = false;
+    //    private bool _requestSent = false;
+    //    private Int64 _target;
 
-        public GoapDockAction(Int64 dockScId)
-        {
-            addPrecondition("isDocked", false);   
-            addEffect("isDocked", true);
-            addEffect("DockedAt", dockScId);
-            _target = dockScId;
-        }
+    //    public GoapDockAction(Int64 dockScId)
+    //    {
+    //        addPrecondition("isDocked", false);   
+    //        addEffect("isDocked", true);
+    //        addEffect("DockedAt", dockScId);
+    //        _target = dockScId;
+    //    }
 
-        public override void reset()
-        {
-            _docked = false;
-            _requestSent = false;
-        }
+    //    public override void reset()
+    //    {
+    //        _docked = false;
+    //        _requestSent = false;
+    //    }
 
-        public override bool isDone()
-        {
-            return _docked == true;
-        }
+    //    public override bool isDone()
+    //    {
+    //        return _docked == true;
+    //    }
     
 
-        public override bool requiresInRange()
-        {
-            return true; 
-        }
+    //    public override bool requiresInRange()
+    //    {
+    //        return true; 
+    //    }
 
-        public override bool checkProceduralPrecondition(object agent)
-        {
-            target = _target;
-            return true;
-        }
+    //    public override bool checkProceduralPrecondition(object agent)
+    //    {
+    //        target = _target;
+    //        return true;
+    //    }
 
-        public override bool perform(object agent)
-        {
-            GoapAgent ag = (GoapAgent)agent;
+    //    public override bool perform(object agent)
+    //    {
+    //        GoapAgent ag = (GoapAgent)agent;
 
-            if (ag.StateProvider.CurrentShipIsDocked)
-                _docked = true;
-            else if (!ag.StateProvider.CurrentShipIsDocked && !_requestSent)
-            {
-                ag.ActionProvider.RequestDock();
-                _requestSent = true;
-            }
+    //        if (ag.StateProvider.CurrentShipIsDocked)
+    //            _docked = true;
+    //        else if (!ag.StateProvider.CurrentShipIsDocked && !_requestSent)
+    //        {
+    //            ag.ActionProvider.RequestDock();
+    //            _requestSent = true;
+    //        }
 
-            return true;
-        }
-    }
+    //        return true;
+    //    }
+    //}
 }

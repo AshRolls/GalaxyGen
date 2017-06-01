@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System;
 using GalaxyGen.Engine.Ai.Fsm;
 using GalaxyGen.Engine.Controllers;
+using GalaxyGen.Engine.Goap.Planner;
+using GalaxyGen.Engine.Goap.Core;
 
 namespace GalaxyGen.Engine.Ai.Goap
 {
-    public sealed class GoapAgent
+    public sealed class GoapAgent<T, W> : IReGoapAgent<T,W>
     {
 
         private FSM _stateMachine;
@@ -15,30 +17,28 @@ namespace GalaxyGen.Engine.Ai.Goap
         private FSM.FSMState _moveToState; // moves to a target
         private FSM.FSMState _performActionState; // performs an action
 
-        private HashSet<GoapAction> _availableActions;
-        private Queue<GoapAction> _currentActions;
+        private IReGoapGoal<T,W> _currentPlan;
 
-        private IGoap _dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
-        public IAgentActions ActionProvider; // this is the class that will perform actions from the goap
-        public IAgentControllerState StateProvider;
+        private IGoap<T,W> _dataProvider; // this is the implementing class that provides our world data and listens to feedback on planning
+        private IAgentActions _actionProvider; // this is the class that will perform actions from the goap
+        private IAgentControllerState _stateProvider;
 
-        private GoapPlanner _planner;
+        private IGoapPlanner<T, W> _planner;
+        private List<IReGoapGoal<T, W>> _goals;
+        private List<IReGoapAction<T, W>> _actions;
+        protected IReGoapMemory<T, W> memory;
 
-
-        public GoapAgent(IGoap provider, IAgentActions actions, IAgentControllerState state)
+        public GoapAgent(IGoap<T,W> provider, IAgentActions actions, IAgentControllerState state)
         {
             _dataProvider = provider;
-            ActionProvider = actions;
-            StateProvider = state;
+            _actionProvider = actions;
+            _stateProvider = state;
             _stateMachine = new FSM();
-            _availableActions = new HashSet<GoapAction>();
-            _currentActions = new Queue<GoapAction>();
-            _planner = new GoapPlanner();            
+            _planner = new ReGoapPlanner<T, W>();            
             createIdleState();
             createMoveToState();
             createPerformActionState();
             _stateMachine.pushState(_idleState);
-            loadActions();
         }
 
 
@@ -49,7 +49,7 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         private bool hasActionPlan()
         {
-            return _currentActions.Count > 0;
+            return _currentPlan.GetPlan().Count > 0;
         }
 
         private void createIdleState()
@@ -59,19 +59,21 @@ namespace GalaxyGen.Engine.Ai.Goap
                 // GOAP planning
 
                 // get the world state and the goal we want to plan for
-                Dictionary<string, object> worldState = _dataProvider.GetWorldState();
-                Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
-                Dictionary<string, object> goal = _dataProvider.CreateGoalState();
-                Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
-                loadActions();
+                //Dictionary<string, object> worldState = _dataProvider.GetWorldState();
+                //Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
+                //Dictionary<string, object> goal = _dataProvider.CreateGoalState();
+                //Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
+                _goals = _dataProvider.GetGoals();
+                _actions = _dataProvider.GetActions();
 
                 // Plan
-                Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, resourceState, goal, resourceGoal);
+                //Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, resourceState, goal, resourceGoal);
+                IReGoapGoal<T,W> plan = _planner.Plan(this, null, null);
                 if (plan != null)
                 {
                     // we have a plan, hooray!
-                    _currentActions = plan;
-                    _dataProvider.PlanFound(goal, plan);
+                    _currentPlan = plan;
+                    _dataProvider.PlanFound(plan);
 
                     fsm.popState(); // move to PerformAction state
                     fsm.pushState(_performActionState);
@@ -81,7 +83,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 {
                     // ugh, we couldn't get a plan
                     // Console.WriteLine("<color=orange>Failed Plan:</color>" + PrettyPrint(goal));
-                    _dataProvider.PlanFailed(goal);
+                    _dataProvider.PlanFailed(plan);
                     fsm.popState(); // move back to IdleAction state
                     fsm.pushState(_idleState);
                 }
@@ -93,10 +95,10 @@ namespace GalaxyGen.Engine.Ai.Goap
         {
             _moveToState = (fsm, gameObj) =>
             {
-                // move the game object
+                // move the game object               
 
-                GoapAction action = _currentActions.Peek();
-                if (action.requiresInRange() && action.target == null)
+                ReGoapActionState<T,W> action = _currentPlan.GetPlan().Peek();
+                if (action.Action.RequiresInRange() && action.Action.TargetScId == 0)
                 {
                     // Console.WriteLine("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
                     fsm.popState(); // move
@@ -110,24 +112,6 @@ namespace GalaxyGen.Engine.Ai.Goap
                 {
                     fsm.popState();
                 }
-
-                /*MovableComponent movable = (MovableComponent) gameObj.GetComponent(typeof(MovableComponent));
-                if (movable == null) {
-                    // Console.WriteLine("<color=red>Fatal error:</color> Trying to move an Agent that doesn't have a MovableComponent. Please give it one.");
-                    fsm.popState(); // move
-                    fsm.popState(); // perform
-                    fsm.pushState(idleState);
-                    return;
-                }
-
-                float step = movable.moveSpeed * Time.deltaTime;
-                gameObj.transform.position = Vector3.MoveTowards(gameObj.transform.position, action.target.transform.position, step);
-
-                if (gameObj.transform.position.Equals(action.target.transform.position) ) {
-                    // we are at the target location, we are done
-                    action.setInRange(true);
-                    fsm.popState();
-                }*/
             };
         }
 
@@ -148,23 +132,24 @@ namespace GalaxyGen.Engine.Ai.Goap
                     return;
                 }
 
-                GoapAction action = _currentActions.Peek();
-                if (action.isDone())
+
+                ReGoapActionState<T, W> action = _currentPlan.GetPlan().Peek();
+                if (action.Action.IsDone())
                 {
                     // the action is done. Remove it so we can perform the next one
-                    _currentActions.Dequeue();
+                    _currentPlan.GetPlan().Dequeue();
                 }
 
                 if (hasActionPlan())
                 {
                     // perform the next action
-                    action = _currentActions.Peek();
-                    bool inRange = action.requiresInRange() ? action.isInRange() : true;
+                    action = _currentPlan.GetPlan().Peek();
+                    bool inRange = action.Action.RequiresInRange() ? action.Action.IsInRange() : true;
 
                     if (inRange)
                     {
                         // we are in range, so perform the action
-                        bool success = action.perform(gameObj);
+                        bool success = action.Action.Perform(action.Settings,_currentPlan.GetGoalState());
 
                         if (!success)
                         {
@@ -193,55 +178,35 @@ namespace GalaxyGen.Engine.Ai.Goap
             };
         }
 
-        private void loadActions()
+        public List<IReGoapGoal<T, W>> GetGoalsSet()
         {
-            GoapAction[] actions = _dataProvider.GetActions();
-            _availableActions.Clear();
-            foreach (GoapAction a in actions)
-            {
-                _availableActions.Add(a);
-            }
-            //// Console.WriteLine("Found actions: " + prettyPrint(actions));
+            return _goals;
         }
 
-        public static string PrettyPrint(Dictionary<string, object> state)
+        public List<IReGoapAction<T, W>> GetActionsSet()
         {
-            String s = "";
-            foreach (KeyValuePair<string, object> kvp in state)
-            {
-                s += kvp.Key + ":" + kvp.Value.ToString();
-                s += ", ";
-            }
-            return s;
+            return _actions;
         }
 
-        public static string PrettyPrint(Queue<GoapAction> actions)
+        public IReGoapMemory<T, W> GetMemory()
         {
-            String s = "";
-            foreach (GoapAction a in actions)
-            {
-                s += a.GetType().Name;
-                s += "-> ";
-            }
-            s += "GOAL";
-            return s;
+            return memory;
         }
 
-        public static string prettyPrint(GoapAction[] actions)
+        public IAgentActions ActionProvider
         {
-            String s = "";
-            foreach (GoapAction a in actions)
+            get
             {
-                s += a.GetType().Name;
-                s += ", ";
+                return _actionProvider;
             }
-            return s;
         }
 
-        public static string prettyPrint(GoapAction action)
+        public IAgentControllerState StateProvider
         {
-            String s = "" + action.GetType().Name;
-            return s;
+            get
+            {
+                return _stateProvider;
+            }
         }
     }
 }

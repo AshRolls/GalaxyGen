@@ -1,4 +1,5 @@
 ﻿using GalaxyGen.Engine.Controllers;
+using GalaxyGen.Engine.Goap.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,9 @@ using System.Threading.Tasks;
 
 namespace GalaxyGen.Engine.Ai.Goap.Actions
 {
-    public class GoapUndockAction : GoapAction
+    public class GoapUndockAction : GoapAction<string, object>
     {
+        private string _name = "Goap Undock Action";
         private bool _requestSent = false;
         private bool _docked = true;
 
@@ -26,13 +28,13 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
             _docked = true;
         }
 
-        public override bool isDone()
+        public override bool IsDone()
         {
             return _docked == false;
         }
     
 
-        public override bool requiresInRange()
+        public override bool RequiresInRange()
         {
             return false; 
         }
@@ -43,20 +45,26 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
             return true;
         }
 
-        public override bool perform(object agent)
-        {
-            GoapAgent ag = (GoapAgent)agent;
-
-            if (!ag.StateProvider.CurrentShipIsDocked)
+        public override bool Perform(IReGoapActionSettings<string, object> settings, ReGoapState<string, object> goalState)
+        {            
+            if (!agent.StateProvider.CurrentShipIsDocked)
                 _docked = false;
-            else if (ag.StateProvider.CurrentShipIsDocked && !_requestSent)
+            else if (agent.StateProvider.CurrentShipIsDocked && !_requestSent)
             {
                 _requestSent = true;
-                ag.ActionProvider.RequestUndock();
+                agent.ActionProvider.RequestUndock();
             }
 
             // TODO add a number of count before retry undock 
             return true;
+        }
+
+        public override string Name
+        {
+            get
+            {
+                return _name;
+            }
         }
     }
 }

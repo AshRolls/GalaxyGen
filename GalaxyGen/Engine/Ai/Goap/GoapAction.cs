@@ -1,22 +1,28 @@
 
+using GalaxyGen.Engine.Goap.Core;
 using System;
 using System.Collections.Generic;
 
 namespace GalaxyGen.Engine.Ai.Goap
 {
-    public abstract class GoapAction
+    public abstract class GoapAction<T,W> : IReGoapAction<T,W>
     {
-        private Dictionary<string, object> preconditions;
-        private Dictionary<string, object> effects;
-        private Dictionary<Int64, Int64> resources;
+        private ReGoapState<T, W> preconditions;
+        private ReGoapState<T, W> effects;
+        //private Dictionary<Int64, Int64> resources;
 
-        private bool inRange = false;
+        protected IReGoapActionSettings<T, W> settings = null;
+        protected IReGoapAgent<T, W> agent;
+
+        private bool _inRange = false;
+
+        public Int64 TargetScId { get; private set; }
 
         /* The cost of performing the action. 
          * Figure out a weight that suits the action. 
          * Changing it will affect what actions are chosen during planning.*/
         private float _cost = 1f;
-        public virtual float GetCost()
+        public virtual float GetCost(ReGoapState<T, W> goalState, IReGoapAction<T, W> next = null)
         {
             return _cost;
         }
@@ -31,21 +37,17 @@ namespace GalaxyGen.Engine.Ai.Goap
             return (1 - Risk) * Return;
         }
 
-        /**
-         * An action often has to perform on an object. This is that object. Can be null. */
-        public object target;
-
         public GoapAction()
         {
-            preconditions = new Dictionary<string, object>();
-            effects = new Dictionary<string, object>();
-            resources = new Dictionary<Int64, Int64>();
+            preconditions = ReGoapState<T, W>.Instantiate();
+            effects = ReGoapState<T, W>.Instantiate();
+            //resources = new Dictionary<Int64, Int64>();
         }
 
         public void doReset()
         {
-            inRange = false;
-            target = null;
+            _inRange = false;
+            TargetScId = 0;
             reset();
         }
 
@@ -57,104 +59,82 @@ namespace GalaxyGen.Engine.Ai.Goap
         /**
          * Is the action done?
          */
-        public abstract bool isDone();
-
-        /**
-         * Procedurally check if this action can run. Not all actions
-         * will need this, but some might.
-         */
+     
         public abstract bool checkProceduralPrecondition(object agent);
 
-        /**
-         * Run the action.
-         * Returns True if the action performed successfully or false
-         * if something happened and it can no longer perform. In this case
-         * the action queue should clear out and the goal cannot be reached.
-         */
-        public abstract bool perform(object agent);
-
-        /**
-         * Does this action need to be within range of a target game object?
-         * If not then the moveTo state will not need to run for this action.
-         */
-        public abstract bool requiresInRange();
-
-
+        public abstract bool RequiresInRange();
+        public abstract bool IsDone();
         /**
          * Are we in range of the target?
          * The MoveTo state will set this and it gets reset each time this action is performed.
          */
-        public bool isInRange()
+        public bool IsInRange()
         {
-            return inRange;
+            return _inRange;
         }
 
-        public void setInRange(bool inRange)
+        public void SetInRange(bool inRange)
         {
-            this.inRange = inRange;
-        }
-
-
-        public void addPrecondition(string key, object value)
-        {
-            preconditions.Add(key, value);
+            this._inRange = inRange;
         }
 
 
-        public void removePrecondition(string key)
+        public void addPrecondition(T key, W value)
         {
-            if (preconditions.ContainsKey(key))
+            preconditions.Set(key, value);
+        }
+
+
+        public void removePrecondition(T key)
+        {
+            if (preconditions.HasKey(key))
                 preconditions.Remove(key);
         }
 
-
-        public void addEffect(string key, object value)
+        public void addEffect(T key, W value)
         {
-            effects.Add(key, value);
+            effects.Set(key, value);
         }
 
 
-        public void removeEffect(string key)
+        public void removeEffect(T key)
         {
-            if (effects.ContainsKey(key))
+            if (effects.HasKey(key))
                 effects.Remove(key);
         }
 
-        public void addResource(Int64 key, Int64 value)
+        public virtual IReGoapActionSettings<T, W> GetSettings(IReGoapAgent<T, W> goapAgent, ReGoapState<T, W> goalState)
         {
-            resources.Add(key, value);
+            return settings;
         }
 
+        public abstract bool Perform(IReGoapActionSettings<T, W> settings, ReGoapState<T, W> goalState);
 
-        public void removeResource(Int64 key, Int64 value)
+        public abstract string Name { get; }
+
+        public ReGoapState<T, W> GetPreconditions(ReGoapState<T, W> goalState, IReGoapAction<T, W> next = null)
         {
-            if (resources.ContainsKey(key))
-                resources.Remove(key);
+            return preconditions;
         }
 
-
-        public Dictionary<string, object> Preconditions
+        public ReGoapState<T, W> GetEffects(ReGoapState<T, W> goalState, IReGoapAction<T, W> next = null)
         {
-            get
-            {
-                return preconditions;
-            }
+            return effects;
         }
 
-        public Dictionary<string, object> Effects
+        public virtual bool CheckProceduralCondition(IReGoapAgent<T, W> goapAgent, ReGoapState<T, W> goalState, IReGoapAction<T, W> next = null)
         {
-            get
-            {
-                return effects;
-            }
+            return true;
         }
 
-        public Dictionary<Int64, Int64> Resources
+        public virtual void PostPlanCalculations(IReGoapAgent<T, W> goapAgent)
         {
-            get
-            {
-                return resources;
-            }
+            agent = goapAgent;
+        }
+
+        public virtual void Precalculations(IReGoapAgent<T, W> goapAgent, ReGoapState<T, W> goalState)
+        {
+            agent = goapAgent;
         }
     }
 }
