@@ -55,6 +55,5 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         List<IReGoapGoal<T, W>> GetGoals();
         List<IReGoapAction<T, W>> GetActions();
-
     }
 }

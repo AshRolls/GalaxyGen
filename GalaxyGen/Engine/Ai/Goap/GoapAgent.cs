@@ -26,7 +26,7 @@ namespace GalaxyGen.Engine.Ai.Goap
         private IGoapPlanner<T, W> _planner;
         private List<IReGoapGoal<T, W>> _goals;
         private List<IReGoapAction<T, W>> _actions;
-        protected IReGoapMemory<T, W> memory;
+        private IReGoapMemory<T, W> _memory;
 
         public GoapAgent(IGoap<T,W> provider, IAgentActions actions, IAgentControllerState state)
         {
@@ -34,7 +34,8 @@ namespace GalaxyGen.Engine.Ai.Goap
             _actionProvider = actions;
             _stateProvider = state;
             _stateMachine = new FSM();
-            _planner = new ReGoapPlanner<T, W>();            
+            _planner = new ReGoapPlanner<T, W>();
+            _memory = new GoapMemory<T, W>();            
             createIdleState();
             createMoveToState();
             createPerformActionState();
@@ -190,7 +191,7 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         public IReGoapMemory<T, W> GetMemory()
         {
-            return memory;
+            return _memory;
         }
 
         public IAgentActions ActionProvider

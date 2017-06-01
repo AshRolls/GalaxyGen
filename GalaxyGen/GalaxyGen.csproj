@@ -135,6 +135,7 @@
     <Compile Include="Engine\Ai\Goap\Core\ReGoapState.cs" />
     <Compile Include="Engine\Ai\Goap\Goals\GoapUndockGoal.cs" />
     <Compile Include="Engine\Ai\Goap\GoapGoal.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapMemory.cs" />
     <Compile Include="Engine\Ai\Goap\Planner\AStar.cs" />
     <Compile Include="Engine\Ai\Goap\Planner\FastPriorityQueue.cs" />
     <Compile Include="Engine\Ai\Goap\Planner\IGoapPlanner.cs" />

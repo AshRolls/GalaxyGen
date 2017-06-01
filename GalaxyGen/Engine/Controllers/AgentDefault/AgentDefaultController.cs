@@ -319,6 +319,5 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
             return actionsList;
         }
-
     }
 }
