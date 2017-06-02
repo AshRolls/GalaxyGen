@@ -68,8 +68,8 @@ namespace GalaxyGen.Engine.Goap.Planner
                 }
 
                 goalState = goalState.Clone();
-                var leaf = (ReGoapNode<T, W>)astar.Run(
-                    ReGoapNode<T, W>.Instantiate(this, goalState, null, null), goalState, settings.MaxIterations, settings.PlanningEarlyExit);
+                ReGoapNode<T, W> startNode = ReGoapNode<T, W>.Instantiate(this, goalState, null, null);
+                var leaf = (ReGoapNode<T, W>)astar.Run(startNode, goalState, settings.MaxIterations, settings.PlanningEarlyExit);
                 if (leaf == null)
                 {
                     currentGoal = null;

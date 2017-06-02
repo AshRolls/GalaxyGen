@@ -17,9 +17,11 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
         public GoapUndockAction(Int64 undockScId)
         {
             addPrecondition("IsDocked", true);
-            addPrecondition("DockedAt", undockScId);
+            //addPrecondition("DockedAt", undockScId);
+
+            addEffect("IsInSpace", true);
             addEffect("IsDocked", false);
-            addEffect("DockedAt", 0);
+            //addEffect("DockedAt", 0);
         }
 
         public override void reset()

@@ -34,8 +34,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             _actionProvider = actions;
             _stateProvider = state;
             _stateMachine = new FSM();
-            _planner = new ReGoapPlanner<T, W>();
-            _memory = new GoapMemory<T, W>();            
+            _planner = new ReGoapPlanner<T, W>();        
             createIdleState();
             createMoveToState();
             createPerformActionState();
@@ -58,17 +57,11 @@ namespace GalaxyGen.Engine.Ai.Goap
             _idleState = (fsm, gameObj) =>
             {
                 // GOAP planning
-
-                // get the world state and the goal we want to plan for
-                //Dictionary<string, object> worldState = _dataProvider.GetWorldState();
-                //Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
-                //Dictionary<string, object> goal = _dataProvider.CreateGoalState();
-                //Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
                 _goals = _dataProvider.GetGoals();
                 _actions = _dataProvider.GetActions();
+                _memory = _dataProvider.GetMemory();
 
                 // Plan
-                //Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, resourceState, goal, resourceGoal);
                 IReGoapGoal<T,W> plan = _planner.Plan(this, null, null);
                 if (plan != null)
                 {

@@ -10,8 +10,8 @@ namespace GalaxyGen.Engine.Ai.Goap.Goals
     {
         public GoapUndockGoal()
         {
-            goal.Set("IsDocked", false);
-            goal.Set("DockedAt", 0);
+            goal.Set("IsInSpace", true);
+            //goal.Set("DockedAt", 0);
         }
     }
 }

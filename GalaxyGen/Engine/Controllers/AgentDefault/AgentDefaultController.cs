@@ -319,5 +319,16 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
             return actionsList;
         }
+
+        public GoapMemory<string, object> GetMemory()
+        {
+            GoapMemory<string, object> mem = new GoapMemory<string, object>();
+            ReGoapState<string, object> state = ReGoapState<string, object>.Instantiate();
+            state.Set("IsDocked", true);
+            state.Set("IsInSpace", false);
+            state.Set("DockedAt", _state.CurrentShipDockedPlanetScId);
+            mem.GetWorldState().AddFromState(state);
+            return mem;
+        }
     }
 }
