@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using Priority_Queue;
 
 namespace GalaxyGen.Engine.Ai.Goap
 {
@@ -9,6 +9,7 @@ namespace GalaxyGen.Engine.Ai.Goap
      */
     public class GoapPlanner
     {
+        private static float currentMaxCost;
 
         /**
          * Plan what sequence of actions can fulfill the goal.
@@ -38,6 +39,7 @@ namespace GalaxyGen.Engine.Ai.Goap
 
             // build graph
             GoapNode start = new GoapNode(null, 0, 0, worldState, resourceState, null);
+            currentMaxCost = float.MaxValue;
             bool success = buildGraph(start, leaves, usableActions, goal, resourceGoal);
 
             if (!success)
@@ -105,15 +107,16 @@ namespace GalaxyGen.Engine.Ai.Goap
                     Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
 
                     // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
-                    GoapNode node = new GoapNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, currentResources, action);
+                    GoapNode node = new GoapNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, currentResources, action);                    
 
                     if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
                     {
                         // we found a solution!
                         leaves.Add(node);
+                        currentMaxCost = node.runningCost;
                         foundOne = true;
                     }
-                    else
+                    else if (node.runningCost < currentMaxCost)
                     {
                         // not at a solution yet, so test all the remaining actions and branch out the tree
                         HashSet<GoapAction> subset = actionSubset(usableActions, action);
