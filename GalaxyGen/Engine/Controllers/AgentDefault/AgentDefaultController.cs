@@ -174,19 +174,19 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             _state.Memory = JsonConvert.SerializeObject(_memory);
         }
 
-        public Dictionary<string, object> GetWorldState()
+        public GoapState GetWorldState()
         {
-            Dictionary<string, object> worldData = new Dictionary<string, object>();
+            GoapState worldData = new GoapState();
 
             if (_state.CurrentShipIsDocked)
             {
-                worldData.Add("isDocked", true);
-                worldData.Add("DockedAt", _state.CurrentShipDockedPlanetScId);
+                worldData.Set("isDocked", true);
+                worldData.Set("DockedAt", _state.CurrentShipDockedPlanetScId);
             }
             else
             {
-                worldData.Add("isDocked", false);
-                worldData.Add("DockedAt", 0);
+                worldData.Set("isDocked", false);
+                worldData.Set("DockedAt", 0);
             }            
 
             return worldData;
@@ -201,9 +201,9 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return resourceData;
         }
 
-        public Dictionary<string, object> CreateGoalState()
+        public GoapState CreateGoalState()
         {
-            Dictionary<string, object> goalState = new Dictionary<string, object>();
+            GoapState goalState = new GoapState();
 
             //goalState.Add("isDocked", true);
             //goalState.Add("DockedAt", chooseRandomDestinationScId());
@@ -220,12 +220,12 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             return resourceGoal;
         }
 
-        public void PlanFailed(Dictionary<string, object> failedGoal)
+        public void PlanFailed(GoapState failedGoal)
         {
             //_actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
         }
 
-        public void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions)
+        public void PlanFound(GoapState goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));

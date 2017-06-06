@@ -8,57 +8,63 @@ namespace GalaxyGen.Engine.Ai.Goap
 {
     public class GoapNode
     {
-        private static int MaxID;
-        public int ID;
-        public GoapAction action;
-        public GoapNode parent;
-        public float runningCost;
-        public Dictionary<string, object> state;
-        public Dictionary<Int64, Int64> resources;
-        public float weight;
+        
+        private GoapNode parent;
+        private float cost;
+        private GoapState state;
+        private GoapState goal;
+        private GoapPlanner planner;
 
-        public GoapNode(GoapNode parent, float runningCost, float weight, Dictionary<string, object> state, Dictionary<Int64, Int64> resources, GoapAction action)
-        {
-            ID = MaxID++;
-            ReInit(parent, runningCost, weight, state, resources, action);
-        }
+        public GoapAction Action { get; private set; }
+        public float PathCost { get; private set; }
+        public float HeuristicCost { get; private set; }
 
-        public void ReInit(GoapNode parent, float runningCost, float weight, Dictionary<string, object> state, Dictionary<Int64, Int64> resources, GoapAction action)
+        public GoapNode(GoapPlanner planner, GoapNode parent, GoapAction action, GoapState newGoal)
         {
-            Clear();
             this.parent = parent;
-            this.runningCost = runningCost;
-            this.weight = weight;
-            this.state = state;
-            this.resources = resources;
-            this.action = action;
+            this.Action = action;
+
+            init(state, newGoal);
         }
 
-        private void Clear()
+        private void init(GoapState state, GoapState newGoal)
         {
-            this.parent = null;
-            this.runningCost = 0;
-            this.weight = 0;
-            this.state = null;
-            this.resources = null;
-            this.action = null;
+            if (this.parent != null)
+            {
+                this.state = parent.state.Clone();
+                this.PathCost = parent.PathCost;
+            }
+
+            GoapAction nextAction = parent == null ? null : parent.Action;
+            if (this.Action != null)
+            {
+                this.goal = newGoal + this.Action.Preconditions;
+                this.state.AddFromState(this.Action.Effects);
+
+                PathCost += this.Action.GetCost();
+
+                goal.ReplaceWithMissingDifference(this.Action.Effects); // remove current action effects from goal
+                goal.ReplaceWithMissingDifference(planner.StartingWorldState); // remove any preconditions already satisfied by world state.
+            }
+            else
+            {
+                GoapState diff = new GoapState();
+                newGoal.MissingDifference(state, ref diff);
+                goal = diff;
+            }
+
+            HeuristicCost = goal.Count;
+            cost = PathCost + HeuristicCost;
         }
 
-        /// <summary>
-        ///     compare node
-        /// </summary>
-        /// <param name="cheapest"></param>
-        /// <returns></returns>
-        public bool BetterThan(GoapNode rh)
+        public bool IsGoal(GoapNode node)
         {
-            return runningCost < rh.runningCost;
-            //if (weight > rh.weight && runningCost < rh.runningCost)
-            //    return true;
-            //if (weight < rh.weight && runningCost > rh.runningCost)
-            //    return false;
-            ////make weight > cost
-            //var better = (weight / rh.weight - 1) >= (runningCost / rh.runningCost - 1);
-            //return better;
+            return this.HeuristicCost == 0;
+        }
+
+        internal float GetCost()
+        {
+            return cost;
         }
     }
 }

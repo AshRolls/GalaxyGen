@@ -6,8 +6,8 @@ namespace GalaxyGen.Engine.Ai.Goap
 {
     public abstract class GoapAction
     {
-        private Dictionary<string, object> preconditions;
-        private Dictionary<string, object> effects;
+        private GoapState preconditions;
+        private GoapState effects;
         private Dictionary<Int64, Int64> resources;
 
         private bool inRange = false;
@@ -37,8 +37,8 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         public GoapAction()
         {
-            preconditions = new Dictionary<string, object>();
-            effects = new Dictionary<string, object>();
+            preconditions = new GoapState();
+            effects = new GoapState();
             resources = new Dictionary<Int64, Int64>();
         }
 
@@ -97,26 +97,26 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         public void addPrecondition(string key, object value)
         {
-            preconditions.Add(key, value);
+            preconditions.Set(key, value);
         }
 
 
         public void removePrecondition(string key)
         {
-            if (preconditions.ContainsKey(key))
+            if (preconditions.HasKey(key))
                 preconditions.Remove(key);
         }
 
 
         public void addEffect(string key, object value)
         {
-            effects.Add(key, value);
+            effects.Set(key, value);
         }
 
 
         public void removeEffect(string key)
         {
-            if (effects.ContainsKey(key))
+            if (effects.HasKey(key))
                 effects.Remove(key);
         }
 
@@ -133,7 +133,7 @@ namespace GalaxyGen.Engine.Ai.Goap
         }
 
 
-        public Dictionary<string, object> Preconditions
+        public GoapState Preconditions
         {
             get
             {
@@ -141,7 +141,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             }
         }
 
-        public Dictionary<string, object> Effects
+        public GoapState Effects
         {
             get
             {

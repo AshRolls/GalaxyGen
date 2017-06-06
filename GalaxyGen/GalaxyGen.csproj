@@ -130,6 +130,7 @@
     <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
     <Compile Include="Engine\Ai\Goap\GoapManager.cs" />
     <Compile Include="Engine\Ai\Goap\GoapNode.cs" />
+    <Compile Include="Engine\Ai\Goap\GoapState.cs" />
     <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
     <Compile Include="Engine\Controllers\IAgentActions.cs" />
     <Compile Include="Engine\Controllers\IAgentController.cs" />

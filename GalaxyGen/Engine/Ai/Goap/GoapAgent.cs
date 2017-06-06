@@ -59,9 +59,9 @@ namespace GalaxyGen.Engine.Ai.Goap
                 // GOAP planning
 
                 // get the world state and the goal we want to plan for
-                Dictionary<string, object> worldState = _dataProvider.GetWorldState();
+                GoapState worldState = _dataProvider.GetWorldState();
                 Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
-                Dictionary<string, object> goal = _dataProvider.CreateGoalState();
+                GoapState goal = _dataProvider.CreateGoalState();
                 Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
                 loadActions();
 
