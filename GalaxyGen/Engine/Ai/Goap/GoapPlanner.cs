@@ -118,12 +118,13 @@ namespace GalaxyGen.Engine.Ai.Goap
                 explored.Add(node);
 
                 // where can we get from here that we haven't explored before?
-
+                foreach (var child in node.Expand())
+                {
                     //First time we see this node?
 
                     // If this is a new path, or a shorter path than what we have, keep it.
 
-            }
+                }
 
             // no path found
             return false;

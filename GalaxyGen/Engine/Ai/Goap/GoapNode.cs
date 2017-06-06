@@ -18,11 +18,13 @@ namespace GalaxyGen.Engine.Ai.Goap
         public GoapAction Action { get; private set; }
         public float PathCost { get; private set; }
         public float HeuristicCost { get; private set; }
+        public HashSet<GoapAction> UsableActions { get; private set; }
 
-        public GoapNode(GoapPlanner planner, GoapNode parent, GoapAction action, GoapState newGoal)
+        public GoapNode(GoapPlanner planner, GoapNode parent, GoapAction action, GoapState newGoal, HashSet<GoapAction> usableActions)
         {
             this.parent = parent;
             this.Action = action;
+            this.UsableActions = usableActions;
 
             init(state, newGoal);
         }
@@ -62,9 +64,25 @@ namespace GalaxyGen.Engine.Ai.Goap
             return this.HeuristicCost == 0;
         }
 
-        internal float GetCost()
+        public float GetCost()
         {
             return cost;
+        }
+
+        public List<GoapNode> Expand()
+        {
+            List<GoapNode> expandList = new List<GoapNode>();
+            foreach (GoapAction action in this.UsableActions)
+            {
+                HashSet<GoapAction> newActions = new HashSet<GoapAction>();
+                foreach(GoapAction ga in this.UsableActions)
+                {
+                    if (ga != action) newActions.Add(ga);
+                }
+
+                expandList.Add(new GoapNode(this.planner, this, action, goal, newActions));
+            }
+            return expandList;
         }
     }
 }
