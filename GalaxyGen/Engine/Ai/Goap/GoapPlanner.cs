@@ -41,7 +41,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             StartingWorldState = worldState;
             GoapState worldStateGS = new GoapState(worldState);
             // build graph
-            GoapNode start = new GoapNode(this, null, null, worldStateGS);
+            GoapNode start = new GoapNode(this, null, null, worldStateGS, usableActions);
             currentMaxCost = float.MaxValue;
 
             GoapState goalStateGS = new GoapState(goal);
@@ -96,17 +96,22 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         private bool aStar(GoapNode start, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal, Dictionary<long, long> resourceGoal)
         {
-            var reachable = new SimplePriorityQueue<GoapNode>();
-            var explored = new List<GoapNode>();
+            var frontier = new SimplePriorityQueue<GoapNode>();
+            var explored = new Dictionary<GoapState,GoapNode>();
+            var stateToNode = new Dictionary<GoapState, GoapNode>();
 
             // start at the goal and reverse search back to start
-            GoapNode root = new GoapNode(this, null, null, goal);
-            reachable.Enqueue(root, root.GetCost()); 
+            GoapNode root = new GoapNode(this, null, null, goal, usableActions);
+            frontier.Enqueue(root, root.Cost);
 
-            while (reachable.Count > 0)
+            int i = 0;
+            int maxIterations = 1000;
+            while (frontier.Count > 0 && i < maxIterations)
             {
+                i++;
+
                 // choose a node we know how to reach
-                GoapNode node = reachable.Dequeue();
+                GoapNode node = frontier.Dequeue();
 
                 // check if the node is goal, if so add to leaves
                 if (node.IsGoal(start))
@@ -115,17 +120,30 @@ namespace GalaxyGen.Engine.Ai.Goap
                 }
 
                 // do not repeat ourself
-                explored.Add(node);
+                explored.Add(node.State, node);
 
                 // where can we get from here that we haven't explored before?
                 foreach (var child in node.Expand())
                 {
                     //First time we see this node?
+                    if (explored.ContainsKey(child.State))
+                        continue;
 
                     // If this is a new path, or a shorter path than what we have, keep it.
-
+                    GoapNode similiarNode;
+                    stateToNode.TryGetValue(child.State, out similiarNode);
+                    if (similiarNode != null)
+                    {
+                        if (similiarNode.Cost > child.Cost)
+                            frontier.Remove(similiarNode);
+                        else
+                            break;
+                    }
+                    frontier.Enqueue(child, child.Cost);
+                    stateToNode[child.State] = child;
                 }
-
+            }
+            if (leaves.Count > 0) return true;
             // no path found
             return false;
         }

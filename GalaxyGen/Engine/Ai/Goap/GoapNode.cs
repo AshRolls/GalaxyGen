@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 namespace GalaxyGen.Engine.Ai.Goap
 {
     public class GoapNode
-    {
-        
+    {        
         private GoapNode parent;
-        private float cost;
-        private GoapState state;
         private GoapState goal;
         private GoapPlanner planner;
 
+        public float Cost { get; private set; }
+        public GoapState State { get; private set; }
         public GoapAction Action { get; private set; }
         public float PathCost { get; private set; }
         public float HeuristicCost { get; private set; }
@@ -24,16 +23,17 @@ namespace GalaxyGen.Engine.Ai.Goap
         {
             this.parent = parent;
             this.Action = action;
+            this.planner = planner;
             this.UsableActions = usableActions;
 
-            init(state, newGoal);
+            init(State, newGoal);
         }
 
         private void init(GoapState state, GoapState newGoal)
         {
             if (this.parent != null)
             {
-                this.state = parent.state.Clone();
+                this.State = parent.State.Clone();
                 this.PathCost = parent.PathCost;
             }
 
@@ -41,7 +41,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             if (this.Action != null)
             {
                 this.goal = newGoal + this.Action.Preconditions;
-                this.state.AddFromState(this.Action.Effects);
+                this.State.AddFromState(this.Action.Effects);
 
                 PathCost += this.Action.GetCost();
 
@@ -56,17 +56,12 @@ namespace GalaxyGen.Engine.Ai.Goap
             }
 
             HeuristicCost = goal.Count;
-            cost = PathCost + HeuristicCost;
+            Cost = PathCost + HeuristicCost;
         }
 
         public bool IsGoal(GoapNode node)
         {
             return this.HeuristicCost == 0;
-        }
-
-        public float GetCost()
-        {
-            return cost;
         }
 
         public List<GoapNode> Expand()
