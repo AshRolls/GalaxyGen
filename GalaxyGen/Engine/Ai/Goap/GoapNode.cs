@@ -17,14 +17,12 @@ namespace GalaxyGen.Engine.Ai.Goap
         public GoapAction Action { get; private set; }
         public float PathCost { get; private set; }
         public float HeuristicCost { get; private set; }
-        public HashSet<GoapAction> UsableActions { get; private set; }
 
-        public GoapNode(GoapPlanner planner, GoapNode parent, GoapAction action, GoapState newGoal, HashSet<GoapAction> usableActions)
+        public GoapNode(GoapPlanner planner, GoapNode parent, GoapAction action, GoapState newGoal)
         {
             this.Parent = parent;
             this.Action = action;
             this.planner = planner;
-            this.UsableActions = usableActions;
 
             init(newGoal);
         }
@@ -38,10 +36,10 @@ namespace GalaxyGen.Engine.Ai.Goap
             }
             else
             {
-                this.State = planner.StartingWorldState.Clone(); 
+                this.State = planner.StartingWorldState.Clone();                
             }
 
-            GoapAction nextAction = Parent == null ? null : Parent.Action;
+            //GoapAction nextAction = Parent == null ? null : Parent.Action; // TODO can pass this later for improved cost calc in action.getCost
             if (this.Action != null)
             {
                 this.goal = newGoal + this.Action.Preconditions;
@@ -50,7 +48,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 PathCost += this.Action.GetCost();
 
                 goal.ReplaceWithMissingDifference(this.Action.Effects); // remove current action effects from goal
-                goal.ReplaceWithMissingDifference(planner.StartingWorldState); // remove any preconditions already satisfied by world state.
+                //goal.ReplaceWithMissingDifference(planner.StartingWorldState); // remove any preconditions already satisfied by world state.
             }
             else
             {
@@ -63,25 +61,44 @@ namespace GalaxyGen.Engine.Ai.Goap
             Cost = PathCost + HeuristicCost;
         }
 
-        public bool IsGoal(GoapNode node)
+        public bool IsGoal()
         {
-            return this.HeuristicCost == 0;
+            return this.HeuristicCost <= 0;
         }
 
         public List<GoapNode> Expand()
         {
             List<GoapNode> expandList = new List<GoapNode>();
-            foreach (GoapAction action in this.UsableActions)
+            foreach (GoapAction action in planner.UsableActions)
             {
-                HashSet<GoapAction> newActions = new HashSet<GoapAction>();
-                foreach(GoapAction ga in this.UsableActions)
-                {
-                    if (ga != action) newActions.Add(ga);
-                }
+                if (action == this.Action)    // don't repeat same action twice
+                    continue;
 
-                expandList.Add(new GoapNode(this.planner, this, action, goal, newActions));
+                if (!this.State.HasAnyConflict(action.Effects))
+                {
+                    expandList.Add(new GoapNode(this.planner, this, action, goal));
+                }
             }
             return expandList;
         }
+
+        //private bool checkActionValid(GoapAction ga)
+        //{
+        //    bool valid = true;
+        //    // if the current state contains the action effect, then the effect must equal the state
+        //    foreach (KeyValuePair<string, object> kvp in ga.Effects.GetValues())
+        //    {
+        //        if (this.State.HasKey(kvp.Key))
+        //        {
+        //            if (!this.State.Get(kvp.Key).Equals(kvp.Value))
+        //            {
+        //                valid = false;
+        //                break;
+        //            }
+
+        //        }
+        //    }
+        //    return valid;
+        //}
     }
 }

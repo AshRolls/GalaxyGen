@@ -10,7 +10,8 @@ namespace GalaxyGen.Engine.Ai.Goap
     public class GoapPlanner
     {
         private static float currentMaxCost;
-        public GoapState StartingWorldState { get; private set; }       
+        public GoapState StartingWorldState { get; private set; }
+        public HashSet<GoapAction> UsableActions { get; private set; }
 
         /**
          * Plan what sequence of actions can fulfill the goal.
@@ -26,30 +27,28 @@ namespace GalaxyGen.Engine.Ai.Goap
             }
 
             // check what actions can run using their checkProceduralPrecondition
-            HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
+            UsableActions = new HashSet<GoapAction>();
             foreach (GoapAction a in availableActions)
             {
                 if (a.checkProceduralPrecondition(agent))
-                    usableActions.Add(a);
+                    UsableActions.Add(a);
             }
 
             // we now have all actions that can run, stored in usableActions
 
             // build up the tree and record the leaf nodes that provide a solution to the goal.
             List<GoapNode> leaves = new List<GoapNode>();
-
-            StartingWorldState = worldState;
-            GoapState worldStateGS = new GoapState(worldState);
             // build graph
-            GoapNode start = new GoapNode(this, null, null, worldStateGS, usableActions);
             currentMaxCost = float.MaxValue;
 
-            GoapState goalStateGS = new GoapState(goal);
+            GoapState startingState = new GoapState(worldState);
+            startingState.AddFromState(goal);
+            StartingWorldState = startingState;
 
-            GoapState goalGS = new GoapState(goalStateGS);
+            GoapState goalGS = new GoapState(goal);
 
             //bool success = buildGraph(start, leaves, usableActions, goal, resourceGoal);
-            bool success = aStar(start, leaves, usableActions, goalGS, resourceGoal);
+            bool success = aStar(worldState, leaves, goalGS, resourceGoal);
 
             if (!success)
             {
@@ -94,14 +93,14 @@ namespace GalaxyGen.Engine.Ai.Goap
             return queue;
         }
 
-        private bool aStar(GoapNode start, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal, Dictionary<long, long> resourceGoal)
+        private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal)
         {
             var frontier = new SimplePriorityQueue<GoapNode>();
             var explored = new Dictionary<GoapState,GoapNode>();
             var stateToNode = new Dictionary<GoapState, GoapNode>();
 
             // start at the goal and reverse search back to start
-            GoapNode root = new GoapNode(this, null, null, goal, usableActions);
+            GoapNode root = new GoapNode(this, null, null, start.Clone());
             frontier.Enqueue(root, root.Cost);
 
             int i = 0;
@@ -114,7 +113,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                 GoapNode node = frontier.Dequeue();
 
                 // check if the node is goal, if so add to leaves
-                if (node.IsGoal(start))
+                if (node.IsGoal())
                 {
                     leaves.Add(node);
                 }
@@ -139,6 +138,7 @@ namespace GalaxyGen.Engine.Ai.Goap
                         else
                             break;
                     }
+
                     frontier.Enqueue(child, child.Cost);
                     stateToNode[child.State] = child;
                 }

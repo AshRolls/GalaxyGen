@@ -159,5 +159,23 @@ namespace GalaxyGen.Engine.Ai.Goap
                 return count;
             }
         }
+
+        public bool HasAnyConflict(GoapState other) // used only in backward for now
+        {
+            lock (values) lock (other.values)
+                {
+                    foreach (var pair in other.values)
+                    {
+                        object thisValue;
+                        values.TryGetValue(pair.Key, out thisValue);
+                        var otherValue = pair.Value;
+                        if (otherValue == null || Equals(otherValue, false))
+                            continue;
+                        if (thisValue != null && !Equals(otherValue, thisValue))
+                            return true;
+                    }
+                    return false;
+                }
+        }
     }
 }

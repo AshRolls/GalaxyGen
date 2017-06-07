@@ -15,8 +15,8 @@ namespace GalaxyGen.Engine.Ai.Goap.Actions
 
         public GoapDockAction(Int64 dockScId)
         {
-            addPrecondition("isDocked", false);   
-            addEffect("isDocked", true);
+            addPrecondition("DockedAt", 0);   
+            //addEffect("isDocked", true);
             addEffect("DockedAt", dockScId);
             _target = dockScId;
         }

@@ -94,12 +94,12 @@ namespace GalaxyGen.Engine
                 //    {
                 //        if (j % 2 == 0)
                 //        {
-                //            //addMetalProducerToPlanet(ag, p);
+                //            addMetalProducerToPlanet(ag, p);
                 //            addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
                 //        }
                 //        else
                 //        {
-                //            //addSpiceProducerToPlanet(ag, p);
+                //            addSpiceProducerToPlanet(ag, p);
                 //            addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
                 //        }
 

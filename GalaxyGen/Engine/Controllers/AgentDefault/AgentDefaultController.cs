@@ -180,12 +180,12 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
             if (_state.CurrentShipIsDocked)
             {
-                worldData.Set("isDocked", true);
+                //worldData.Set("isDocked", true);
                 worldData.Set("DockedAt", _state.CurrentShipDockedPlanetScId);
             }
             else
             {
-                worldData.Set("isDocked", false);
+                //worldData.Set("isDocked", false);
                 worldData.Set("DockedAt", 0);
             }            
 
@@ -205,7 +205,7 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             GoapState goalState = new GoapState();
 
-            goalState.Set("isDocked", true);
+            //goalState.Set("isDocked", true);
             goalState.Set("DockedAt", chooseRandomDestinationScId());
 
             return goalState;
@@ -222,20 +222,20 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public void PlanFailed(GoapState failedGoal)
         {
-            _actorTextOutput.Tell("Plan failed " + failedGoal.ToString());
+            //_actorTextOutput.Tell("Plan failed " + failedGoal.ToString());
         }
 
         public void PlanFound(GoapState goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
+            //_actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
         }
 
         public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
-            _actorTextOutput.Tell("Plan Completed");
+            //_actorTextOutput.Tell("Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
@@ -306,11 +306,11 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
             {
                 actionsList.Add(new GoapUndockAction(destScId));
                 actionsList.Add(new GoapDockAction(destScId));
-                List<ResourceQuantity> resources = _state.PlanetResources(destScId);
-                foreach (ResourceQuantity resQ in resources)
-                {
-                    actionsList.Add(new GoapLoadShipAction(destScId, resQ));
-                }                
+                //List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                //foreach (ResourceQuantity resQ in resources)
+                //{
+                //    actionsList.Add(new GoapLoadShipAction(destScId, resQ));
+                //}                
             }
 
             GoapAction[] actions = actionsList.ToArray();
