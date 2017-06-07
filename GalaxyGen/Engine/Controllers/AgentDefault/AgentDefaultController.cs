@@ -205,8 +205,8 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
         {
             GoapState goalState = new GoapState();
 
-            //goalState.Add("isDocked", true);
-            //goalState.Add("DockedAt", chooseRandomDestinationScId());
+            goalState.Set("isDocked", true);
+            goalState.Set("DockedAt", chooseRandomDestinationScId());
 
             return goalState;
         }
@@ -222,20 +222,20 @@ namespace GalaxyGen.Engine.Controllers.AgentDefault
 
         public void PlanFailed(GoapState failedGoal)
         {
-            //_actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
+            _actorTextOutput.Tell("Plan failed " + failedGoal.ToString());
         }
 
         public void PlanFound(GoapState goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            //_actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
+            _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
         }
 
         public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
-            //_actorTextOutput.Tell("Plan Completed");
+            _actorTextOutput.Tell("Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 

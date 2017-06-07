@@ -74,14 +74,14 @@ namespace GalaxyGen.Engine.Ai.Goap
             // get its node and work back through the parents
             List<GoapAction> result = new List<GoapAction>();
             GoapNode n = cheapest;
-            //while (n != null)
-            //{
-            //    if (n.action != null)
-            //    {
-            //        result.Insert(0, n.action); // insert the action in the front
-            //    }
-            //    n = n.parent;
-            //}
+            while (n != null)
+            {
+                if (n.Action != null)
+                {
+                    result.Insert(0, n.Action); // insert the action in the front
+                }
+                n = n.Parent;
+            }
             // we now have this action list in correct order
 
             Queue<GoapAction> queue = new Queue<GoapAction>();

@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace GalaxyGen.Engine.Ai.Goap
 {
     public class GoapNode
-    {        
-        private GoapNode parent;
+    {                
         private GoapState goal;
         private GoapPlanner planner;
 
+        public GoapNode Parent { get; private set; }
         public float Cost { get; private set; }
         public GoapState State { get; private set; }
         public GoapAction Action { get; private set; }
@@ -21,23 +21,27 @@ namespace GalaxyGen.Engine.Ai.Goap
 
         public GoapNode(GoapPlanner planner, GoapNode parent, GoapAction action, GoapState newGoal, HashSet<GoapAction> usableActions)
         {
-            this.parent = parent;
+            this.Parent = parent;
             this.Action = action;
             this.planner = planner;
             this.UsableActions = usableActions;
 
-            init(State, newGoal);
+            init(newGoal);
         }
 
-        private void init(GoapState state, GoapState newGoal)
+        private void init(GoapState newGoal)
         {
-            if (this.parent != null)
+            if (this.Parent != null)
             {
-                this.State = parent.State.Clone();
-                this.PathCost = parent.PathCost;
+                this.State = Parent.State.Clone();
+                this.PathCost = Parent.PathCost;
+            }
+            else
+            {
+                this.State = planner.StartingWorldState.Clone(); 
             }
 
-            GoapAction nextAction = parent == null ? null : parent.Action;
+            GoapAction nextAction = Parent == null ? null : Parent.Action;
             if (this.Action != null)
             {
                 this.goal = newGoal + this.Action.Preconditions;
@@ -51,7 +55,7 @@ namespace GalaxyGen.Engine.Ai.Goap
             else
             {
                 GoapState diff = new GoapState();
-                newGoal.MissingDifference(state, ref diff);
+                newGoal.MissingDifference(this.State, ref diff);
                 goal = diff;
             }
 
