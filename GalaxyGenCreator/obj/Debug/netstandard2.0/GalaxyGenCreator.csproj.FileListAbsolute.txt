@@ -1,0 +1,11 @@
+C:\Dev\GalaxyGen\GalaxyGenCreator\bin\Debug\netstandard2.0\GalaxyGenCreator.deps.json
+C:\Dev\GalaxyGen\GalaxyGenCreator\bin\Debug\netstandard2.0\GalaxyGenCreator.dll
+C:\Dev\GalaxyGen\GalaxyGenCreator\bin\Debug\netstandard2.0\GalaxyGenCreator.pdb
+C:\Dev\GalaxyGen\GalaxyGenCreator\bin\Debug\netstandard2.0\GalaxyGenCore.dll
+C:\Dev\GalaxyGen\GalaxyGenCreator\bin\Debug\netstandard2.0\GalaxyGenCore.pdb
+C:\Dev\GalaxyGen\GalaxyGenCreator\obj\Debug\netstandard2.0\GalaxyGenCreator.csprojResolveAssemblyReference.cache
+C:\Dev\GalaxyGen\GalaxyGenCreator\obj\Debug\netstandard2.0\GalaxyGenCreator.csproj.CoreCompileInputs.cache
+C:\Dev\GalaxyGen\GalaxyGenCreator\obj\Debug\netstandard2.0\GalaxyGenCreator.AssemblyInfoInputs.cache
+C:\Dev\GalaxyGen\GalaxyGenCreator\obj\Debug\netstandard2.0\GalaxyGenCreator.AssemblyInfo.cs
+C:\Dev\GalaxyGen\GalaxyGenCreator\obj\Debug\netstandard2.0\GalaxyGenCreator.dll
+C:\Dev\GalaxyGen\GalaxyGenCreator\obj\Debug\netstandard2.0\GalaxyGenCreator.pdb

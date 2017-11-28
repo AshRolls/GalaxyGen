@@ -1,0 +1,8 @@
+C:\Dev\GalaxyGen\GalaxyGenCore\bin\Debug\netstandard2.0\GalaxyGenCore.deps.json
+C:\Dev\GalaxyGen\GalaxyGenCore\bin\Debug\netstandard2.0\GalaxyGenCore.dll
+C:\Dev\GalaxyGen\GalaxyGenCore\bin\Debug\netstandard2.0\GalaxyGenCore.pdb
+C:\Dev\GalaxyGen\GalaxyGenCore\obj\Debug\netstandard2.0\GalaxyGenCore.csproj.CoreCompileInputs.cache
+C:\Dev\GalaxyGen\GalaxyGenCore\obj\Debug\netstandard2.0\GalaxyGenCore.AssemblyInfoInputs.cache
+C:\Dev\GalaxyGen\GalaxyGenCore\obj\Debug\netstandard2.0\GalaxyGenCore.AssemblyInfo.cs
+C:\Dev\GalaxyGen\GalaxyGenCore\obj\Debug\netstandard2.0\GalaxyGenCore.dll
+C:\Dev\GalaxyGen\GalaxyGenCore\obj\Debug\netstandard2.0\GalaxyGenCore.pdb

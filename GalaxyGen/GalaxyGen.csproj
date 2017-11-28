@@ -119,96 +119,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Engine\ActorSolarSystem.cs" />
-    <Compile Include="Engine\AgentControllerState.cs" />
-    <Compile Include="Engine\Ai\Goap\Actions\GoapLoadShipAction.cs" />
-    <Compile Include="Engine\Ai\Goap\Actions\GoapDockAction.cs" />
-    <Compile Include="Engine\Ai\Goap\Actions\GoapUndockAction.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapManager.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapNode.cs" />
-    <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultMemory.cs" />
-    <Compile Include="Engine\Controllers\IAgentActions.cs" />
-    <Compile Include="Engine\Controllers\IAgentController.cs" />
-    <Compile Include="Engine\Controllers\ShipController.cs" />
-    <Compile Include="Engine\Controllers\AgentDefault\AgentDefaultController.cs" />
-    <Compile Include="Engine\Controllers\ProducerController.cs" />
-    <Compile Include="Engine\Controllers\PlanetController.cs" />
-    <Compile Include="Engine\Controllers\SolarSystemController.cs" />
-    <Compile Include="Engine\IAgentControllerState.cs" />
-    <Compile Include="Engine\Messages\IMessageMarketCommandData.cs" />
-    <Compile Include="Engine\Messages\IMessageShipCommandData.cs" />
-    <Compile Include="Engine\Messages\Message.cs" />
-    <Compile Include="Engine\Messages\MessageEngineAgCompletedCommand.cs" />
-    <Compile Include="Engine\Messages\MessageEngineSSCompletedCommand.cs" />
-    <Compile Include="Engine\Messages\MessageMarketCommand.cs" />
-    <Compile Include="Engine\Messages\MessageMarketBasic.cs" />
-    <Compile Include="Engine\Messages\MessageShipBasic.cs" />
-    <Compile Include="Engine\Messages\MessageShipSetAutopilot.cs" />
-    <Compile Include="Engine\Messages\MessageShipSetDestination.cs" />
-    <Compile Include="Engine\Messages\MessageShipSetXY.cs" />
-    <Compile Include="Engine\Messages\MessageShipResponse.cs" />
-    <Compile Include="Engine\Messages\MessageShipDocking.cs" />
-    <Compile Include="Engine\Messages\MessageShipCommand.cs" />
-    <Compile Include="Engine\Messages\MessageProducerCommand.cs" />
-    <Compile Include="Engine\Messages\MessageProducedResources.cs" />
-    <Compile Include="Engine\Messages\MessageRequestResources.cs" />
-    <Compile Include="Engine\Messages\MessageResources.cs" />
-    <Compile Include="Engine\Messages\MessageTick.cs" />
-    <Compile Include="Engine\Messages\MessageEngineCommand.cs" />
-    <Compile Include="Engine\ActorTextOutput.cs" />
-    <Compile Include="Engine\ActorTickEngineCoordinator.cs" />
-    <Compile Include="Engine\Ai\Fsm\FSM.cs" />
-    <Compile Include="Engine\Ai\Fsm\FSMState.cs" />
-    <Compile Include="Framework\GalaxyLoader.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapAction.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapAgent.cs" />
-    <Compile Include="Engine\Ai\Goap\GoapPlanner.cs" />
-    <Compile Include="Engine\Ai\Goap\IGoap.cs" />
-    <Compile Include="Framework\IdUtils.cs" />
-    <Compile Include="Framework\NavigationUtils.cs" />
-    <Compile Include="Framework\OrbitalUtils.cs" />
-    <Compile Include="Framework\CommonStructs.cs" />
-    <Compile Include="Framework\RandomUtils.cs" />
-    <Compile Include="Model\IAccountOwner.cs" />
-    <Compile Include="Model\IStoreLocation.cs" />
-    <Compile Include="Model\IAgentLocation.cs" />
-    <Compile Include="Model\Account.cs" />
-    <Compile Include="Model\Ship.cs" />
-    <Compile Include="Model\ShipType.cs" />
-    <Compile Include="Model\Store.cs" />
-    <Compile Include="Model\Producer.cs" />
-    <Compile Include="Model\Agent.cs" />
-    <Compile Include="Model\Galaxy.cs" />
-    <Compile Include="Model\MarketBuyOrder.cs" />
-    <Compile Include="Model\SolarSystem.cs" />
-    <Compile Include="Model\TypeEnum.cs" />
-    <Compile Include="ViewModel\IAgentViewModel.cs" />
-    <Compile Include="ViewModel\IShipViewModel.cs" />
-    <Compile Include="ViewModel\IResourceQuantityViewModel.cs" />
-    <Compile Include="ViewModel\IStoreViewModel.cs" />
-    <Compile Include="ViewModel\IResourceTypeViewModel.cs" />
-    <Compile Include="ViewModel\IProducerViewModel.cs" />
-    <Compile Include="ViewModel\ISolarSystemViewModel.cs" />
-    <Compile Include="ViewModel\IMainGalaxyViewModel.cs" />
-    <Compile Include="ViewModel\IMarketViewModel.cs" />
-    <Compile Include="ViewModel\IGalaxyViewModel.cs" />
-    <Compile Include="ViewModel\IPlanetViewModel.cs" />
-    <Compile Include="ViewModel\ISocietyViewModel.cs" />
-    <Compile Include="ViewModel\ITextOutputViewModel.cs" />
-    <Compile Include="ViewModel\MainGalaxyViewModel.cs" />
-    <Compile Include="ViewModel\MarketViewModel.cs" />
-    <Compile Include="ViewModel\GalaxyViewModel.cs" />
-    <Compile Include="Engine\ActorAgent.cs" />
-    <Compile Include="ViewModel\AgentViewModel.cs" />
-    <Compile Include="ViewModel\ShipViewModel.cs" />
-    <Compile Include="ViewModel\StoreViewModel.cs" />
-    <Compile Include="ViewModel\ResourceQuantityViewModel.cs" />
-    <Compile Include="ViewModel\ResourceTypeViewModel.cs" />
-    <Compile Include="ViewModel\ProducerViewModel.cs" />
-    <Compile Include="ViewModel\SolarSystemViewModel.cs" />
-    <Compile Include="ViewModel\SocietyViewModel.cs" />
-    <Compile Include="ViewModel\PlanetViewModel.cs" />
-    <Compile Include="ViewModel\TextOutputViewModel.cs" />
     <Compile Include="View\AgentControl.xaml.cs">
       <DependentUpon>AgentControl.xaml</DependentUpon>
     </Compile>
@@ -227,8 +137,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Bindings.cs" />
-    <Compile Include="Engine\GalaxyPopulator.cs" />
-    <Compile Include="Engine\IGalaxyPopulator.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -247,11 +155,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Engine\TickEngine.cs" />
-    <Compile Include="Engine\ITickEngine.cs" />
-    <Compile Include="Model\Market.cs" />
-    <Compile Include="Model\Planet.cs" />
-    <Compile Include="Model\Society.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -283,8 +186,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GalaxyGenCore\GalaxyGenCore.csproj">
-      <Project>{c9aa7a47-80f4-47f9-a222-c94cc4eabe3a}</Project>
+      <Project>{8a9e2270-91f1-4630-b572-c0e2e0133642}</Project>
       <Name>GalaxyGenCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GalaxyGenEngine\GalaxyGenEngine.csproj">
+      <Project>{3a77044d-af51-4c28-ad43-b33d77f648e2}</Project>
+      <Name>GalaxyGenEngine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

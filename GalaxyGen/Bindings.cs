@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Ninject;
 using Ninject.Extensions.Factory;
-using GalaxyGen.Engine;
-using GalaxyGen.Model;
-using GalaxyGen.ViewModel;
+using GCEngine.Engine;
+using GCEngine.Model;
+using GCEngine.ViewModel;
 
 namespace GalaxyGen
 {
