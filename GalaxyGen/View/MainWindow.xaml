@@ -4,14 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        xmlns:command ="http://www.galasoft.ch/mvvmlight"
         xmlns:local="clr-namespace:GalaxyGen"
         mc:Ignorable="d"
         Title="Galaxy Life Simulation of Everything" Height="850" Width="1600"
         Loaded="Window_Loaded">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <command:EventToCommand Command="{Binding WindowClosing}" PassEventArgsToCommand="True" />
+            <i:InvokeCommandAction Command="{Binding WindowClosing}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>

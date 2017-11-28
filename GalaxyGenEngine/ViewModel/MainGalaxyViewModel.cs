@@ -217,7 +217,11 @@ namespace GCEngine.ViewModel
         {
             get
             {
-                if (runMaxEngineCommand == null) runMaxEngineCommand = new RelayCommand(() => runEngine(true));
+                if (runMaxEngineCommand == null)
+                {
+                    runMaxEngineCommand = new RelayCommand(() => runEngine(true));
+                    runMaxEngineCommand.IsEnabled = true;
+                }
                 return runMaxEngineCommand;
             }
         }
@@ -227,7 +231,11 @@ namespace GCEngine.ViewModel
         {
             get
             {
-                if (runEngineCommand == null) runEngineCommand = new RelayCommand(() => runEngine(false));
+                if (runEngineCommand == null)
+                {
+                    runEngineCommand = new RelayCommand(() => runEngine(false));
+                    runEngineCommand.IsEnabled = true;
+                }
                 return runEngineCommand; 
             }
         }
@@ -242,7 +250,11 @@ namespace GCEngine.ViewModel
         {
             get
             {
-                if (stopEngineCommand == null) stopEngineCommand = new RelayCommand(() => stopEngine());
+                if (stopEngineCommand == null)
+                {
+                    stopEngineCommand = new RelayCommand(() => stopEngine());
+                    stopEngineCommand.IsEnabled = true;
+                }
                 return stopEngineCommand;
             }
         }
