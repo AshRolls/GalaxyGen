@@ -14,9 +14,9 @@ namespace GCEngine.Engine.Ai.Goap.Actions
 
         public GoapUndockAction(Int64 undockScId)
         {
-            addPrecondition("isDocked", true);
+            //addPrecondition("isDocked", true);
             addPrecondition("DockedAt", undockScId);
-            addEffect("isDocked", false);
+            //addEffect("isDocked", false);
             addEffect("DockedAt", 0);
         }
 

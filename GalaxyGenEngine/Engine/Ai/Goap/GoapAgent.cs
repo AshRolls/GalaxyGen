@@ -59,9 +59,9 @@ namespace GCEngine.Engine.Ai.Goap
                 // GOAP planning
 
                 // get the world state and the goal we want to plan for
-                Dictionary<string, object> worldState = _dataProvider.GetWorldState();
+                GoapState worldState = _dataProvider.GetWorldState();
                 Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
-                Dictionary<string, object> goal = _dataProvider.CreateGoalState();
+                GoapState goal = _dataProvider.CreateGoalState();
                 Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
                 loadActions();
 
@@ -110,24 +110,6 @@ namespace GCEngine.Engine.Ai.Goap
                 {
                     fsm.popState();
                 }
-
-                /*MovableComponent movable = (MovableComponent) gameObj.GetComponent(typeof(MovableComponent));
-                if (movable == null) {
-                    // Console.WriteLine("<color=red>Fatal error:</color> Trying to move an Agent that doesn't have a MovableComponent. Please give it one.");
-                    fsm.popState(); // move
-                    fsm.popState(); // perform
-                    fsm.pushState(idleState);
-                    return;
-                }
-
-                float step = movable.moveSpeed * Time.deltaTime;
-                gameObj.transform.position = Vector3.MoveTowards(gameObj.transform.position, action.target.transform.position, step);
-
-                if (gameObj.transform.position.Equals(action.target.transform.position) ) {
-                    // we are at the target location, we are done
-                    action.setInRange(true);
-                    fsm.popState();
-                }*/
             };
         }
 

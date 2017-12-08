@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-
+using Priority_Queue;
 
 namespace GCEngine.Engine.Ai.Goap
 {
@@ -9,13 +9,16 @@ namespace GCEngine.Engine.Ai.Goap
      */
     public class GoapPlanner
     {
+        private static float currentMaxCost;
+        public GoapState StartingWorldState { get; private set; }
+        public HashSet<GoapAction> UsableActions { get; private set; }
 
         /**
          * Plan what sequence of actions can fulfill the goal.
          * Returns null if a plan could not be found, or a list of the actions
          * that must be performed, in order, to fulfill the goal.
          */
-        public Queue<GoapAction> Plan(object agent, HashSet<GoapAction> availableActions, Dictionary<string, object> worldState, Dictionary<Int64, Int64> resourceState, Dictionary<string, object> goal, Dictionary<Int64, Int64> resourceGoal)
+        public Queue<GoapAction> Plan(object agent, HashSet<GoapAction> availableActions, GoapState worldState, Dictionary<Int64, Int64> resourceState, GoapState goal, Dictionary<Int64, Int64> resourceGoal)
         {
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
@@ -24,21 +27,28 @@ namespace GCEngine.Engine.Ai.Goap
             }
 
             // check what actions can run using their checkProceduralPrecondition
-            HashSet<GoapAction> usableActions = new HashSet<GoapAction>();
+            UsableActions = new HashSet<GoapAction>();
             foreach (GoapAction a in availableActions)
             {
                 if (a.checkProceduralPrecondition(agent))
-                    usableActions.Add(a);
+                    UsableActions.Add(a);
             }
 
             // we now have all actions that can run, stored in usableActions
 
             // build up the tree and record the leaf nodes that provide a solution to the goal.
             List<GoapNode> leaves = new List<GoapNode>();
-
             // build graph
-            GoapNode start = new GoapNode(null, 0, 0, worldState, resourceState, null);
-            bool success = buildGraph(start, leaves, usableActions, goal, resourceGoal);
+            currentMaxCost = float.MaxValue;
+
+            GoapState startingState = new GoapState(worldState);
+            startingState.AddFromState(goal);
+            StartingWorldState = startingState;
+
+            GoapState goalGS = new GoapState(goal);
+
+            //bool success = buildGraph(start, leaves, usableActions, goal, resourceGoal);
+            bool success = aStar(worldState, leaves, goalGS, resourceGoal);
 
             if (!success)
             {
@@ -53,11 +63,11 @@ namespace GCEngine.Engine.Ai.Goap
             {
                 if (cheapest == null)
                     cheapest = leaf;
-                else
-                {
-                    if (leaf.BetterThan(cheapest))
-                        cheapest = leaf;
-                }
+                //else
+                //{
+                //    if (leaf.BetterThan(cheapest))
+                //        cheapest = leaf;
+                //}
             }
 
             // get its node and work back through the parents
@@ -65,11 +75,11 @@ namespace GCEngine.Engine.Ai.Goap
             GoapNode n = cheapest;
             while (n != null)
             {
-                if (n.action != null)
+                if (n.Action != null)
                 {
-                    result.Insert(0, n.action); // insert the action in the front
+                    result.Insert(0, n.Action); // insert the action in the front
                 }
-                n = n.parent;
+                n = n.Parent;
             }
             // we now have this action list in correct order
 
@@ -83,49 +93,105 @@ namespace GCEngine.Engine.Ai.Goap
             return queue;
         }
 
+        private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal)
+        {
+            var frontier = new SimplePriorityQueue<GoapNode>();
+            var explored = new Dictionary<GoapState,GoapNode>();
+            var stateToNode = new Dictionary<GoapState, GoapNode>();
+
+            // start at the goal and reverse search back to start
+            GoapNode root = new GoapNode(this, null, null, start.Clone());
+            frontier.Enqueue(root, root.Cost);
+
+            int i = 0;
+            int maxIterations = 1000;
+            while (frontier.Count > 0 && i < maxIterations)
+            {
+                i++;
+
+                // choose a node we know how to reach
+                GoapNode node = frontier.Dequeue();
+
+                // check if the node is goal, if so add to leaves
+                if (node.IsGoal())
+                {
+                    leaves.Add(node);
+                }
+
+                // do not repeat ourself
+                explored.Add(node.State, node);
+
+                // where can we get from here that we haven't explored before?
+                foreach (var child in node.Expand())
+                {
+                    //First time we see this node?
+                    if (explored.ContainsKey(child.State))
+                        continue;
+
+                    // If this is a new path, or a shorter path than what we have, keep it.
+                    GoapNode similiarNode;
+                    stateToNode.TryGetValue(child.State, out similiarNode);
+                    if (similiarNode != null)
+                    {
+                        if (similiarNode.Cost > child.Cost)
+                            frontier.Remove(similiarNode);
+                        else
+                            break;
+                    }
+
+                    frontier.Enqueue(child, child.Cost);
+                    stateToNode[child.State] = child;
+                }
+            }
+            if (leaves.Count > 0) return true;
+            // no path found
+            return false;
+        }
+
         /**
          * Returns true if at least one solution was found.
          * The possible paths are stored in the leaves list. Each leaf has a
          * 'runningCost' value where the lowest cost will be the best action
          * sequence.
          */
-        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, Dictionary<string, object> goal, Dictionary<Int64, Int64> resourceGoal)
-        {
-            bool foundOne = false;
+        //private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, Dictionary<string, object> goal, Dictionary<Int64, Int64> resourceGoal)
+        //{
+        //    bool foundOne = false;
 
-            // go through each action available at this node and see if we can use it here
-            foreach (GoapAction action in usableActions)
-            {
+        //    // go through each action available at this node and see if we can use it here
+        //    foreach (GoapAction action in usableActions)
+        //    {
 
-                // if the parent state has the conditions for this action's preconditions, we can use it here
-                if (inState(action.Preconditions, parent.state))
-                {
-                    // apply the action's effects to the parent state
-                    Dictionary<string, object> currentState = populateState(parent.state, action.Effects);
-                    Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
+        //        // if the parent state has the conditions for this action's preconditions, we can use it here
+        //        if (inState(action.Preconditions, parent.state))
+        //        {
+        //            // apply the action's effects to the parent state
+        //            Dictionary<string, object> currentState = populateState(parent.state, action.Effects);
+        //            Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
 
-                    // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
-                    GoapNode node = new GoapNode(parent, parent.runningCost + action.GetCost(), parent.weight + action.GetWeight(), currentState, currentResources, action);
+        //            // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
+        //            GoapNode node = new GoapNode(parent, parent.cost + action.GetCost(), parent.weight + action.GetWeight(), currentState, currentResources, action);                    
 
-                    if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
-                    {
-                        // we found a solution!
-                        leaves.Add(node);
-                        foundOne = true;
-                    }
-                    else
-                    {
-                        // not at a solution yet, so test all the remaining actions and branch out the tree
-                        HashSet<GoapAction> subset = actionSubset(usableActions, action);
-                        bool found = buildGraph(node, leaves, subset, goal, resourceGoal);
-                        if (found)
-                            foundOne = true;
-                    }
-                }
-            }
+        //            if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
+        //            {
+        //                // we found a solution!
+        //                leaves.Add(node);
+        //                currentMaxCost = node.cost;
+        //                foundOne = true;
+        //            }
+        //            else if (node.cost < currentMaxCost)
+        //            {
+        //                // not at a solution yet, so test all the remaining actions and branch out the tree
+        //                HashSet<GoapAction> subset = actionSubset(usableActions, action);
+        //                bool found = buildGraph(node, leaves, subset, goal, resourceGoal);
+        //                if (found)
+        //                    foundOne = true;
+        //            }
+        //        }
+        //    }
 
-            return foundOne;
-        }
+        //    return foundOne;
+        //}
 
         /**
          * Create a subset of the actions excluding the removeMe one. Creates a new set.

@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GCEngine.Model;
-using Ninject;
-using GCEngine.Framework;
-using GalaxyGenCore;
 using GalaxyGenCore.StarChart;
 using GalaxyGenCore.BluePrints;
 using GalaxyGenCore.Resources;

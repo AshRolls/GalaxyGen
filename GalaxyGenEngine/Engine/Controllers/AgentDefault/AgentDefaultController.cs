@@ -4,12 +4,12 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
 using GalaxyGenCore.StarChart;
-using GCEngine.Engine.Messages;
 using GalaxyGenCore.Framework;
+using GalaxyGenCore.Resources;
+using GCEngine.Engine.Messages;
 using GCEngine.Framework;
 using GCEngine.Engine.Ai.Goap;
 using GCEngine.Engine.Ai.Goap.Actions;
-using GalaxyGenCore.Resources;
 
 namespace GCEngine.Engine.Controllers.AgentDefault
 {
@@ -27,7 +27,7 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             _state = ag;
             _actorSolarSystem = actorSolarSystem;
             _actorTextOutput = actorTextOutput;
-            _goapAgent = new GoapAgent(this, this, _state);            
+            _goapAgent = new GoapAgent(this, this, _state);
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
         }
@@ -146,7 +146,7 @@ namespace GCEngine.Engine.Controllers.AgentDefault
 
         public void RequestLoadShip(ResourceQuantity resQ)
         {
-            _actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);
+            //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);
         }
 
         private Int64 chooseRandomDestinationScId()
@@ -174,39 +174,39 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             _state.Memory = JsonConvert.SerializeObject(_memory);
         }
 
-        public Dictionary<string, object> GetWorldState()
+        public GoapState GetWorldState()
         {
-            Dictionary<string, object> worldData = new Dictionary<string, object>();
+            GoapState worldData = new GoapState();
 
             if (_state.CurrentShipIsDocked)
             {
-                worldData.Add("isDocked", true);
-                worldData.Add("DockedAt", _state.CurrentShipDockedPlanetScId);
+                //worldData.Set("isDocked", true);
+                worldData.Set("DockedAt", _state.CurrentShipDockedPlanetScId);
             }
             else
             {
-                worldData.Add("isDocked", false);
-                worldData.Add("DockedAt", 0);
-            }            
+                //worldData.Set("isDocked", false);
+                worldData.Set("DockedAt", 0);
+            }
 
             return worldData;
         }
 
         public Dictionary<Int64, Int64> GetResourceState()
         {
-            Dictionary<Int64, Int64> resourceData = new Dictionary<Int64, Int64>();            
+            Dictionary<Int64, Int64> resourceData = new Dictionary<Int64, Int64>();
 
             // no resources
 
             return resourceData;
         }
 
-        public Dictionary<string, object> CreateGoalState()
+        public GoapState CreateGoalState()
         {
-            Dictionary<string, object> goalState = new Dictionary<string, object>();
+            GoapState goalState = new GoapState();
 
-            //goalState.Add("isDocked", true);
-            //goalState.Add("DockedAt", chooseRandomDestinationScId());
+            //goalState.Set("isDocked", true);
+            goalState.Set("DockedAt", chooseRandomDestinationScId());
 
             return goalState;
         }
@@ -220,22 +220,22 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             return resourceGoal;
         }
 
-        public void PlanFailed(Dictionary<string, object> failedGoal)
+        public void PlanFailed(GoapState failedGoal)
         {
-            _actorTextOutput.Tell("Plan failed " + GoapAgent.PrettyPrint(failedGoal));
+            //_actorTextOutput.Tell("Plan failed " + failedGoal.ToString());
         }
 
-        public void PlanFound(Dictionary<string, object> goal, Queue<GoapAction> actions)
+        public void PlanFound(GoapState goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
+            //_actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
         }
 
         public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
-            _actorTextOutput.Tell("Plan Completed");
+            //_actorTextOutput.Tell("Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
@@ -245,7 +245,7 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
             // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
-            _actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
+            //_actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
         }
 
         public bool MoveAgent(GoapAction nextAction)
@@ -256,7 +256,7 @@ namespace GCEngine.Engine.Controllers.AgentDefault
                 setNewDestination(destinationScId);
             }
             else
-            { 
+            {
                 if (!_state.CurrentShipAutopilotActive) // turn on autopilot if off
                 {
                     _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetAutopilot(ShipCommandEnum.SetAutopilot, true), 10, _state.CurrentShipId));
@@ -294,23 +294,23 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             //}
             return false;
         }
-        
+
         // actions this agent is capable of
         public GoapAction[] GetActions()
         {
             List<GoapAction> actionsList = new List<GoapAction>();
 
-           
+
             // TODO limit number of destination actions we add to avoid combinatorial explosion
             foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
             {
                 actionsList.Add(new GoapUndockAction(destScId));
                 actionsList.Add(new GoapDockAction(destScId));
-                List<ResourceQuantity> resources = _state.PlanetResources(destScId);
-                foreach (ResourceQuantity resQ in resources)
-                {
-                    actionsList.Add(new GoapLoadShipAction(destScId, resQ));
-                }                
+                //List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                //foreach (ResourceQuantity resQ in resources)
+                //{
+                //    actionsList.Add(new GoapLoadShipAction(destScId, resQ));
+                //}                
             }
 
             GoapAction[] actions = actionsList.ToArray();

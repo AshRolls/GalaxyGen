@@ -2,16 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.3.2" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.2" />
+    <PackageReference Include="OptimizedPriorityQueue" Version="4.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GalaxyGenCore\GalaxyGenCore.csproj" />
+    <ProjectReference Include="..\GalaxyGenCore\GalaxyGenCore.csproj">
+      <Private>true</Private>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>
