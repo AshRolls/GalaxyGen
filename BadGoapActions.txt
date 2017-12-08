@@ -1,0 +1,32 @@
+S 101
+G 100
+
+		Dock 	P 0			P 0
+				E 101		E 100
+				
+		Undock	P 101		P 101
+				E 0			E 0
+
+S 0
+G 100
+
+S 100
+G 100
+
+
+**********************    
+
+S 101
+G 100
+
+		Dock 	P 0 T		P 0 T
+				E 101 F		E 100 F
+				
+		Undock	P 101 T		P 101 T
+				E 0	F		E 0 F
+
+S 0
+G 100 T
+
+S 100
+G 100
