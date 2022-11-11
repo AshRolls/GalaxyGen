@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33103.184
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GalaxyGen", "GalaxyGen.csproj", "{72D8F1D5-D690-419D-8079-E239742E0C55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GalaxyGen", "GalaxyGen.csproj", "{72D8F1D5-D690-419D-8079-E239742E0C55}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8A9E2270-91F1-4630-B572-C0E2E0133642} = {8A9E2270-91F1-4630-B572-C0E2E0133642}
 	EndProjectSection
@@ -26,8 +26,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{72D8F1D5-D690-419D-8079-E239742E0C55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{72D8F1D5-D690-419D-8079-E239742E0C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{72D8F1D5-D690-419D-8079-E239742E0C55}.Debug|x64.ActiveCfg = Debug|x64
-		{72D8F1D5-D690-419D-8079-E239742E0C55}.Debug|x64.Build.0 = Debug|x64
+		{72D8F1D5-D690-419D-8079-E239742E0C55}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{72D8F1D5-D690-419D-8079-E239742E0C55}.Debug|x64.Build.0 = Debug|Any CPU
 		{72D8F1D5-D690-419D-8079-E239742E0C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72D8F1D5-D690-419D-8079-E239742E0C55}.Release|Any CPU.Build.0 = Release|Any CPU
 		{72D8F1D5-D690-419D-8079-E239742E0C55}.Release|x64.ActiveCfg = Release|x64

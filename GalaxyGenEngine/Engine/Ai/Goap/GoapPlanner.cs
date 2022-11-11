@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Priority_Queue;
 
 namespace GCEngine.Engine.Ai.Goap
 {
@@ -95,7 +94,7 @@ namespace GCEngine.Engine.Ai.Goap
 
         private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal)
         {
-            var frontier = new SimplePriorityQueue<GoapNode>();
+            PriorityQueue<GoapNode, float> frontier = new PriorityQueue<GoapNode, float>();
             var explored = new Dictionary<GoapState,GoapNode>();
             var stateToNode = new Dictionary<GoapState, GoapNode>();
 
@@ -133,8 +132,8 @@ namespace GCEngine.Engine.Ai.Goap
                     stateToNode.TryGetValue(child.State, out similiarNode);
                     if (similiarNode != null)
                     {
-                        if (similiarNode.Cost > child.Cost)
-                            frontier.Remove(similiarNode);
+                        if (similiarNode.Cost > child.Cost) { }
+                        //frontier.Remove(similiarNode);
                         else
                             break;
                     }
