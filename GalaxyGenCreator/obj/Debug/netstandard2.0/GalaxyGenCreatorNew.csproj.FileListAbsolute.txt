@@ -1,0 +1,4 @@
+C:\Dev\GalaxyGen\GalaxyGenCreatorNew\obj\Debug\netstandard2.0\GalaxyGenCreatorNew.csprojResolveAssemblyReference.cache
+C:\Dev\GalaxyGen\GalaxyGenCreatorNew\obj\Debug\netstandard2.0\GalaxyGenCreatorNew.csproj.CoreCompileInputs.cache
+C:\Dev\GalaxyGen\GalaxyGenCreatorNew\obj\Debug\netstandard2.0\GalaxyGenCreatorNew.AssemblyInfoInputs.cache
+C:\Dev\GalaxyGen\GalaxyGenCreatorNew\obj\Debug\netstandard2.0\GalaxyGenCreatorNew.AssemblyInfo.cs
