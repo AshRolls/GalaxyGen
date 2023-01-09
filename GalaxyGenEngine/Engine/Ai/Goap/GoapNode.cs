@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GCEngine.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,11 +19,13 @@ namespace GCEngine.Engine.Ai.Goap
         public float PathCost { get; private set; }
         public float HeuristicCost { get; private set; }
 
-        public GoapNode(GoapPlanner planner, GoapNode parent, GoapAction action, GoapState newGoal)
+        public GoapNode(GoapPlanner planner, GoapNode parent, float cost, GoapAction action, GoapState newGoal)
         {
             this.Parent = parent;
             this.Action = action;
+            this.Cost = cost;
             this.planner = planner;
+            
 
             init(newGoal);
         }
@@ -66,21 +69,21 @@ namespace GCEngine.Engine.Ai.Goap
             return this.HeuristicCost <= 0;
         }
 
-        public List<GoapNode> Expand()
-        {
-            List<GoapNode> expandList = new List<GoapNode>();
-            foreach (GoapAction action in planner.UsableActions)
-            {
-                if (action == this.Action)    // don't repeat same action twice
-                    continue;
+        //public List<GoapNode> Expand(object agent)
+        //{
+        //    List<GoapNode> expandList = new List<GoapNode>();
+        //    foreach (GoapAction action in planner.UsableActions)
+        //    {
+        //        if (action == this.Action || !action.checkProceduralPrecondition(agent))    
+        //            continue;                
 
-                if (!this.State.HasAnyConflict(action.Effects))
-                {
-                    expandList.Add(new GoapNode(this.planner, this, action, goal));
-                }
-            }
-            return expandList;
-        }
+        //        //if (!this.State.HasAnyConflict(action.Effects))
+        //        //{
+        //            expandList.Add(new GoapNode(this.planner, this, action, goal));
+        //        //}
+        //    }
+        //    return expandList;
+        //}
 
         //private bool checkActionValid(GoapAction ga)
         //{

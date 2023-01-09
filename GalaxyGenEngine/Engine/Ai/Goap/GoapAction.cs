@@ -57,13 +57,13 @@ namespace GCEngine.Engine.Ai.Goap
         /**
          * Is the action done?
          */
-        public abstract bool isDone();
+        public abstract bool isDone(object agent);
 
         /**
          * Procedurally check if this action can run. Not all actions
          * will need this, but some might.
          */
-        public abstract bool checkProceduralPrecondition(object agent);
+        public abstract bool CheckProceduralPrecondition();
 
         /**
          * Run the action.

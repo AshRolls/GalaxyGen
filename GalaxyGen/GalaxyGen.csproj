@@ -29,11 +29,11 @@
     <ProjectReference Include="..\GalaxyGenEngine\GalaxyGenEngine.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Akka" Version="1.4.45" />
-    <PackageReference Include="Castle.Core" Version="5.1.0" />
+    <PackageReference Include="Akka" Version="1.4.48" />
+    <PackageReference Include="Castle.Core" Version="5.1.1" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Ninject" Version="3.3.6" />
     <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.3" />
     <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
@@ -43,6 +43,9 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="packages\" />
   </ItemGroup>
   <PropertyGroup>
     <AssemblyName>1</AssemblyName>

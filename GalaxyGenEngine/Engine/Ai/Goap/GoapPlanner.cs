@@ -29,25 +29,22 @@ namespace GCEngine.Engine.Ai.Goap
             UsableActions = new HashSet<GoapAction>();
             foreach (GoapAction a in availableActions)
             {
-                if (a.checkProceduralPrecondition(agent))
-                    UsableActions.Add(a);
+                UsableActions.Add(a);
             }
-
-            // we now have all actions that can run, stored in usableActions
 
             // build up the tree and record the leaf nodes that provide a solution to the goal.
             List<GoapNode> leaves = new List<GoapNode>();
-            // build graph
             currentMaxCost = float.MaxValue;
 
             GoapState startingState = new GoapState(worldState);
-            startingState.AddFromState(goal);
+            //startingState.AddFromState(goal);
             StartingWorldState = startingState;
 
             GoapState goalGS = new GoapState(goal);
+            GoapNode startNode = new GoapNode(this, null, 0, null, goal);
 
-            //bool success = buildGraph(start, leaves, usableActions, goal, resourceGoal);
-            bool success = aStar(worldState, leaves, goalGS, resourceGoal);
+            bool success = buildGraph(startNode, leaves, UsableActions, goalGS, resourceGoal);
+            //bool success = aStar(worldState, leaves, goalGS, resourceGoal, agent);
 
             if (!success)
             {
@@ -92,60 +89,59 @@ namespace GCEngine.Engine.Ai.Goap
             return queue;
         }
 
-        private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal)
-        {
-            PriorityQueue<GoapNode, float> frontier = new PriorityQueue<GoapNode, float>();
-            var explored = new Dictionary<GoapState,GoapNode>();
-            var stateToNode = new Dictionary<GoapState, GoapNode>();
+        //private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal, object agent)
+        //{
+        //    PriorityQueue<GoapNode, float> frontier = new PriorityQueue<GoapNode, float>();
+        //    var explored = new Dictionary<GoapState,GoapNode>();
+        //    var stateToNode = new Dictionary<GoapState, GoapNode>();
 
-            // start at the goal and reverse search back to start
-            GoapNode root = new GoapNode(this, null, null, start.Clone());
-            frontier.Enqueue(root, root.Cost);
+        //    GoapNode root = new GoapNode(this, null, null, start.Clone());
+        //    frontier.Enqueue(root, root.Cost);
 
-            int i = 0;
-            int maxIterations = 1000;
-            while (frontier.Count > 0 && i < maxIterations)
-            {
-                i++;
+        //    int i = 0;
+        //    int maxIterations = 1000;
+        //    while (frontier.Count > 0 && i < maxIterations)
+        //    {
+        //        i++;
 
-                // choose a node we know how to reach
-                GoapNode node = frontier.Dequeue();
+        //        // choose a node we know how to reach
+        //        GoapNode node = frontier.Dequeue();
 
-                // check if the node is goal, if so add to leaves
-                if (node.IsGoal())
-                {
-                    leaves.Add(node);
-                }
+        //        // check if the node is goal, if so add to leaves
+        //        if (inState(goal, node.State))
+        //        {
+        //            leaves.Add(node);
+        //        }
 
-                // do not repeat ourself
-                explored.Add(node.State, node);
+        //        // do not repeat ourself
+        //        explored.Add(node.State, node);
 
-                // where can we get from here that we haven't explored before?
-                foreach (var child in node.Expand())
-                {
-                    //First time we see this node?
-                    if (explored.ContainsKey(child.State))
-                        continue;
+        //        // where can we get from here that we haven't explored before?
+        //        foreach (var child in node.Expand(agent))
+        //        {
+        //            //First time we see this node?
+        //            if (explored.ContainsKey(child.State))
+        //                continue;
 
-                    // If this is a new path, or a shorter path than what we have, keep it.
-                    GoapNode similiarNode;
-                    stateToNode.TryGetValue(child.State, out similiarNode);
-                    if (similiarNode != null)
-                    {
-                        if (similiarNode.Cost > child.Cost) { }
-                        //frontier.Remove(similiarNode);
-                        else
-                            break;
-                    }
+        //            // If this is a new path, or a shorter path than what we have, keep it.
+        //            //GoapNode similiarNode;
+        //            //stateToNode.TryGetValue(child.State, out similiarNode);
+        //            //if (similiarNode != null)
+        //            //{
+        //            //    if (similiarNode.Cost > child.Cost) { }
+        //            //    //frontier.Remove(similiarNode);
+        //            //    else
+        //            //        break;
+        //            //}
 
-                    frontier.Enqueue(child, child.Cost);
-                    stateToNode[child.State] = child;
-                }
-            }
-            if (leaves.Count > 0) return true;
-            // no path found
-            return false;
-        }
+        //            frontier.Enqueue(child, child.Cost);
+        //            stateToNode[child.State] = child;
+        //        }
+        //    }
+        //    if (leaves.Count > 0) return true;
+        //    // no path found
+        //    return false;
+        //}
 
         /**
          * Returns true if at least one solution was found.
@@ -153,44 +149,47 @@ namespace GCEngine.Engine.Ai.Goap
          * 'runningCost' value where the lowest cost will be the best action
          * sequence.
          */
-        //private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, Dictionary<string, object> goal, Dictionary<Int64, Int64> resourceGoal)
-        //{
-        //    bool foundOne = false;
+        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal, Dictionary<Int64, Int64> resourceGoal)
+        {
+            bool foundOne = false;
 
-        //    // go through each action available at this node and see if we can use it here
-        //    foreach (GoapAction action in usableActions)
-        //    {
+            // go through each action available at this node and see if we can use it here            
 
-        //        // if the parent state has the conditions for this action's preconditions, we can use it here
-        //        if (inState(action.Preconditions, parent.state))
-        //        {
-        //            // apply the action's effects to the parent state
-        //            Dictionary<string, object> currentState = populateState(parent.state, action.Effects);
-        //            Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
+            foreach (GoapAction action in usableActions)
+            {
 
-        //            // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
-        //            GoapNode node = new GoapNode(parent, parent.cost + action.GetCost(), parent.weight + action.GetWeight(), currentState, currentResources, action);                    
+                // if the parent state has the conditions for this action's preconditions, we can use it here
+                if (inState(action.Preconditions, parent.State) && action.CheckProceduralPrecondition())
+                {
+                    // apply the action's effects to the parent state
+                    GoapState currentState = populateState(parent.State, action.Effects);
+                    //Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
 
-        //            if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
-        //            {
-        //                // we found a solution!
-        //                leaves.Add(node);
-        //                currentMaxCost = node.cost;
-        //                foundOne = true;
-        //            }
-        //            else if (node.cost < currentMaxCost)
-        //            {
-        //                // not at a solution yet, so test all the remaining actions and branch out the tree
-        //                HashSet<GoapAction> subset = actionSubset(usableActions, action);
-        //                bool found = buildGraph(node, leaves, subset, goal, resourceGoal);
-        //                if (found)
-        //                    foundOne = true;
-        //            }
-        //        }
-        //    }
+                    // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
+                    //GoapNode node = new GoapNode(this, parent, parent.Cost + action.GetCost(), parent.Weight + action.GetWeight(), currentState, action);
+                    GoapNode node = new GoapNode(this, parent, parent.Cost + action.GetCost(), action, goal);
 
-        //    return foundOne;
-        //}
+                    //if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
+                    if (inState(goal, currentState))
+                    {
+                        // we found a solution!
+                        leaves.Add(node);
+                        currentMaxCost = node.Cost;
+                        foundOne = true;
+                    }
+                    else if (node.Cost < currentMaxCost)
+                    {
+                        // not at a solution yet, so test all the remaining actions and branch out the tree
+                        HashSet<GoapAction> subset = actionSubset(usableActions, action);
+                        bool found = buildGraph(node, leaves, subset, goal, resourceGoal);
+                        if (found)
+                            foundOne = true;
+                    }
+                }
+            }
+
+            return foundOne;
+        }
 
         /**
          * Create a subset of the actions excluding the removeMe one. Creates a new set.
@@ -216,6 +215,21 @@ namespace GCEngine.Engine.Ai.Goap
             foreach (var t in test)
             {
                 var match = state.ContainsKey(t.Key) && state[t.Key].Equals(t.Value);
+                if (!match)
+                {
+                    allMatch = false;
+                    break;
+                }
+            }
+            return allMatch;
+        }
+
+        private bool inState(GoapState test, GoapState state)
+        {
+            var allMatch = true;
+            foreach (var t in test.GetValues())
+            {
+                var match = state.HasKey(t.Key) && state.Get(t.Key).Equals(t.Value);
                 if (!match)
                 {
                     allMatch = false;
@@ -257,25 +271,17 @@ namespace GCEngine.Engine.Ai.Goap
         /**
          * Apply the stateChange to the currentState
          */
-        private Dictionary<string, object> populateState(Dictionary<string, object> currentState, Dictionary<string, object> stateChange)
+        private GoapState populateState(GoapState currentState, GoapState stateChange)
         {
-            Dictionary<string, object> state = new Dictionary<string, object>();
-            foreach (var s in currentState)
+            GoapState state = new GoapState();
+            foreach (var s in currentState.GetValues())
             {
-                state.Add(s.Key, s.Value);
+                state.Set(s.Key, s.Value);
             }
 
-            foreach (var change in stateChange)
-            {
-                // if the key exists in the current state, update the Value
-                if (state.ContainsKey(change.Key))
-                {
-                    state[change.Key] = change.Value;
-                }
-                else
-                {
-                    state.Add(change.Key, change.Value);
-                }
+            foreach (var change in stateChange.GetValues())
+            {                
+                state.Set(change.Key, change.Value);
             }
 
             return state;

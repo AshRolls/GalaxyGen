@@ -230,7 +230,7 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
             //_actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
-        }
+       }
 
         public void ActionsFinished()
         {
