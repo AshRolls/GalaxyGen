@@ -1,13 +1,9 @@
-﻿using Akka.Actor;
-using GCEngine.Model;
+﻿using GCEngine.Model;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace GCEngine.ViewModel
@@ -17,11 +13,13 @@ namespace GCEngine.ViewModel
         private IProducerViewModelFactory _producerVmFactory;
         private Timer _refreshTimer;
 
-        public PlanetViewModel(ISocietyViewModelFactory initSocietyViewModelFactory, IProducerViewModelFactory initProducerVmFactory)
+        public PlanetViewModel(ISocietyViewModelFactory initSocietyVMFactory, IProducerViewModelFactory initProducerVmFactory, IMarketViewModelFactory initMarketVmFactory)
         {            
             _producerVmFactory = initProducerVmFactory;
-            ISocietyViewModelFactory societyViewModelFactory = initSocietyViewModelFactory;
+            ISocietyViewModelFactory societyViewModelFactory = initSocietyVMFactory;
             this.Society = societyViewModelFactory.CreateSocietyViewModel();
+            IMarketViewModelFactory marketViewModelFactory = initMarketVmFactory;
+            this.Market = marketViewModelFactory.CreateMarketViewModel();
             setupAndStartTimer();
         }
 
@@ -66,6 +64,7 @@ namespace GCEngine.ViewModel
             name_Var = p.Name;
             //Population = model_Var.Population;           
             societyVm_Var.Model = model_Var.Society;
+            marketVm_Var.Model = model_Var.Market;
 
             foreach (Producer prod in model_Var.Producers)
             {
@@ -112,7 +111,6 @@ namespace GCEngine.ViewModel
                     return 0;
             }
         }
-
 
         public Double PositionY
         {
@@ -176,6 +174,20 @@ namespace GCEngine.ViewModel
             {
                 societyVm_Var = value;
                 OnPropertyChanged("Society");
+            }
+        }
+
+        private IMarketViewModel marketVm_Var;
+        public IMarketViewModel Market
+        {
+            get
+            {
+                return marketVm_Var;
+            }
+            private set
+            {
+                marketVm_Var = value;
+                OnPropertyChanged("Market");
             }
         }
 

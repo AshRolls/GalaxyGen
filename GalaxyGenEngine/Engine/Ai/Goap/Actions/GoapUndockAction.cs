@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +18,7 @@ namespace GCEngine.Engine.Ai.Goap.Actions
             //addPrecondition("isDocked", true);
             addPrecondition("DockedAt", undockScId);
             //addEffect("isDocked", false);
-            addEffect("DockedAt", 0);
+            addEffect("DockedAt", 0L);
         }
 
         public override void reset()
@@ -26,9 +27,10 @@ namespace GCEngine.Engine.Ai.Goap.Actions
             _docked = true;
         }
 
-        public override bool isDone()
+        public override bool isDone(object agent)
         {
-            return _docked == false;
+            GoapAgent ag = (GoapAgent)agent;
+            return !ag.StateProvider.CurrentShipIsDocked;
         }
     
 
@@ -37,9 +39,8 @@ namespace GCEngine.Engine.Ai.Goap.Actions
             return false; 
         }
 
-        public override bool checkProceduralPrecondition(object agent)
+        public override bool CheckProceduralPrecondition()
         {
-            // set target?
             return true;
         }
 
@@ -47,9 +48,7 @@ namespace GCEngine.Engine.Ai.Goap.Actions
         {
             GoapAgent ag = (GoapAgent)agent;
 
-            if (!ag.StateProvider.CurrentShipIsDocked)
-                _docked = false;
-            else if (ag.StateProvider.CurrentShipIsDocked && !_requestSent)
+            if (ag.StateProvider.CurrentShipIsDocked && !_requestSent)
             {
                 _requestSent = true;
                 ag.ActionProvider.RequestUndock();
