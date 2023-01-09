@@ -37,17 +37,18 @@ namespace GCEngine.Engine
 
                     if (j % 2 == 0)
                     {
-                        //addMetalProducerToPlanet(ag, p);
+                        addMetalProducerToPlanet(ag, p);
                         addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
                     }
                     else
                     {
-                        //addSpiceProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
+                        addSpiceProducerToPlanet(ag, p);
+                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 50) });
                     }
 
                     j++;
                     ss.Planets.Add(p);
+                    p.SolarSystem = ss;
                 }
 
                 Ship s = this.GetShip("Ship" + chartSS.Name, shipT);
@@ -64,7 +65,8 @@ namespace GCEngine.Engine
                 s.SolarSystem = ss;
                 ss.Ships.Add(s);
 
-                for (int i = 0; i < 1000; i++)
+                const int NUMBER_OF_AGENTS = 0;
+                for (int i = 0; i < NUMBER_OF_AGENTS; i++)
                 {
 
                     ag = this.GetAgent("Agent " + i);
@@ -84,21 +86,17 @@ namespace GCEngine.Engine
                     addNewCargoStoreToShip(s, ag);
                     s.SolarSystem = ss;
                     ss.Ships.Add(s);
-
-                    foreach (Planet p in ss.Planets)
+          
+                    Planet p = ss.Planets.Skip(i % ss.Planets.Count()).First();
+                    if (i % 2 == 0)
                     {
-                        if (j % 2 == 0)
-                        {
-                            //addMetalProducerToPlanet(ag, p);
-                            addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
-                        }
-                        else
-                        {
-                            //addSpiceProducerToPlanet(ag, p);
-                            addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
-                        }
-
-                        j++;
+                        addMetalProducerToPlanet(ag, p);
+                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
+                    }
+                    else
+                    {
+                        addSpiceProducerToPlanet(ag, p);
+                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
                     }
                 }
 
@@ -151,6 +149,9 @@ namespace GCEngine.Engine
             soc.Name = chartP.Name + " Soc";
             plan.Society = soc;
 
+            Market m = new Market();
+            
+            
             return plan;
         }
 

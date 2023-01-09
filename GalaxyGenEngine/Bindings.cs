@@ -57,6 +57,8 @@ namespace GCEngine
             kernel.Bind<IPlanetViewModelFactory>().ToFactory();
             kernel.Bind<ISocietyViewModel>().To<SocietyViewModel>();
             kernel.Bind<ISocietyViewModelFactory>().ToFactory();
+            kernel.Bind<IMarketViewModel>().To<MarketViewModel>();
+            kernel.Bind<IMarketViewModelFactory>().ToFactory();
             kernel.Bind<IAgentViewModel>().To<AgentViewModel>();
             kernel.Bind<IAgentViewModelFactory>().ToFactory();
             kernel.Bind<IProducerViewModel>().To<ProducerViewModel>();

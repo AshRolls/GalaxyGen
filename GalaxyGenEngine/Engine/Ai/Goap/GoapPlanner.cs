@@ -208,22 +208,7 @@ namespace GCEngine.Engine.Ai.Goap
         /**
          * Check that all items in 'test' are in 'state'. If just one does not match or is not there
          * then this returns false.
-         */
-        private bool inState(Dictionary<string, object> test, Dictionary<string, object> state)
-        {
-            var allMatch = true;
-            foreach (var t in test)
-            {
-                var match = state.ContainsKey(t.Key) && state[t.Key].Equals(t.Value);
-                if (!match)
-                {
-                    allMatch = false;
-                    break;
-                }
-            }
-            return allMatch;
-        }
-
+         */        
         private bool inState(GoapState test, GoapState state)
         {
             var allMatch = true;

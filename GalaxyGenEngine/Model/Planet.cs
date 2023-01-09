@@ -13,11 +13,10 @@ namespace GCEngine.Model
             Producers = new HashSet<Producer>();
             Stores = new Dictionary<Int64, Store>();
             DockedShips = new List<Ship>();
-            Agents = new List<Agent>();
+            Agents = new List<Agent>();            
         }
 
         public String Name { get; set; }
-
         public Int64 PlanetId { get; set; }
         public Int64 StarChartId { get; set; }
         public TypeEnum GalType { get; set; }
