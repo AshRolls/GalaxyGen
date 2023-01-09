@@ -28,7 +28,7 @@ namespace GCEngine.Engine.Ai.Goap.Actions
             _requestSent = false;
         }
 
-        public override bool isDone()
+        public override bool isDone(object agent)
         {
             return _loaded == true;
         }
@@ -39,7 +39,7 @@ namespace GCEngine.Engine.Ai.Goap.Actions
             return false; 
         }
 
-        public override bool checkProceduralPrecondition(object agent)
+        public override bool CheckProceduralPrecondition()
         {
             return true;
         }

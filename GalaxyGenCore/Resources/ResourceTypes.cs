@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenCore.Resources
 {
-    public enum ResourceTypeEnum
+    public enum ResourceTypeEnum : ulong
     {
         NotSet = 0,
         Spice = 1,

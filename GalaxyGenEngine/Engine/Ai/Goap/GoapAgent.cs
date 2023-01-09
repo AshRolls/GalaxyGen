@@ -131,7 +131,7 @@ namespace GCEngine.Engine.Ai.Goap
                 }
 
                 GoapAction action = _currentActions.Peek();
-                if (action.isDone())
+                if (action.isDone(this))
                 {
                     // the action is done. Remove it so we can perform the next one
                     _currentActions.Dequeue();
