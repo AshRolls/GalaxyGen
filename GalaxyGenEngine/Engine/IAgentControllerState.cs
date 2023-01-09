@@ -22,7 +22,7 @@ namespace GCEngine.Engine
         bool IsPilotingShip { get; }
         string Memory { get; set; }
         IEnumerable<ScPlanet> PlanetsInSolarSystem { get; }
-        IEnumerable<long> PlanetsInSolarSystemScIds { get; }
+        IEnumerable<long> PlanetsInSolarSystemScIds { get; }        
         bool CurrentShipAtDestination(long destinationScId);
         UInt64 CurrentShipResourceQuantity(ResourceTypeEnum resType);
         double DestinationX(long destinationScId);

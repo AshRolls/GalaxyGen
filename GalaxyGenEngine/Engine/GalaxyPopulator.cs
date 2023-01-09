@@ -47,7 +47,7 @@ namespace GCEngine.Engine
                     }
 
                     j++;
-                    ss.Planets.Add(p);
+                    ss.Planets.Add(p.StarChartId, p);
                     p.SolarSystem = ss;
                 }
 
@@ -58,12 +58,12 @@ namespace GCEngine.Engine
                 ag.Location = s;
                 s.Pilot = ag;
                 ag.AgentState = AgentStateEnum.PilotingShip;
-                s.DockedPlanet = ss.Planets.First();
-                ss.Planets.First().DockedShips.Add(s);
+                s.DockedPlanet = ss.Planets.Values.First();
+                ss.Planets.Values.First().DockedShips.Add(s.ShipId, s);
                 ag.ShipsOwned.Add(s);
                 addNewCargoStoreToShip(s, ag);
                 s.SolarSystem = ss;
-                ss.Ships.Add(s);
+                ss.Ships.Add(s.ShipId, s);
 
                 const int NUMBER_OF_AGENTS = 0;
                 for (int i = 0; i < NUMBER_OF_AGENTS; i++)
@@ -80,14 +80,14 @@ namespace GCEngine.Engine
                     ag.Location = s;
                     s.Pilot = ag;
                     ag.AgentState = AgentStateEnum.PilotingShip;
-                    s.DockedPlanet = ss.Planets.First();
-                    ss.Planets.First().DockedShips.Add(s);
+                    s.DockedPlanet = ss.Planets.Values.First();
+                    ss.Planets.Values.First().DockedShips.Add(s.ShipId, s);
                     ag.ShipsOwned.Add(s);
                     addNewCargoStoreToShip(s, ag);
                     s.SolarSystem = ss;
-                    ss.Ships.Add(s);
+                    ss.Ships.Add(s.ShipId, s);
           
-                    Planet p = ss.Planets.Skip(i % ss.Planets.Count()).First();
+                    Planet p = ss.Planets.Values.Skip(i % ss.Planets.Count()).First();
                     if (i % 2 == 0)
                     {
                         addMetalProducerToPlanet(ag, p);
@@ -110,15 +110,16 @@ namespace GCEngine.Engine
         {
             Producer prod = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
             prod.Owner = ag;
+            prod.Planet = p;
             ag.Producers.Add(prod);
             p.Producers.Add(prod);
-
         }
 
         private void addSpiceProducerToPlanet(Agent ag, Planet p)
         {           
             Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
             prod2.Owner = ag;
+            prod2.Planet = p;
             ag.Producers.Add(prod2);
             p.Producers.Add(prod2);
         }
@@ -150,7 +151,7 @@ namespace GCEngine.Engine
             plan.Society = soc;
 
             Market m = new Market();
-            
+            plan.Market = m;
             
             return plan;
         }

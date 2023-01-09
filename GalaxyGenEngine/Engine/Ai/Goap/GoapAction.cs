@@ -1,4 +1,6 @@
 
+using GalaxyGenCore.Resources;
+using GalaxyGenEngine.Engine.Ai.Goap;
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +10,6 @@ namespace GCEngine.Engine.Ai.Goap
     {
         private GoapState preconditions;
         private GoapState effects;
-        private Dictionary<Int64, Int64> resources;
 
         private bool inRange = false;
 
@@ -39,7 +40,6 @@ namespace GCEngine.Engine.Ai.Goap
         {
             preconditions = new GoapState();
             effects = new GoapState();
-            resources = new Dictionary<Int64, Int64>();
         }
 
         public void doReset()
@@ -95,43 +95,29 @@ namespace GCEngine.Engine.Ai.Goap
         }
 
 
-        public void addPrecondition(string key, object value)
+        public void addPrecondition(GoapStateKey key, object value)
         {
             preconditions.Set(key, value);
         }
 
-
-        public void removePrecondition(string key)
+        public void removePrecondition(GoapStateKey key)
         {
             if (preconditions.HasKey(key))
                 preconditions.Remove(key);
         }
 
 
-        public void addEffect(string key, object value)
+        public void addEffect(GoapStateKey key, object value)
         {
             effects.Set(key, value);
         }
 
 
-        public void removeEffect(string key)
+        public void removeEffect(GoapStateKey key)
         {
             if (effects.HasKey(key))
                 effects.Remove(key);
         }
-
-        public void addResource(Int64 key, Int64 value)
-        {
-            resources.Add(key, value);
-        }
-
-
-        public void removeResource(Int64 key, Int64 value)
-        {
-            if (resources.ContainsKey(key))
-                resources.Remove(key);
-        }
-
 
         public GoapState Preconditions
         {
@@ -146,14 +132,6 @@ namespace GCEngine.Engine.Ai.Goap
             get
             {
                 return effects;
-            }
-        }
-
-        public Dictionary<Int64, Int64> Resources
-        {
-            get
-            {
-                return resources;
             }
         }
     }

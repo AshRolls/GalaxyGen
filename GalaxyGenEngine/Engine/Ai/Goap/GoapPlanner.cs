@@ -43,7 +43,7 @@ namespace GCEngine.Engine.Ai.Goap
             GoapState goalGS = new GoapState(goal);
             GoapNode startNode = new GoapNode(this, null, 0, null, goal);
 
-            bool success = buildGraph(startNode, leaves, UsableActions, goalGS, resourceGoal);
+            bool success = buildGraph(startNode, leaves, UsableActions, goalGS);
             //bool success = aStar(worldState, leaves, goalGS, resourceGoal, agent);
 
             if (!success)
@@ -149,7 +149,7 @@ namespace GCEngine.Engine.Ai.Goap
          * 'runningCost' value where the lowest cost will be the best action
          * sequence.
          */
-        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal, Dictionary<Int64, Int64> resourceGoal)
+        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal)
         {
             bool foundOne = false;
 
@@ -157,7 +157,6 @@ namespace GCEngine.Engine.Ai.Goap
 
             foreach (GoapAction action in usableActions)
             {
-
                 // if the parent state has the conditions for this action's preconditions, we can use it here
                 if (inState(action.Preconditions, parent.State) && action.CheckProceduralPrecondition())
                 {
@@ -181,7 +180,7 @@ namespace GCEngine.Engine.Ai.Goap
                     {
                         // not at a solution yet, so test all the remaining actions and branch out the tree
                         HashSet<GoapAction> subset = actionSubset(usableActions, action);
-                        bool found = buildGraph(node, leaves, subset, goal, resourceGoal);
+                        bool found = buildGraph(node, leaves, subset, goal);
                         if (found)
                             foundOne = true;
                     }

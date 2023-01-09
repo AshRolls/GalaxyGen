@@ -32,6 +32,7 @@ namespace GCEngine.Engine
             Receive<MessageTick>(msg => receiveTick(msg));
             Receive<MessageShipCommand>(msg => receiveCommandForShip(msg));
             Receive<MessageMarketCommand>(msg => receiveCommandForMarket(msg));
+            Receive<MessagePlanetCommand>(msg => receiveCommandForPlanet(msg));
             Receive<MessageEngineAgCompletedCommand>(msg => receiveAgentCompletedMessage(msg));
 
             //_actorTextOutput.Tell("Solar System initialised : " + _solarSystem.Name);            
@@ -86,6 +87,10 @@ namespace GCEngine.Engine
         private void receiveCommandForMarket(MessageMarketCommand msg)
         {
             _solarSystemC.ReceiveCommandForMarket(msg);
+        }
+        private void receiveCommandForPlanet(MessagePlanetCommand msg)
+        {
+            _solarSystemC.ReceiveCommandForPlanet(msg);
         }
 
         internal void SendMessageToAgent(Int64 agentId, object msg)

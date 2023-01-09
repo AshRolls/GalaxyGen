@@ -10,6 +10,7 @@ using GCEngine.Engine.Messages;
 using GCEngine.Framework;
 using GCEngine.Engine.Ai.Goap;
 using GCEngine.Engine.Ai.Goap.Actions;
+using GalaxyGenEngine.Engine.Ai.Goap;
 
 namespace GCEngine.Engine.Controllers.AgentDefault
 {
@@ -22,9 +23,9 @@ namespace GCEngine.Engine.Controllers.AgentDefault
         private AgentDefaultMemory _memory;
         private GoapAgent _goapAgent;
 
-        public AgentDefaultController(AgentControllerState ag, IActorRef actorSolarSystem, IActorRef actorTextOutput)
+        public AgentDefaultController(AgentControllerState state, IActorRef actorSolarSystem, IActorRef actorTextOutput)
         {
-            _state = ag;
+            _state = state;
             _actorSolarSystem = actorSolarSystem;
             _actorTextOutput = actorTextOutput;
             _goapAgent = new GoapAgent(this, this, _state);
@@ -147,6 +148,8 @@ namespace GCEngine.Engine.Controllers.AgentDefault
         public void RequestLoadShip(ResourceQuantity resQ)
         {
             //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);
+            //TODO planetscid needs to be planetid
+            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestLoadShipResources(PlanetCommandEnum.RequestResourceShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
 
         private Int64 chooseRandomDestinationScId()
@@ -177,16 +180,16 @@ namespace GCEngine.Engine.Controllers.AgentDefault
         public GoapState GetWorldState()
         {
             GoapState worldData = new GoapState();
-
+            GoapStateKey key = new GoapStateKey();
+            key.Type = GoapStateKeyEnum.String;
+            key.String = "DockedAt";
             if (_state.CurrentShipIsDocked)
-            {
-                //worldData.Set("isDocked", true);
-                worldData.Set("DockedAt", _state.CurrentShipDockedPlanetScId);
+            {                
+                worldData.Set(key, _state.CurrentShipDockedPlanetScId);
             }
             else
-            {
-                //worldData.Set("isDocked", false);
-                worldData.Set("DockedAt", 0);
+            {             
+                worldData.Set(key, 0);
             }
 
             return worldData;
@@ -204,9 +207,11 @@ namespace GCEngine.Engine.Controllers.AgentDefault
         public GoapState CreateGoalState()
         {
             GoapState goalState = new GoapState();
-
-            //goalState.Set("isDocked", true);
-            goalState.Set("DockedAt", chooseRandomDestinationScId());
+            
+            GoapStateKey key = new GoapStateKey();
+            key.Type = GoapStateKeyEnum.String;
+            key.String = "DockedAt";
+            goalState.Set(key, chooseRandomDestinationScId());
 
             return goalState;
         }

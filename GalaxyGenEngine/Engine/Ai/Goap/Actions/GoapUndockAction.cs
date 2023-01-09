@@ -1,4 +1,5 @@
-﻿using GCEngine.Engine.Controllers;
+﻿using GalaxyGenEngine.Engine.Ai.Goap;
+using GCEngine.Engine.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,12 @@ namespace GCEngine.Engine.Ai.Goap.Actions
         private bool _docked = true;
 
         public GoapUndockAction(Int64 undockScId)
-        {
-            //addPrecondition("isDocked", true);
-            addPrecondition("DockedAt", undockScId);
-            //addEffect("isDocked", false);
-            addEffect("DockedAt", 0L);
+        {            
+            GoapStateKey key = new GoapStateKey();
+            key.Type = GoapStateKeyEnum.String;
+            key.String = "DockedAt";
+            addPrecondition(key, undockScId);            
+            addEffect(key, 0L);
         }
 
         public override void reset()

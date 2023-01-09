@@ -5,34 +5,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaxyGenEngine.Engine.Ai.Goap;
 
 namespace GCEngine.Engine.Ai.Goap.Actions
 {
     public class GoapLoadShipAction : GoapAction
     {
-        private bool _loaded = false;
         private bool _requestSent = false;
-        private ResourceQuantity _resourceQ;
+        private ResourceQuantity _resQ;
+        private ulong _curQ;
 
-        public GoapLoadShipAction(Int64 dockScId, ResourceQuantity resQ)
-        {
-            addPrecondition("isDocked", true);
-            addPrecondition("DockedAt", dockScId);
-            addResource((Int64)resQ.Type, (Int64)resQ.Quantity);
-            _resourceQ = resQ;           
+        public GoapLoadShipAction(long dockScId, long sourceStoreId, long destShipStoreId, ResourceQuantity resQ)
+        {            
+            GoapStateKey key = new GoapStateKey();
+            key.Type = GoapStateKeyEnum.String;
+            key.String = "DockedAt";
+            addPrecondition(key, dockScId);
+            
+            key = new GoapStateKey();
+            key.Type = GoapStateKeyEnum.Resource;
+            key.ResType = resQ.Type;
+            key.StoreId = sourceStoreId;
+            addPrecondition(key, resQ.Quantity);
+            addEffect(key, (0 - resQ.Quantity));
+            key.StoreId = destShipStoreId;
+            addEffect(key, resQ.Quantity);
+            
+            _resQ = resQ;                       
         }
 
         public override void reset()
         {
-            _loaded = false;
             _requestSent = false;
         }
 
         public override bool isDone(object agent)
         {
-            return _loaded == true;
+            GoapAgent ag = (GoapAgent)agent;
+            return ag.StateProvider.CurrentShipResourceQuantity(_resQ.Type) >= _resQ.Quantity;          
         }
-    
+
 
         public override bool requiresInRange()
         {
@@ -48,15 +60,12 @@ namespace GCEngine.Engine.Ai.Goap.Actions
         {
             GoapAgent ag = (GoapAgent)agent;
 
-            //if (ag.StateProvider.CurrentShipResourceQuantity(_resourceQ.Type) >= _resourceQ.Quantity)            
-            //    _loaded = true;
-            //else if (!_requestSent)
-            //{
-            //    ag.ActionProvider.RequestLoadShip(_resourceQ);
-            //    _requestSent = true;
-            //}
-            _loaded = true;
-            ag.ActionProvider.RequestLoadShip(_resourceQ);
+            if (!_requestSent)
+            {
+                _curQ = ag.StateProvider.CurrentShipResourceQuantity(_resQ.Type);
+                _requestSent = true; 
+                ag.ActionProvider.RequestLoadShip(_resQ);
+            }
 
             return true;
         }

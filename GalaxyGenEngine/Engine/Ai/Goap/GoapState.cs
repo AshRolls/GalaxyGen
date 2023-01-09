@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaxyGenCore.Resources;
+using GalaxyGenEngine.Engine.Ai.Goap;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +10,9 @@ namespace GCEngine.Engine.Ai.Goap
 {
     public class GoapState
     {
-        private Dictionary<string, object> values = new Dictionary<string, object>();
-        private readonly Dictionary<string, object> bufferA = new Dictionary<string, object>(DefaultSize);
-        private readonly Dictionary<string, object> bufferB = new Dictionary<string, object>(DefaultSize);
+        private Dictionary<GoapStateKey, object> values = new Dictionary<GoapStateKey, object>();        
+        private readonly Dictionary<GoapStateKey, object> bufferA = new Dictionary<GoapStateKey, object>(DefaultSize);
+        private readonly Dictionary<GoapStateKey, object> bufferB = new Dictionary<GoapStateKey, object>(DefaultSize);
         public static int DefaultSize = 20;
 
         public GoapState()
@@ -19,7 +21,7 @@ namespace GCEngine.Engine.Ai.Goap
 
         public GoapState(GoapState state)
         {
-            foreach (KeyValuePair<string, object> kvp in state.GetValues())
+            foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
             {
                 values.Add(kvp.Key, kvp.Value);
             }
@@ -60,7 +62,7 @@ namespace GCEngine.Engine.Ai.Goap
             }
         }
 
-        public object Get(string key)
+        public object Get(GoapStateKey key)
         {
             lock (values)
             {
@@ -70,13 +72,13 @@ namespace GCEngine.Engine.Ai.Goap
             }
         }
 
-        public Dictionary<string, object> GetValues()
+        public Dictionary<GoapStateKey, object> GetValues()
         {
             lock (values)
                 return values;
         }
 
-        public void Set(string key, object value)
+        public void Set(GoapStateKey key, object value)
         {
             lock (values)
             {
@@ -91,13 +93,13 @@ namespace GCEngine.Engine.Ai.Goap
             return newState;
         }
 
-        public bool HasKey(string key)
+        public bool HasKey(GoapStateKey key)
         {
             lock (values)
                 return values.ContainsKey(key);
         }
 
-        public void Remove(string key)
+        public void Remove(GoapStateKey key)
         {
             lock (values)
             {

@@ -17,7 +17,7 @@ namespace GCEngine.Engine.Controllers
         private SolarSystem _model;
         private Dictionary<Int64, PlanetController> _planetCs;
         private IEnumerable _planetValues;        
-        private Dictionary<Int64,ShipController> _shipCs;
+        private Dictionary<Int64, ShipController> _shipCs;
         private IEnumerable _shipValues;
         private IActorRef _actorTextOutput;
         private ActorSolarSystem _parentActor;
@@ -30,7 +30,7 @@ namespace GCEngine.Engine.Controllers
 
             // create child controller for each planet in ss
             _planetCs = new Dictionary<Int64, PlanetController>();
-            foreach (Planet p in ss.Planets)
+            foreach (Planet p in ss.Planets.Values)
             {
                 PlanetController pc = new PlanetController(p, actorTextOutput);
                 _planetCs.Add(p.PlanetId, pc);
@@ -39,7 +39,7 @@ namespace GCEngine.Engine.Controllers
 
             // create child controller for each ship in ss
             _shipCs = new Dictionary<Int64, ShipController>();
-            foreach (Ship s in ss.Ships)
+            foreach (Ship s in ss.Ships.Values)
             {
                 ShipController sc = new ShipController(s, this, actorTextOutput);
                 _shipCs.Add(s.ShipId, sc);
@@ -70,8 +70,7 @@ namespace GCEngine.Engine.Controllers
         }
 
         internal void ReceiveCommandForShip(MessageShipCommand msg)
-        {
-           
+        {           
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
        
@@ -91,7 +90,7 @@ namespace GCEngine.Engine.Controllers
                     break;
                 case ShipCommandEnum.SetAutopilot:
                     ShipSetAutopilot(msg, sc);
-                    break;
+                    break;                
                 default:
                     throw new Exception("Unknown Ship Command");
             }
@@ -115,8 +114,8 @@ namespace GCEngine.Engine.Controllers
             bool success = false;
             if (sc.checkValidDockCommand(msg))
             {
-                Ship s = _model.Ships.Where(x => x.ShipId == msg.ShipId).First();
-                Planet p = _model.Planets.Where(x => x.StarChartId == ((MessageShipDocking)msg.Command).DockingTargetId).FirstOrDefault();
+                Ship s = _model.Ships[msg.ShipId];
+                Planet p = _model.Planets[((MessageShipDocking)msg.Command).DockingTargetId];
                 _planetCs[p.PlanetId].DockShip(s);                
                 sc.Dock(p);
                 success = true;
@@ -163,6 +162,11 @@ namespace GCEngine.Engine.Controllers
         internal void ReceiveCommandForMarket(MessageMarketCommand msg)
         {
             _planetCs[msg.PlanetId].ReceiveCommandForMarket(msg);
+        }
+
+        internal void ReceiveCommandForPlanet(MessagePlanetCommand msg)
+        {            
+            _planetCs[msg.PlanetId].ReceiveCommandForPlanet(msg);
         }
 
         internal Int64 SolarSystemId

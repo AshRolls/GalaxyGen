@@ -12,7 +12,7 @@ namespace GCEngine.Model
             GalType = TypeEnum.Planet;
             Producers = new HashSet<Producer>();
             Stores = new Dictionary<Int64, Store>();
-            DockedShips = new List<Ship>();
+            DockedShips = new Dictionary<long, Ship>();
             Agents = new List<Agent>();            
         }
 
@@ -29,8 +29,8 @@ namespace GCEngine.Model
         public Society Society { get; set; }
 
         public ICollection<Producer> Producers { get; set; }
-        public Dictionary<Int64,Store> Stores { get; set; }
-        public ICollection<Ship> DockedShips { get; set; }
+        public Dictionary<long, Store> Stores { get; set; }
+        public Dictionary<long, Ship> DockedShips { get; set; }
         public ICollection<Agent> Agents { get; set; }
         public SolarSystem SolarSystem { get; set; }
         public Market Market { get; set; }

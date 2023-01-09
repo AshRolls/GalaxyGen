@@ -31,6 +31,14 @@ namespace GCEngine.Engine
             }
         }
 
+        public long AgentId
+        {
+            get
+            {
+                return _model.AgentId;
+            }
+        }
+
         public IEnumerable<ScPlanet> PlanetsInSolarSystem
         {
             get
@@ -44,7 +52,7 @@ namespace GCEngine.Engine
         {
             get
             {
-                return _model.SolarSystem.Planets.Select(x => x.StarChartId);
+                return _model.SolarSystem.Planets.Keys;
             }
         }
 
@@ -85,7 +93,7 @@ namespace GCEngine.Engine
         {
             if (destinationScId != lastDestinationScId) // if we have a new destination, cache the planet so we only need to look it up once.
             {
-                destinationPlanet = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
+                destinationPlanet = _model.SolarSystem.Planets[destinationScId];
                 lastDestinationScId = destinationScId;
             }
         }
@@ -130,6 +138,14 @@ namespace GCEngine.Engine
             get
             {
                 return ((Ship)_model.Location).ShipId;
+            }
+        }
+
+        public Int64 CurrentShipStoreId
+        {
+            get
+            {
+                return ((Ship)_model.Location).Stores[_model.AgentId].StoreId;
             }
         }
 
@@ -210,7 +226,7 @@ namespace GCEngine.Engine
 
         public UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res)
         {
-            Planet p = _model.SolarSystem.Planets.Where(x => x.StarChartId == planetScId).FirstOrDefault();
+            Planet p = _model.SolarSystem.Planets[planetScId];
             Store s = p.Stores[_model.AgentId];
             if (s.StoredResources.ContainsKey(res))
                 return s.StoredResources[res];
@@ -220,7 +236,7 @@ namespace GCEngine.Engine
 
         public List<ResourceQuantity> PlanetResources(Int64 planetScId)
         {
-            Planet p = _model.SolarSystem.Planets.Where(x => x.StarChartId == planetScId).FirstOrDefault();
+            Planet p = _model.SolarSystem.Planets[planetScId];
             List<ResourceQuantity> resources = new List<ResourceQuantity>();
             if (p.Stores.ContainsKey(_model.AgentId))
             {

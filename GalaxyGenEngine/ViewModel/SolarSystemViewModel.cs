@@ -83,7 +83,7 @@ namespace GCEngine.ViewModel
             planets_Var = new ObservableCollection<IPlanetViewModel>();
             if (model_Var != null)
             {
-                foreach (Planet p in model_Var.Planets)
+                foreach (Planet p in model_Var.Planets.Values)
                 {
                     IPlanetViewModel pVm = planetViewModelFactory.CreatePlanetViewModel();
                     pVm.Model = p;
@@ -131,7 +131,7 @@ namespace GCEngine.ViewModel
             ships_Var = new ObservableCollection<IShipViewModel>();
             if (model_Var != null)
             {
-                foreach (Ship s in model_Var.Ships)
+                foreach (Ship s in model_Var.Ships.Values)
                 {
                     IShipViewModel sVm = shipViewModelFactory.CreateShipViewModel();
                     sVm.Model = s;

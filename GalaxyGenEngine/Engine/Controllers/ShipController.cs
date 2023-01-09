@@ -23,7 +23,10 @@ namespace GCEngine.Engine.Controllers
             _model = s;
             _solarSystemC = ssc;
             _actorTextOutput = actorTextOutput;
-            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == _model.DestinationScId).FirstOrDefault();
+            if (_model.DestinationScId != 0)
+            {
+                _destination = _model.SolarSystem.Planets[_model.DestinationScId];
+            }
         }
 
         public void Tick(MessageTick tick)
@@ -138,7 +141,7 @@ namespace GCEngine.Engine.Controllers
         internal void SetDestination(Int64 destinationScId)
         {
             _model.DestinationScId = destinationScId;
-            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
+            _destination = _model.SolarSystem.Planets[destinationScId];
         }
 
         internal void SetAutopilot(bool active)

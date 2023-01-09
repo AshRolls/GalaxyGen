@@ -11,17 +11,17 @@ namespace GCEngine.Model
         public SolarSystem()
         {
             SolarSystemId = IdUtils.GetId();
-            Planets = new List<Planet>();
+            Planets = new Dictionary<long, Planet>();
             Agents = new List<Agent>();
-            Ships = new HashSet<Ship>();
+            Ships = new Dictionary<long, Ship>();
         }
 
         public Int64 SolarSystemId { get; set; }
         public Int64 StarChartId { get; set; }
 
-        public ICollection<Planet> Planets { get; set; }
+        public Dictionary<long, Planet> Planets { get; set; }
         public ICollection<Agent> Agents { get; set; }
-        public ICollection<Ship> Ships { get; set; }
+        public Dictionary<long, Ship> Ships { get; set; }
 
         [JsonIgnore]
         public String Name { get; set; }

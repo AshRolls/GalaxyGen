@@ -66,7 +66,7 @@ namespace GCEngine.Engine.Controllers
 
         private void requestResources(MessageTick tick)
         {
-            MessageRequestResources msg = new MessageRequestResources(_bp.Consumes, _model.Owner, tick.Tick);
+            MessagePlanetRequestResources msg = new MessagePlanetRequestResources(_bp.Consumes, _model.Owner.AgentId, _model.Planet.Stores[_model.Owner.AgentId].StoreId, tick.Tick);
             if (_planetC.ReceiveResourceRequest(msg))
             {
                 _model.TickForNextProduction = msg.TickSent + _bp.BaseTicks;
