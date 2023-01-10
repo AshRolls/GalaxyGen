@@ -60,13 +60,11 @@ namespace GCEngine.Engine.Ai.Goap
 
                 // get the world state and the goal we want to plan for
                 GoapState worldState = _dataProvider.GetWorldState();
-                Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
                 GoapState goal = _dataProvider.CreateGoalState();
-                Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
                 loadActions();
 
                 // Plan
-                Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, resourceState, goal, resourceGoal);
+                Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, goal);
                 if (plan != null)
                 {
                     // we have a plan, hooray!

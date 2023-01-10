@@ -26,18 +26,10 @@ namespace GCEngine.Engine.Ai.Goap
         GoapState GetWorldState();
 
         /**
-         * The resources of the Agent.
-         * Supply the current resources of the agent.
-         */
-        Dictionary<Int64, Int64> GetResourceState();
-
-        /**
          * Give the planner a new goal so it can figure out 
          * the actions needed to fulfill it.
          */
         GoapState CreateGoalState();
-
-        Dictionary<Int64, Int64> CreateResourceGoal();
 
         /**
          * No sequence of actions could be found for the supplied goal.

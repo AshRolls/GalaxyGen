@@ -17,7 +17,7 @@ namespace GCEngine.Engine.Ai.Goap
          * Returns null if a plan could not be found, or a list of the actions
          * that must be performed, in order, to fulfill the goal.
          */
-        public Queue<GoapAction> Plan(object agent, HashSet<GoapAction> availableActions, GoapState worldState, Dictionary<Int64, Int64> resourceState, GoapState goal, Dictionary<Int64, Int64> resourceGoal)
+        public Queue<GoapAction> Plan(object agent, HashSet<GoapAction> availableActions, GoapState worldState, GoapState goal)
         {
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
@@ -25,7 +25,6 @@ namespace GCEngine.Engine.Ai.Goap
                 a.doReset();
             }
 
-            // check what actions can run using their checkProceduralPrecondition
             UsableActions = new HashSet<GoapAction>();
             foreach (GoapAction a in availableActions)
             {
@@ -59,11 +58,11 @@ namespace GCEngine.Engine.Ai.Goap
             {
                 if (cheapest == null)
                     cheapest = leaf;
-                //else
-                //{
-                //    if (leaf.BetterThan(cheapest))
-                //        cheapest = leaf;
-                //}
+                else
+                {
+                    if (leaf.BetterThan(cheapest))
+                        cheapest = leaf;
+                }
             }
 
             // get its node and work back through the parents

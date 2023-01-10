@@ -64,9 +64,9 @@ namespace GCEngine.Engine.Ai.Goap
             Cost = PathCost + HeuristicCost;
         }
 
-        public bool IsGoal()
+        internal bool BetterThan(GoapNode cheapest)
         {
-            return this.HeuristicCost <= 0;
+            return this.Cost < cheapest.Cost;
         }
 
         //public List<GoapNode> Expand(object agent)
