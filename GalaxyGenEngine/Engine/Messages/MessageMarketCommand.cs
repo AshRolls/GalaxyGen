@@ -20,14 +20,14 @@ namespace GCEngine.Engine.Messages
 
     public class MessageMarketCommand : Message
     {
-        public MessageMarketCommand(IMessageMarketCommandData cmd, Int64 tickSent, Int64 planetId)
+        public MessageMarketCommand(IMessageMarketCommandData cmd, Int64 tickSent, Int64 planetScId)
         {
             Command = cmd;
             TickSent = tickSent;
-            PlanetId = planetId;
+            PlanetScId = planetScId;
         }
 
         public IMessageMarketCommandData Command { get; private set; }
-        public Int64 PlanetId { get; private set; }
+        public Int64 PlanetScId { get; private set; }
     }
 }

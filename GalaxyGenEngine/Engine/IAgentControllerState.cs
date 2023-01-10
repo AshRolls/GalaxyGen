@@ -30,5 +30,6 @@ namespace GCEngine.Engine
         bool XYAtDestination(long destinationScId, double X, double Y);
         UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res);
         List<ResourceQuantity> PlanetResources(Int64 planetScId);
+        bool TryGetPlanetStoreId(Int64 planetScId, out long storeId);
     }
 }

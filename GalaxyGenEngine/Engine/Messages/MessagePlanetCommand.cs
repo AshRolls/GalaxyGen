@@ -15,14 +15,14 @@ namespace GCEngine.Engine.Messages
 
     public class MessagePlanetCommand : Message
     {
-        public MessagePlanetCommand(IMessagePlanetCommandData cmd, Int64 tickSent, Int64 planetId)
+        public MessagePlanetCommand(IMessagePlanetCommandData cmd, Int64 tickSent, Int64 planetScId)
         {
             Command = cmd;
             TickSent = tickSent;
-            PlanetId = planetId;
+            PlanetScId = planetScId;
         }
 
         public IMessagePlanetCommandData Command { get; private set; }        
-        public Int64 PlanetId { get; private set; }
+        public Int64 PlanetScId { get; private set; }
     }
 }

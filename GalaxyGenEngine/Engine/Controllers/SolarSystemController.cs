@@ -33,7 +33,7 @@ namespace GCEngine.Engine.Controllers
             foreach (Planet p in ss.Planets.Values)
             {
                 PlanetController pc = new PlanetController(p, actorTextOutput);
-                _planetCs.Add(p.PlanetId, pc);
+                _planetCs.Add(p.StarChartId, pc);
             }
             _planetValues = _planetCs.Values;
 
@@ -102,7 +102,7 @@ namespace GCEngine.Engine.Controllers
             bool success = false;
             if (sc.checkValidUndockCommand(msg))
             {
-                _planetCs[sc.DockedPlanet.PlanetId].UndockShip(msg.ShipId);
+                _planetCs[sc.DockedPlanet.StarChartId].UndockShip(msg.ShipId);
                 sc.Undock();
                 success = true;
             }
@@ -116,7 +116,7 @@ namespace GCEngine.Engine.Controllers
             {
                 Ship s = _model.Ships[msg.ShipId];
                 Planet p = _model.Planets[((MessageShipDocking)msg.Command).DockingTargetId];
-                _planetCs[p.PlanetId].DockShip(s);                
+                _planetCs[p.StarChartId].DockShip(s);                
                 sc.Dock(p);
                 success = true;
             }
@@ -161,12 +161,12 @@ namespace GCEngine.Engine.Controllers
 
         internal void ReceiveCommandForMarket(MessageMarketCommand msg)
         {
-            _planetCs[msg.PlanetId].ReceiveCommandForMarket(msg);
+            _planetCs[msg.PlanetScId].ReceiveCommandForMarket(msg);
         }
 
         internal void ReceiveCommandForPlanet(MessagePlanetCommand msg)
         {            
-            _planetCs[msg.PlanetId].ReceiveCommandForPlanet(msg);
+            _planetCs[msg.PlanetScId].ReceiveCommandForPlanet(msg);
         }
 
         internal Int64 SolarSystemId

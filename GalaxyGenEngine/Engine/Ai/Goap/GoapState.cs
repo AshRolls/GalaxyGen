@@ -37,7 +37,11 @@ namespace GCEngine.Engine.Ai.Goap
             lock (b.values)
             {
                 foreach (var pair in b.values)
-                    result.values[pair.Key] = pair.Value;
+                {
+                    if (pair.Key.Type == GoapStateKeyEnum.String) result.values[pair.Key] = pair.Value;
+                    if (pair.Key.Type == GoapStateKeyEnum.Resource && !result.values.ContainsKey(pair.Key)) result.values[pair.Key] = pair.Value;
+                    else if (pair.Key.Type == GoapStateKeyEnum.Resource) result.values[pair.Key] = (long)pair.Value + (long)result.values[pair.Key];
+                }
                 return result;
             }
         }
@@ -47,20 +51,20 @@ namespace GCEngine.Engine.Ai.Goap
             get { return values.Count; }
         }
 
-        public bool HasAny(GoapState other)
-        {
-            lock (values) lock (other.values)
-            {
-                foreach (var pair in other.values)
-                {
-                    object thisValue;
-                    values.TryGetValue(pair.Key, out thisValue);
-                    if (Equals(thisValue, pair.Value))
-                        return true;
-                }
-                return false;
-            }
-        }
+        //public bool HasAny(GoapState other)
+        //{
+        //    lock (values) lock (other.values)
+        //    {
+        //        foreach (var pair in other.values)
+        //        {
+        //            object thisValue;
+        //            values.TryGetValue(pair.Key, out thisValue);
+        //            if (Equals(thisValue, pair.Value))
+        //                return true;
+        //        }
+        //        return false;
+        //    }
+        //}
 
         public object Get(GoapStateKey key)
         {
@@ -82,7 +86,11 @@ namespace GCEngine.Engine.Ai.Goap
         {
             lock (values)
             {
-                if (values.ContainsKey(key)) values[key] = value;
+                if (values.ContainsKey(key))
+                {
+                    if (key.Type == GoapStateKeyEnum.String) values[key] = value;
+                    else if (key.Type == GoapStateKeyEnum.Resource) values[key] = (long)values[key] + (long)value;
+                }
                 else values.Add(key, value);
             }
         }
@@ -131,7 +139,9 @@ namespace GCEngine.Engine.Ai.Goap
                     if (!Equals(pair.Value, otherValue))
                     {
                         count++;
-                        values[pair.Key] = pair.Value;
+                        if (pair.Key.Type == GoapStateKeyEnum.String) values[pair.Key] = pair.Value;
+                        else if (pair.Key.Type == GoapStateKeyEnum.Resource && otherValue != null) values[pair.Key] = (long)pair.Value + (long)otherValue;
+                        else if (pair.Key.Type == GoapStateKeyEnum.Resource) values[pair.Key] = pair.Value;
                         if (count >= stopAt)
                             break;
                     }
@@ -154,7 +164,11 @@ namespace GCEngine.Engine.Ai.Goap
                     {
                         count++;
                         if (difference != null)
-                            difference.values[pair.Key] = pair.Value;
+                        {
+                            if (pair.Key.Type == GoapStateKeyEnum.String) difference.values[pair.Key] = pair.Value;
+                            else if (pair.Key.Type == GoapStateKeyEnum.Resource && otherValue != null) difference.values[pair.Key] = (long)pair.Value + (long)otherValue;
+                            else if (pair.Key.Type == GoapStateKeyEnum.Resource) difference.values[pair.Key] = pair.Value;
+                        }
                         if (count >= stopAt)
                             break;
                     }
@@ -163,22 +177,22 @@ namespace GCEngine.Engine.Ai.Goap
             }
         }
 
-        public bool HasAnyConflict(GoapState other) // used only in backward for now
-        {
-            lock (values) lock (other.values)
-            {
-                foreach (var pair in other.values)
-                {
-                    object thisValue;
-                    values.TryGetValue(pair.Key, out thisValue);
-                    var otherValue = pair.Value;
-                    if (otherValue == null || Equals(otherValue, false))
-                        continue;
-                    if (thisValue != null && !Equals(otherValue, thisValue))
-                        return true;
-                }
-                return false;
-            }
-        }
+        //public bool HasAnyConflict(GoapState other) // used only in backward for now
+        //{
+        //    lock (values) lock (other.values)
+        //    {
+        //        foreach (var pair in other.values)
+        //        {
+        //            object thisValue;
+        //            values.TryGetValue(pair.Key, out thisValue);
+        //            var otherValue = pair.Value;
+        //            if (otherValue == null || Equals(otherValue, false))
+        //                continue;
+        //            if (thisValue != null && !Equals(otherValue, thisValue))
+        //                return true;
+        //        }
+        //        return false;
+        //    }
+        //}
     }
 }

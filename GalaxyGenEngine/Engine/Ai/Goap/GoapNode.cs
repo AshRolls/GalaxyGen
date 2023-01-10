@@ -26,7 +26,6 @@ namespace GCEngine.Engine.Ai.Goap
             this.Cost = cost;
             this.planner = planner;
             
-
             init(newGoal);
         }
 
@@ -41,11 +40,11 @@ namespace GCEngine.Engine.Ai.Goap
             {
                 this.State = planner.StartingWorldState.Clone();                
             }
-
-            //GoapAction nextAction = Parent == null ? null : Parent.Action; // TODO can pass this later for improved cost calc in action.getCost
+            
             if (this.Action != null)
             {
-                this.goal = newGoal + this.Action.Preconditions;
+                //this.goal = newGoal + this.Action.Preconditions;
+                this.goal = newGoal;
                 this.State.AddFromState(this.Action.Effects);
 
                 PathCost += this.Action.GetCost();

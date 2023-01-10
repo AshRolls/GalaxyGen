@@ -147,8 +147,7 @@ namespace GCEngine.Engine.Controllers.AgentDefault
 
         public void RequestLoadShip(ResourceQuantity resQ)
         {
-            //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);
-            //TODO planetscid needs to be planetid
+            //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);            
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestLoadShipResources(PlanetCommandEnum.RequestResourceShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
 
@@ -183,25 +182,16 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             GoapStateKey key = new GoapStateKey();
             key.Type = GoapStateKeyEnum.String;
             key.String = "DockedAt";
-            if (_state.CurrentShipIsDocked)
-            {                
-                worldData.Set(key, _state.CurrentShipDockedPlanetScId);
-            }
-            else
-            {             
-                worldData.Set(key, 0);
-            }
+            if (_state.CurrentShipIsDocked) worldData.Set(key, _state.CurrentShipDockedPlanetScId);            
+            else worldData.Set(key, 0);
+
+            key = new GoapStateKey();
+            key.Type = GoapStateKeyEnum.Resource;
+            key.ResType = ResourceTypeEnum.Platinum;
+            key.StoreId = _state.CurrentShipStoreId;
+            //worldData.Set()
 
             return worldData;
-        }
-
-        public Dictionary<Int64, Int64> GetResourceState()
-        {
-            Dictionary<Int64, Int64> resourceData = new Dictionary<Int64, Int64>();
-
-            // no resources
-
-            return resourceData;
         }
 
         public GoapState CreateGoalState()
@@ -213,16 +203,12 @@ namespace GCEngine.Engine.Controllers.AgentDefault
             key.String = "DockedAt";
             goalState.Set(key, chooseRandomDestinationScId());
 
+            key = new GoapStateKey();
+            key.Type = GoapStateKeyEnum.Resource;
+            key.ResType = ResourceTypeEnum.Platinum;
+            key.StoreId = _state.CurrentShipStoreId;
+            goalState.Set(key, 1L);
             return goalState;
-        }
-
-        public Dictionary<Int64, Int64> CreateResourceGoal()
-        {
-            Dictionary<Int64, Int64> resourceGoal = new Dictionary<Int64, Int64>();
-
-            resourceGoal.Add((Int64)ResourceTypeEnum.Platinum, 10);
-
-            return resourceGoal;
         }
 
         public void PlanFailed(GoapState failedGoal)
@@ -305,17 +291,19 @@ namespace GCEngine.Engine.Controllers.AgentDefault
         {
             List<GoapAction> actionsList = new List<GoapAction>();
 
-
-            // TODO limit number of destination actions we add to avoid combinatorial explosion
             foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
             {
                 actionsList.Add(new GoapUndockAction(destScId));
                 actionsList.Add(new GoapDockAction(destScId));
-                //List<ResourceQuantity> resources = _state.PlanetResources(destScId);
-                //foreach (ResourceQuantity resQ in resources)
-                //{
-                //    actionsList.Add(new GoapLoadShipAction(destScId, resQ));
-                //}                
+                long storeId;
+                if (_state.TryGetPlanetStoreId(destScId, out storeId))
+                {                    
+                    List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                    foreach (ResourceQuantity resQ in resources)
+                    {
+                        if (resQ.Quantity > 0) actionsList.Add(new GoapLoadShipAction(destScId, storeId, _state.CurrentShipStoreId, resQ));
+                    }
+                }
             }
 
             GoapAction[] actions = actionsList.ToArray();

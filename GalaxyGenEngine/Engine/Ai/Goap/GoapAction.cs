@@ -100,23 +100,9 @@ namespace GCEngine.Engine.Ai.Goap
             preconditions.Set(key, value);
         }
 
-        public void removePrecondition(GoapStateKey key)
-        {
-            if (preconditions.HasKey(key))
-                preconditions.Remove(key);
-        }
-
-
         public void addEffect(GoapStateKey key, object value)
         {
             effects.Set(key, value);
-        }
-
-
-        public void removeEffect(GoapStateKey key)
-        {
-            if (effects.HasKey(key))
-                effects.Remove(key);
         }
 
         public GoapState Preconditions

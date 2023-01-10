@@ -158,6 +158,14 @@ namespace GCEngine.Engine
             }
         }
 
+        public Int64 CurrentShipDockedPlanetStoreId
+        {
+            get
+            {
+                return ((Ship)_model.Location).DockedPlanet.Stores[_model.AgentId].StoreId;
+            }
+        }
+
         public Double CurrentShipCruisingSpeed
         {
             get
@@ -221,21 +229,24 @@ namespace GCEngine.Engine
             if (s.StoredResources.ContainsKey(res))
                 return s.StoredResources[res];
             else
-                return 0;
+                return 0L;
         }
 
         public UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res)
         {
+            // TODO should be using a controller rather than direct access to model
             Planet p = _model.SolarSystem.Planets[planetScId];
-            Store s = p.Stores[_model.AgentId];
-            if (s.StoredResources.ContainsKey(res))
-                return s.StoredResources[res];
-            else
-                return 0;
+            if (p.Stores.ContainsKey(_model.AgentId))
+            {
+                Store s = p.Stores[_model.AgentId];
+                if (s.StoredResources.ContainsKey(res)) return s.StoredResources[res];               
+            }
+            return 0L;
         }
 
         public List<ResourceQuantity> PlanetResources(Int64 planetScId)
         {
+            // TODO should be using a controller rather than direct access to model
             Planet p = _model.SolarSystem.Planets[planetScId];
             List<ResourceQuantity> resources = new List<ResourceQuantity>();
             if (p.Stores.ContainsKey(_model.AgentId))
@@ -247,6 +258,18 @@ namespace GCEngine.Engine
                 }
             }
             return resources;
+        }
+
+        public bool TryGetPlanetStoreId(Int64 planetScId, out long storeId)
+        {
+            Planet p = _model.SolarSystem.Planets[planetScId];
+            if (p.Stores.ContainsKey(_model.AgentId))
+            {
+                storeId = p.Stores[_model.AgentId].StoreId;
+                return true;
+            }
+            storeId = 0L;
+            return false;
         }
     }
 }
