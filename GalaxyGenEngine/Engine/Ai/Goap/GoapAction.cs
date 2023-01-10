@@ -4,7 +4,7 @@ using GalaxyGenEngine.Engine.Ai.Goap;
 using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public abstract class GoapAction
     {

@@ -10,7 +10,7 @@ using System.Collections;
  */
 using System;
 
-namespace GCEngine.Engine.Ai.Fsm
+namespace GalaxyGenEngine.Engine.Ai.Fsm
 {
     public class FSM
     {

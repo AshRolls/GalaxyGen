@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Ninject;
 using Ninject.Extensions.Factory;
-using GCEngine.Engine;
-using GCEngine.Model;
-using GCEngine.ViewModel;
+using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Model;
+using GalaxyGenEngine.ViewModel;
 
-namespace GCEngine
+namespace GalaxyGenEngine
 {
     public class Bindings
     {

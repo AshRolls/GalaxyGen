@@ -1,13 +1,13 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine.Controllers;
-using GCEngine.Engine.Controllers.AgentDefault;
-using GCEngine.Engine.Messages;
-using GCEngine.Model;
+using GalaxyGenEngine.Engine.Controllers;
+using GalaxyGenEngine.Engine.Controllers.AgentDefault;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     // AGENT SHOULD NEVER CHANGE IT'S OWN MODEL STATE. IT SHOULD TELL SOLARSYSTEM AND THAT WILL MANAGE THE STATE CHANGES.    
 

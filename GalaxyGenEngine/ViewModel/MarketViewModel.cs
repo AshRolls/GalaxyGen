@@ -1,9 +1,9 @@
 ﻿using GalaxyGenCore.Resources;
-using GCEngine.Model;
+using GalaxyGenEngine.Model;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class MarketViewModel : IMarketViewModel
     {

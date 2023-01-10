@@ -1,4 +1,4 @@
-﻿using GCEngine.ViewModel;
+﻿using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
-using GCEngine.Engine.Messages;
+using GalaxyGenEngine.Engine.Messages;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public class TickEngine : ITickEngine
     {

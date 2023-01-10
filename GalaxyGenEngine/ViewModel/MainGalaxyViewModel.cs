@@ -1,6 +1,6 @@
-﻿using GCEngine.Engine;
-using GCEngine.Framework;
-using GCEngine.Model;
+﻿using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.BluePrints;
 using GalaxyGenCore.Resources;
 using GalaxyGenCore.StarChart;
@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
     {        

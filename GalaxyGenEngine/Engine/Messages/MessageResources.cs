@@ -1,5 +1,5 @@
-﻿using GCEngine.Model;
-using GCEngine.ViewModel;
+﻿using GalaxyGenEngine.Model;
+using GalaxyGenEngine.ViewModel;
 using GalaxyGenCore;
 using GalaxyGenCore.Resources;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageResources : Message
     {

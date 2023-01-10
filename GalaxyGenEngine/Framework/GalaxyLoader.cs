@@ -1,10 +1,10 @@
-﻿using GCEngine.Model;
+﻿using GalaxyGenEngine.Model;
 using GalaxyGenCore.Framework;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 
-namespace GCEngine.Framework
+namespace GalaxyGenEngine.Framework
 {
     public static class GalaxyLoader
     {        

@@ -1,10 +1,10 @@
 ﻿using Akka.Actor;
-using GCEngine.Framework;
+using GalaxyGenEngine.Framework;
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public class Galaxy
     {

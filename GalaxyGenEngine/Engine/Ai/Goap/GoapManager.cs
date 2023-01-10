@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     //public class NodeManager
     //{

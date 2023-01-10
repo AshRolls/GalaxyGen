@@ -1,10 +1,10 @@
 ﻿using Akka.Actor;
-using GCEngine.Framework;
+using GalaxyGenEngine.Framework;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public class SolarSystem
     {

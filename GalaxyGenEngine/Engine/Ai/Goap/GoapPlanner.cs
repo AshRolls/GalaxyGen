@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     /**
      * Plans what actions can be completed in order to fulfill a goal state.
@@ -37,12 +37,13 @@ namespace GCEngine.Engine.Ai.Goap
 
             GoapState startingState = new GoapState(worldState);
             //startingState.AddFromState(goal);
-            StartingWorldState = startingState;
+            //StartingWorldState = startingState;
 
             GoapState goalGS = new GoapState(goal);
-            GoapNode startNode = new GoapNode(this, null, 0, null, goal);
+            GoapNode startNode = new GoapNode(null, startingState, 0, null, goal);
 
-            bool success = buildGraph(startNode, leaves, UsableActions, goalGS);
+            bool success = aStarGraph(startNode, leaves, UsableActions, goalGS);
+            //bool success = buildGraph(startNode, leaves, UsableActions, goalGS);
             //bool success = aStar(worldState, leaves, goalGS, resourceGoal, agent);
 
             if (!success)
@@ -148,45 +149,90 @@ namespace GCEngine.Engine.Ai.Goap
          * 'runningCost' value where the lowest cost will be the best action
          * sequence.
          */
-        private bool buildGraph(GoapNode parent, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal)
+        //private bool buildGraph(GoapNode startNode, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal)
+        //{
+            
+        //    foreach (GoapAction action in usableActions)
+        //    {
+        //        // if the parent state has the conditions for this action's preconditions, we can use it here
+        //        if (inState(action.Preconditions, startNode.State) && action.CheckProceduralPrecondition())
+        //        {
+        //            // apply the action's effects to the parent state
+        //            GoapState currentState = populateState(startNode.State, action.Effects);
+        //            //Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
+
+        //            // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
+        //            //GoapNode node = new GoapNode(this, parent, parent.Cost + action.GetCost(), parent.Weight + action.GetWeight(), currentState, action);
+        //            GoapNode node = new GoapNode(this, startNode, startNode.Cost + action.GetCost(), action, goal);
+
+        //            //if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
+        //            if (inState(goal, currentState))
+        //            {
+        //                // we found a solution!
+        //                leaves.Add(node);
+        //                currentMaxCost = node.Cost;
+        //                foundOne = true;
+        //            }
+        //            else if (node.Cost < currentMaxCost)
+        //            {
+        //                // not at a solution yet, so test all the remaining actions and branch out the tree
+        //                HashSet<GoapAction> subset = actionSubset(usableActions, action);
+        //                bool found = buildGraph(node, leaves, subset, goal);
+        //                if (found)
+        //                    foundOne = true;
+        //            }
+        //        }
+        //    }
+
+        //    return foundOne;
+        //}
+
+        private bool aStarGraph(GoapNode startNode, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal)
         {
-            bool foundOne = false;
+            PriorityQueue<GoapNode, float> queue = new PriorityQueue<GoapNode, float>();
+            Dictionary<GoapState, float> visited = new Dictionary<GoapState, float>();
 
-            // go through each action available at this node and see if we can use it here            
+            queue.Enqueue(startNode, 0);
 
-            foreach (GoapAction action in usableActions)
+            const int maxIterations = 10000;
+            int iterations = 0;
+            bool found = false;
+            GoapNode cur = null;
+            while (queue.Count > 0 && iterations < maxIterations)
             {
-                // if the parent state has the conditions for this action's preconditions, we can use it here
-                if (inState(action.Preconditions, parent.State) && action.CheckProceduralPrecondition())
+                iterations++;
+                cur = queue.Dequeue();
+
+                // check goal
+                if (inState(goal, cur.State))
                 {
-                    // apply the action's effects to the parent state
-                    GoapState currentState = populateState(parent.State, action.Effects);
-                    //Dictionary<Int64, Int64> currentResources = populateResource(parent.resources, action.Resources);
+                    found = true;
+                    break;
+                }
 
-                    // Console.WriteLine(GoapAgent.PrettyPrint(currentState));
-                    //GoapNode node = new GoapNode(this, parent, parent.Cost + action.GetCost(), parent.Weight + action.GetWeight(), currentState, action);
-                    GoapNode node = new GoapNode(this, parent, parent.Cost + action.GetCost(), action, goal);
+                // check if we have explored this state before
+                float existingCost;
+                if (visited.TryGetValue(cur.State, out existingCost))
+                {
+                    if (cur.Cost >= existingCost) continue;
+                    else visited[cur.State] = existingCost;
+                }
+                else visited.Add(cur.State, cur.Cost);
 
-                    //if (inState(goal, currentState) && inResources(resourceGoal, currentResources))
-                    if (inState(goal, currentState))
+                // expand current nodes
+                foreach (GoapAction action in usableActions)
+                {
+                    if (inState(action.Preconditions, cur.State) && action.CheckProceduralPrecondition())
                     {
-                        // we found a solution!
-                        leaves.Add(node);
-                        currentMaxCost = node.Cost;
-                        foundOne = true;
-                    }
-                    else if (node.Cost < currentMaxCost)
-                    {
-                        // not at a solution yet, so test all the remaining actions and branch out the tree
-                        HashSet<GoapAction> subset = actionSubset(usableActions, action);
-                        bool found = buildGraph(node, leaves, subset, goal);
-                        if (found)
-                            foundOne = true;
+                        GoapState newState = getNewState(cur.State, action.Effects);
+                        GoapNode newNode = new GoapNode(cur, newState, cur.Cost + action.GetCost(), action, goal.Clone());
+                        queue.Enqueue(newNode, newNode.Cost);
                     }
                 }
             }
+            if (found) leaves.Add(cur);
 
-            return foundOne;
+            return found;
         }
 
         /**
@@ -254,7 +300,7 @@ namespace GCEngine.Engine.Ai.Goap
         /**
          * Apply the stateChange to the currentState
          */
-        private GoapState populateState(GoapState currentState, GoapState stateChange)
+        private GoapState getNewState(GoapState currentState, GoapState stateChange)
         {
             GoapState state = new GoapState();
             foreach (var s in currentState.GetValues())

@@ -1,4 +1,4 @@
-﻿using GCEngine.Engine.Controllers;
+﻿using GalaxyGenEngine.Engine.Controllers;
 using GalaxyGenCore.Resources;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaxyGenEngine.Engine.Ai.Goap;
 
-namespace GCEngine.Engine.Ai.Goap.Actions
+namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapLoadShipAction : GoapAction
     {

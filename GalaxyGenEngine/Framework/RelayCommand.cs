@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace GCEngine.Framework
+namespace GalaxyGenEngine.Framework
 {
     public class RelayCommand : ICommand
     {

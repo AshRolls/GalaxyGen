@@ -1,6 +1,6 @@
-﻿using GCEngine.Engine;
-using GCEngine.Framework;
-using GCEngine.Model;
+﻿using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class StoreViewModel : IStoreViewModel
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GalaxyGenCore.Resources;
 
-namespace GCEngine.Engine.Controllers
+namespace GalaxyGenEngine.Engine.Controllers
 {
     public interface IAgentActions
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessagePlanetRequestLoadShipResources : IMessagePlanetCommandData
     {

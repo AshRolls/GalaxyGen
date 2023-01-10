@@ -1,8 +1,8 @@
-﻿using GCEngine.Framework;
+﻿using GalaxyGenEngine.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public enum AgentStateEnum
     {

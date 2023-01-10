@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Controllers.AgentDefault
+namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultMemory
     {

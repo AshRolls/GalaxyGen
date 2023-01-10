@@ -1,7 +1,7 @@
-﻿using GCEngine.Framework;
+﻿using GalaxyGenEngine.Framework;
 using System;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public class Society
     {

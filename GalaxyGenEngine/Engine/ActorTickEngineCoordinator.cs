@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine.Messages;
-using GCEngine.Model;
-using GCEngine.ViewModel;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Model;
+using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public enum TickEngineRunState
     {

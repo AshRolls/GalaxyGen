@@ -1,8 +1,8 @@
-﻿using GCEngine.Framework;
+﻿using GalaxyGenEngine.Framework;
 using System;
 using GalaxyGenCore.BluePrints;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public class Producer
     {

@@ -1,10 +1,10 @@
-﻿using GCEngine.Model;
+﻿using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public interface IMainGalaxyViewModel : INotifyPropertyChanged
     {

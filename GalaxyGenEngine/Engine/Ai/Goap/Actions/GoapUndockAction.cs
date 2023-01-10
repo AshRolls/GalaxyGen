@@ -1,5 +1,5 @@
 ﻿using GalaxyGenEngine.Engine.Ai.Goap;
-using GCEngine.Engine.Controllers;
+using GalaxyGenEngine.Engine.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Ai.Goap.Actions
+namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapUndockAction : GoapAction
     {

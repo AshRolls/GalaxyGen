@@ -1,6 +1,6 @@
-﻿using GCEngine.Model;
+﻿using GalaxyGenEngine.Model;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public interface IMarketViewModel
     {

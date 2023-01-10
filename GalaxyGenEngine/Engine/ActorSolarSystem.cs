@@ -1,12 +1,12 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine.Controllers;
-using GCEngine.Engine.Messages;
-using GCEngine.Model;
+using GalaxyGenEngine.Engine.Controllers;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public class ActorSolarSystem : ReceiveActor
     {

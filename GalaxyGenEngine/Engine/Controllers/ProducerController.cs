@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine.Messages;
-using GCEngine.Model;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.BluePrints;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Controllers
+namespace GalaxyGenEngine.Engine.Controllers
 {
     public class ProducerController
     {

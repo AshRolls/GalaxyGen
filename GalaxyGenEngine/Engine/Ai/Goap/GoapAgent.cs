@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using GCEngine.Engine.Ai.Fsm;
-using GCEngine.Engine.Controllers;
+using GalaxyGenEngine.Engine.Ai.Fsm;
+using GalaxyGenEngine.Engine.Controllers;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public sealed class GoapAgent
     {

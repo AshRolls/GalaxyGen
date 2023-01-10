@@ -1,11 +1,11 @@
-﻿using GCEngine.Model;
+﻿using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public class GoapNode
     {                
@@ -19,33 +19,32 @@ namespace GCEngine.Engine.Ai.Goap
         public float PathCost { get; private set; }
         public float HeuristicCost { get; private set; }
 
-        public GoapNode(GoapPlanner planner, GoapNode parent, float cost, GoapAction action, GoapState newGoal)
+        public GoapNode(GoapNode parent, GoapState state, float cost, GoapAction action, GoapState newGoal)
         {
             this.Parent = parent;
             this.Action = action;
             this.Cost = cost;
-            this.planner = planner;
+            this.State = state;
             
             init(newGoal);
         }
 
         private void init(GoapState newGoal)
         {
-            if (this.Parent != null)
-            {
-                this.State = Parent.State.Clone();
-                this.PathCost = Parent.PathCost;
-            }
-            else
-            {
-                this.State = planner.StartingWorldState.Clone();                
-            }
+            //if (this.Parent != null)
+            //{
+            //    this.State = Parent.State.Clone();
+            //    this.PathCost = Parent.PathCost;
+            //}
+            //else
+            //{
+            //    this.State = planner.StartingWorldState.Clone();                
+            //}
             
             if (this.Action != null)
             {
-                //this.goal = newGoal + this.Action.Preconditions;
                 this.goal = newGoal;
-                this.State.AddFromState(this.Action.Effects);
+                //this.State.AddFromState(this.Action.Effects);
 
                 PathCost += this.Action.GetCost();
 

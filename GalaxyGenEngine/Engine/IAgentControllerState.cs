@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using GCEngine.Framework;
-using GCEngine.Model;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using GalaxyGenCore.Resources;
 using System;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public interface IAgentControllerState
     {

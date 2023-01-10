@@ -7,7 +7,7 @@ using System.Collections;
  */
 using System.Collections.Generic;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     /**
      * Any agent that wants to use GOAP must implement

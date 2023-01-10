@@ -1,7 +1,7 @@
 ﻿using GalaxyGenCore.Resources;
 using System.Collections.Generic;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessagePlanetRequestResources : Message
     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GCEngine.Model;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using GalaxyGenCore.BluePrints;
 using GalaxyGenCore.Resources;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {

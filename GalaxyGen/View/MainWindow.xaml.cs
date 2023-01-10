@@ -1,6 +1,6 @@
 ﻿using Ninject;
 using System.Windows;
-using GCEngine.ViewModel;
+using GalaxyGenEngine.ViewModel;
 
 namespace GalaxyGen
 {
@@ -21,7 +21,7 @@ namespace GalaxyGen
 
         private void SetupBackEnd()
         {
-            StandardKernel kernel = GCEngine.Bindings.Kernel;
+            StandardKernel kernel = GalaxyGenEngine.Bindings.Kernel;
             IMainGalaxyViewModel mvm = kernel.Get<IMainGalaxyViewModel>();
             this.DataContext = mvm;
         }

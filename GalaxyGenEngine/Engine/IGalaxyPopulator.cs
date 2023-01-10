@@ -1,8 +1,8 @@
-﻿using GCEngine.Model;
+﻿using GalaxyGenEngine.Model;
 using GalaxyGenCore;
 using System.Collections.Generic;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public interface IGalaxyPopulator
     {

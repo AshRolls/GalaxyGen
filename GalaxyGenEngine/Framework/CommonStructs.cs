@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Framework
+namespace GalaxyGenEngine.Framework
 {
     public struct PointD
     {

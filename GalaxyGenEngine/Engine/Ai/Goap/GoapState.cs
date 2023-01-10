@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Akka.Actor.FSMBase;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public class GoapState
     {
@@ -17,6 +18,38 @@ namespace GCEngine.Engine.Ai.Goap
 
         public GoapState()
         {
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            foreach (KeyValuePair<GoapStateKey, object> kvp in values)
+            {
+                hash += hash * 397 + kvp.Key.GetHashCode() + kvp.Value.GetHashCode();
+            }
+            return hash;
+        }
+        public override bool Equals(object obj)
+        {
+            GoapState otherState = (GoapState)obj;
+            lock (values) lock (otherState.values)
+            {
+                foreach (var pair in otherState.values)
+                {
+                    object thisValue;
+                    values.TryGetValue(pair.Key, out thisValue);
+                    if (!Equals(thisValue, pair.Value))
+                        return false;
+                }
+                foreach (var pair in values)
+                {
+                    object thisValue;
+                    otherState.values.TryGetValue(pair.Key, out thisValue);
+                    if (!Equals(thisValue, pair.Value))
+                        return false;
+                }
+                return true;
+            }
         }
 
         public GoapState(GoapState state)

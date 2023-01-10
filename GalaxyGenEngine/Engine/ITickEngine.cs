@@ -1,7 +1,7 @@
-﻿using GCEngine.ViewModel;
+﻿using GalaxyGenEngine.ViewModel;
 using System;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public interface ITickEngine
     {
