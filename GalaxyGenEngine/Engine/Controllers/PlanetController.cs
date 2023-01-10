@@ -128,19 +128,27 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
         }
 
-        internal bool ReceiveResourceLoadShipRequest(MessagePlanetRequestLoadShipResources msg)
+        internal bool ReceiveResourceLoadShipRequest(MessagePlanetCommand msg)
         {
-            Store s = getStoreForOwner(msg.OwnerId); 
-            if (s == null) return false; // does not have resources
-            if (checkResourcesAvailable(msg.ResourcesRequested, s))
-            {                
-                foreach (ResourceQuantity resQ in msg.ResourcesRequested)
+            MessagePlanetRequestShipResources msd = (MessagePlanetRequestShipResources)msg.Command;
+            Store planetS = getStoreForOwner(msd.OwnerId);
+            Store shipS = _model.DockedShips[msd.ShipId].Stores[msd.OwnerId];
+            if (msg.Command.CommandType == PlanetCommandEnum.RequestLoadShip) return moveResources(planetS, shipS, msd.ResourcesRequested);
+            else if (msg.Command.CommandType == PlanetCommandEnum.RequestUnloadShip) return moveResources(shipS, planetS, msd.ResourcesRequested);
+            return false;
+        }
+
+        private bool moveResources(Store sourceStore, Store destStore, List<ResourceQuantity> resQs)
+        {
+            if (sourceStore == null || destStore == null) return false; // does not have resources
+            if (checkResourcesAvailable(resQs, sourceStore))
+            {
+                foreach (ResourceQuantity resQ in resQs)
                 {
                     // remove resources
-                    s.StoredResources[resQ.Type] -= resQ.Quantity;
+                    sourceStore.StoredResources[resQ.Type] -= resQ.Quantity;
                     // add to ship store
-                    Store store = _model.DockedShips[msg.ShipId].Stores[msg.OwnerId];
-                    addResourceQuantityToStore(store, new List<ResourceQuantity>() { resQ });                    
+                    addResourceQuantityToStore(destStore, new List<ResourceQuantity>() { resQ });
                 }
                 return true;
             }
@@ -195,9 +203,12 @@ namespace GalaxyGenEngine.Engine.Controllers
         {
             switch (msg.Command.CommandType)
             {
-                case PlanetCommandEnum.RequestResourceShip:
-                    ReceiveResourceLoadShipRequest((MessagePlanetRequestLoadShipResources)msg.Command);
-                    break;                
+                case PlanetCommandEnum.RequestLoadShip:
+                    ReceiveResourceLoadShipRequest(msg);
+                    break;
+                case PlanetCommandEnum.RequestUnloadShip:
+                    ReceiveResourceLoadShipRequest(msg);
+                    break;
                 default:
                     throw new Exception("Unknown Ship Command");
             }

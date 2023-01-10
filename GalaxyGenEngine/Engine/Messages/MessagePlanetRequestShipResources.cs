@@ -4,9 +4,9 @@ using System.Data;
 
 namespace GalaxyGenEngine.Engine.Messages
 {
-    public class MessagePlanetRequestLoadShipResources : IMessagePlanetCommandData
+    public class MessagePlanetRequestShipResources : IMessagePlanetCommandData
     {
-        public MessagePlanetRequestLoadShipResources(PlanetCommandEnum type, List<ResourceQuantity> resourcesRequested, long ownerId, long shipId)
+        public MessagePlanetRequestShipResources(PlanetCommandEnum type, List<ResourceQuantity> resourcesRequested, long ownerId, long shipId)
         {
             CommandType = type;
             ResourcesRequested = resourcesRequested;

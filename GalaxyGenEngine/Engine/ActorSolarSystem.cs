@@ -88,6 +88,7 @@ namespace GalaxyGenEngine.Engine
         {
             _solarSystemC.ReceiveCommandForMarket(msg);
         }
+
         private void receiveCommandForPlanet(MessagePlanetCommand msg)
         {
             _solarSystemC.ReceiveCommandForPlanet(msg);

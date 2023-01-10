@@ -10,7 +10,8 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public enum PlanetCommandEnum
     {
-        RequestResourceShip
+        RequestLoadShip,
+        RequestUnloadShip
     }
 
     public class MessagePlanetCommand : Message

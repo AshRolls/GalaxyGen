@@ -12,5 +12,6 @@ namespace GalaxyGenEngine.Engine.Controllers
         void RequestUndock();
         void RequestDock();
         void RequestLoadShip(ResourceQuantity resQ);
+        void RequestUnloadShip(ResourceQuantity resQ);
     }
 }

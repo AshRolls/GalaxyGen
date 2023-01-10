@@ -148,7 +148,13 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         public void RequestLoadShip(ResourceQuantity resQ)
         {
             //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);            
-            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestLoadShipResources(PlanetCommandEnum.RequestResourceShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
+            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestLoadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
+        }
+
+        public void RequestUnloadShip(ResourceQuantity resQ)
+        {
+            //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);            
+            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
 
         private Int64 chooseRandomDestinationScId()
