@@ -22,10 +22,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public override int GetHashCode()
         {
-            int hash = 17;
+            int hash = 397;
             foreach (KeyValuePair<GoapStateKey, object> kvp in values)
             {
-                hash += hash * 397 + kvp.Key.GetHashCode() + kvp.Value.GetHashCode();
+                hash *= 37 + kvp.Key.GetHashCode() + kvp.Value.GetHashCode();
             }
             return hash;
         }

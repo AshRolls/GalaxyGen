@@ -40,9 +40,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             //StartingWorldState = startingState;
 
             GoapState goalGS = new GoapState(goal);
-            GoapNode startNode = new GoapNode(null, startingState, 0, null, goal);
-
-            bool success = aStarGraph(startNode, leaves, UsableActions, goalGS);
+            GoapNode startNode = new GoapNode(null, startingState, null, 0, goal);
+            GoapNode res = null;
+            bool success = aStarGraph(startNode, ref res, UsableActions, goalGS);
             //bool success = buildGraph(startNode, leaves, UsableActions, goalGS);
             //bool success = aStar(worldState, leaves, goalGS, resourceGoal, agent);
 
@@ -53,22 +53,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 return null;
             }
 
-            // get the cheapest leaf
-            GoapNode cheapest = null;
-            foreach (GoapNode leaf in leaves)
-            {
-                if (cheapest == null)
-                    cheapest = leaf;
-                else
-                {
-                    if (leaf.BetterThan(cheapest))
-                        cheapest = leaf;
-                }
-            }
-
             // get its node and work back through the parents
             List<GoapAction> result = new List<GoapAction>();
-            GoapNode n = cheapest;
+            GoapNode n = res;
             while (n != null)
             {
                 if (n.Action != null)
@@ -187,7 +174,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         //    return foundOne;
         //}
 
-        private bool aStarGraph(GoapNode startNode, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal)
+        private bool aStarGraph(GoapNode startNode, ref GoapNode cur, HashSet<GoapAction> usableActions, GoapState goal)
         {
             PriorityQueue<GoapNode, float> queue = new PriorityQueue<GoapNode, float>();
             Dictionary<GoapState, float> visited = new Dictionary<GoapState, float>();
@@ -197,7 +184,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             const int maxIterations = 10000;
             int iterations = 0;
             bool found = false;
-            GoapNode cur = null;
+            cur = null;
             while (queue.Count > 0 && iterations < maxIterations)
             {
                 iterations++;
@@ -225,12 +212,11 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     if (inState(action.Preconditions, cur.State) && action.CheckProceduralPrecondition())
                     {
                         GoapState newState = getNewState(cur.State, action.Effects);
-                        GoapNode newNode = new GoapNode(cur, newState, cur.Cost + action.GetCost(), action, goal.Clone());
+                        GoapNode newNode = new GoapNode(cur, newState, action, cur.PathCost, goal.Clone());
                         queue.Enqueue(newNode, newNode.Cost);
                     }
                 }
             }
-            if (found) leaves.Add(cur);
 
             return found;
         }

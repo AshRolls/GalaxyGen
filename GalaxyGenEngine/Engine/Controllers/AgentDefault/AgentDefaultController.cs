@@ -185,11 +185,26 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             if (_state.CurrentShipIsDocked) worldData.Set(key, _state.CurrentShipDockedPlanetScId);            
             else worldData.Set(key, 0);
 
-            //key = new GoapStateKey();
-            //key.Type = GoapStateKeyEnum.Resource;
-            //key.ResType = ResourceTypeEnum.Platinum;
-            //key.StoreId = _state.CurrentShipStoreId;
-            //worldData.Set()
+
+            foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
+            {
+                long storeId;
+                if (_state.TryGetPlanetStoreId(destScId, out storeId))
+                {
+                    List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                    foreach (ResourceQuantity resQ in resources)
+                    {
+                        if (resQ.Quantity > 0)
+                        {
+                            key = new GoapStateKey();
+                            key.Type = GoapStateKeyEnum.Resource;
+                            key.ResType = resQ.Type;
+                            key.StoreId = storeId;
+                            worldData.Set(key,1L);
+                        }
+                    }
+                }
+            }
 
             return worldData;
         }
@@ -295,15 +310,16 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             {
                 actionsList.Add(new GoapUndockAction(destScId));
                 actionsList.Add(new GoapDockAction(destScId));
-                //long storeId;
-                //if (_state.TryGetPlanetStoreId(destScId, out storeId))
-                //{                    
-                //    List<ResourceQuantity> resources = _state.PlanetResources(destScId);
-                //    foreach (ResourceQuantity resQ in resources)
-                //    {
-                //        if (resQ.Quantity > 0) actionsList.Add(new GoapLoadShipAction(destScId, storeId, _state.CurrentShipStoreId, resQ));
-                //    }
-                //}
+                long storeId;
+                if (_state.TryGetPlanetStoreId(destScId, out storeId))
+                {
+                    List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                    foreach (ResourceQuantity resQ in resources)
+                    {
+                        //if (resQ.Quantity > 0) actionsList.Add(new GoapLoadShipAction(destScId, storeId, _state.CurrentShipStoreId, resQ));
+                        if (resQ.Quantity > 0) actionsList.Add(new GoapLoadShipAction(destScId, storeId, _state.CurrentShipStoreId, new ResourceQuantity(resQ.Type,1L)));
+                    }
+                }
             }
 
             GoapAction[] actions = actionsList.ToArray();

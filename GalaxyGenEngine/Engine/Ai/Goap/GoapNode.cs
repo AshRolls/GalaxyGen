@@ -19,12 +19,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public float PathCost { get; private set; }
         public float HeuristicCost { get; private set; }
 
-        public GoapNode(GoapNode parent, GoapState state, float cost, GoapAction action, GoapState newGoal)
+        public GoapNode(GoapNode parent, GoapState state, GoapAction action, float pathCost, GoapState newGoal)
         {
             this.Parent = parent;
             this.Action = action;
-            this.Cost = cost;
             this.State = state;
+            this.PathCost = pathCost;
             
             init(newGoal);
         }

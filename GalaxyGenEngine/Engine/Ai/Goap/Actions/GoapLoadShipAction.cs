@@ -26,10 +26,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             key.Type = GoapStateKeyEnum.Resource;
             key.ResType = resQ.Type;
             key.StoreId = sourceStoreId;
-            addPrecondition(key, resQ.Quantity);
-            addEffect(key, (0 - resQ.Quantity));
+            addPrecondition(key, (long)resQ.Quantity);
+            addEffect(key, (0L - (long)resQ.Quantity));
             key.StoreId = destShipStoreId;
-            addEffect(key, resQ.Quantity);
+            addEffect(key, (long)resQ.Quantity);
             
             _resQ = resQ;                       
         }
@@ -42,7 +42,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public override bool isDone(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
-            return ag.StateProvider.CurrentShipResourceQuantity(_resQ.Type) >= _resQ.Quantity;          
+            return ag.StateProvider.CurrentShipResourceQuantity(_resQ.Type) >= _curQ;          
         }
 
 
