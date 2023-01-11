@@ -89,7 +89,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public abstract bool isSpecific();
 
-        public abstract List<GoapAction> GetSpecificActions(object agent);
+        public abstract List<GoapAction> GetSpecificActions(object agent, GoapState state);
 
         public void addPrecondition(GoapStateKey key, object value)
         {

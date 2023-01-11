@@ -83,7 +83,7 @@ namespace GalaxyGenEngine.ViewModel
     
     public class TreeOrder
     {
-        public long id;
+        public ulong id;
         public bool buy;
         public long qty;
         public long limitPrice;
@@ -93,7 +93,7 @@ namespace GalaxyGenEngine.ViewModel
         public TreeOrder next;
         public TreeLimit parentLimit;
 
-        public TreeOrder(long id, bool buy, long qty, long limitPrice, long entryTime)
+        public TreeOrder(ulong id, bool buy, long qty, long limitPrice, long entryTime)
         {
             this.id = id;
             this.buy = buy;

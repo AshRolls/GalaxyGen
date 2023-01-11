@@ -5,7 +5,7 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessagePlanetRequestResources : Message
     {
-        public MessagePlanetRequestResources(List<ResourceQuantity> resourcesRequested, long ownerId, long storeId, long tickSent)
+        public MessagePlanetRequestResources(List<ResourceQuantity> resourcesRequested, ulong ownerId, ulong storeId, ulong tickSent)
         {
             ResourcesRequested = resourcesRequested;
             OwnerId = ownerId;
@@ -14,7 +14,7 @@ namespace GalaxyGenEngine.Engine.Messages
         }
 
         public List<ResourceQuantity> ResourcesRequested { get; private set; }
-        public long OwnerId { get; private set; }
-        public long StoreId { get; private set; }
+        public ulong OwnerId { get; private set; }
+        public ulong StoreId { get; private set; }
     }
 }

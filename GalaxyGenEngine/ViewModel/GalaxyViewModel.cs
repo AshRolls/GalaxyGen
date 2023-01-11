@@ -89,7 +89,7 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-        public Int64 CurrentTick
+        public UInt64 CurrentTick
         {
             get
             {
@@ -108,7 +108,7 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-        public Int64 TicksPerSecond
+        public UInt64 TicksPerSecond
         {
             get
             {

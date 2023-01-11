@@ -81,7 +81,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             return s;
         }
 
-        private Store getStoreForOwner(long ownerId)
+        private Store getStoreForOwner(ulong ownerId)
         {
             return _model.Stores[ownerId];
         }
@@ -103,7 +103,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
         }
 
-        private UInt64 getStoredResourceQtyFromStore(Store s, ResourceTypeEnum type)
+        private Int64 getStoredResourceQtyFromStore(Store s, ResourceTypeEnum type)
         {
             return s.StoredResources[type];
         }
@@ -165,7 +165,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             {
                 if (s.StoredResources.ContainsKey(resQ.Type))
                 {
-                    UInt64 storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
+                    Int64 storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
                     if (storedResQ < resQ.Quantity)
                     {
                         hasResources = false;
@@ -182,7 +182,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             return hasResources;
         }    
 
-        internal void UndockShip(Int64 shipId)
+        internal void UndockShip(UInt64 shipId)
         {
             Ship s = _model.DockedShips[shipId];
             if (s != null)

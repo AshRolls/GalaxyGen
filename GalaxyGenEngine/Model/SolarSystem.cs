@@ -11,17 +11,17 @@ namespace GalaxyGenEngine.Model
         public SolarSystem()
         {
             SolarSystemId = IdUtils.GetId();
-            Planets = new Dictionary<long, Planet>();
+            Planets = new Dictionary<ulong, Planet>();
             Agents = new List<Agent>();
-            Ships = new Dictionary<long, Ship>();
+            Ships = new Dictionary<ulong, Ship>();
         }
 
-        public Int64 SolarSystemId { get; set; }
-        public Int64 StarChartId { get; set; }
+        public UInt64 SolarSystemId { get; set; }
+        public UInt64 StarChartId { get; set; }
 
-        public Dictionary<long, Planet> Planets { get; set; }
+        public Dictionary<ulong, Planet> Planets { get; set; }
         public ICollection<Agent> Agents { get; set; }
-        public Dictionary<long, Ship> Ships { get; set; }
+        public Dictionary<ulong, Ship> Ships { get; set; }
 
         [JsonIgnore]
         public String Name { get; set; }

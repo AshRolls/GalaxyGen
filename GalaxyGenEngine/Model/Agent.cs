@@ -27,7 +27,7 @@ namespace GalaxyGenEngine.Model
             AgentId = IdUtils.GetId();
         }
 
-        public Int64 AgentId { get; set; }
+        public UInt64 AgentId { get; set; }
 
         public String Name { get; set; }
         public AgentTypeEnum Type { get; set; }

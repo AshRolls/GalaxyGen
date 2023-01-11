@@ -12,7 +12,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     {
         private bool _requestSent = false;
 
-        public GoapDockSpecificAction(long dockScId)
+        public GoapDockSpecificAction(ulong dockScId)
         {
             target = dockScId;
             GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());                                    
@@ -41,7 +41,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             return true;
         }
-        public override List<GoapAction> GetSpecificActions(object agent)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
         {
             return null;
         }

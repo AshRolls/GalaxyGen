@@ -10,7 +10,7 @@ namespace GalaxyGenEngine.Model
             SocietyId = IdUtils.GetId();
         }
 
-        public Int64 SocietyId { get; set; }
+        public UInt64 SocietyId { get; set; }
 
         public String Name { get; set; }
         

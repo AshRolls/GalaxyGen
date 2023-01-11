@@ -84,7 +84,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     }
                     else
                     {
-                        foreach(GoapAction sAction in action.GetSpecificActions(agent))
+                        foreach(GoapAction sAction in action.GetSpecificActions(agent, this.State))
                         {
                             GoapState newState = planner.GetNewState(this.State, sAction.Effects);
                             GoapNode newNode = new GoapNode(this, newState, sAction, this.PathCost, goal.Clone(), planner);

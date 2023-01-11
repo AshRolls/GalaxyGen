@@ -49,7 +49,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return true;
         }
 
-        public override List<GoapAction> GetSpecificActions(object agent)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
         {
             return null;
         }

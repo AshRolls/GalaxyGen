@@ -138,7 +138,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             _model.PositionY = Y;
         }
 
-        internal void SetDestination(Int64 destinationScId)
+        internal void SetDestination(UInt64 destinationScId)
         {
             _model.DestinationScId = destinationScId;
             _destination = _model.SolarSystem.Planets[destinationScId];

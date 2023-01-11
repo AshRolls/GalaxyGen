@@ -15,14 +15,14 @@ namespace GalaxyGenCore.Resources
 
     public struct ResourceQuantity
     {
-        public ResourceQuantity(ResourceTypeEnum type, ulong qty)
+        public ResourceQuantity(ResourceTypeEnum type, long qty)
         {
             Type = type;
             Quantity = qty;
         }
 
         public ResourceTypeEnum Type { get; set; }
-        public ulong Quantity { get; set; }
+        public long Quantity { get; set; }
     }
 
     public class ResourceType

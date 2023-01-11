@@ -20,7 +20,7 @@ namespace GalaxyGenEngine.Engine.Messages
 
     public class MessageMarketCommand : Message
     {
-        public MessageMarketCommand(IMessageMarketCommandData cmd, Int64 tickSent, Int64 planetScId)
+        public MessageMarketCommand(IMessageMarketCommandData cmd, UInt64 tickSent, UInt64 planetScId)
         {
             Command = cmd;
             TickSent = tickSent;
@@ -28,6 +28,6 @@ namespace GalaxyGenEngine.Engine.Messages
         }
 
         public IMessageMarketCommandData Command { get; private set; }
-        public Int64 PlanetScId { get; private set; }
+        public UInt64 PlanetScId { get; private set; }
     }
 }

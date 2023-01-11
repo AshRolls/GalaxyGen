@@ -16,8 +16,8 @@ namespace GalaxyGenEngine.ViewModel
         Galaxy Model { get; set; }
         IActorRef Actor { get; }
         String Name { get; set; }
-        Int64 CurrentTick { get; }
-        Int64 TicksPerSecond { get; }
+        UInt64 CurrentTick { get; }
+        UInt64 TicksPerSecond { get; }
         ICollection<ScSolarSystem> ScSolarSystems { get; }
     }
 

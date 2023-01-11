@@ -9,7 +9,7 @@ namespace GalaxyGenEngine.Framework
 {    
     public static class OrbitalUtils
     {        
-        public static PointD CalcPositionFromTick(Int64 tick, Double orbitalTicks, Double orbitalKm)
+        public static PointD CalcPositionFromTick(UInt64 tick, Double orbitalTicks, Double orbitalKm)
         {
             double tickMod = tick % orbitalTicks;
             double slice = 2 * Math.PI / orbitalTicks;
@@ -20,7 +20,7 @@ namespace GalaxyGenEngine.Framework
             return pt;
         }
 
-        public static PointD CalcCenteredPositionFromTick(Int64 tick, Double orbitalTicks, Double orbitalKm, PointD center)
+        public static PointD CalcCenteredPositionFromTick(UInt64 tick, Double orbitalTicks, Double orbitalKm, PointD center)
         {
             double tickMod = tick % orbitalTicks;
             double slice = 2 * Math.PI / orbitalTicks;

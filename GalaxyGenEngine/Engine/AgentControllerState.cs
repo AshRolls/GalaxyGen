@@ -31,7 +31,7 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public long AgentId
+        public ulong AgentId
         {
             get
             {
@@ -48,7 +48,7 @@ namespace GalaxyGenEngine.Engine
         }
 
 
-        public IEnumerable<Int64> PlanetsInSolarSystemScIds
+        public IEnumerable<UInt64> PlanetsInSolarSystemScIds
         {
             get
             {
@@ -87,9 +87,9 @@ namespace GalaxyGenEngine.Engine
         }
 
 
-        private Int64 lastDestinationScId;
+        private UInt64 lastDestinationScId;
         private Planet destinationPlanet;
-        private void updateCachedPlanet(Int64 destinationScId)
+        private void updateCachedPlanet(UInt64 destinationScId)
         {
             if (destinationScId != lastDestinationScId) // if we have a new destination, cache the planet so we only need to look it up once.
             {
@@ -98,19 +98,19 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public Double DestinationX(Int64 destinationScId)
+        public Double DestinationX(UInt64 destinationScId)
         {
             updateCachedPlanet(destinationScId);
             return destinationPlanet.PositionX;            
         }
 
-        public Double DestinationY(Int64 destinationScId)
+        public Double DestinationY(UInt64 destinationScId)
         {
             updateCachedPlanet(destinationScId);
             return destinationPlanet.PositionY;
         }
 
-        public bool CurrentShipAtDestination(Int64 destinationScId)
+        public bool CurrentShipAtDestination(UInt64 destinationScId)
         {
             Ship s = (Ship)_model.Location;
             updateCachedPlanet(destinationScId);
@@ -122,7 +122,7 @@ namespace GalaxyGenEngine.Engine
             return false;
         }
 
-        public bool XYAtDestination(Int64 destinationScId, Double X, Double Y)
+        public bool XYAtDestination(UInt64 destinationScId, Double X, Double Y)
         {
             updateCachedPlanet(destinationScId);
 
@@ -133,7 +133,7 @@ namespace GalaxyGenEngine.Engine
             return false;
         }
 
-        public Int64 CurrentShipId
+        public UInt64 CurrentShipId
         {
             get
             {
@@ -141,7 +141,7 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public Int64 CurrentShipStoreId
+        public UInt64 CurrentShipStoreId
         {
             get
             {
@@ -149,7 +149,7 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public Int64 CurrentShipDockedPlanetScId
+        public UInt64 CurrentShipDockedPlanetScId
         {
             get
             {
@@ -158,7 +158,7 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public Int64 CurrentShipDockedPlanetStoreId
+        public UInt64 CurrentShipDockedPlanetStoreId
         {
             get
             {
@@ -215,7 +215,7 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public Int64 CurrentShipDestinationScID
+        public UInt64 CurrentShipDestinationScID
         {
             get
             {
@@ -223,7 +223,7 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public UInt64 CurrentShipResourceQuantity(ResourceTypeEnum res)
+        public Int64 CurrentShipResourceQuantity(ResourceTypeEnum res)
         {
             Store s = ((Ship)_model.Location).Stores[_model.AgentId];
             if (s.StoredResources.ContainsKey(res))
@@ -232,7 +232,7 @@ namespace GalaxyGenEngine.Engine
                 return 0L;
         }
 
-        public UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res)
+        public Int64 PlanetResourceQuantity(UInt64 planetScId, ResourceTypeEnum res)
         {
             // TODO should be using a controller rather than direct access to model
             Planet p = _model.SolarSystem.Planets[planetScId];
@@ -244,7 +244,7 @@ namespace GalaxyGenEngine.Engine
             return 0L;
         }
 
-        public List<ResourceQuantity> PlanetResources(Int64 planetScId)
+        public List<ResourceQuantity> PlanetResources(UInt64 planetScId)
         {
             // TODO should be using a controller rather than direct access to model
             Planet p = _model.SolarSystem.Planets[planetScId];
@@ -252,7 +252,7 @@ namespace GalaxyGenEngine.Engine
             if (p.Stores.ContainsKey(_model.AgentId))
             {
                 Store s = p.Stores[_model.AgentId];             
-                foreach (KeyValuePair<ResourceTypeEnum, UInt64> kvp in s.StoredResources)
+                foreach (KeyValuePair<ResourceTypeEnum, Int64> kvp in s.StoredResources)
                 {
                     resources.Add(new ResourceQuantity(kvp.Key, kvp.Value));
                 }
@@ -260,7 +260,7 @@ namespace GalaxyGenEngine.Engine
             return resources;
         }
 
-        public bool TryGetPlanetStoreId(Int64 planetScId, out long storeId)
+        public bool TryGetPlanetStoreId(UInt64 planetScId, out ulong storeId)
         {
             Planet p = _model.SolarSystem.Planets[planetScId];
             if (p.Stores.ContainsKey(_model.AgentId))

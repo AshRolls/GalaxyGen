@@ -11,7 +11,7 @@ namespace GalaxyGenEngine.Model
             MarketOrderId = IdUtils.GetId();
         }
 
-        public Int64 MarketOrderId { get; set; }
+        public UInt64 MarketOrderId { get; set; }
         public bool Buy { get; set; }
         public ResourceTypeEnum Type {get; set;}
         public Int64 Quantity { get; set; }

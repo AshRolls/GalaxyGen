@@ -14,7 +14,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultController : IAgentController, IGoap, IAgentActions
     {
-        private const Int64 DAYS_BEFORE_MARKET_RECHECK = 7;
+        private const UInt64 DAYS_BEFORE_MARKET_RECHECK = 7;
         private AgentControllerState _state;
         private IActorRef _actorSolarSystem;
         private IActorRef _actorTextOutput;
@@ -81,7 +81,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         private void checkMarkets(MessageTick tick)
         {
             // do i need to place a place / fulfil a market order, if so leave ship to interact with market            
-            Int64 curPlanet = _state.CurrentShipDockedPlanetScId;
+            UInt64 curPlanet = _state.CurrentShipDockedPlanetScId;
             if (checkOverMinimumTimeForMarketCheck(curPlanet, tick.Tick))
             {
                 checkMarketPlaceOrder(tick);
@@ -101,7 +101,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         }
 
         // make sure we haven't recently scanned market
-        private bool checkOverMinimumTimeForMarketCheck(Int64 planetScId, Int64 tick)
+        private bool checkOverMinimumTimeForMarketCheck(UInt64 planetScId, UInt64 tick)
         {
             if (!_memory.MarketLastCheckedTick.ContainsKey(planetScId))
             {
@@ -109,7 +109,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             }
             else
             {
-                Int64 tickForMinNextMarketCheck = _memory.MarketLastCheckedTick[planetScId] + (DAYS_BEFORE_MARKET_RECHECK * Globals.DAYS_TO_TICKS_FACTOR);
+                UInt64 tickForMinNextMarketCheck = _memory.MarketLastCheckedTick[planetScId] + (DAYS_BEFORE_MARKET_RECHECK * Globals.DAYS_TO_TICKS_FACTOR);
                 return tick >= tickForMinNextMarketCheck;
             }
         }
@@ -134,7 +134,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         {
             //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
             //setNewDestination();
-            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10, _state.CurrentShipId));
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10UL, _state.CurrentShipId));
         }
 
         public void RequestDock()
@@ -155,10 +155,10 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
 
-        private Int64 chooseRandomDestinationScId()
+        private UInt64 chooseRandomDestinationScId()
         {
             // choose randomly        
-            List<Int64> planetsToChooseFrom;
+            List<UInt64> planetsToChooseFrom;
             if (_state.CurrentShipIsDocked)
                 planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.Where(x => x != _state.CurrentShipDockedPlanetScId).ToList();
             else
@@ -167,7 +167,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return planetsToChooseFrom[index];
         }
 
-        private void setNewDestination(Int64 destinationScId)
+        private void setNewDestination(UInt64 destinationScId)
         {
             _memory.CurrentDestinationScId = destinationScId;
             saveMemory();
@@ -192,29 +192,29 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             }
             else
             {
-                worldData.Set(key, 0L);
+                worldData.Set(key, 0UL);
                 worldData.Set(key2, true);
             }
+            
+            key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.ShipStoreId, new GoapStateKeyResLoc());
+            worldData.Set(key, _state.CurrentShipStoreId);
 
-            //foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
-            //{
-            //    long storeId;
-            //    if (_state.TryGetPlanetStoreId(destScId, out storeId))
-            //    {
-            //        List<ResourceQuantity> resources = _state.PlanetResources(destScId);
-            //        foreach (ResourceQuantity resQ in resources)
-            //        {
-            //            if (resQ.Quantity > 0)
-            //            {
-            //                key = new GoapStateKey();
-            //                key.Type = GoapStateKeyEnum.Resource;
-            //                key.ResType = resQ.Type;
-            //                key.StoreId = storeId;
-            //                worldData.Set(key,1L);
-            //            }
-            //        }
-            //    }
-            //}
+            foreach (UInt64 destScId in _state.PlanetsInSolarSystemScIds)
+            {
+                ulong storeId;
+                if (_state.TryGetPlanetStoreId(destScId, out storeId))
+                {
+                    List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                    foreach (ResourceQuantity resQ in resources)
+                    {
+                        if (resQ.Quantity > 0)
+                        {
+                            key = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(resQ.Type,storeId));                            
+                            worldData.Set(key, resQ.Quantity);
+                        }
+                    }
+                }
+            }
 
             return worldData;
         }
@@ -226,11 +226,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc());
             goalState.Set(key, chooseRandomDestinationScId());
 
-            //key = new GoapStateKey();
-            //key.Type = GoapStateKeyEnum.Resource;
-            //key.ResType = ResourceTypeEnum.Platinum;
-            //key.StoreId = _state.CurrentShipStoreId;
-            //goalState.Set(key, 1L);
+            GoapStateKey rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource,GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Platinum,_state.CurrentShipStoreId));
+            goalState.Set(rkey, 1L);
             return goalState;
         }
 
@@ -264,7 +261,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public bool MoveAgent(GoapAction nextAction)
         {
-            Int64 destinationScId = (Int64)nextAction.target;
+            UInt64 destinationScId = (UInt64)nextAction.target;
             if (!_state.CurrentShipHasDestination || _state.CurrentShipDestinationScID != destinationScId) // set destination based on action if we don't have one or it has changed
             {
                 setNewDestination(destinationScId);
@@ -315,7 +312,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             List<GoapAction> actionsList = new List<GoapAction>
             {
                 new GoapUndockAction(),
-                new GoapDockGenericAction(_state.PlanetsInSolarSystemScIds.ToHashSet())
+                new GoapDockGenericAction(_state.PlanetsInSolarSystemScIds.ToHashSet()),
+                new GoapLoadShipGenericAction()
             };
 
             //foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)

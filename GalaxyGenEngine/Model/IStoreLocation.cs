@@ -5,6 +5,6 @@ namespace GalaxyGenEngine.Model
 {
     public interface IStoreLocation
     {
-        Dictionary<Int64,Store> Stores { get; set; }
+        Dictionary<UInt64,Store> Stores { get; set; }
     }
 }

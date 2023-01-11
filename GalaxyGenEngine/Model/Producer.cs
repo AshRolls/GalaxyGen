@@ -11,12 +11,12 @@ namespace GalaxyGenEngine.Model
             ProducerId = IdUtils.GetId();
         }
 
-        public Int64 ProducerId { get; set; }
+        public UInt64 ProducerId { get; set; }
 
         public String Name { get; set; }
 
         public BluePrintEnum BluePrintType {get; set;}       
-        public Int64 TickForNextProduction { get; set; }
+        public UInt64 TickForNextProduction { get; set; }
         public bool Producing { get; set; }
         public bool AutoResumeProduction { get; set; }
         public int ProduceNThenStop { get; set; }

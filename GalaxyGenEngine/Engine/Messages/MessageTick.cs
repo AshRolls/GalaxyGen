@@ -9,11 +9,11 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageTick
     {
-        public MessageTick(Int64 tick)
+        public MessageTick(UInt64 tick)
         {
             Tick = tick;
         }
 
-        public Int64 Tick { get; private set; }
+        public UInt64 Tick { get; private set; }
     }
 }

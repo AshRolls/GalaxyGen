@@ -12,7 +12,7 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageResources : Message
     {
-        public MessageResources(List<ResourceQuantity> resources, Int64 tickSent)
+        public MessageResources(List<ResourceQuantity> resources, UInt64 tickSent)
         {
             Resources = resources;
             TickSent = tickSent;

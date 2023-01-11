@@ -8,7 +8,7 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageShipDocking : IMessageShipCommandData
     {
-        public MessageShipDocking(ShipCommandEnum type, Int64 dockingTargetId)
+        public MessageShipDocking(ShipCommandEnum type, UInt64 dockingTargetId)
         {
             CommandType = type;
             DockingTargetId = dockingTargetId;
@@ -16,6 +16,6 @@ namespace GalaxyGenEngine.Engine.Messages
 
         public ShipCommandEnum CommandType { get; set; }
 
-        public Int64 DockingTargetId { get; set; }
+        public UInt64 DockingTargetId { get; set; }
     }
 }

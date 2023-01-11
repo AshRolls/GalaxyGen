@@ -109,7 +109,7 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-        public Int64 TickForNextProduction
+        public UInt64 TickForNextProduction
         {
             get
             {

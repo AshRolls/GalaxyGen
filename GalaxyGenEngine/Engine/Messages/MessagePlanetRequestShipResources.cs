@@ -6,7 +6,7 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessagePlanetRequestShipResources : IMessagePlanetCommandData
     {
-        public MessagePlanetRequestShipResources(PlanetCommandEnum type, List<ResourceQuantity> resourcesRequested, long ownerId, long shipId)
+        public MessagePlanetRequestShipResources(PlanetCommandEnum type, List<ResourceQuantity> resourcesRequested, ulong ownerId, ulong shipId)
         {
             CommandType = type;
             ResourcesRequested = resourcesRequested;
@@ -16,7 +16,7 @@ namespace GalaxyGenEngine.Engine.Messages
 
         public PlanetCommandEnum CommandType { get; set; }
         public List<ResourceQuantity> ResourcesRequested { get; private set; }
-        public long OwnerId { get; private set; }
-        public long ShipId { get; private set; }
+        public ulong OwnerId { get; private set; }
+        public ulong ShipId { get; private set; }
     }
 }

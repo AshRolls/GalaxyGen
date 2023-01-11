@@ -16,7 +16,7 @@ namespace GalaxyGenEngine.Engine.Messages
 
     public class MessagePlanetCommand : Message
     {
-        public MessagePlanetCommand(IMessagePlanetCommandData cmd, Int64 tickSent, Int64 planetScId)
+        public MessagePlanetCommand(IMessagePlanetCommandData cmd, UInt64 tickSent, UInt64 planetScId)
         {
             Command = cmd;
             TickSent = tickSent;
@@ -24,6 +24,6 @@ namespace GalaxyGenEngine.Engine.Messages
         }
 
         public IMessagePlanetCommandData Command { get; private set; }        
-        public Int64 PlanetScId { get; private set; }
+        public UInt64 PlanetScId { get; private set; }
     }
 }

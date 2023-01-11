@@ -10,7 +10,7 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageShipResponse : Message
     {
-        public MessageShipResponse(bool response, MessageShipCommand sentCommand, Int64 tickSent)
+        public MessageShipResponse(bool response, MessageShipCommand sentCommand, UInt64 tickSent)
         {
             Response = response;
             SentCommand = sentCommand;

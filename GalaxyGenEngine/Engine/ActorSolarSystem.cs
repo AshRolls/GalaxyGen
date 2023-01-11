@@ -13,9 +13,9 @@ namespace GalaxyGenEngine.Engine
         IActorRef _actorEngine;
         IActorRef _actorTextOutput;
         private SolarSystemController _solarSystemC;
-        private Dictionary<Int64, IActorRef> _subscribedActorAgents; // key agent id
+        private Dictionary<UInt64, IActorRef> _subscribedActorAgents; // key agent id
         private IEnumerable<IActorRef> _actorAgentValues;  
-        private Int64 _curTick;
+        private UInt64 _curTick;
         private int _numberOfIncompleteAg;
         private MessageEngineSSCompletedCommand _tickCompleteCmd;
 
@@ -41,7 +41,7 @@ namespace GalaxyGenEngine.Engine
         private void setupChildAgentActors(SolarSystem ss)
         {
             // create child actors for each agent in ss
-            _subscribedActorAgents = new Dictionary<Int64, IActorRef>();
+            _subscribedActorAgents = new Dictionary<UInt64, IActorRef>();
             _numberOfIncompleteAg = ss.Agents.Count();
             foreach (Agent agent in ss.Agents)
             {
@@ -94,7 +94,7 @@ namespace GalaxyGenEngine.Engine
             _solarSystemC.ReceiveCommandForPlanet(msg);
         }
 
-        internal void SendMessageToAgent(Int64 agentId, object msg)
+        internal void SendMessageToAgent(UInt64 agentId, object msg)
         {
             _subscribedActorAgents[agentId].Tell(msg);
         }

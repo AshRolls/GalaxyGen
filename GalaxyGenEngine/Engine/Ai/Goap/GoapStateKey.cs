@@ -17,7 +17,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     {
         None,
         IsDocked,
-        DockedAt
+        DockedAt,
+        ShipStoreId
     }
 
     public struct GoapStateKey
@@ -37,9 +38,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     public struct GoapStateKeyResLoc
     {
         public ResourceTypeEnum ResType;
-        public long StoreId;
+        public ulong StoreId;
 
-        public GoapStateKeyResLoc(ResourceTypeEnum resType, long storeId)
+        public GoapStateKeyResLoc(ResourceTypeEnum resType, ulong storeId)
         {
             ResType = resType;
             StoreId = storeId;

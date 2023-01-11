@@ -10,10 +10,10 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
     {
         public AgentDefaultMemory()
         {
-            MarketLastCheckedTick = new Dictionary<Int64, Int64>();  // key = planetscid, value = tick
+            MarketLastCheckedTick = new Dictionary<UInt64, UInt64>();  // key = planetscid, value = tick
         }
 
-        public Int64 CurrentDestinationScId { get; set; }
-        public Dictionary<Int64,Int64> MarketLastCheckedTick { get; set; }
+        public UInt64 CurrentDestinationScId { get; set; }
+        public Dictionary<UInt64,UInt64> MarketLastCheckedTick { get; set; }
     }
 }

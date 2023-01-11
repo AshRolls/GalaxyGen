@@ -8,6 +8,6 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public abstract class Message
     {
-        public Int64 TickSent { get; protected set; }
+        public UInt64 TickSent { get; protected set; }
     }
 }

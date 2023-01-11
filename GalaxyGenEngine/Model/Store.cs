@@ -10,14 +10,14 @@ namespace GalaxyGenEngine.Model
         public Store()
         {
             StoreId = IdUtils.GetId();
-            StoredResources = new Dictionary<ResourceTypeEnum, UInt64>();
+            StoredResources = new Dictionary<ResourceTypeEnum, Int64>();
         }
 
-        public Int64 StoreId { get; set; }
+        public UInt64 StoreId { get; set; }
 
         public String Name { get; set; }
 
-        public Dictionary<ResourceTypeEnum,UInt64> StoredResources { get; set; }
+        public Dictionary<ResourceTypeEnum,Int64> StoredResources { get; set; }
         public Agent Owner { get; set; }
 
         public IStoreLocation Location { get; set; }

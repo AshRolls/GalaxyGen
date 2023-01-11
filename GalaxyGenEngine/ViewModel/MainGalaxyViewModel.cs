@@ -122,7 +122,7 @@ namespace GalaxyGenEngine.ViewModel
 
         private void createSsVmFromSelectedScSS()
         {
-            Int64 scId = StarChart.GetIdForObject(selectedScSolarSystem_Var);
+            UInt64 scId = StarChart.GetIdForObject(selectedScSolarSystem_Var);
             SolarSystem ss = Galaxy.Model.SolarSystems.Where(x => x.StarChartId == scId).FirstOrDefault();
             if (ss != null)
             {
@@ -163,7 +163,7 @@ namespace GalaxyGenEngine.ViewModel
 
         private void createPVmFromSelectedScP()
         {
-            Int64 pId = StarChart.GetIdForObject(selectedScPlanet_Var);
+            UInt64 pId = StarChart.GetIdForObject(selectedScPlanet_Var);
             Planet p = SelectedSolarSystemVm.Planets.Select(x => x.Model).Where(x => x.StarChartId == pId).FirstOrDefault();
             if (p != null)
             {

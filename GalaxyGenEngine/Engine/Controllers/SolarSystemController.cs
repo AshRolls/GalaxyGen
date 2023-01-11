@@ -15,9 +15,9 @@ namespace GalaxyGenEngine.Engine.Controllers
     public class SolarSystemController
     {
         private SolarSystem _model;
-        private Dictionary<Int64, PlanetController> _planetCs;
+        private Dictionary<UInt64, PlanetController> _planetCs;
         private IEnumerable _planetValues;        
-        private Dictionary<Int64, ShipController> _shipCs;
+        private Dictionary<UInt64, ShipController> _shipCs;
         private IEnumerable _shipValues;
         private IActorRef _actorTextOutput;
         private ActorSolarSystem _parentActor;
@@ -29,7 +29,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             _actorTextOutput = actorTextOutput;
 
             // create child controller for each planet in ss
-            _planetCs = new Dictionary<Int64, PlanetController>();
+            _planetCs = new Dictionary<UInt64, PlanetController>();
             foreach (Planet p in ss.Planets.Values)
             {
                 PlanetController pc = new PlanetController(p, actorTextOutput);
@@ -38,7 +38,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             _planetValues = _planetCs.Values;
 
             // create child controller for each ship in ss
-            _shipCs = new Dictionary<Int64, ShipController>();
+            _shipCs = new Dictionary<UInt64, ShipController>();
             foreach (Ship s in ss.Ships.Values)
             {
                 ShipController sc = new ShipController(s, this, actorTextOutput);
@@ -169,7 +169,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             _planetCs[msg.PlanetScId].ReceiveCommandForPlanet(msg);
         }
 
-        internal Int64 SolarSystemId
+        internal UInt64 SolarSystemId
         {
             get
             {
@@ -177,7 +177,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
         }
 
-        internal void SendMessageToAgent(Int64 agentId, object msg)
+        internal void SendMessageToAgent(UInt64 agentId, object msg)
         {
             _parentActor.SendMessageToAgent(agentId, msg);
         }

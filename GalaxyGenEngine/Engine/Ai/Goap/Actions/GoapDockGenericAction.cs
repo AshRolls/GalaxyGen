@@ -13,7 +13,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     {
         private bool _requestSent = false;        
 
-        public GoapDockGenericAction(HashSet<long> possibleDocks)
+        public GoapDockGenericAction(HashSet<ulong> possibleDocks)
         {
             _targets = possibleDocks;
 
@@ -28,8 +28,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public override bool isDone(object agent)
         {
-            GoapAgent ag = (GoapAgent)agent;
-            return ag.StateProvider.CurrentShipIsDocked;
+            return true;
         }
     
         public override bool requiresInRange()
@@ -47,10 +46,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return false;
         }  
 
-        public override List<GoapAction> GetSpecificActions(object agent)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
         {
             List<GoapAction> actions = new List<GoapAction>();
-            foreach (long t in _targets)
+            foreach (ulong t in _targets)
             {
                 GoapDockSpecificAction a = new GoapDockSpecificAction(t);
                 actions.Add(a);
@@ -59,20 +58,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         }
 
         public override bool perform(object agent)
-        {
-            GoapAgent ag = (GoapAgent)agent;
-           
-            if (!ag.StateProvider.CurrentShipIsDocked && !_requestSent)
-            {
-                ag.ActionProvider.RequestDock();
-                _requestSent = true;
-            }
-
+        {            
             return true;
         }
 
-        private static HashSet<long> _targets;
-        public static HashSet<long> Targets
+        private static HashSet<ulong> _targets;
+        public static HashSet<ulong> Targets
         {
             get { return _targets; }
         }

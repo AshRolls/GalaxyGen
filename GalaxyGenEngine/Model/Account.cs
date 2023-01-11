@@ -10,7 +10,7 @@ namespace GalaxyGenEngine.Model
             AccountId = IdUtils.GetId();
         }
 
-        public Int64 AccountId { get; set; }
+        public UInt64 AccountId { get; set; }
 
         public IAccountOwner Owner { get; set; }        
 

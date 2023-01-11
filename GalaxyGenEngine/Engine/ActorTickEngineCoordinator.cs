@@ -26,7 +26,7 @@ namespace GalaxyGenEngine.Engine
         private TickEngineRunState _runState;
         private int _numberOfIncompleteSS;
         private Timer _secondTimer;
-        private Int64 _ticksAtTimerStart;        
+        private UInt64 _ticksAtTimerStart;        
 
         public ActorTickEngineCoordinator(IActorRef actorTextOutput, Galaxy state)
         {

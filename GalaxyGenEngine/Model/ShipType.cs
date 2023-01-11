@@ -14,7 +14,7 @@ namespace GalaxyGenEngine.Model
             ShipTypeId = IdUtils.GetId();            
         }
 
-        public Int64 ShipTypeId { get; set; }
+        public UInt64 ShipTypeId { get; set; }
         public String Name { get; set; }
         public Double MaxCruisingSpeedKmH { get; set; } // km per hour
     }
