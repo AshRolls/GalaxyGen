@@ -15,11 +15,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public GoapDockSpecificAction(long dockScId)
         {
             target = dockScId;
-            GoapStateKey key = new GoapStateKey();            
-            key.Type = GoapStateKeyEnum.String;
-            key.String = "IsDocked";            
+            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());                                    
             addEffect(key, true);
-            key.String = "DockedAt";           
+            key.StateName = GoapStateKeyStateNameEnum.DockedAt;            
             addEffect(key, dockScId);
         }
 

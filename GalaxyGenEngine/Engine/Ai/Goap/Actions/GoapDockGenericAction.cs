@@ -17,9 +17,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             _targets = possibleDocks;
 
-            GoapStateKey key = new GoapStateKey();            
-            key.Type = GoapStateKeyEnum.String;
-            key.String = "IsDocked";
+            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName,GoapStateKeyStateNameEnum.IsDocked,new GoapStateKeyResLoc());                        
             addPrecondition(key, false);            
         }
 

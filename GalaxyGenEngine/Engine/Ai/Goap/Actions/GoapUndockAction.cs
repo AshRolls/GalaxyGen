@@ -15,12 +15,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public GoapUndockAction()
         {            
-            GoapStateKey key = new GoapStateKey();
-            key.Type = GoapStateKeyEnum.String;
-            key.String = "IsDocked";
+            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());
             addPrecondition(key, true);
             addEffect(key, false);
-            key.String = "DockedAt";            
+            key.StateName = GoapStateKeyStateNameEnum.DockedAt;
             addEffect(key, 0L);
         }
 

@@ -7,16 +7,42 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {
-    public enum GoapStateKeyEnum
+    public enum GoapStateKeyTypeEnum
     {
-        String = 0,
+        StateName = 0,
         Resource = 1
     }
+
+    public enum GoapStateKeyStateNameEnum
+    {
+        None,
+        IsDocked,
+        DockedAt
+    }
+
     public struct GoapStateKey
     {
-        public GoapStateKeyEnum Type;
-        public string String; // replace with enum
+        public GoapStateKeyTypeEnum Type;
+        public GoapStateKeyStateNameEnum StateName;
+        public GoapStateKeyResLoc ResourceLocation;
+
+        public GoapStateKey(GoapStateKeyTypeEnum type, GoapStateKeyStateNameEnum stateName, GoapStateKeyResLoc resourceLocation)
+        {
+            Type = type;
+            StateName = stateName;
+            ResourceLocation = resourceLocation;
+        }
+    }    
+
+    public struct GoapStateKeyResLoc
+    {
         public ResourceTypeEnum ResType;
         public long StoreId;
-    }    
+
+        public GoapStateKeyResLoc(ResourceTypeEnum resType, long storeId)
+        {
+            ResType = resType;
+            StoreId = storeId;
+        }
+    }
 }

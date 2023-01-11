@@ -8,7 +8,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
      */
     public class GoapPlanner
     {
-        private static float currentMaxCost;
         public GoapState StartingWorldState { get; private set; }
         public HashSet<GoapAction> UsableActions { get; private set; }
 

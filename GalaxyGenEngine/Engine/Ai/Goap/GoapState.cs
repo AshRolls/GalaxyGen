@@ -71,9 +71,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 foreach (var pair in b.values)
                 {
-                    if (pair.Key.Type == GoapStateKeyEnum.String) result.values[pair.Key] = pair.Value;
-                    if (pair.Key.Type == GoapStateKeyEnum.Resource && !result.values.ContainsKey(pair.Key)) result.values[pair.Key] = pair.Value;
-                    else if (pair.Key.Type == GoapStateKeyEnum.Resource) result.values[pair.Key] = (long)pair.Value + (long)result.values[pair.Key];
+                    if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) result.values[pair.Key] = pair.Value;
+                    if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && !result.values.ContainsKey(pair.Key)) result.values[pair.Key] = pair.Value;
+                    else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) result.values[pair.Key] = (long)pair.Value + (long)result.values[pair.Key];
                 }
                 return result;
             }
@@ -121,8 +121,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 if (values.ContainsKey(key))
                 {
-                    if (key.Type == GoapStateKeyEnum.String) values[key] = value;
-                    else if (key.Type == GoapStateKeyEnum.Resource) values[key] = (long)values[key] + (long)value;
+                    if (key.Type == GoapStateKeyTypeEnum.StateName) values[key] = value;
+                    else if (key.Type == GoapStateKeyTypeEnum.Resource) values[key] = (long)values[key] + (long)value;
                 }
                 else values.Add(key, value);
             }
@@ -172,9 +172,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     if (!Equals(pair.Value, otherValue))
                     {
                         count++;
-                        if (pair.Key.Type == GoapStateKeyEnum.String) values[pair.Key] = pair.Value;
-                        else if (pair.Key.Type == GoapStateKeyEnum.Resource && otherValue != null) values[pair.Key] = (long)pair.Value + (long)otherValue;
-                        else if (pair.Key.Type == GoapStateKeyEnum.Resource) values[pair.Key] = pair.Value;
+                        if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) values[pair.Key] = pair.Value;
+                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) values[pair.Key] = (long)pair.Value + (long)otherValue;
+                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) values[pair.Key] = pair.Value;
                         if (count >= stopAt)
                             break;
                     }
@@ -198,9 +198,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                         count++;
                         if (difference != null)
                         {
-                            if (pair.Key.Type == GoapStateKeyEnum.String) difference.values[pair.Key] = pair.Value;
-                            else if (pair.Key.Type == GoapStateKeyEnum.Resource && otherValue != null) difference.values[pair.Key] = (long)pair.Value + (long)otherValue;
-                            else if (pair.Key.Type == GoapStateKeyEnum.Resource) difference.values[pair.Key] = pair.Value;
+                            if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) difference.values[pair.Key] = pair.Value;
+                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) difference.values[pair.Key] = (long)pair.Value + (long)otherValue;
+                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) difference.values[pair.Key] = pair.Value;
                         }
                         if (count >= stopAt)
                             break;

@@ -3,14 +3,12 @@ using Akka.Actor;
 using Newtonsoft.Json;
 using System.Linq;
 using System.Collections.Generic;
-using GalaxyGenCore.StarChart;
 using GalaxyGenCore.Framework;
 using GalaxyGenCore.Resources;
 using GalaxyGenEngine.Engine.Messages;
 using GalaxyGenEngine.Framework;
 using GalaxyGenEngine.Engine.Ai.Goap;
 using GalaxyGenEngine.Engine.Ai.Goap.Actions;
-using GalaxyGenEngine.Engine.Ai.Goap;
 
 namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 {
@@ -185,12 +183,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         public GoapState GetWorldState()
         {
             GoapState worldData = new GoapState();
-            GoapStateKey key = new GoapStateKey();
-            key.Type = GoapStateKeyEnum.String;
-            key.String = "DockedAt";
-            GoapStateKey key2 = new GoapStateKey();
-            key2.Type = GoapStateKeyEnum.String;
-            key2.String = "IsDocked";
+            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc());
+            GoapStateKey key2 = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());
             if (_state.CurrentShipIsDocked)
             {
                 worldData.Set(key, _state.CurrentShipDockedPlanetScId);
@@ -229,9 +223,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         {
             GoapState goalState = new GoapState();
             
-            GoapStateKey key = new GoapStateKey();
-            key.Type = GoapStateKeyEnum.String;
-            key.String = "DockedAt";
+            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc());
             goalState.Set(key, chooseRandomDestinationScId());
 
             //key = new GoapStateKey();
