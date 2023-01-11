@@ -33,6 +33,25 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             StateName = stateName;
             ResourceLocation = resourceLocation;
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            switch (Type)
+            {
+                case GoapStateKeyTypeEnum.StateName:
+                    sb.Append("State: ");
+                    sb.Append(StateName.ToString());                    
+                    break;
+                case GoapStateKeyTypeEnum.Resource:
+                    sb.Append("Resource: ");
+                    sb.Append(ResourceLocation.ResType.ToString());
+                    sb.Append(" ");
+                    sb.Append(ResourceLocation.StoreId);
+                    break;
+            }
+            return sb.ToString();
+        }
     }    
 
     public struct GoapStateKeyResLoc

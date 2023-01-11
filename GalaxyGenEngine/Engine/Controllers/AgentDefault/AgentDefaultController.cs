@@ -236,10 +236,10 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc());
             goalState.Set(key, chooseRandomDestinationScId());
 
-            GoapStateKey rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource,GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Platinum,_state.CurrentShipStoreId));
-            goalState.Set(rkey, 2L);
-            rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Spice, _state.CurrentShipStoreId));
-            goalState.Set(rkey, 9L);
+            GoapStateKey rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Platinum, _state.CurrentShipStoreId));
+            goalState.Set(rkey, 4L);
+            //rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Spice, _state.CurrentShipStoreId));
+            //goalState.Set(rkey, 100L);
             return goalState;
         }
 
