@@ -15,7 +15,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     public struct GoapStateKey
     {
         public GoapStateKeyEnum Type;
-        public string String;
+        public string String; // replace with enum
         public ResourceTypeEnum ResType;
         public long StoreId;
     }    

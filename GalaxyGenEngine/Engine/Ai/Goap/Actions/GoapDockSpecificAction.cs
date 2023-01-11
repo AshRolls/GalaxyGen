@@ -8,22 +8,19 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
-    public class GoapDockAction : GoapAction
+    public class GoapDockSpecificAction : GoapAction
     {
-        private object _target;
         private bool _requestSent = false;
-        
 
-        public GoapDockAction(Int64 dockScId)
+        public GoapDockSpecificAction(long dockScId)
         {
-            GoapStateKey key = new GoapStateKey();
+            target = dockScId;
+            GoapStateKey key = new GoapStateKey();            
             key.Type = GoapStateKeyEnum.String;
-            key.String = "DockedAt";
-
-            addPrecondition(key, 0L);               
+            key.String = "IsDocked";            
+            addEffect(key, true);
+            key.String = "DockedAt";           
             addEffect(key, dockScId);
-            
-            _target = dockScId;
         }
 
         public override void reset()
@@ -37,29 +34,35 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return ag.StateProvider.CurrentShipIsDocked;
         }
     
-
         public override bool requiresInRange()
         {
             return true; 
         }
 
-        public override bool CheckProceduralPrecondition()
+        public override bool isSpecific()
         {
-            target = _target;
+            return true;
+        }
+        public override List<GoapAction> GetSpecificActions(object agent)
+        {
+            return null;
+        }
+
+        public override bool CheckProceduralPrecondition(object agent)
+        {
             return true;
         }
 
         public override bool perform(object agent)
         {
-            GoapAgent ag = (GoapAgent)agent;
-           
+            GoapAgent ag = (GoapAgent)agent;           
             if (!ag.StateProvider.CurrentShipIsDocked && !_requestSent)
             {
                 ag.ActionProvider.RequestDock();
                 _requestSent = true;
             }
-
             return true;
         }
+
     }
 }

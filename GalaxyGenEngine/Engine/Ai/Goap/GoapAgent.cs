@@ -175,7 +175,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         private void loadActions()
         {
-            GoapAction[] actions = _dataProvider.GetActions();
+            List<GoapAction> actions = _dataProvider.GetActions();
             _availableActions.Clear();
             foreach (GoapAction a in actions)
             {

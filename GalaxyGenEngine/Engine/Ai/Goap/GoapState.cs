@@ -210,6 +210,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             }
         }
 
+        
+
         //public bool HasAnyConflict(GoapState other) // used only in backward for now
         //{
         //    lock (values) lock (other.values)

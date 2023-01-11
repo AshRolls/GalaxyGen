@@ -8,11 +8,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public abstract class GoapAction
     {
-        private GoapState preconditions;
-        private GoapState effects;
-
-        private bool inRange = false;
-
+        private GoapState _preconditions;
+        private GoapState _effects;     
+        private bool _inRange = false;
+   
         /* The cost of performing the action. 
          * Figure out a weight that suits the action. 
          * Changing it will affect what actions are chosen during planning.*/
@@ -22,29 +21,24 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             return _cost;
         }
 
-        /* The risk of performing the action. */
+        // The risk of performing the action.
         public float Risk = 0f;
-        /* The Benefits of performing the action. */
+        // The Benefits of performing the action. 
         public float Return = 1f;
-        /* Figure out a weight that suits the action. */
-        public virtual float GetWeight()
-        {
-            return (1 - Risk) * Return;
-        }
-
-        /**
-         * An action often has to perform on an object. This is that object. Can be null. */
+        // Figure out a weight that suits the action. 
+        public virtual float GetWeight() => (1 - Risk) * Return;        
+        // An action often has to perform on an object. This is that object. Can be null. 
         public object target;
 
         public GoapAction()
         {
-            preconditions = new GoapState();
-            effects = new GoapState();
+            _preconditions = new GoapState();
+            _effects = new GoapState();
         }
 
         public void doReset()
         {
-            inRange = false;
+            _inRange = false;
             target = null;
             reset();
         }
@@ -63,7 +57,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * Procedurally check if this action can run. Not all actions
          * will need this, but some might.
          */
-        public abstract bool CheckProceduralPrecondition();
+        public abstract bool CheckProceduralPrecondition(object agent);
 
         /**
          * Run the action.
@@ -79,37 +73,39 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          */
         public abstract bool requiresInRange();
 
-
         /**
          * Are we in range of the target?
          * The MoveTo state will set this and it gets reset each time this action is performed.
          */
         public bool isInRange()
         {
-            return inRange;
+            return _inRange;
         }
 
         public void setInRange(bool inRange)
         {
-            this.inRange = inRange;
+            this._inRange = inRange;
         }
 
+        public abstract bool isSpecific();
+
+        public abstract List<GoapAction> GetSpecificActions(object agent);
 
         public void addPrecondition(GoapStateKey key, object value)
         {
-            preconditions.Set(key, value);
+            _preconditions.Set(key, value);
         }
 
         public void addEffect(GoapStateKey key, object value)
         {
-            effects.Set(key, value);
+            _effects.Set(key, value);
         }
 
         public GoapState Preconditions
         {
             get
             {
-                return preconditions;
+                return _preconditions;
             }
         }
 
@@ -117,7 +113,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             get
             {
-                return effects;
+                return _effects;
             }
         }
     }

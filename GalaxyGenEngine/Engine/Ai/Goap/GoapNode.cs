@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,12 +20,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public float PathCost { get; private set; }
         public float HeuristicCost { get; private set; }
 
-        public GoapNode(GoapNode parent, GoapState state, GoapAction action, float pathCost, GoapState newGoal)
+        public GoapNode(GoapNode parent, GoapState state, GoapAction action, float pathCost, GoapState newGoal, GoapPlanner planner)
         {
             this.Parent = parent;
             this.Action = action;
             this.State = state;
             this.PathCost = pathCost;
+            this.planner = planner;
             
             init(newGoal);
         }
@@ -46,7 +48,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 this.goal = newGoal;
                 //this.State.AddFromState(this.Action.Effects);
 
-                PathCost += this.Action.GetCost();
+                if (this.Action.isSpecific()) PathCost += this.Action.GetCost();
 
                 goal.ReplaceWithMissingDifference(this.Action.Effects); // remove current action effects from goal
                 //goal.ReplaceWithMissingDifference(planner.StartingWorldState); // remove any preconditions already satisfied by world state.
@@ -65,6 +67,33 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         internal bool BetterThan(GoapNode cheapest)
         {
             return this.Cost < cheapest.Cost;
+        }
+
+        public List<GoapNode> Expand(object agent)
+        {
+            List<GoapNode> expandList = new List<GoapNode>();
+            foreach (GoapAction action in planner.UsableActions)
+            {
+                if (planner.InState(action.Preconditions, this.State) && action.CheckProceduralPrecondition(agent))
+                {
+                    if (action.isSpecific())
+                    {
+                        GoapState newState = planner.GetNewState(this.State, action.Effects);
+                        GoapNode newNode = new GoapNode(this, newState, action, this.PathCost, goal.Clone(), planner);
+                        expandList.Add(newNode);
+                    }
+                    else
+                    {
+                        foreach(GoapAction sAction in action.GetSpecificActions(agent))
+                        {
+                            GoapState newState = planner.GetNewState(this.State, sAction.Effects);
+                            GoapNode newNode = new GoapNode(this, newState, sAction, this.PathCost, goal.Clone(), planner);
+                            expandList.Add(newNode);
+                        }
+                    }
+                }
+            }
+            return expandList;
         }
 
         //public List<GoapNode> Expand(object agent)

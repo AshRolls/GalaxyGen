@@ -12,21 +12,21 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     public class GoapUndockAction : GoapAction
     {
         private bool _requestSent = false;
-        private bool _docked = true;
 
-        public GoapUndockAction(Int64 undockScId)
+        public GoapUndockAction()
         {            
             GoapStateKey key = new GoapStateKey();
             key.Type = GoapStateKeyEnum.String;
-            key.String = "DockedAt";
-            addPrecondition(key, undockScId);            
+            key.String = "IsDocked";
+            addPrecondition(key, true);
+            addEffect(key, false);
+            key.String = "DockedAt";            
             addEffect(key, 0L);
         }
 
         public override void reset()
         {
             _requestSent = false;
-            _docked = true;
         }
 
         public override bool isDone(object agent)
@@ -41,9 +41,19 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return false; 
         }
 
-        public override bool CheckProceduralPrecondition()
+        public override bool CheckProceduralPrecondition(object agent)
         {
             return true;
+        }
+
+        public override bool isSpecific()
+        {
+            return true;
+        }
+
+        public override List<GoapAction> GetSpecificActions(object agent)
+        {
+            return null;
         }
 
         public override bool perform(object agent)
