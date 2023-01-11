@@ -25,6 +25,7 @@ namespace GalaxyGenEngine.Engine
         IEnumerable<ulong> PlanetsInSolarSystemScIds { get; }        
         bool CurrentShipAtDestination(ulong destinationScId);
         Int64 CurrentShipResourceQuantity(ResourceTypeEnum resType);
+        Int64 CurrentPlanetResourceQuantity(ResourceTypeEnum resType);
         double DestinationX(ulong destinationScId);
         double DestinationY(ulong destinationScId);
         bool XYAtDestination(ulong destinationScId, double X, double Y);

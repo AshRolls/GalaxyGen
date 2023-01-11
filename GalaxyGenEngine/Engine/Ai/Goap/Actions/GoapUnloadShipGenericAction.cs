@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
-    public class GoapLoadShipGenericAction : GoapAction
+    public class GoapUnloadShipGenericAction : GoapAction
     {
         private bool _requestSent = false;
 
-        public GoapLoadShipGenericAction()
+        public GoapUnloadShipGenericAction()
         {
             GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());
             addPrecondition(key, true);
@@ -44,10 +44,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
                 ulong shipStoreId = (ulong)state.Get(new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.ShipStoreId, new GoapStateKeyResLoc()));
                 foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
                 {
-                    if (kvp.Key.Type == GoapStateKeyTypeEnum.Resource && kvp.Key.ResourceLocation.StoreId == dockedAtStoreId)
+                    if (kvp.Key.Type == GoapStateKeyTypeEnum.Resource && kvp.Key.ResourceLocation.StoreId == shipStoreId)
                     {
-                        GoapLoadShipSpecificAction aSingle = new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 1L));
-                        GoapLoadShipSpecificAction aAll = new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, (long)kvp.Value));
+                        GoapUnloadShipSpecificAction aSingle = new GoapUnloadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, dockedAtStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 1L));
+                        GoapUnloadShipSpecificAction aAll = new GoapUnloadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, dockedAtStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, (long)kvp.Value));
                         actions.Add(aSingle);
                         actions.Add(aAll);
                     }

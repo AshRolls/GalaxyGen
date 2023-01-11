@@ -232,6 +232,26 @@ namespace GalaxyGenEngine.Engine
                 return 0L;
         }
 
+        public List<ResourceQuantity> CurrentShipResources()
+        {
+            List<ResourceQuantity> resources = new List<ResourceQuantity>();
+            Store s = ((Ship)_model.Location).Stores[_model.AgentId];
+            foreach (KeyValuePair<ResourceTypeEnum, Int64> kvp in s.StoredResources)
+            {
+                resources.Add(new ResourceQuantity(kvp.Key, kvp.Value));
+            }            
+            return resources;
+        }
+
+        public Int64 CurrentPlanetResourceQuantity(ResourceTypeEnum res)
+        {
+            Store s = ((Ship)_model.Location).DockedPlanet.Stores[_model.AgentId];
+            if (s.StoredResources.ContainsKey(res))
+                return s.StoredResources[res];
+            else
+                return 0L;
+        }
+
         public Int64 PlanetResourceQuantity(UInt64 planetScId, ResourceTypeEnum res)
         {
             // TODO should be using a controller rather than direct access to model

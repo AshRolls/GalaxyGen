@@ -71,6 +71,51 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             return queue;
         }
 
+        private bool aStarGraph(GoapNode startNode, ref GoapNode cur, GoapState goal, GoapAgent agent)
+        {
+            PriorityQueue<GoapNode, float> queue = new PriorityQueue<GoapNode, float>();
+            Dictionary<GoapState, float> visited = new Dictionary<GoapState, float>();
+
+            queue.Enqueue(startNode, 0);
+
+            const int MAX_NODES = 10000;
+            const float MAX_COST = 1000;
+            int iterations = 0;
+            float cost = 0;
+            bool found = false;
+            cur = null;
+            while (queue.Count > 0 && iterations < MAX_NODES && cost < MAX_COST)
+            {
+                cur = queue.Dequeue();
+                iterations++;
+                cost = cur.Cost;
+
+                // check goal
+                if (InState(goal, cur.State))
+                {
+                    found = true;
+                    break;
+                }
+
+                // check if we have explored this state before
+                float existingCost;
+                if (visited.TryGetValue(cur.State, out existingCost))
+                {
+                    if (cur.Cost >= existingCost) continue;
+                    else visited[cur.State] = existingCost;
+                }
+                else visited.Add(cur.State, cur.Cost);
+
+                // expand current nodes
+                foreach (GoapNode node in cur.Expand(agent))
+                {
+                    queue.Enqueue(node, node.Cost);
+                }
+            }
+
+            return found;
+        }
+
         //private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal, object agent)
         //{
         //    PriorityQueue<GoapNode, float> frontier = new PriorityQueue<GoapNode, float>();
@@ -133,7 +178,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          */
         //private bool buildGraph(GoapNode startNode, List<GoapNode> leaves, HashSet<GoapAction> usableActions, GoapState goal)
         //{
-            
+
         //    foreach (GoapAction action in usableActions)
         //    {
         //        // if the parent state has the conditions for this action's preconditions, we can use it here
@@ -167,52 +212,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         //    }
 
         //    return foundOne;
-        //}
-
-        private bool aStarGraph(GoapNode startNode, ref GoapNode cur, GoapState goal, GoapAgent agent)
-        {
-            PriorityQueue<GoapNode, float> queue = new PriorityQueue<GoapNode, float>();
-            Dictionary<GoapState, float> visited = new Dictionary<GoapState, float>();
-
-            queue.Enqueue(startNode, 0);
-
-            const int MAX_NODES = 10000;
-            const float MAX_COST = 1000;
-            int iterations = 0;
-            float cost = 0;
-            bool found = false;
-            cur = null;
-            while (queue.Count > 0 && iterations < MAX_NODES && cost < MAX_COST)
-            {
-                cur = queue.Dequeue();
-                iterations++;
-                cost = cur.Cost;
-
-                // check goal
-                if (InState(goal, cur.State))
-                {
-                    found = true;
-                    break;
-                }
-
-                // check if we have explored this state before
-                float existingCost;
-                if (visited.TryGetValue(cur.State, out existingCost))
-                {
-                    if (cur.Cost >= existingCost) continue;
-                    else visited[cur.State] = existingCost;
-                }
-                else visited.Add(cur.State, cur.Cost);
-
-                // expand current nodes
-                foreach (GoapNode node in cur.Expand(agent))
-                {                                        
-                     queue.Enqueue(node, node.Cost);                                        
-                }
-            }
-
-            return found;
-        }
+        //}       
 
         /**
          * Create a subset of the actions excluding the removeMe one. Creates a new set.

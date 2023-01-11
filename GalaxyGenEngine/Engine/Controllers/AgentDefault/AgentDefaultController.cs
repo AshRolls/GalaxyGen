@@ -9,6 +9,7 @@ using GalaxyGenEngine.Engine.Messages;
 using GalaxyGenEngine.Framework;
 using GalaxyGenEngine.Engine.Ai.Goap;
 using GalaxyGenEngine.Engine.Ai.Goap.Actions;
+using GalaxyGenEngine.Model;
 
 namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 {
@@ -198,13 +199,22 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             
             key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.ShipStoreId, new GoapStateKeyResLoc());
             worldData.Set(key, _state.CurrentShipStoreId);
+            List<ResourceQuantity> resources = _state.CurrentShipResources();
+            foreach (ResourceQuantity resQ in resources)
+            {
+                if (resQ.Quantity > 0)
+                {
+                    key = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(resQ.Type, _state.CurrentShipStoreId));
+                    worldData.Set(key, resQ.Quantity);
+                }
+            }
 
             foreach (UInt64 destScId in _state.PlanetsInSolarSystemScIds)
             {
                 ulong storeId;
                 if (_state.TryGetPlanetStoreId(destScId, out storeId))
-                {
-                    List<ResourceQuantity> resources = _state.PlanetResources(destScId);
+                {                    
+                    resources = _state.PlanetResources(destScId);
                     foreach (ResourceQuantity resQ in resources)
                     {
                         if (resQ.Quantity > 0)
@@ -227,7 +237,9 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             goalState.Set(key, chooseRandomDestinationScId());
 
             GoapStateKey rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource,GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Platinum,_state.CurrentShipStoreId));
-            goalState.Set(rkey, 1L);
+            goalState.Set(rkey, 2L);
+            rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Spice, _state.CurrentShipStoreId));
+            goalState.Set(rkey, 9L);
             return goalState;
         }
 
@@ -313,7 +325,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             {
                 new GoapUndockAction(),
                 new GoapDockGenericAction(_state.PlanetsInSolarSystemScIds.ToHashSet()),
-                new GoapLoadShipGenericAction()
+                new GoapLoadShipGenericAction(),
+                new GoapUnloadShipGenericAction(),
             };
 
             //foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
