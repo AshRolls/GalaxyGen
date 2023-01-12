@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
+using GalaxyGenEngine.Framework;
 
 namespace GalaxyGenEngine.ViewModel
 {
     public class TextOutputViewModel : ITextOutputViewModel
     {
+        private bool _enabled = true;
+
         private ObservableCollection<String> consoleLines_Var = new ObservableCollection<string>();
         public ObservableCollection<String> ConsoleLines
         {
@@ -24,7 +28,7 @@ namespace GalaxyGenEngine.ViewModel
         }
 
         public void AddLine(string line)
-        {            
+        {
             consoleLines_Var.Add(line);
             while (consoleLines_Var.Count > 1000) consoleLines_Var.RemoveAt(0);
         }

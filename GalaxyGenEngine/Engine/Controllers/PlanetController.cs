@@ -19,16 +19,16 @@ namespace GalaxyGenEngine.Engine.Controllers
         private Planet _model;
         private SolarSystemController _solarSystemC;
         private HashSet<ProducerController> _producerCs;
-        private IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;
         private ScPlanet _scPlanet;
         private Double _orbitHours;
         private ulong _curTick;
 
-        public PlanetController(Planet p, SolarSystemController ssc, IActorRef actorTextOutput)
+        public PlanetController(Planet p, SolarSystemController ssc, TextOutputController textOutput)
         {
             _model = p;
             _solarSystemC = ssc;
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
             _scPlanet = StarChart.GetPlanet(_model.StarChartId);
             _orbitHours = _scPlanet.OrbitDays * (double)Globals.DAYS_TO_TICKS_FACTOR;
 
@@ -36,7 +36,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             // create child controllers for each producer in planet
             foreach (Producer prod in p.Producers)
             {
-                ProducerController pc = new ProducerController(prod, this, actorTextOutput);
+                ProducerController pc = new ProducerController(prod, this, textOutput);
                 _producerCs.Add(pc);
             }
 

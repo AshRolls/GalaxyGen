@@ -11,19 +11,19 @@ namespace GalaxyGenEngine.Engine
     public class ActorSolarSystem : ReceiveActor
     {
         IActorRef _actorEngine;
-        IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;
         private SolarSystemController _solarSystemC;
         private Dictionary<UInt64, IActorRef> _subscribedActorAgents; // key agent id        
         private UInt64 _curTick;
         private int _numberOfIncompleteAg;
         private MessageEngineSSCompletedCommand _tickCompleteCmd;
 
-        public ActorSolarSystem(IActorRef actorEngine, IActorRef actorTextOutput, SolarSystem ss)
+        public ActorSolarSystem(IActorRef actorEngine, TextOutputController textOutput, SolarSystem ss)
         {
             _actorEngine = actorEngine;
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
             ss.Actor = Self;
-            _solarSystemC = new SolarSystemController(ss, this, actorTextOutput);
+            _solarSystemC = new SolarSystemController(ss, this, textOutput);
             _tickCompleteCmd = new MessageEngineSSCompletedCommand(_solarSystemC.SolarSystemId);
 
             setupChildAgentActors(ss);
@@ -44,7 +44,7 @@ namespace GalaxyGenEngine.Engine
             _numberOfIncompleteAg = ss.Agents.Count();
             foreach (Agent agent in ss.Agents)
             {
-                Props agentProps = Props.Create<ActorAgent>(_actorTextOutput, agent, Self);
+                Props agentProps = Props.Create<ActorAgent>(_textOutput, agent, Self);
                 IActorRef actor = Context.ActorOf(agentProps, "Agent" + agent.AgentId.ToString());
                 _subscribedActorAgents.Add(agent.AgentId, actor);
             }

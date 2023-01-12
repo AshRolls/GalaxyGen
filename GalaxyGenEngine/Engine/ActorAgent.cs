@@ -14,15 +14,15 @@ namespace GalaxyGenEngine.Engine
 
     public class ActorAgent : ReceiveActor
     {
-        private IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;
         private IActorRef _actorSolarSystem;
         private Agent _agent;
         private IAgentController _agentC;
         private MessageEngineAgCompletedCommand _tickCompleteCmd;
 
-        public ActorAgent(IActorRef actorTextOutput, Agent ag, IActorRef actorSolarSystem)
+        public ActorAgent(TextOutputController textOutput, Agent ag, IActorRef actorSolarSystem)
         {
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
             _actorSolarSystem = actorSolarSystem;
             _agent = ag;
             _tickCompleteCmd = new MessageEngineAgCompletedCommand(_agent.AgentId);
@@ -35,7 +35,7 @@ namespace GalaxyGenEngine.Engine
                 //    _agentC = new AgentTraderController(ag, _actorTextOutput);
                 //    break;
                 default:
-                    _agentC = new AgentDefaultController(stateForAgent, _actorSolarSystem, _actorTextOutput);
+                    _agentC = new AgentDefaultController(stateForAgent, _actorSolarSystem, _textOutput);
                     break;
             }
 

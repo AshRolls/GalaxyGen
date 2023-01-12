@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGenEngine.Engine.Controllers;
 using GalaxyGenEngine.Engine.Messages;
 using GalaxyGenEngine.Model;
 using GalaxyGenEngine.ViewModel;
@@ -23,7 +24,7 @@ namespace GalaxyGenEngine.Engine
     {
         private Galaxy _state;
         private HashSet<IActorRef> _subscribedActorSolarSystems; 
-        private IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;
         private TickEngineRunState _runState;
         private int _numberOfIncompleteSS;
         private Timer _secondTimer;
@@ -31,12 +32,12 @@ namespace GalaxyGenEngine.Engine
         private UInt64 _ticksAtTimerStart;
         private bool _receivedAll;
 
-        public ActorTickEngineCoordinator(IActorRef actorTextOutput, Galaxy state)
+        public ActorTickEngineCoordinator(TextOutputController textOutput, Galaxy state)
         {
             _runState = TickEngineRunState.Stopped;
             _state = state;
             _state.Actor = Self;
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
             _receivedAll = false;
 
             setupChildSolarSystemActors();
@@ -55,7 +56,7 @@ namespace GalaxyGenEngine.Engine
             _numberOfIncompleteSS = _state.SolarSystems.Count();
             foreach (SolarSystem ss in _state.SolarSystems)
             {
-                Props ssProps = Props.Create<ActorSolarSystem>(Self, _actorTextOutput, ss);
+                Props ssProps = Props.Create<ActorSolarSystem>(Self, _textOutput, ss);
                 IActorRef actor = Context.ActorOf(ssProps, "SolarSystem" + ss.SolarSystemId.ToString());
                 _subscribedActorSolarSystems.Add(actor);
             }
@@ -103,6 +104,7 @@ namespace GalaxyGenEngine.Engine
             stop();
             if (msg.RunCommand == EngineRunCommand.RunMax && _runState != TickEngineRunState.RunningMax)
             {
+                _textOutput.Disable();
                 _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();                
                 _runState = TickEngineRunState.RunningMax;
                 startSecondTimer();
@@ -110,6 +112,7 @@ namespace GalaxyGenEngine.Engine
             }
             else if (msg.RunCommand == EngineRunCommand.RunThrottled && _runState != TickEngineRunState.RunningThrottled)
             {
+                _textOutput.Enable();
                 _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
                 _runState = TickEngineRunState.RunningThrottled;
                 startSecondTimer();
@@ -118,6 +121,7 @@ namespace GalaxyGenEngine.Engine
             }
             else if (msg.RunCommand == EngineRunCommand.RunPulse && _runState != TickEngineRunState.Running)
             {
+                _textOutput.Enable();
                 _runState = TickEngineRunState.Running;
                 _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 5, Self, pulse, ActorRefs.Nobody);
                 startSecondTimer();
@@ -125,6 +129,7 @@ namespace GalaxyGenEngine.Engine
             }
             else if (msg.RunCommand == EngineRunCommand.SingleTick)
             {
+                _textOutput.Enable();
                 sendTick();
             }
         }        

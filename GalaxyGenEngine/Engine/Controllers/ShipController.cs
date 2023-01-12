@@ -15,13 +15,13 @@ namespace GalaxyGenEngine.Engine.Controllers
     {
         private Ship _model;
         private SolarSystemController _solarSystemC;
-        private IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;
         private Planet _destination;        
-        public ShipController(Ship s, SolarSystemController ssc, IActorRef actorTextOutput)
+        public ShipController(Ship s, SolarSystemController ssc, TextOutputController textOutput)
         {
             _model = s;
             _solarSystemC = ssc;
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
             if (_model.DestinationScId != 0)
             {
                 _destination = _model.SolarSystem.Planets[_model.DestinationScId];

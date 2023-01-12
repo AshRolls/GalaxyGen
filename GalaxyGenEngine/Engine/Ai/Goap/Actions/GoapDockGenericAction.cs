@@ -10,9 +10,7 @@ using System.Threading.Tasks;
 namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapDockGenericAction : GoapAction
-    {
-        private bool _requestSent = false;        
-
+    {   
         public GoapDockGenericAction(HashSet<ulong> possibleDocks)
         {
             _targets = possibleDocks;
@@ -23,7 +21,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public override void Reset()
         {
-            _requestSent = false;
         }
 
         public override bool IsDone(object agent)

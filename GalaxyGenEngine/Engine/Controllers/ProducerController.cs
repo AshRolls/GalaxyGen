@@ -15,13 +15,13 @@ namespace GalaxyGenEngine.Engine.Controllers
         private Producer _model;
         private BluePrint _bp;
         private PlanetController _planetC;
-        private IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;
 
-        public ProducerController(Producer p, PlanetController pc, IActorRef actorTextOutput)
+        public ProducerController(Producer p, PlanetController pc, TextOutputController textOutput)
         {
             _model = p;
             _planetC = pc;
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
             _bp = BluePrints.GetBluePrint(p.BluePrintType);            
         }
 

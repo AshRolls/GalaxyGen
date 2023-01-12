@@ -56,7 +56,7 @@
             </DockPanel>
             <local:AgentControl Grid.Column="4" Grid.Row="0" AgentVm="{Binding SelectedAgent}" />
 
-            <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Background="Black" Margin="0, 10, 0, 10">
+            <ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Background="Black" Margin="0, 10, 0, 10" ScrollChanged="ScrollViewer_ScrollChanged">
                 <ItemsControl ItemsSource="{Binding TextOutput.ConsoleLines, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>

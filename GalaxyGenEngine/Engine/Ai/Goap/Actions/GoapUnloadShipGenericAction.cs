@@ -5,8 +5,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapUnloadShipGenericAction : GoapAction
     {
-        private bool _requestSent = false;
-
         public GoapUnloadShipGenericAction()
         {
             GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());
@@ -15,7 +13,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public override void Reset()
         {
-            _requestSent = false;
         }
 
         public override bool IsDone(object agent)

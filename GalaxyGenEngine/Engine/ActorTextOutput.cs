@@ -10,7 +10,7 @@ namespace GalaxyGenEngine.Engine
 {
     public class ActorTextOutput : ReceiveActor
     {
-        ITextOutputViewModel _textOutputVm;
+        ITextOutputViewModel _textOutputVm;        
 
         public ActorTextOutput(ITextOutputViewModel textOutputVm)
         {

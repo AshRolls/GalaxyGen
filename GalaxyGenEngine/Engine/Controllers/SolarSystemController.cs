@@ -18,20 +18,20 @@ namespace GalaxyGenEngine.Engine.Controllers
         private ulong _curTick;
         private Dictionary<UInt64, PlanetController> _planetCs;      
         private Dictionary<UInt64, ShipController> _shipCs;
-        private IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;
         private ActorSolarSystem _parentActor;
 
-        public SolarSystemController(SolarSystem ss, ActorSolarSystem parentActor, IActorRef actorTextOutput)
+        public SolarSystemController(SolarSystem ss, ActorSolarSystem parentActor, TextOutputController textOutput)
         {
             _model = ss;
             _parentActor = parentActor;
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
 
             // create child controller for each planet in ss
             _planetCs = new Dictionary<UInt64, PlanetController>();
             foreach (Planet p in ss.Planets.Values)
             {
-                PlanetController pc = new PlanetController(p, this, actorTextOutput);
+                PlanetController pc = new PlanetController(p, this, textOutput);
                 _planetCs.Add(p.StarChartId, pc);
             }
 
@@ -39,7 +39,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             _shipCs = new Dictionary<UInt64, ShipController>();
             foreach (Ship s in ss.Ships.Values)
             {
-                ShipController sc = new ShipController(s, this, actorTextOutput);
+                ShipController sc = new ShipController(s, this, textOutput);
                 _shipCs.Add(s.ShipId, sc);
             }
         }

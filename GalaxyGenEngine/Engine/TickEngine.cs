@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
 using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Engine.Controllers;
 
 namespace GalaxyGenEngine.Engine
 {
@@ -15,16 +16,17 @@ namespace GalaxyGenEngine.Engine
         bool engineInitialised = false;
         ActorSystem _galaxyActorSystem;
         IActorRef _actorTECoordinator;
-        IActorRef _actorTextOutput;
+        TextOutputController _textOutput;
 
         public void SetupTickEngine(IGalaxyViewModel state, ITextOutputViewModel textOutput)
         {
             _galaxyActorSystem = ActorSystem.Create("GalaxyActors");
 
             Props textOutputProps = Props.Create<ActorTextOutput>(textOutput).WithDispatcher("akka.actor.synchronized-dispatcher");
-            _actorTextOutput = _galaxyActorSystem.ActorOf(textOutputProps, "TextOutput");
+            IActorRef _actorTextOutput = _galaxyActorSystem.ActorOf(textOutputProps, "TextOutput");
+            _textOutput = new TextOutputController(_actorTextOutput);
 
-            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_actorTextOutput, state.Model);
+            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_textOutput, state.Model);
             _actorTECoordinator = _galaxyActorSystem.ActorOf(teCoordinatorProps, "TECoordinator");
             
             engineInitialised = true;
