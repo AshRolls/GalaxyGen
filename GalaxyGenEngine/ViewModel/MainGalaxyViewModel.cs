@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
+using GalaxyGenEngine.Engine.Messages;
 
 namespace GalaxyGenEngine.ViewModel
 {
@@ -211,7 +212,6 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-
         private RelayCommand runMaxEngineCommand;
         public ICommand RunMaxEngineCommand
         {
@@ -219,10 +219,24 @@ namespace GalaxyGenEngine.ViewModel
             {
                 if (runMaxEngineCommand == null)
                 {
-                    runMaxEngineCommand = new RelayCommand(() => runEngine(true));
+                    runMaxEngineCommand = new RelayCommand(() => runEngine(EngineRunCommand.RunMax));
                     runMaxEngineCommand.IsEnabled = true;
                 }
                 return runMaxEngineCommand;
+            }
+        }
+
+        private RelayCommand runEngineThrottledCommand;
+        public ICommand RunEngineThrottledCommand
+        {
+            get
+            {
+                if (runEngineThrottledCommand == null)
+                {
+                    runEngineThrottledCommand = new RelayCommand(() => runEngine(EngineRunCommand.RunThrottled));
+                    runEngineThrottledCommand.IsEnabled = true;
+                }
+                return runEngineThrottledCommand;
             }
         }
 
@@ -233,16 +247,16 @@ namespace GalaxyGenEngine.ViewModel
             {
                 if (runEngineCommand == null)
                 {
-                    runEngineCommand = new RelayCommand(() => runEngine(false));
+                    runEngineCommand = new RelayCommand(() => runEngine(EngineRunCommand.RunPulse));
                     runEngineCommand.IsEnabled = true;
                 }
                 return runEngineCommand; 
             }
         }
 
-        private void runEngine(bool maxRate)
+        private void runEngine(EngineRunCommand cmd)
         {            
-            _tickEngine.Run(maxRate);
+            _tickEngine.Run(cmd);
         }
 
         private RelayCommand stopEngineCommand;

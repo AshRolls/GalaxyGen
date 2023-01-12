@@ -30,17 +30,10 @@ namespace GalaxyGenEngine.Engine
             engineInitialised = true;
         }
 
-        public void Run(bool maxRate)
+        public void Run(EngineRunCommand cmd)
         {
             if (!engineInitialised) throw new Exception("You must initialise engine first");
-
-            MessageEngineRunCommand run;
-            if (maxRate)
-                run = new MessageEngineRunCommand(EngineRunCommand.RunMax);
-            else
-                run = new MessageEngineRunCommand(EngineRunCommand.RunPulse);
-
-            _actorTECoordinator.Tell(run);
+            _actorTECoordinator.Tell(new MessageEngineRunCommand(cmd));
         }
 
         public void Stop()

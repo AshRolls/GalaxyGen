@@ -10,6 +10,7 @@ namespace GalaxyGenEngine.Engine.Messages
     public enum EngineRunCommand
     {
         RunMax,
+        RunThrottled,
         RunPulse,
         Stop
     }
