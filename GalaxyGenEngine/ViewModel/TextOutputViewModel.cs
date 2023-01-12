@@ -12,8 +12,6 @@ namespace GalaxyGenEngine.ViewModel
 {
     public class TextOutputViewModel : ITextOutputViewModel
     {
-        private bool _enabled = true;
-
         private ObservableCollection<String> consoleLines_Var = new ObservableCollection<string>();
         public ObservableCollection<String> ConsoleLines
         {

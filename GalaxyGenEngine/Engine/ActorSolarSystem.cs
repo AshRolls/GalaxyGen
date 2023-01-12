@@ -42,6 +42,7 @@ namespace GalaxyGenEngine.Engine
             // create child actors for each agent in ss
             _subscribedActorAgents = new Dictionary<UInt64, IActorRef>();
             _numberOfIncompleteAg = ss.Agents.Count();
+            if (ss.Agents.Count > 0) _textOutput.AddAllowedId(ss.Agents.First().AgentId); 
             foreach (Agent agent in ss.Agents)
             {
                 Props agentProps = Props.Create<ActorAgent>(_textOutput, agent, Self);

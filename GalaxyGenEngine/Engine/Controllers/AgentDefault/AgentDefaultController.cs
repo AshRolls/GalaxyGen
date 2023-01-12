@@ -45,9 +45,11 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             switch (msg.Command.CommandType)
             {
                 case AgentCommandEnum.ShipCommandFailed:
+                    _textOutput.Write(_state.AgentId, "Plan Failed");
                     _goapAgent.ResetPlan();
                     break;
                 case AgentCommandEnum.PlanetCommandFailed:
+                    _textOutput.Write(_state.AgentId, "Plan Failed");
                     _goapAgent.ResetPlan();
                     break;
             }
@@ -148,26 +150,25 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public void RequestUndock()
         {
-            _textOutput.Write("Requesting Undock from " + _state.CurrentShipDockedPlanetScId);
-            //setNewDestination();
+            _textOutput.Write(_state.AgentId, "Requesting Undock from " + _state.CurrentShipDockedPlanetScId);
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), _curTick, _state.CurrentShipId, _state.AgentId));
         }
 
         public void RequestDock()
         {
-            _textOutput.Write("Requesting Dock from " + _memory.CurrentDestinationScId);
+            _textOutput.Write(_state.AgentId, "Requesting Dock from " + _memory.CurrentDestinationScId);
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), _curTick, _state.CurrentShipId, _state.AgentId));
         }
 
         public void RequestLoadShip(ResourceQuantity resQ)
         {
-            _textOutput.Write("Requesting Load resources " + resQ.Type + ":" + resQ.Quantity);            
+            _textOutput.Write(_state.AgentId, "Requesting Load resources " + resQ.Type + ":" + resQ.Quantity);            
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestLoadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
 
         public void RequestUnloadShip(ResourceQuantity resQ)
         {
-            _textOutput.Write("Requesting Unloading resources " + resQ.Type + ":" + resQ.Quantity);            
+            _textOutput.Write(_state.AgentId, "Requesting Unloading resources " + resQ.Type + ":" + resQ.Quantity);            
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
                 
@@ -188,7 +189,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         {
             _memory.CurrentDestinationScId = destinationScId;
             saveMemory();
-            _textOutput.Write("Setting new destination " + destinationScId);
+            _textOutput.Write(_state.AgentId, "Setting new destination " + destinationScId);
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId), 10, _state.CurrentShipId, _state.AgentId));
         }
 
@@ -262,20 +263,20 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public void PlanFailed(GoapState failedGoal)
         {
-            _textOutput.Write("Plan failed " + failedGoal.ToString());
+            _textOutput.Write(_state.AgentId, "Plan failed " + failedGoal.ToString());
         }
 
         public void PlanFound(GoapState goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            _textOutput.Write("Plan found " + GoapAgent.PrettyPrint(actions));
+            _textOutput.Write(_state.AgentId, "Plan found " + GoapAgent.PrettyPrint(actions));
        }
 
         public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
-            _textOutput.Write("Plan Completed");
+            _textOutput.Write(_state.AgentId, "Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
@@ -285,7 +286,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
             // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
-            _textOutput.Write("Plan Aborted " + GoapAgent.prettyPrint(aborter));
+            _textOutput.Write(_state.AgentId, "Plan Aborted " + GoapAgent.prettyPrint(aborter));
         }
 
         public bool MoveAgent(GoapAction nextAction)
