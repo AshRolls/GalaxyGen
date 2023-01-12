@@ -19,6 +19,7 @@ namespace GalaxyGenEngine.ViewModel
         ICommand RunEngineCommand { get; }
         ICommand RunEngineThrottledCommand { get; }
         ICommand RunMaxEngineCommand { get; }
+        ICommand RunEngineSingleTickCommand { get; }
         ICommand StopEngineCommand { get; }
     }
 }

@@ -72,8 +72,7 @@ namespace GalaxyGenEngine.Engine
         private void startSecondTimer()
         {
             _ticksAtTimerStart = _state.CurrentTick;
-            _secondTimer.Start();
-            _msTimer.Start();
+            _secondTimer.Start();       
         }        
 
         private void stopTimers()
@@ -101,9 +100,9 @@ namespace GalaxyGenEngine.Engine
         private void receiveEngineRunCommand(MessageEngineRunCommand msg)
         {
             MessageTick pulse = new MessageTick(0);
+            stop();
             if (msg.RunCommand == EngineRunCommand.RunMax && _runState != TickEngineRunState.RunningMax)
             {
-                stop();
                 _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();                
                 _runState = TickEngineRunState.RunningMax;
                 startSecondTimer();
@@ -111,7 +110,6 @@ namespace GalaxyGenEngine.Engine
             }
             else if (msg.RunCommand == EngineRunCommand.RunThrottled && _runState != TickEngineRunState.RunningThrottled)
             {
-                stop();
                 _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
                 _runState = TickEngineRunState.RunningThrottled;
                 startSecondTimer();
@@ -120,15 +118,14 @@ namespace GalaxyGenEngine.Engine
             }
             else if (msg.RunCommand == EngineRunCommand.RunPulse && _runState != TickEngineRunState.Running)
             {
-                stop();
                 _runState = TickEngineRunState.Running;
                 _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 5, Self, pulse, ActorRefs.Nobody);
                 startSecondTimer();
                 sendTick();
             }
-            else if (msg.RunCommand == EngineRunCommand.Stop && _runState != TickEngineRunState.Stopped)
+            else if (msg.RunCommand == EngineRunCommand.SingleTick)
             {
-                stop();
+                sendTick();
             }
         }        
 

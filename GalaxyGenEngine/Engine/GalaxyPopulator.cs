@@ -10,6 +10,8 @@ namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
+        const int NUMBER_OF_AGENTS = 2;
+
         public Galaxy GetFullGalaxy()
         {
             Galaxy gal = this.GetGalaxy();
@@ -25,85 +27,60 @@ namespace GalaxyGenEngine.Engine
                 SolarSystem ss = getSolarSystemFromStarChartSS(chartSS);
                 ss.StarChartId = StarChart.GetIdForObject(chartSS);
 
-                Agent ag = this.GetAgent("Agent " + chartSS.Name);                
-                ss.Agents.Add(ag);
-                ag.SolarSystem = ss;
-
-                int j = 0;
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
                     Planet p = this.GetPlanet(chartP);
                     p.StarChartId = StarChart.GetIdForObject(chartP);
-
-                    if (j % 2 == 0)
-                    {
-                        addMetalProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
-                    }
-                    else
-                    {
-                        addSpiceProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 50) });
-                    }
-
-                    j++;
                     ss.Planets.Add(p.StarChartId, p);
                     p.SolarSystem = ss;
                 }
-
-                Ship s = this.GetShip("Ship" + chartSS.Name, shipT);
-                s.Owner = ag;
-                s.ShipState = ShipStateEnum.Docked;
-                s.Agents.Add(ag);
-                ag.Location = s;
-                s.Pilot = ag;
-                ag.AgentState = AgentStateEnum.PilotingShip;
-                s.DockedPlanet = ss.Planets.Values.First();
-                ss.Planets.Values.First().DockedShips.Add(s.ShipId, s);
-                ag.ShipsOwned.Add(s);
-                addNewCargoStoreToShip(s, ag);
-                s.SolarSystem = ss;
-                ss.Ships.Add(s.ShipId, s);
-
-                const int NUMBER_OF_AGENTS = 0;
+                
                 for (int i = 0; i < NUMBER_OF_AGENTS; i++)
                 {
-
-                    ag = this.GetAgent("Agent " + i);
-                    ss.Agents.Add(ag);
-                    ag.SolarSystem = ss;
-
-                    s = this.GetShip("Ship" + i, shipT);
-                    s.Owner = ag;
-                    s.ShipState = ShipStateEnum.Docked;
-                    s.Agents.Add(ag);
-                    ag.Location = s;
-                    s.Pilot = ag;
-                    ag.AgentState = AgentStateEnum.PilotingShip;
-                    s.DockedPlanet = ss.Planets.Values.First();
-                    ss.Planets.Values.First().DockedShips.Add(s.ShipId, s);
-                    ag.ShipsOwned.Add(s);
-                    addNewCargoStoreToShip(s, ag);
-                    s.SolarSystem = ss;
-                    ss.Ships.Add(s.ShipId, s);
-          
-                    Planet p = ss.Planets.Values.Skip(i % ss.Planets.Count()).First();
-                    if (i % 2 == 0)
-                    {
-                        addMetalProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
-                    }
-                    else
-                    {
-                        addSpiceProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
-                    }
+                    AddAgent(shipT, chartSS, i, ss);
                 }
 
                 gal.SolarSystems.Add(ss);
-            }                      
+            }
 
             return gal;
+        }
+
+        private void AddAgent(ShipType shipT, ScSolarSystem chartSS, int name, SolarSystem ss)
+        {
+            Agent ag = this.GetAgent("Agent " + name);
+            ss.Agents.Add(ag);
+            ag.SolarSystem = ss;
+
+            int j = 0;
+            foreach(Planet p in ss.Planets.Values)
+            {
+                if (j % 2 == 0)
+                {
+                    addMetalProducerToPlanet(ag, p);
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
+                }
+                else
+                {
+                    addSpiceProducerToPlanet(ag, p);
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
+                }
+                j++;
+            }                            
+
+            Ship s = this.GetShip("Ship" + name, shipT);
+            s.Owner = ag;
+            s.ShipState = ShipStateEnum.Docked;
+            s.Agents.Add(ag);
+            ag.Location = s;
+            s.Pilot = ag;
+            ag.AgentState = AgentStateEnum.PilotingShip;
+            s.DockedPlanet = ss.Planets.Values.First();
+            ss.Planets.Values.First().DockedShips.Add(s.ShipId, s);
+            ag.ShipsOwned.Add(s);
+            addNewCargoStoreToShip(s, ag);
+            s.SolarSystem = ss;
+            ss.Ships.Add(s.ShipId, s);
         }
 
         private void addMetalProducerToPlanet(Agent ag, Planet p)

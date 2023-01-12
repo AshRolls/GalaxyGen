@@ -13,8 +13,7 @@ namespace GalaxyGenEngine.Engine
         IActorRef _actorEngine;
         IActorRef _actorTextOutput;
         private SolarSystemController _solarSystemC;
-        private Dictionary<UInt64, IActorRef> _subscribedActorAgents; // key agent id
-        private IEnumerable<IActorRef> _actorAgentValues;  
+        private Dictionary<UInt64, IActorRef> _subscribedActorAgents; // key agent id        
         private UInt64 _curTick;
         private int _numberOfIncompleteAg;
         private MessageEngineSSCompletedCommand _tickCompleteCmd;
@@ -49,19 +48,17 @@ namespace GalaxyGenEngine.Engine
                 IActorRef actor = Context.ActorOf(agentProps, "Agent" + agent.AgentId.ToString());
                 _subscribedActorAgents.Add(agent.AgentId, actor);
             }
-            _actorAgentValues = _subscribedActorAgents.Values;
         }
 
         private void receiveTick(MessageTick tick)
         {
             _curTick = tick.Tick;
-            _solarSystemC.Tick(tick);   
-            foreach(IActorRef agentActor in _actorAgentValues)
+            _solarSystemC.Tick(tick);
+            if (_subscribedActorAgents.Any())
             {
-                agentActor.Tell(tick);
+                foreach (IActorRef agentActor in _subscribedActorAgents.Values) agentActor.Tell(tick);                
             }
-            if (!_subscribedActorAgents.Any())
-                sendSSCompletedMessage();        
+            else sendSSCompletedMessage();        
         }
 
         private void receiveAgentCompletedMessage(MessageEngineAgCompletedCommand msg)

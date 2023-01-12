@@ -6,6 +6,7 @@ using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Akka.Actor.FSMBase;
 
 namespace GalaxyGenEngine.Engine
 {
@@ -43,13 +44,15 @@ namespace GalaxyGenEngine.Engine
 
         private void receiveDefaultTick(MessageTick tick)
         {
+            _actorTextOutput.Tell(_agent.AgentId + " agent recv tick");
             _agentC.Tick(tick);
             sendAgentCompletedMessage();
         }
 
         private void sendAgentCompletedMessage()
         {
-            _actorSolarSystem.Tell(_tickCompleteCmd);
+            _actorTextOutput.Tell(_agent.AgentId + " agent complete");
+            _actorSolarSystem.Tell(_tickCompleteCmd);            
         }
     }
 }

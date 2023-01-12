@@ -33,7 +33,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         }
 
         public void Tick(MessageTick tick)
-        {
+        {            
             _goapAgent.Tick();
         }
 
@@ -237,7 +237,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             goalState.Set(key, chooseRandomDestinationScId());
 
             GoapStateKey rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Platinum, _state.CurrentShipStoreId));
-            goalState.Set(rkey, 4L);
+            goalState.Set(rkey, 1L);
             //rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Spice, _state.CurrentShipStoreId));
             //goalState.Set(rkey, 100L);
             return goalState;

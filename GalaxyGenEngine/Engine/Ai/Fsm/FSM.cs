@@ -19,7 +19,6 @@ namespace GalaxyGenEngine.Engine.Ai.Fsm
 
         public delegate void FSMState(FSM fsm, object target);
 
-
         public void Update(object target)
         {
             if (stateStack.Peek() != null)

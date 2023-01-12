@@ -215,20 +215,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         //}       
 
         /**
-         * Create a subset of the actions excluding the removeMe one. Creates a new set.
-         */
-        private HashSet<GoapAction> actionSubset(HashSet<GoapAction> actions, GoapAction removeMe)
-        {
-            HashSet<GoapAction> subset = new HashSet<GoapAction>();
-            foreach (GoapAction a in actions)
-            {
-                if (!a.Equals(removeMe))
-                    subset.Add(a);
-            }
-            return subset;
-        }
-
-        /**
          * Check that all items in 'test' are in 'state'. If just one does not match or is not there
          * then this returns false.
          */        
@@ -245,19 +231,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 }
             }
             return allMatch;
-        }
-
-        //if there is one true relationship
-        private bool CondRelation(Dictionary<string, object> preconditions
-                                , Dictionary<string, object> effects)
-        {
-            foreach (var t in preconditions)
-            {
-                var match = effects.ContainsKey(t.Key) && effects[t.Key].Equals(t.Value);
-                if (match)
-                    return true;
-            }
-            return false;
         }
 
         /**

@@ -12,6 +12,7 @@ namespace GalaxyGenEngine.Engine.Messages
         RunMax,
         RunThrottled,
         RunPulse,
+        SingleTick,
         Stop
     }
 

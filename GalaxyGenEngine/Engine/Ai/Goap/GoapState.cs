@@ -28,28 +28,34 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 hash *= 37 + kvp.Key.GetHashCode() + kvp.Value.GetHashCode();
             }
             return hash;
+            //return values.GetHashCode();
         }
         public override bool Equals(object obj)
         {
             GoapState otherState = (GoapState)obj;
-            lock (values) lock (otherState.values)
-            {
-                foreach (var pair in otherState.values)
-                {
-                    object thisValue;
-                    values.TryGetValue(pair.Key, out thisValue);
-                    if (!Equals(thisValue, pair.Value))
-                        return false;
-                }
-                foreach (var pair in values)
-                {
-                    object thisValue;
-                    otherState.values.TryGetValue(pair.Key, out thisValue);
-                    if (!Equals(thisValue, pair.Value))
-                        return false;
-                }
-                return true;
-            }
+            return values.Count == otherState.values.Count && !values.Except(otherState.values).Any(); // https://stackoverflow.com/questions/3804367/testing-for-equality-between-dictionaries-in-c-sharp
+
+            //GoapState otherState = (GoapState)obj;
+            //lock (values) lock (otherState.values)
+            //{
+            //    if (values.Count != otherState.values.Count) return false;
+            //    foreach (var pair in otherState.values)
+            //    {
+            //        object thisValue;
+            //        values.TryGetValue(pair.Key, out thisValue);
+            //        if (!Equals(thisValue, pair.Value))
+            //            return false;
+            //    }
+            //    foreach (var pair in values)
+            //    {
+            //        object thisValue;
+            //        otherState.values.TryGetValue(pair.Key, out thisValue);
+            //        if (!Equals(thisValue, pair.Value))
+            //            return false;
+            //    }
+            //    return true;
+            //}
+            //return values.Equals(((GoapState)obj).values);
         }
 
         public GoapState(GoapState state)
@@ -150,10 +156,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public void AddFromState(GoapState b)
         {
             lock (values) lock (b.values)
-                {
-                    foreach (var pair in b.values)
-                        values[pair.Key] = pair.Value;
-                }
+            {
+                foreach (var pair in b.values)
+                    values[pair.Key] = pair.Value;
+            }
         }
 
         // keep only missing differences in values

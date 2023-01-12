@@ -254,6 +254,20 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
+        private RelayCommand runEngineSingleTickCommand;
+        public ICommand RunEngineSingleTickCommand
+        {
+            get
+            {
+                if (runEngineSingleTickCommand == null)
+                {
+                    runEngineSingleTickCommand = new RelayCommand(() => runEngine(EngineRunCommand.SingleTick));
+                    runEngineSingleTickCommand.IsEnabled = true;
+                }
+                return runEngineSingleTickCommand;
+            }
+        }
+
         private void runEngine(EngineRunCommand cmd)
         {            
             _tickEngine.Run(cmd);
