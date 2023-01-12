@@ -16,8 +16,7 @@ namespace GalaxyGenEngine.Engine.Controllers
         private Ship _model;
         private SolarSystemController _solarSystemC;
         private IActorRef _actorTextOutput;
-        private Planet _destination;
-        
+        private Planet _destination;        
         public ShipController(Ship s, SolarSystemController ssc, IActorRef actorTextOutput)
         {
             _model = s;

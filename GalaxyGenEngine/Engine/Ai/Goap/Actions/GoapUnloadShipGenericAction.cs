@@ -13,21 +13,21 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             addPrecondition(key, true);
         }
 
-        public override void reset()
+        public override void Reset()
         {
             _requestSent = false;
         }
 
-        public override bool isDone(object agent)
+        public override bool IsDone(object agent)
         {
             return true;
         }
 
-        public override bool requiresInRange()
+        public override bool RequiresInRange()
         {
             return false;
         }
-        public override bool isSpecific()
+        public override bool IsSpecific()
         {
             return false;
         }
@@ -61,7 +61,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return true;
         }
 
-        public override bool perform(object agent)
+        public override bool Perform(object agent)
         {
             return true;
         }

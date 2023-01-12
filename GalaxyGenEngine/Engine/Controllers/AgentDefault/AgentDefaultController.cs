@@ -10,12 +10,14 @@ using GalaxyGenEngine.Framework;
 using GalaxyGenEngine.Engine.Ai.Goap;
 using GalaxyGenEngine.Engine.Ai.Goap.Actions;
 using GalaxyGenEngine.Model;
+using static Akka.Actor.Status;
 
 namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultController : IAgentController, IGoap, IAgentActions
-    {
+    {        
         private const UInt64 DAYS_BEFORE_MARKET_RECHECK = 7;
+        private ulong _curTick;
         private AgentControllerState _state;
         private IActorRef _actorSolarSystem;
         private IActorRef _actorTextOutput;
@@ -33,10 +35,23 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         }
 
         public void Tick(MessageTick tick)
-        {            
+        {
+            _curTick = tick.Tick;
             _goapAgent.Tick();
         }
 
+        public void ReceiveCommand(MessageAgentCommand msg)
+        {
+            switch (msg.Command.CommandType)
+            {
+                case AgentCommandEnum.ShipCommandFailed:
+                    _goapAgent.ResetPlan();
+                    break;
+                case AgentCommandEnum.PlanetCommandFailed:
+                    _goapAgent.ResetPlan();
+                    break;
+            }
+        }
         //private object pilotingCruisingShip(MessageTick tick)
         //{
         //    // new destination
@@ -118,7 +133,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         // do we need to go planetside?
         private bool checkLeaveShip(MessageTick tick)
         {
-            return false;
+            throw new NotImplementedException();
         }
 
         private object requestPlanetside(MessageTick tick)
@@ -128,33 +143,34 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         private bool checkUndock(MessageTick tick)
         {
-            return true;
+            throw new NotImplementedException();
         }
 
         public void RequestUndock()
         {
-            //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
+            _actorTextOutput.Tell("Requesting Undock from " + _state.CurrentShipDockedPlanetScId);
             //setNewDestination();
-            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), 10UL, _state.CurrentShipId));
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), _curTick, _state.CurrentShipId, _state.AgentId));
         }
 
         public void RequestDock()
         {
-            //_actorTextOutput.Tell("Agent Requesting Undock from " + _currentShip.DockedPlanet.Name);
-            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), 10, _state.CurrentShipId));
+            _actorTextOutput.Tell("Requesting Dock from " + _memory.CurrentDestinationScId);
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), _curTick, _state.CurrentShipId, _state.AgentId));
         }
 
         public void RequestLoadShip(ResourceQuantity resQ)
         {
-            //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);            
+            _actorTextOutput.Tell("Requesting Load resources " + resQ.Type + ":" + resQ.Quantity);            
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestLoadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
 
         public void RequestUnloadShip(ResourceQuantity resQ)
         {
-            //_actorTextOutput.Tell("Loading resources " + resQ.Type + ":" + resQ.Quantity);            
+            _actorTextOutput.Tell("Requesting Unloading resources " + resQ.Type + ":" + resQ.Quantity);            
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
         }
+                
 
         private UInt64 chooseRandomDestinationScId()
         {
@@ -172,7 +188,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         {
             _memory.CurrentDestinationScId = destinationScId;
             saveMemory();
-            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId), 10, _state.CurrentShipId));
+            _actorTextOutput.Tell("Setting new destination " + destinationScId);
+            _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId), 10, _state.CurrentShipId, _state.AgentId));
         }
 
 
@@ -245,20 +262,20 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public void PlanFailed(GoapState failedGoal)
         {
-            //_actorTextOutput.Tell("Plan failed " + failedGoal.ToString());
+            _actorTextOutput.Tell("Plan failed " + failedGoal.ToString());
         }
 
         public void PlanFound(GoapState goal, Queue<GoapAction> actions)
         {
             // Yay we found a plan for our goal
             // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            //_actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
+            _actorTextOutput.Tell("Plan found " + GoapAgent.PrettyPrint(actions));
        }
 
         public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
-            //_actorTextOutput.Tell("Plan Completed");
+            _actorTextOutput.Tell("Plan Completed");
             // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
@@ -268,7 +285,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
             // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
-            //_actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
+            _actorTextOutput.Tell("Plan Aborted " + GoapAgent.prettyPrint(aborter));
         }
 
         public bool MoveAgent(GoapAction nextAction)
@@ -282,7 +299,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             {
                 if (!_state.CurrentShipAutopilotActive) // turn on autopilot if off
                 {
-                    _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetAutopilot(ShipCommandEnum.SetAutopilot, true), 10, _state.CurrentShipId));
+                    _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetAutopilot(ShipCommandEnum.SetAutopilot, true), 10, _state.CurrentShipId, _state.AgentId));
                     return false;
                 }
                 else

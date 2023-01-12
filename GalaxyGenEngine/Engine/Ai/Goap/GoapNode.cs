@@ -48,7 +48,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 this.goal = newGoal;
                 //this.State.AddFromState(this.Action.Effects);
 
-                if (this.Action.isSpecific()) PathCost += this.Action.GetCost();
+                if (this.Action.IsSpecific()) PathCost += this.Action.GetCost();
 
                 goal.ReplaceWithMissingDifference(this.Action.Effects); // remove current action effects from goal
                 //goal.ReplaceWithMissingDifference(planner.StartingWorldState); // remove any preconditions already satisfied by world state.
@@ -76,7 +76,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 if (planner.InState(action.Preconditions, this.State) && action.CheckProceduralPrecondition(agent))
                 {
-                    if (action.isSpecific())
+                    if (action.IsSpecific())
                     {
                         GoapState newState = planner.GetNewState(this.State, action.Effects);
                         GoapNode newNode = new GoapNode(this, newState, action, this.PathCost, goal.Clone(), planner);

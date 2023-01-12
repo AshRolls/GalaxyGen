@@ -62,7 +62,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          */
         bool MoveAgent(GoapAction nextAction);
 
-        List<GoapAction> GetActions();
-
+        List<GoapAction> GetActions();     
     }
 }

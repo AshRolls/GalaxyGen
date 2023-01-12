@@ -40,18 +40,18 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             _inRange = false;
             target = null;
-            reset();
+            Reset();
         }
 
         /**
          * Reset any variables that need to be reset before planning happens again.
          */
-        public abstract void reset();
+        public abstract void Reset();
 
         /**
          * Is the action done?
          */
-        public abstract bool isDone(object agent);
+        public abstract bool IsDone(object agent);
 
         /**
          * Procedurally check if this action can run. Not all actions
@@ -65,13 +65,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * if something happened and it can no longer perform. In this case
          * the action queue should clear out and the goal cannot be reached.
          */
-        public abstract bool perform(object agent);
+        public abstract bool Perform(object agent);
 
         /**
          * Does this action need to be within range of a target game object?
          * If not then the moveTo state will not need to run for this action.
          */
-        public abstract bool requiresInRange();
+        public abstract bool RequiresInRange();
 
         /**
          * Are we in range of the target?
@@ -87,7 +87,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             this._inRange = inRange;
         }
 
-        public abstract bool isSpecific();
+        public abstract bool IsSpecific();
 
         public abstract List<GoapAction> GetSpecificActions(object agent, GoapState state);
 

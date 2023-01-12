@@ -15,6 +15,7 @@ namespace GalaxyGenEngine.Engine.Controllers
     public class SolarSystemController
     {
         private SolarSystem _model;
+        private ulong _curTick;
         private Dictionary<UInt64, PlanetController> _planetCs;      
         private Dictionary<UInt64, ShipController> _shipCs;
         private IActorRef _actorTextOutput;
@@ -30,7 +31,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             _planetCs = new Dictionary<UInt64, PlanetController>();
             foreach (Planet p in ss.Planets.Values)
             {
-                PlanetController pc = new PlanetController(p, actorTextOutput);
+                PlanetController pc = new PlanetController(p, this, actorTextOutput);
                 _planetCs.Add(p.StarChartId, pc);
             }
 
@@ -44,7 +45,8 @@ namespace GalaxyGenEngine.Engine.Controllers
         }
 
         public void Tick(MessageTick tick)
-        {                       
+        {                   
+            _curTick = tick.Tick;
             updatePlanets(tick);
             updateShips(tick);
         }
@@ -69,28 +71,32 @@ namespace GalaxyGenEngine.Engine.Controllers
         {           
             ShipController sc = _shipCs[msg.ShipId];
             // check the ship *could* execute this command
-       
+            bool success;
             switch (msg.Command.CommandType)
             {
                 case ShipCommandEnum.SetXY:
-                    ShipSetXY(msg, sc);
+                    success = ShipSetXY(msg, sc);
                     break;
                 case ShipCommandEnum.Undock:
-                    ShipUndock(msg, sc);
+                    success = ShipUndock(msg, sc);
                     break;
                 case ShipCommandEnum.Dock:
-                    ShipDock(msg, sc);
+                    success = ShipDock(msg, sc);
                     break;
                 case ShipCommandEnum.SetDestination:
-                    ShipSetDestination(msg, sc);
+                    success = ShipSetDestination(msg, sc);
                     break;
                 case ShipCommandEnum.SetAutopilot:
-                    ShipSetAutopilot(msg, sc);
+                    success = ShipSetAutopilot(msg, sc);
                     break;                
                 default:
+                    success = false;
                     throw new Exception("Unknown Ship Command");
             }
-
+            if (!success)
+            {
+                SendMessageToAgent(msg.AgentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.ShipCommandFailed), _curTick));
+            }
         }
        
         private bool ShipUndock(MessageShipCommand msg, ShipController sc)

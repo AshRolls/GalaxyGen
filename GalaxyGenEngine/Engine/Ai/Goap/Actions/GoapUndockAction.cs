@@ -22,19 +22,19 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             addEffect(key, 0L);
         }
 
-        public override void reset()
+        public override void Reset()
         {
             _requestSent = false;
         }
 
-        public override bool isDone(object agent)
+        public override bool IsDone(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
             return !ag.StateProvider.CurrentShipIsDocked;
         }
     
 
-        public override bool requiresInRange()
+        public override bool RequiresInRange()
         {
             return false; 
         }
@@ -44,7 +44,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return true;
         }
 
-        public override bool isSpecific()
+        public override bool IsSpecific()
         {
             return true;
         }
@@ -54,7 +54,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return null;
         }
 
-        public override bool perform(object agent)
+        public override bool Perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
 

@@ -37,7 +37,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             createIdleState();
             createMoveToState();
             createPerformActionState();
-            _stateMachine.pushState(_idleState);
+            _stateMachine.PushState(_idleState);
             loadActions();
         }
 
@@ -45,7 +45,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public void Tick()
         {
             _stateMachine.Update(this);
-        }        
+        }
+
+        public void ResetPlan()
+        {
+            _stateMachine.ClearState();
+            _stateMachine.PushState(_idleState);
+        }
 
         private bool hasActionPlan()
         {
@@ -71,17 +77,16 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     _currentActions = plan;
                     _dataProvider.PlanFound(goal, plan);
 
-                    fsm.popState(); // move to PerformAction state
-                    fsm.pushState(_performActionState);
-
+                    fsm.PopState(); // move to PerformAction state
+                    fsm.PushState(_performActionState);
                 }
                 else
                 {
                     // ugh, we couldn't get a plan
                     // Console.WriteLine("<color=orange>Failed Plan:</color>" + PrettyPrint(goal));
                     _dataProvider.PlanFailed(goal);
-                    fsm.popState(); // move back to IdleAction state
-                    fsm.pushState(_idleState);
+                    fsm.PopState(); // move back to IdleAction state
+                    fsm.PushState(_idleState);
                 }
 
             };
@@ -94,26 +99,25 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 // move the game object
 
                 GoapAction action = _currentActions.Peek();
-                if (action.requiresInRange() && action.target == null)
+                if (action.RequiresInRange() && action.target == null)
                 {
                     // Console.WriteLine("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
-                    fsm.popState(); // move
-                    fsm.popState(); // perform
-                    fsm.pushState(_idleState);
+                    fsm.PopState(); // move
+                    fsm.PopState(); // perform
+                    fsm.PushState(_idleState);
                     return;
                 }
 
                 // get the agent to move itself
                 if (_dataProvider.MoveAgent(action))
                 {
-                    fsm.popState();
+                    fsm.PopState();
                 }
             };
         }
 
         private void createPerformActionState()
         {
-
             _performActionState = (fsm, gameObj) =>
             {
                 // perform the action
@@ -122,14 +126,14 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 {
                     // no actions to perform
                     // Console.WriteLine("<color=red>Done actions</color>");
-                    fsm.popState();
-                    fsm.pushState(_idleState);
+                    fsm.PopState();
+                    fsm.PushState(_idleState);
                     _dataProvider.ActionsFinished();
                     return;
                 }
 
                 GoapAction action = _currentActions.Peek();
-                if (action.isDone(this))
+                if (action.IsDone(this))
                 {
                     // the action is done. Remove it so we can perform the next one
                     _currentActions.Dequeue();
@@ -139,18 +143,18 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 {
                     // perform the next action
                     action = _currentActions.Peek();
-                    bool inRange = action.requiresInRange() ? action.isInRange() : true;
+                    bool inRange = action.RequiresInRange() ? action.isInRange() : true;
 
                     if (inRange)
                     {
                         // we are in range, so perform the action
-                        bool success = action.perform(gameObj);
+                        bool success = action.Perform(gameObj);
 
                         if (!success)
                         {
                             // action failed, we need to plan again
-                            fsm.popState();
-                            fsm.pushState(_idleState);
+                            fsm.PopState();
+                            fsm.PushState(_idleState);
                             _dataProvider.PlanAborted(action);
                         }
                     }
@@ -158,15 +162,15 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     {
                         // we need to move there first
                         // push moveTo state
-                        fsm.pushState(_moveToState);
+                        fsm.PushState(_moveToState);
                     }
 
                 }
                 else
                 {
                     // no actions left, move to Plan state
-                    fsm.popState();
-                    fsm.pushState(_idleState);
+                    fsm.PopState();
+                    fsm.PushState(_idleState);
                     _dataProvider.ActionsFinished();
                 }
 

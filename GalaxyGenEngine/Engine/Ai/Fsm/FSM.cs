@@ -25,14 +25,19 @@ namespace GalaxyGenEngine.Engine.Ai.Fsm
                 stateStack.Peek().Invoke(this, target);
         }
 
-        public void pushState(FSMState state)
+        public void PushState(FSMState state)
         {
             stateStack.Push(state);
         }
 
-        public void popState()
+        public void PopState()
         {
             stateStack.Pop();
+        }
+
+        public void ClearState()
+        {
+            stateStack.Clear();
         }
     }
 }

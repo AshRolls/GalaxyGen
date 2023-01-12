@@ -28,23 +28,23 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             _resQ = resQ;
         }
 
-        public override void reset()
+        public override void Reset()
         {
             _requestSent = false;
         }
 
-        public override bool isDone(object agent)
+        public override bool IsDone(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
             return ag.StateProvider.CurrentShipResourceQuantity(_resQ.Type) >= _curQ + _resQ.Quantity;
         }
 
-        public override bool requiresInRange()
+        public override bool RequiresInRange()
         {
             return false;
         }
 
-        public override bool isSpecific()
+        public override bool IsSpecific()
         {
             return true;
         }
@@ -58,7 +58,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return true;
         }
 
-        public override bool perform(object agent)
+        public override bool Perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
 

@@ -10,11 +10,11 @@ namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
-        const int NUMBER_OF_AGENTS = 2;
+        const int NUMBER_OF_AGENTS = 1;
 
         public Galaxy GetFullGalaxy()
         {
-            Galaxy gal = this.GetGalaxy();
+            Galaxy gal = this.getNewGalaxy();
             gal.MaxId = 100;
 
             ShipType shipT = new ShipType();
@@ -24,12 +24,12 @@ namespace GalaxyGenEngine.Engine
                         
             foreach (ScSolarSystem chartSS in StarChart.SolarSystems.Values)
             {
-                SolarSystem ss = getSolarSystemFromStarChartSS(chartSS);
+                SolarSystem ss = getNewSolarSystemFromStarChart(chartSS);
                 ss.StarChartId = StarChart.GetIdForObject(chartSS);
 
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
-                    Planet p = this.GetPlanet(chartP);
+                    Planet p = this.getNewPlanet(chartP);
                     p.StarChartId = StarChart.GetIdForObject(chartP);
                     ss.Planets.Add(p.StarChartId, p);
                     p.SolarSystem = ss;
@@ -57,18 +57,18 @@ namespace GalaxyGenEngine.Engine
             {
                 if (j % 2 == 0)
                 {
-                    addMetalProducerToPlanet(ag, p);
+                    //addMetalProducerToPlanet(ag, p);
                     addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
                 }
                 else
                 {
-                    addSpiceProducerToPlanet(ag, p);
+                    //addSpiceProducerToPlanet(ag, p);
                     addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
                 }
                 j++;
             }                            
 
-            Ship s = this.GetShip("Ship" + name, shipT);
+            Ship s = this.getNewShip("Ship" + name, shipT);
             s.Owner = ag;
             s.ShipState = ShipStateEnum.Docked;
             s.Agents.Add(ag);
@@ -85,7 +85,7 @@ namespace GalaxyGenEngine.Engine
 
         private void addMetalProducerToPlanet(Agent ag, Planet p)
         {
-            Producer prod = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+            Producer prod = this.getNewProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
             prod.Owner = ag;
             prod.Planet = p;
             ag.Producers.Add(prod);
@@ -94,30 +94,28 @@ namespace GalaxyGenEngine.Engine
 
         private void addSpiceProducerToPlanet(Agent ag, Planet p)
         {           
-            Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-            prod2.Owner = ag;
-            prod2.Planet = p;
-            ag.Producers.Add(prod2);
-            p.Producers.Add(prod2);
+            Producer prod = this.getNewProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+            prod.Owner = ag;
+            prod.Planet = p;
+            ag.Producers.Add(prod);
+            p.Producers.Add(prod);
         }
 
-
-        private SolarSystem getSolarSystemFromStarChartSS(ScSolarSystem chartSS)
+        private SolarSystem getNewSolarSystemFromStarChart(ScSolarSystem chartSS)
         {
             SolarSystem ss = new SolarSystem();
             ss.Name = chartSS.Name;           
             return ss;
         }
 
-        private Galaxy GetGalaxy()
+        private Galaxy getNewGalaxy()
         {
             Galaxy gal = new Galaxy();
             gal.Name = "Milky Way";
             return gal;
         }
 
-
-        private Planet GetPlanet(ScPlanet chartP)
+        private Planet getNewPlanet(ScPlanet chartP)
         {
             Planet plan = new Planet();
             plan.Name = chartP.Name;
@@ -164,7 +162,7 @@ namespace GalaxyGenEngine.Engine
             return ac;
         }
 
-        private Producer GetProducer(String seedName, BluePrintEnum bpType)
+        private Producer getNewProducer(String seedName, BluePrintEnum bpType)
         {
             Producer prod = new Producer();
             prod.Name = seedName;
@@ -187,7 +185,7 @@ namespace GalaxyGenEngine.Engine
             s.StoredResources.Add(ResourceTypeEnum.Spice, 10);
         }
 
-        private Ship GetShip(String seedName, ShipType shipT)
+        private Ship getNewShip(String seedName, ShipType shipT)
         {
             Ship s = new Ship();
             s.Type = shipT;

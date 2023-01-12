@@ -17,14 +17,17 @@ namespace GalaxyGenEngine.Engine.Controllers
     public class PlanetController
     {
         private Planet _model;
+        private SolarSystemController _solarSystemC;
         private HashSet<ProducerController> _producerCs;
         private IActorRef _actorTextOutput;
         private ScPlanet _scPlanet;
         private Double _orbitHours;
+        private ulong _curTick;
 
-        public PlanetController(Planet p, IActorRef actorTextOutput)
+        public PlanetController(Planet p, SolarSystemController ssc, IActorRef actorTextOutput)
         {
             _model = p;
+            _solarSystemC = ssc;
             _actorTextOutput = actorTextOutput;
             _scPlanet = StarChart.GetPlanet(_model.StarChartId);
             _orbitHours = _scPlanet.OrbitDays * (double)Globals.DAYS_TO_TICKS_FACTOR;
@@ -43,6 +46,7 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         public void Tick(MessageTick tick)
         {
+            _curTick = tick.Tick;
             movePlanetXY(tick);
             updateProducers(tick);
         }
@@ -110,7 +114,7 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal bool ReceiveResourceRequest(MessagePlanetRequestResources msg)
         {            
-            Store s = getStoreForOwner(msg.OwnerId);
+            Store s = getStoreForOwner(msg.AgentId);
             if (s == null) return false; // does not have resources
             if (checkResourcesAvailable(msg.ResourcesRequested, s))
             {
@@ -131,8 +135,8 @@ namespace GalaxyGenEngine.Engine.Controllers
         internal bool ReceiveResourceLoadShipRequest(MessagePlanetCommand msg)
         {
             MessagePlanetRequestShipResources msd = (MessagePlanetRequestShipResources)msg.Command;
-            Store planetS = getStoreForOwner(msd.OwnerId);
-            Store shipS = _model.DockedShips[msd.ShipId].Stores[msd.OwnerId];
+            Store planetS = getStoreForOwner(msd.AgentId);
+            Store shipS = _model.DockedShips[msd.ShipId].Stores[msd.AgentId];
             if (msg.Command.CommandType == PlanetCommandEnum.RequestLoadShip) return moveResources(planetS, shipS, msd.ResourcesRequested);
             else if (msg.Command.CommandType == PlanetCommandEnum.RequestUnloadShip) return moveResources(shipS, planetS, msd.ResourcesRequested);
             return false;
@@ -201,17 +205,27 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal void ReceiveCommandForPlanet(MessagePlanetCommand msg)
         {
+            bool success;
+            ulong agentId;
             switch (msg.Command.CommandType)
             {
                 case PlanetCommandEnum.RequestLoadShip:
-                    ReceiveResourceLoadShipRequest(msg);
+                    agentId = ((MessagePlanetRequestShipResources)msg.Command).AgentId;
+                    success = ReceiveResourceLoadShipRequest(msg);
                     break;
                 case PlanetCommandEnum.RequestUnloadShip:
-                    ReceiveResourceLoadShipRequest(msg);
+                    agentId = ((MessagePlanetRequestShipResources)msg.Command).AgentId;
+                    success = ReceiveResourceLoadShipRequest(msg);
                     break;
                 default:
+                    success = false;
                     throw new Exception("Unknown Ship Command");
             }
+            if (!success)
+            {
+                _solarSystemC.SendMessageToAgent(agentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.PlanetCommandFailed), _curTick));
+            }
+
         }
     }
 }

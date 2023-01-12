@@ -40,18 +40,24 @@ namespace GalaxyGenEngine.Engine
             }
 
             Receive<MessageTick>(msg => receiveDefaultTick(msg));
-        }
+            Receive<MessageAgentCommand>(msg => receiveCommand(msg));
+        }        
 
         private void receiveDefaultTick(MessageTick tick)
         {
-            _actorTextOutput.Tell(_agent.AgentId + " agent recv tick");
+            //_actorTextOutput.Tell(_agent.AgentId + " agent recv tick");
             _agentC.Tick(tick);
             sendAgentCompletedMessage();
         }
 
+        private void receiveCommand(MessageAgentCommand msg)
+        {
+            _agentC.ReceiveCommand(msg);
+        }
+
         private void sendAgentCompletedMessage()
         {
-            _actorTextOutput.Tell(_agent.AgentId + " agent complete");
+            //_actorTextOutput.Tell(_agent.AgentId + " agent complete");
             _actorSolarSystem.Tell(_tickCompleteCmd);            
         }
     }
