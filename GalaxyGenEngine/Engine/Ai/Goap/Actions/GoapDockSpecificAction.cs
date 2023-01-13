@@ -10,8 +10,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapDockSpecificAction : GoapAction
     {
-        private bool _requestSent = false;
-
         public GoapDockSpecificAction(ulong dockScId)
         {
             target = dockScId;
@@ -23,7 +21,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public override void Reset()
         {
-            _requestSent = false;
         }
 
         public override bool IsDone(object agent)
@@ -54,11 +51,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public override bool Perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;           
-            if (!ag.StateProvider.CurrentShipIsDocked && !_requestSent)
-            {
-                ag.ActionProvider.RequestDock();
-                _requestSent = true;
-            }
+            if (!ag.StateProvider.CurrentShipIsDocked) ag.ActionProvider.RequestDock();
             return true;
         }
 

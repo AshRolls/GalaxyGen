@@ -45,11 +45,11 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             switch (msg.Command.CommandType)
             {
                 case AgentCommandEnum.ShipCommandFailed:
-                    _textOutput.Write(_state.AgentId, "Plan Failed");
+                    _textOutput.Write(_state.AgentId, "Plan Failed (Ship)");
                     _goapAgent.ResetPlan();
                     break;
                 case AgentCommandEnum.PlanetCommandFailed:
-                    _textOutput.Write(_state.AgentId, "Plan Failed");
+                    _textOutput.Write(_state.AgentId, "Plan Failed (Planet)");
                     _goapAgent.ResetPlan();
                     break;
             }
@@ -170,20 +170,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         {
             _textOutput.Write(_state.AgentId, "Requesting Unloading resources " + resQ.Type + ":" + resQ.Quantity);            
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
-        }
-                
-
-        private UInt64 chooseRandomDestinationScId()
-        {
-            // choose randomly        
-            List<UInt64> planetsToChooseFrom;
-            if (_state.CurrentShipIsDocked)
-                planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.Where(x => x != _state.CurrentShipDockedPlanetScId).ToList();
-            else
-                planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.ToList();
-            int index = RandomUtils.Random(planetsToChooseFrom.Count);
-            return planetsToChooseFrom[index];
-        }
+        }                       
 
         private void setNewDestination(UInt64 destinationScId)
         {
@@ -250,34 +237,52 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         public GoapState CreateGoalState()
         {
             GoapState goalState = new GoapState();
-            
-            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc());
-            goalState.Set(key, chooseRandomDestinationScId());
 
-            GoapStateKey rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Platinum, _state.CurrentShipStoreId));
-            goalState.Set(rkey, 1L);
-            //rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(ResourceTypeEnum.Spice, _state.CurrentShipStoreId));
-            //goalState.Set(rkey, 100L);
+            ulong dest = chooseRandomDestinationScId();
+            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc());
+            goalState.Set(key, dest);
+
+            int r = RandomUtils.Random(2);
+            ResourceTypeEnum res = r == 1 ? ResourceTypeEnum.Platinum : ResourceTypeEnum.Spice;
+            ulong storeId;
+            if (_state.TryGetPlanetStoreId(dest, out storeId))
+            {
+                long qty = _state.PlanetResourceQuantity(dest, res);
+                GoapStateKey rkey = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(res, storeId));
+                goalState.Set(rkey, (long)r + 1L);
+            }
+
+            _textOutput.Write(_state.AgentId, "Goal created " + GoapState.PrettyPrint(goalState));
             return goalState;
+        }
+
+        private UInt64 chooseRandomDestinationScId()
+        {
+            // choose randomly        
+            List<UInt64> planetsToChooseFrom;
+            if (_state.CurrentShipIsDocked)
+                planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.Where(x => x != _state.CurrentShipDockedPlanetScId).ToList();
+            else
+                planetsToChooseFrom = _state.PlanetsInSolarSystemScIds.ToList();
+            int index = RandomUtils.Random(planetsToChooseFrom.Count);
+            return planetsToChooseFrom[index];
         }
 
         public void PlanFailed(GoapState failedGoal)
         {
-            _textOutput.Write(_state.AgentId, "Plan failed " + failedGoal.ToString());
+            _textOutput.Write(_state.AgentId, "Plan failed " + GoapState.PrettyPrint(failedGoal));
         }
 
         public void PlanFound(GoapState goal, Queue<GoapAction> actions)
         {
-            // Yay we found a plan for our goal
-            // Console.WriteLine("<color=green>Plan found</color> " + GoapAgent.PrettyPrint(actions));
-            _textOutput.Write(_state.AgentId, "Plan found " + GoapAgent.PrettyPrint(actions));
+            // We found a plan for our goal
+            _textOutput.Write(_state.AgentId, "Plan found " + GoapAction.PrettyPrint(actions));
        }
 
         public void ActionsFinished()
         {
             // Everything is done, we completed our actions for this gool. Hooray!
             _textOutput.Write(_state.AgentId, "Plan Completed");
-            // Console.WriteLine("<color=blue>Actions completed</color>");
         }
 
         public void PlanAborted(GoapAction aborter)
@@ -285,8 +290,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             // An action bailed out of the plan. State has been reset to plan again.
             // Take note of what happened and make sure if you run the same goal again
             // that it can succeed.
-            // Console.WriteLine("<color=red>Plan Aborted</color> " + GoapAgent.prettyPrint(aborter));
-            _textOutput.Write(_state.AgentId, "Plan Aborted " + GoapAgent.prettyPrint(aborter));
+            _textOutput.Write(_state.AgentId, "Plan Aborted " + GoapAction.PrettyPrint(aborter));
         }
 
         public bool MoveAgent(GoapAction nextAction)

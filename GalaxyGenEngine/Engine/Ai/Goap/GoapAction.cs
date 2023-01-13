@@ -3,6 +3,7 @@ using GalaxyGenCore.Resources;
 using GalaxyGenEngine.Engine.Ai.Goap;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {
@@ -36,7 +37,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             _effects = new GoapState();
         }
 
-        public void doReset()
+        public void DoReset()
         {
             _inRange = false;
             target = null;
@@ -115,6 +116,34 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 return _effects;
             }
+        }
+
+        public static string PrettyPrint(Queue<GoapAction> actions)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (GoapAction a in actions)
+            {
+                sb.Append(a.GetType().Name);
+                sb.Append("-> ");
+            }
+            sb.Append("GOAL");
+            return sb.ToString();
+        }
+
+        public static string PrettyPrint(GoapAction[] actions)
+        {
+            StringBuilder sb = new StringBuilder();            
+            foreach (GoapAction a in actions)
+            {
+                sb.Append(a.GetType().Name);
+                sb.Append(", ");
+            }
+            return sb.ToString();
+        }
+
+        public static string PrettyPrint(GoapAction action)
+        {
+            return action.GetType().Name;
         }
     }
 }

@@ -11,7 +11,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapLoadShipSpecificAction : GoapAction
     {
-        private bool _requestSent = false;
         private ResourceQuantity _resQ;
         private long _curQ;
 
@@ -30,7 +29,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public override void Reset()
         {
-            _requestSent = false;
         }
 
         public override bool IsDone(object agent)
@@ -61,14 +59,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public override bool Perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
-
-            if (!_requestSent)
-            {
-                _curQ = ag.StateProvider.CurrentShipResourceQuantity(_resQ.Type);
-                _requestSent = true;
-                ag.ActionProvider.RequestLoadShip(_resQ);
-            }
-
+            _curQ = ag.StateProvider.CurrentShipResourceQuantity(_resQ.Type);
+            ag.ActionProvider.RequestLoadShip(_resQ);
             return true;
         }
     }

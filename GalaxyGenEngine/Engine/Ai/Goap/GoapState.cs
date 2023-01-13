@@ -1,4 +1,5 @@
-﻿using GalaxyGenCore.Resources;
+﻿using Castle.Core;
+using GalaxyGenCore.Resources;
 using GalaxyGenEngine.Engine.Ai.Goap;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public class GoapState
     {
-        private Dictionary<GoapStateKey, object> values = new Dictionary<GoapStateKey, object>();        
+        private Dictionary<GoapStateKey, object> _states = new Dictionary<GoapStateKey, object>();        
         private readonly Dictionary<GoapStateKey, object> bufferA = new Dictionary<GoapStateKey, object>(DefaultSize);
         private readonly Dictionary<GoapStateKey, object> bufferB = new Dictionary<GoapStateKey, object>(DefaultSize);
         public static int DefaultSize = 20;
@@ -23,7 +24,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public override int GetHashCode()
         {
             int hash = 397;
-            foreach (KeyValuePair<GoapStateKey, object> kvp in values)
+            foreach (KeyValuePair<GoapStateKey, object> kvp in _states)
             {
                 hash *= 37 + kvp.Key.GetHashCode() + kvp.Value.GetHashCode();
             }
@@ -33,7 +34,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public override bool Equals(object obj)
         {
             GoapState otherState = (GoapState)obj;
-            return values.Count == otherState.values.Count && !values.Except(otherState.values).Any(); // https://stackoverflow.com/questions/3804367/testing-for-equality-between-dictionaries-in-c-sharp
+            return _states.Count == otherState._states.Count && !_states.Except(otherState._states).Any(); // https://stackoverflow.com/questions/3804367/testing-for-equality-between-dictionaries-in-c-sharp
 
             //GoapState otherState = (GoapState)obj;
             //lock (values) lock (otherState.values)
@@ -62,24 +63,24 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
             {
-                values.Add(kvp.Key, kvp.Value);
+                _states.Add(kvp.Key, kvp.Value);
             }
         }
 
         public static GoapState operator +(GoapState a, GoapState b)
         {
             GoapState result;
-            lock (a.values)
+            lock (a._states)
             {
                 result = new GoapState(a);
             }
-            lock (b.values)
+            lock (b._states)
             {
-                foreach (var pair in b.values)
+                foreach (var pair in b._states)
                 {
-                    if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) result.values[pair.Key] = pair.Value;
-                    if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && !result.values.ContainsKey(pair.Key)) result.values[pair.Key] = pair.Value;
-                    else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) result.values[pair.Key] = (long)pair.Value + (long)result.values[pair.Key];
+                    if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) result._states[pair.Key] = pair.Value;
+                    if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && !result._states.ContainsKey(pair.Key)) result._states[pair.Key] = pair.Value;
+                    else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) result._states[pair.Key] = (long)pair.Value + (long)result._states[pair.Key];
                 }
                 return result;
             }
@@ -87,7 +88,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public int Count
         {
-            get { return values.Count; }
+            get { return _states.Count; }
         }
 
         //public bool HasAny(GoapState other)
@@ -107,30 +108,30 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public object Get(GoapStateKey key)
         {
-            lock (values)
+            lock (_states)
             {
-                if (!values.ContainsKey(key))
+                if (!_states.ContainsKey(key))
                     return default(object);
-                return values[key];
+                return _states[key];
             }
         }
 
         public Dictionary<GoapStateKey, object> GetValues()
         {
-            lock (values)
-                return values;
+            lock (_states)
+                return _states;
         }
 
         public void Set(GoapStateKey key, object value)
         {
-            lock (values)
+            lock (_states)
             {
-                if (values.ContainsKey(key))
+                if (_states.ContainsKey(key))
                 {
-                    if (key.Type == GoapStateKeyTypeEnum.StateName) values[key] = value;
-                    else if (key.Type == GoapStateKeyTypeEnum.Resource) values[key] = (long)values[key] + (long)value;
+                    if (key.Type == GoapStateKeyTypeEnum.StateName) _states[key] = value;
+                    else if (key.Type == GoapStateKeyTypeEnum.Resource) _states[key] = (long)_states[key] + (long)value;
                 }
-                else values.Add(key, value);
+                else _states.Add(key, value);
             }
         }
 
@@ -142,45 +143,45 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public bool HasKey(GoapStateKey key)
         {
-            lock (values)
-                return values.ContainsKey(key);
+            lock (_states)
+                return _states.ContainsKey(key);
         }
 
         public void Remove(GoapStateKey key)
         {
-            lock (values)
+            lock (_states)
             {
-                values.Remove(key);
+                _states.Remove(key);
             }
         }
         public void AddFromState(GoapState b)
         {
-            lock (values) lock (b.values)
+            lock (_states) lock (b._states)
             {
-                foreach (var pair in b.values)
-                    values[pair.Key] = pair.Value;
+                foreach (var pair in b._states)
+                    _states[pair.Key] = pair.Value;
             }
         }
 
         // keep only missing differences in values
         public int ReplaceWithMissingDifference(GoapState other, int stopAt = int.MaxValue)
         {
-            lock (values)
+            lock (_states)
             {
                 var count = 0;
-                var buffer = values;
-                values = values == bufferA ? bufferB : bufferA;
-                values.Clear();
+                var buffer = _states;
+                _states = _states == bufferA ? bufferB : bufferA;
+                _states.Clear();
                 foreach (var pair in buffer)
                 {
                     object otherValue;
-                    other.values.TryGetValue(pair.Key, out otherValue);
+                    other._states.TryGetValue(pair.Key, out otherValue);
                     if (!Equals(pair.Value, otherValue))
                     {
                         count++;
-                        if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) values[pair.Key] = pair.Value;
-                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) values[pair.Key] = (long)pair.Value + (long)otherValue;
-                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) values[pair.Key] = pair.Value;
+                        if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) _states[pair.Key] = pair.Value;
+                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) _states[pair.Key] = (long)pair.Value + (long)otherValue;
+                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) _states[pair.Key] = pair.Value;
                         if (count >= stopAt)
                             break;
                     }
@@ -192,21 +193,21 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         // write differences in "difference"
         public int MissingDifference(GoapState other, ref GoapState difference, int stopAt = int.MaxValue)
         {
-            lock (values)
+            lock (_states)
             {
                 var count = 0;
-                foreach (var pair in values)
+                foreach (var pair in _states)
                 {
                     object otherValue;
-                    other.values.TryGetValue(pair.Key, out otherValue);
+                    other._states.TryGetValue(pair.Key, out otherValue);
                     if (!Equals(pair.Value, otherValue))
                     {
                         count++;
                         if (difference != null)
                         {
-                            if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) difference.values[pair.Key] = pair.Value;
-                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) difference.values[pair.Key] = (long)pair.Value + (long)otherValue;
-                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) difference.values[pair.Key] = pair.Value;
+                            if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) difference._states[pair.Key] = pair.Value;
+                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) difference._states[pair.Key] = (long)pair.Value + (long)otherValue;
+                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) difference._states[pair.Key] = pair.Value;
                         }
                         if (count >= stopAt)
                             break;
@@ -216,7 +217,32 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             }
         }
 
-        
+        internal static string PrettyPrint(GoapState state)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<GoapStateKey,object> kvp in state._states)
+            {
+                if (kvp.Key.Type == GoapStateKeyTypeEnum.StateName)
+                {
+                    sb.Append("STA:(");
+                    sb.Append(kvp.Key.StateName);
+                    sb.Append(",");
+                    sb.Append(kvp.Value);
+                    sb.Append(") ");
+                }
+                else
+                {
+                    sb.Append("RES:(");
+                    sb.Append(kvp.Key.ResourceLocation.ResType);
+                    sb.Append("|");
+                    sb.Append(kvp.Key.ResourceLocation.StoreId);
+                    sb.Append(",");
+                    sb.Append(kvp.Value);
+                    sb.Append(") ");
+                }                
+            }
+            return sb.ToString();
+        }
 
         //public bool HasAnyConflict(GoapState other) // used only in backward for now
         //{

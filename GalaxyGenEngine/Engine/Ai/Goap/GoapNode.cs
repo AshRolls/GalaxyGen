@@ -60,7 +60,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 goal = diff;
             }
 
-            HeuristicCost = goal.Count * 5;
+            HeuristicCost = goal.Count;
             Cost = PathCost + HeuristicCost;
         }
 

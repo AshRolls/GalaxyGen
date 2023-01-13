@@ -60,7 +60,7 @@
                 <ItemsControl ItemsSource="{Binding TextOutput.ConsoleLines, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" Foreground="Lime" FontFamily="Consolas" FontSize="10"/>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap" Foreground="Lime" FontFamily="Consolas" FontSize="10"/>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>

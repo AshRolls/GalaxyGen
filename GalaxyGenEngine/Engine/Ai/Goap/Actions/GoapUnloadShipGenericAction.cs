@@ -43,10 +43,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
                 {
                     if (kvp.Key.Type == GoapStateKeyTypeEnum.Resource && kvp.Key.ResourceLocation.StoreId == shipStoreId)
                     {
-                        GoapUnloadShipSpecificAction aSingle = new GoapUnloadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, dockedAtStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 1L));
-                        GoapUnloadShipSpecificAction aAll = new GoapUnloadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, dockedAtStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, (long)kvp.Value));
-                        actions.Add(aSingle);
-                        actions.Add(aAll);
+                        actions.Add(new GoapUnloadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, dockedAtStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 1L)));
+                        if ((long)kvp.Value > 1) actions.Add(new GoapUnloadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, dockedAtStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, (long)kvp.Value)));                                                
                     }
                 }
             }

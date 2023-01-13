@@ -10,7 +10,7 @@ namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
-        const int NUMBER_OF_AGENTS = 100;
+        const int NUMBER_OF_AGENTS = 1;
 
         public Galaxy GetFullGalaxy()
         {
@@ -58,12 +58,14 @@ namespace GalaxyGenEngine.Engine
                 if (j % 2 == 0)
                 {
                     //addMetalProducerToPlanet(ag, p);
-                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 else
                 {
                     //addSpiceProducerToPlanet(ag, p);
-                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 j++;
             }                            
@@ -182,7 +184,8 @@ namespace GalaxyGenEngine.Engine
             o.Stores.Add(s);
 
             // seed with basic starter resource
-            s.StoredResources.Add(ResourceTypeEnum.Spice, 10);
+            s.StoredResources.Add(ResourceTypeEnum.Spice, 2);
+            s.StoredResources.Add(ResourceTypeEnum.Platinum, 2);
         }
 
         private Ship getNewShip(String seedName, ShipType shipT)

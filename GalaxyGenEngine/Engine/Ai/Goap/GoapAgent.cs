@@ -197,35 +197,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 s += ", ";
             }
             return s;
-        }
-
-        public static string PrettyPrint(Queue<GoapAction> actions)
-        {
-            String s = "";
-            foreach (GoapAction a in actions)
-            {
-                s += a.GetType().Name;
-                s += "-> ";
-            }
-            s += "GOAL";
-            return s;
-        }
-
-        public static string prettyPrint(GoapAction[] actions)
-        {
-            String s = "";
-            foreach (GoapAction a in actions)
-            {
-                s += a.GetType().Name;
-                s += ", ";
-            }
-            return s;
-        }
-
-        public static string prettyPrint(GoapAction action)
-        {
-            String s = "" + action.GetType().Name;
-            return s;
-        }
+        }       
     }
 }

@@ -9,7 +9,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     public class GoapPlanner
     {
         public GoapState StartingWorldState { get; private set; }
-        public HashSet<GoapAction> UsableActions { get; private set; }
+        public HashSet<GoapAction> UsableActions { get; private set; }        
 
         /**
          * Plan what sequence of actions can fulfill the goal.
@@ -21,7 +21,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
             {
-                a.doReset();
+                a.DoReset();
             }
 
             UsableActions = new HashSet<GoapAction>();
