@@ -10,7 +10,10 @@ namespace GalaxyGenCore.Resources
     {
         NotSet = 0,
         Spice = 1,
-        Platinum = 2
+        Platinum = 2,
+        Uranium = 4,
+        Xenon = 8,
+        Aluminium = 16
     }
 
     public struct ResourceQuantity

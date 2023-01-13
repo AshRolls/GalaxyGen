@@ -43,7 +43,7 @@ namespace GalaxyGenCore.BluePrints
             {
                 if (typesReadOnly_Var == null)
                 {
-                    ReadOnlyCollection<BluePrint> typesReadOnly_Var = new ReadOnlyCollection<BluePrint>(types_Var);
+                    ReadOnlyCollection<BluePrint> typesReadOnly_Var = new(types_Var);
                 }
                 return typesReadOnly_Var;
             }

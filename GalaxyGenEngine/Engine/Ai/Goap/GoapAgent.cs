@@ -8,7 +8,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public sealed class GoapAgent
     {
-
         private FSM _stateMachine;
 
         private FSM.FSMState _idleState; // finds something to do
@@ -23,7 +22,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public IAgentControllerState StateProvider;
 
         private GoapPlanner _planner;
-
 
         public GoapAgent(IGoap provider, IAgentActions actions, IAgentControllerState state)
         {
@@ -40,7 +38,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             _stateMachine.PushState(_idleState);
             loadActions();
         }
-
 
         public void Tick()
         {
