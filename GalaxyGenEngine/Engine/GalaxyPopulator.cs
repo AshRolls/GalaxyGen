@@ -58,14 +58,14 @@ namespace GalaxyGenEngine.Engine
                 if (j % 2 == 0)
                 {
                     //addMetalProducerToPlanet(ag, p);
-                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
-                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10), new ResourceQuantity(ResourceTypeEnum.Platinum, 10) });
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 else
                 {
                     //addSpiceProducerToPlanet(ag, p);
-                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
-                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10), new ResourceQuantity(ResourceTypeEnum.Platinum, 10) });
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 j++;
             }                            

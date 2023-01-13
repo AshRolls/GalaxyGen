@@ -10,7 +10,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     public enum GoapStateKeyTypeEnum
     {
         StateName = 0,
-        Resource = 1
+        ResourceQty = 1,
+        AllowedResource = 2
     }
 
     public enum GoapStateKeyStateNameEnum
@@ -26,28 +27,33 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public GoapStateKeyTypeEnum Type;
         public GoapStateKeyStateNameEnum StateName;
         public GoapStateKeyResLoc ResourceLocation;
+        public ResourceTypeEnum AllowedResource;
 
-        public GoapStateKey(GoapStateKeyTypeEnum type, GoapStateKeyStateNameEnum stateName, GoapStateKeyResLoc resourceLocation)
+        public GoapStateKey(GoapStateKeyTypeEnum type, GoapStateKeyStateNameEnum stateName, GoapStateKeyResLoc resourceLocation, ResourceTypeEnum allowedResource)
         {
             Type = type;
             StateName = stateName;
             ResourceLocation = resourceLocation;
+            AllowedResource = allowedResource;
         }
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             switch (Type)
             {
                 case GoapStateKeyTypeEnum.StateName:
                     sb.Append("State: ");
                     sb.Append(StateName.ToString());                    
                     break;
-                case GoapStateKeyTypeEnum.Resource:
+                case GoapStateKeyTypeEnum.ResourceQty:
                     sb.Append("Resource: ");
                     sb.Append(ResourceLocation.ResType.ToString());
-                    sb.Append(" ");
+                    sb.Append(' ');
                     sb.Append(ResourceLocation.StoreId);
+                    break;
+                case GoapStateKeyTypeEnum.AllowedResource:
+                    sb.Append("Allowed Resource ");                    
                     break;
             }
             return sb.ToString();

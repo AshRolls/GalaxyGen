@@ -1,11 +1,6 @@
-﻿using GalaxyGenEngine.Engine.Ai.Goap;
-using GalaxyGenEngine.Engine.Controllers;
-using System;
+﻿using GalaxyGenCore.Resources;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
@@ -13,7 +8,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     {
         public GoapUndockAction()
         {            
-            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());
+            GoapStateKey key = new(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);
             addPrecondition(key, true);
             addEffect(key, false);
             key.StateName = GoapStateKeyStateNameEnum.DockedAt;
@@ -46,7 +41,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return true;
         }
 
-        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal)
         {
             return null;
         }

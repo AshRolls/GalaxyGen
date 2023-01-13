@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {
@@ -16,7 +17,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * Returns null if a plan could not be found, or a list of the actions
          * that must be performed, in order, to fulfill the goal.
          */
-        public (Queue<GoapAction>,int) Plan(GoapAgent agent, HashSet<GoapAction> availableActions, GoapState worldState, GoapState goal)
+        public (Queue<GoapAction>,(int,long)) Plan(GoapAgent agent, HashSet<GoapAction> availableActions, GoapState worldState, GoapState goal)
         {
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
@@ -30,53 +31,54 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 UsableActions.Add(a);
             }
 
-            GoapState startingState = new GoapState(worldState);
+            GoapState startingState = new(worldState);
             //startingState.AddFromState(goal);
             //StartingWorldState = startingState;
 
-            GoapState goalGS = new GoapState(goal);
-            GoapNode startNode = new GoapNode(null, startingState, null, 0, goal, this);
+            GoapState goalGS = new(goal);
+            GoapNode startNode = new(null, startingState, null, 0, goal, this);
             GoapNode res = null;
-            (bool success, int iterations) result = aStarGraph(startNode, ref res, goalGS, agent);
+            (bool success, (int iterations, long ms) stats) = aStarGraph(startNode, ref res, goalGS, agent);
             //bool success = buildGraph(startNode, leaves, UsableActions, goalGS);
             //bool success = aStar(worldState, leaves, goalGS, resourceGoal, agent);
 
             // We didn't get a plan
-            if (!result.success) return (null,0);
+            if (!success) return (null,(0,0));
         
-            // get its node and work back through the parents
-            Stack<GoapAction> plan = new Stack<GoapAction>();
+            // get its node and work back through the parents to get actions into the correct order
+            Stack<GoapAction> plan = new();
             GoapNode n = res;
             while (n != null)
             {
                 if (n.Action != null) plan.Push(n.Action);                
                 n = n.Parent;
             }
-            // we now have this action list in correct order
 
-            Queue<GoapAction> queue = new Queue<GoapAction>();
+            Queue<GoapAction> queue = new();
             foreach (GoapAction a in plan)
             {
                 queue.Enqueue(a);
             }
 
             // hooray we have a plan!
-            return (queue, result.iterations);
+            return (queue, stats);
         }
 
-        private (bool,int) aStarGraph(GoapNode startNode, ref GoapNode cur, GoapState goal, GoapAgent agent)
+        private static (bool,(int,long)) aStarGraph(GoapNode startNode, ref GoapNode cur, GoapState goal, GoapAgent agent)
         {
-            PriorityQueue<GoapNode, float> queue = new PriorityQueue<GoapNode, float>();
-            Dictionary<GoapState, float> visited = new Dictionary<GoapState, float>();
+            PriorityQueue<GoapNode, float> queue = new();
+            Dictionary<GoapState, float> visited = new();
 
             queue.Enqueue(startNode, 0);
 
             const int MAX_NODES = 10000;
-            const float MAX_COST = 1000;
+            const float MAX_COST = 15;
             int iterations = 0;
+            int visitedHits = 0;
             float cost = 0;
             bool found = false;
             cur = null;
+            Stopwatch sw = Stopwatch.StartNew();
             while (queue.Count > 0 && iterations < MAX_NODES && cost < MAX_COST)
             {
                 cur = queue.Dequeue();
@@ -91,10 +93,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 }
 
                 // check if we have explored this state before
-                float existingCost;
-                if (visited.TryGetValue(cur.State, out existingCost))
+                if (visited.TryGetValue(cur.State, out float existingCost))
                 {
-                    if (cur.Cost >= existingCost) continue;
+                    if (cur.Cost >= existingCost)
+                    {
+                        visitedHits++;
+                        continue;
+                    }
                     else visited[cur.State] = existingCost;
                 }
                 else visited.Add(cur.State, cur.Cost);
@@ -105,8 +110,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     queue.Enqueue(node, node.Cost);
                 }
             }
+            sw.Stop();
 
-            return (found,iterations);
+            return (found,(iterations, sw.ElapsedMilliseconds));
         }
 
         //private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal, object agent)
@@ -211,7 +217,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * Check that all items in 'test' are in 'state'. If just one does not match or is not there
          * then this returns false.
          */        
-        public bool InState(GoapState test, GoapState state)
+        public static bool InState(GoapState test, GoapState state)
         {
             var allMatch = true;
             foreach (var t in test.GetValues())
@@ -229,9 +235,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         /**
          * Apply the stateChange to the currentState
          */
-        public GoapState GetNewState(GoapState currentState, GoapState stateChange)
+        public static GoapState GetNewState(GoapState currentState, GoapState stateChange)
         {
-            GoapState state = new GoapState();
+            GoapState state = new();
             foreach (var s in currentState.GetValues())
             {
                 state.Set(s.Key, s.Value);

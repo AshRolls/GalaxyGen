@@ -69,24 +69,24 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             return this.Cost < cheapest.Cost;
         }
 
-        public List<GoapNode> Expand(object agent)
+        public List<GoapNode> Expand(GoapAgent agent)
         {
             List<GoapNode> expandList = new List<GoapNode>();
             foreach (GoapAction action in planner.UsableActions)
             {
-                if (planner.InState(action.Preconditions, this.State) && action.CheckProceduralPrecondition(agent))
+                if (GoapPlanner.InState(action.Preconditions, this.State) && action.CheckProceduralPrecondition(agent))
                 {
                     if (action.IsSpecific())
                     {
-                        GoapState newState = planner.GetNewState(this.State, action.Effects);
+                        GoapState newState = GoapPlanner.GetNewState(this.State, action.Effects);
                         GoapNode newNode = new GoapNode(this, newState, action, this.PathCost, goal.Clone(), planner);
                         expandList.Add(newNode);
                     }
                     else
                     {
-                        foreach(GoapAction sAction in action.GetSpecificActions(agent, this.State))
+                        foreach(GoapAction sAction in action.GetSpecificActions(agent, this.State, this.goal))
                         {
-                            GoapState newState = planner.GetNewState(this.State, sAction.Effects);
+                            GoapState newState = GoapPlanner.GetNewState(this.State, sAction.Effects);
                             GoapNode newNode = new GoapNode(this, newState, sAction, this.PathCost, goal.Clone(), planner);
                             expandList.Add(newNode);
                         }

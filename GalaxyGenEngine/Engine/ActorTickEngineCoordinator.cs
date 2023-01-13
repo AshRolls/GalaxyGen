@@ -90,7 +90,7 @@ namespace GalaxyGenEngine.Engine
 
         private void msTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (_receivedAll)
+            if (_receivedAll) 
             {
                 _receivedAll = false;
                 sendTick();

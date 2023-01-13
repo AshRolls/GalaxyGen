@@ -7,7 +7,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     {
         public GoapLoadShipGenericAction()
         {
-            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc());
+            GoapStateKey key = new(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);
             addPrecondition(key, true);
         }
 
@@ -29,22 +29,32 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return false;
         }
 
-        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal)
         {
             GoapAgent ag = (GoapAgent)agent;
-            List<GoapAction> actions = new List<GoapAction>();
-            
-            ulong dockedAt = (ulong)state.Get(new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc()));
-            ulong dockedAtStoreId;
-            if (ag.StateProvider.TryGetPlanetStoreId(dockedAt, out dockedAtStoreId))
+            List<GoapAction> actions = new();
+            List<ResourceTypeEnum> allowedResourceTypes = new(); // list faster than hashset for small sets
+            foreach (KeyValuePair<GoapStateKey, object> kvp in goal.GetValues())
             {
-                ulong shipStoreId = (ulong)state.Get(new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.ShipStoreId, new GoapStateKeyResLoc()));
+                if (kvp.Key.Type == GoapStateKeyTypeEnum.ResourceQty && !allowedResourceTypes.Contains(kvp.Key.ResourceLocation.ResType)) allowedResourceTypes.Add(kvp.Key.ResourceLocation.ResType);
+            }
+            foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
+            {
+                if (kvp.Key.Type == GoapStateKeyTypeEnum.AllowedResource && !allowedResourceTypes.Contains(kvp.Key.AllowedResource)) allowedResourceTypes.Add(kvp.Key.AllowedResource);
+            }
+
+            ulong dockedAt = (ulong)state.Get(new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet));
+            if (ag.StateProvider.TryGetPlanetStoreId(dockedAt, out ulong dockedAtStoreId))
+            {
+                ulong shipStoreId = (ulong)state.Get(new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.ShipStoreId, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet));
                 foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
                 {
-                    if (kvp.Key.Type == GoapStateKeyTypeEnum.Resource && kvp.Key.ResourceLocation.StoreId == dockedAtStoreId)
+                    if (kvp.Key.Type == GoapStateKeyTypeEnum.ResourceQty && kvp.Key.ResourceLocation.StoreId == dockedAtStoreId && allowedResourceTypes.Contains(kvp.Key.ResourceLocation.ResType))
                     {
                         actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 1L)));
-                        if ((long)kvp.Value > 1) actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, (long)kvp.Value)));                        
+                        if ((long)kvp.Value > 1) actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 2L)));
+                        if ((long)kvp.Value > 3) actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 4L)));
+                        if ((long)kvp.Value > 4) actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, (long)kvp.Value)));
                     }
                 }
             }

@@ -10,12 +10,14 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public GoapUnloadShipSpecificAction(ulong sourceShipStoreId, ulong destStoreId, ResourceQuantity resQ)
         {
-            GoapStateKeyResLoc resLoc = new GoapStateKeyResLoc(resQ.Type, sourceShipStoreId);
-            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.Resource, GoapStateKeyStateNameEnum.None, resLoc);            
+            GoapStateKeyResLoc resLoc = new(resQ.Type, sourceShipStoreId);
+            GoapStateKey key = new(GoapStateKeyTypeEnum.ResourceQty, GoapStateKeyStateNameEnum.None, resLoc, ResourceTypeEnum.NotSet);            
             addEffect(key, (0L - resQ.Quantity));
             resLoc.StoreId = destStoreId;
             key.ResourceLocation = resLoc;
             addEffect(key, resQ.Quantity);
+            key = new(GoapStateKeyTypeEnum.AllowedResource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(), resQ.Type);
+            addEffect(key, 0);
 
             _resQ = resQ;
         }
@@ -40,7 +42,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             return true;
         }
-        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal)
         {
             return null;
         }

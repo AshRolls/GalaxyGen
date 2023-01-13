@@ -1,6 +1,7 @@
 ﻿using Castle.Core;
 using GalaxyGenCore.Resources;
 using GalaxyGenEngine.Engine.Ai.Goap;
+using Ninject.Injection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         private readonly Dictionary<GoapStateKey, object> bufferA = new Dictionary<GoapStateKey, object>(DefaultSize);
         private readonly Dictionary<GoapStateKey, object> bufferB = new Dictionary<GoapStateKey, object>(DefaultSize);
         public static int DefaultSize = 20;
+        private static int _allowedResourcesMax = 1;
 
         public GoapState()
         {
@@ -65,46 +67,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 _states.Add(kvp.Key, kvp.Value);
             }
-        }
-
-        public static GoapState operator +(GoapState a, GoapState b)
-        {
-            GoapState result;
-            lock (a._states)
-            {
-                result = new GoapState(a);
-            }
-            lock (b._states)
-            {
-                foreach (var pair in b._states)
-                {
-                    if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) result._states[pair.Key] = pair.Value;
-                    if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && !result._states.ContainsKey(pair.Key)) result._states[pair.Key] = pair.Value;
-                    else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) result._states[pair.Key] = (long)pair.Value + (long)result._states[pair.Key];
-                }
-                return result;
-            }
-        }
+        }    
 
         public int Count
         {
             get { return _states.Count; }
         }
 
-        //public bool HasAny(GoapState other)
-        //{
-        //    lock (values) lock (other.values)
-        //    {
-        //        foreach (var pair in other.values)
-        //        {
-        //            object thisValue;
-        //            values.TryGetValue(pair.Key, out thisValue);
-        //            if (Equals(thisValue, pair.Value))
-        //                return true;
-        //        }
-        //        return false;
-        //    }
-        //}
 
         public object Get(GoapStateKey key)
         {
@@ -129,9 +98,16 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 if (_states.ContainsKey(key))
                 {
                     if (key.Type == GoapStateKeyTypeEnum.StateName) _states[key] = value;
-                    else if (key.Type == GoapStateKeyTypeEnum.Resource) _states[key] = (long)_states[key] + (long)value;
+                    else if (key.Type == GoapStateKeyTypeEnum.ResourceQty) _states[key] = (long)_states[key] + (long)value;
                 }
-                else _states.Add(key, value);
+                else
+                {
+                    if (key.Type == GoapStateKeyTypeEnum.AllowedResource) 
+                    {
+                        if (_states.Where(x => x.Key.Type == GoapStateKeyTypeEnum.AllowedResource).Count() <= _allowedResourcesMax) _states.Add(key, value);
+                    }
+                    else _states.Add(key, value);
+                }
             }
         }
 
@@ -180,8 +156,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     {
                         count++;
                         if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) _states[pair.Key] = pair.Value;
-                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) _states[pair.Key] = (long)pair.Value + (long)otherValue;
-                        else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) _states[pair.Key] = pair.Value;
+                        else if (pair.Key.Type == GoapStateKeyTypeEnum.ResourceQty && otherValue != null) _states[pair.Key] = (long)pair.Value + (long)otherValue;
+                        else if (pair.Key.Type == GoapStateKeyTypeEnum.ResourceQty) _states[pair.Key] = pair.Value;
                         if (count >= stopAt)
                             break;
                     }
@@ -206,8 +182,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                         if (difference != null)
                         {
                             if (pair.Key.Type == GoapStateKeyTypeEnum.StateName) difference._states[pair.Key] = pair.Value;
-                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource && otherValue != null) difference._states[pair.Key] = (long)pair.Value + (long)otherValue;
-                            else if (pair.Key.Type == GoapStateKeyTypeEnum.Resource) difference._states[pair.Key] = pair.Value;
+                            else if (pair.Key.Type == GoapStateKeyTypeEnum.ResourceQty && otherValue != null) difference._states[pair.Key] = (long)pair.Value + (long)otherValue;
+                            else if (pair.Key.Type == GoapStateKeyTypeEnum.ResourceQty) difference._states[pair.Key] = pair.Value;
                         }
                         if (count >= stopAt)
                             break;
@@ -220,7 +196,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         internal static string PrettyPrint(GoapState state)
         {
             StringBuilder sb = new StringBuilder();
-            foreach (KeyValuePair<GoapStateKey,object> kvp in state._states)
+            foreach (KeyValuePair<GoapStateKey, object> kvp in state._states)
             {
                 if (kvp.Key.Type == GoapStateKeyTypeEnum.StateName)
                 {
@@ -230,7 +206,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     sb.Append(kvp.Value);
                     sb.Append(") ");
                 }
-                else
+                else if (kvp.Key.Type == GoapStateKeyTypeEnum.ResourceQty)
                 {
                     sb.Append("RES:(");
                     sb.Append(kvp.Key.ResourceLocation.ResType);
@@ -239,7 +215,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     sb.Append(",");
                     sb.Append(kvp.Value);
                     sb.Append(") ");
-                }                
+                }
+                else if (kvp.Key.Type == GoapStateKeyTypeEnum.ResourceQty)
+                {
+                    sb.Append("ALW:(");
+                    sb.Append(kvp.Key.AllowedResource);
+                    sb.Append(") ");
+                }
             }
             return sb.ToString();
         }

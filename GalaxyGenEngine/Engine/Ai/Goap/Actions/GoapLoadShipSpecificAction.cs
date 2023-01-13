@@ -1,11 +1,5 @@
-﻿using GalaxyGenEngine.Engine.Controllers;
-using GalaxyGenCore.Resources;
-using System;
+﻿using GalaxyGenCore.Resources;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaxyGenEngine.Engine.Ai.Goap;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
@@ -16,14 +10,15 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 
         public GoapLoadShipSpecificAction(ulong sourceStoreId, ulong destShipStoreId, ResourceQuantity resQ)
         {
-            GoapStateKeyResLoc resLoc = new GoapStateKeyResLoc(resQ.Type, sourceStoreId);
-            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.Resource,GoapStateKeyStateNameEnum.None, resLoc);            
+            GoapStateKeyResLoc resLoc = new(resQ.Type, sourceStoreId);
+            GoapStateKey key = new(GoapStateKeyTypeEnum.ResourceQty,GoapStateKeyStateNameEnum.None, resLoc, ResourceTypeEnum.NotSet);            
             //addPrecondition(key, (long)resQ.Quantity);
             addEffect(key, (0L - resQ.Quantity));
             resLoc.StoreId = destShipStoreId;
             key.ResourceLocation = resLoc;
             addEffect(key, resQ.Quantity);
-
+            key = new(GoapStateKeyTypeEnum.AllowedResource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(), resQ.Type);
+            addEffect(key, 0);
             _resQ = resQ;
         }
 
@@ -46,7 +41,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             return true;
         }
-        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal)
         {
             return null;
         }

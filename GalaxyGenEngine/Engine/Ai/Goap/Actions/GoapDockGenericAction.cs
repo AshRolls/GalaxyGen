@@ -1,11 +1,5 @@
-﻿using Akka.Routing;
-using GalaxyGenEngine.Engine.Ai.Goap;
-using GalaxyGenEngine.Engine.Controllers;
-using System;
+﻿using GalaxyGenCore.Resources;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
@@ -15,7 +9,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             _targets = possibleDocks;
 
-            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName,GoapStateKeyStateNameEnum.IsDocked,new GoapStateKeyResLoc());                        
+            GoapStateKey key = new(GoapStateKeyTypeEnum.StateName,GoapStateKeyStateNameEnum.IsDocked,new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);                        
             addPrecondition(key, false);            
         }
 
@@ -43,12 +37,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return false;
         }  
 
-        public override List<GoapAction> GetSpecificActions(object agent, GoapState state)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal)
         {
-            List<GoapAction> actions = new List<GoapAction>();
+            List<GoapAction> actions = new();
             foreach (ulong t in _targets)
             {
-                GoapDockSpecificAction a = new GoapDockSpecificAction(t);
+                GoapDockSpecificAction a = new(t);
                 actions.Add(a);
             }
             return actions;

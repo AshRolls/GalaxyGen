@@ -40,7 +40,7 @@ namespace GalaxyGenCore.Resources
         {
             get
             {
-                if (types_Var == null) types_Var = new ResourceType[Enum.GetNames(typeof(ResourceTypeEnum)).Length]; // initialise to size of enum
+                types_Var ??= new ResourceType[Enum.GetNames(typeof(ResourceTypeEnum)).Length]; // initialise to size of enum
                 return types_Var;
             }
             set
@@ -64,11 +64,13 @@ namespace GalaxyGenCore.Resources
 
         private static ResourceType createResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)
         {
-            ResourceType res = new ResourceType();
-            res.Type = type;
-            res.Name = name;
-            res.VolumePerUnit = volPerUnit;
-            res.DefaultTicksToProduce = defaultToProd;
+            ResourceType res = new()
+            {
+                Type = type,
+                Name = name,
+                VolumePerUnit = volPerUnit,
+                DefaultTicksToProduce = defaultToProd
+            };
             return res;
         }
     }
