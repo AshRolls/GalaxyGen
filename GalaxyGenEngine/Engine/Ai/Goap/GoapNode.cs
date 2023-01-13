@@ -64,11 +64,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             Cost = PathCost + HeuristicCost;
         }
 
-        internal bool BetterThan(GoapNode cheapest)
-        {
-            return this.Cost < cheapest.Cost;
-        }
-
         public List<GoapNode> Expand(GoapAgent agent)
         {
             List<GoapNode> expandList = new List<GoapNode>();

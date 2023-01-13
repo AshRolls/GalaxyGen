@@ -53,8 +53,8 @@ namespace GalaxyGenEngine.Engine
             ag.SolarSystem = ss;
 
             int j = 0;
-            List<ResourceQuantity> resQs = new() { new ResourceQuantity(ResourceTypeEnum.Spice, 10), 
-                                               new ResourceQuantity(ResourceTypeEnum.Platinum, 10),
+            List<ResourceQuantity> resQs = new() { new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 10), 
+                                               new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 10),
                                                //new ResourceQuantity(ResourceTypeEnum.Uranium, 10),
                                                //new ResourceQuantity(ResourceTypeEnum.Xenon, 10),
                                                //new ResourceQuantity(ResourceTypeEnum.Aluminium, 10)
@@ -190,8 +190,8 @@ namespace GalaxyGenEngine.Engine
             o.Stores.Add(s);
 
             // seed with basic starter resource
-            s.StoredResources.Add(ResourceTypeEnum.Spice, 2);
-            s.StoredResources.Add(ResourceTypeEnum.Platinum, 2);
+            s.StoredResources.Add(ResourceTypeEnum.Exotic_Spice, 2);
+            s.StoredResources.Add(ResourceTypeEnum.Metal_Platinum, 2);
         }
 
         private Ship getNewShip(String seedName, ShipType shipT)

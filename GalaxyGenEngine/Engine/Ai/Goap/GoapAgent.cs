@@ -62,12 +62,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 // GOAP planning
 
                 // get the world state and the goal we want to plan for
-                GoapState worldState = _dataProvider.GetWorldState();
-                GoapState goal = _dataProvider.CreateGoalState();
+                GoapStateBit worldState = _dataProvider.GetWorldState();
+                GoapStateBit goal = _dataProvider.CreateGoalState();
                 loadActions();
 
                 // Plan
-                (Queue<GoapAction> plan, (int,long) stats) res = _planner.Plan(this, _availableActions, worldState, goal);
+                (Queue<GoapAction> plan, (int,long) stats) res = _planner.PlanBit(this, _availableActions, worldState, goal);
                 if (res.plan != null)
                 {
                     // we have a plan

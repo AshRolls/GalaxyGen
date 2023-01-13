@@ -8,12 +8,13 @@ namespace GalaxyGenCore.Resources
 {
     public enum ResourceTypeEnum : ulong
     {
-        NotSet = 0,
-        Spice = 1,
-        Platinum = 2,
-        Uranium = 4,
-        Xenon = 8,
-        Aluminium = 16
+        NotSet,
+        Exotic_Spice,
+        Metal_Platinum,
+        Metal_Aluminium,
+        Metal_Uranium,
+        Gas_Xenon
+        
     }
 
     public struct ResourceQuantity
@@ -61,8 +62,8 @@ namespace GalaxyGenCore.Resources
         public static void InitialiseResourceTypes()
         {
             // TODO Json ify ?
-            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = createResource(ResourceTypeEnum.Spice, "Spice", 10, 5);
-            ResourceTypes.Types[(int)ResourceTypeEnum.Platinum] = createResource(ResourceTypeEnum.Platinum, "Platinum", 0.5, 25);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Exotic_Spice] = createResource(ResourceTypeEnum.Exotic_Spice, "Spice", 10, 5);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Platinum] = createResource(ResourceTypeEnum.Metal_Platinum, "Platinum", 0.5, 25);
         }
 
         private static ResourceType createResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)

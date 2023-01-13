@@ -23,25 +23,25 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * The starting state of the Agent and the world.
          * Supply what states are needed for actions to run.
          */
-        GoapState GetWorldState();
+        GoapStateBit GetWorldState();
 
         /**
          * Give the planner a new goal so it can figure out 
          * the actions needed to fulfill it.
          */
-        GoapState CreateGoalState();
+        GoapStateBit CreateGoalState();
 
         /**
          * No sequence of actions could be found for the supplied goal.
          * You will need to try another goal
          */
-        void PlanFailed(GoapState failedGoal);
+        void PlanFailed(GoapStateBit failedGoal);
 
         /**
          * A plan was found for the supplied goal.
          * These are the actions the Agent will perform, in order.
          */
-        void PlanFound(GoapState goal, Queue<GoapAction> actions, (int iterations, long ms) stats);
+        void PlanFound(GoapStateBit goal, Queue<GoapAction> actions, (int iterations, long ms) stats);
 
         /**
          * All actions are complete and the goal was reached. Hooray!

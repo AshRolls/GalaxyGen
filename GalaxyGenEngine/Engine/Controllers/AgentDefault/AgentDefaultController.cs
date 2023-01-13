@@ -243,7 +243,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             goalState.Set(key, dest);
 
             int r = RandomUtils.Random(2);
-            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Platinum : ResourceTypeEnum.Spice;
+            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
             key = new(GoapStateKeyTypeEnum.AllowedResource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(), res);
             goalState.Set(key, 0);
 

@@ -9,8 +9,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public abstract class GoapAction
     {
-        private GoapState _preconditions;
-        private GoapState _effects;     
+        private GoapStateBit _preconditions;
+        private GoapStateBit _effects;     
         private bool _inRange = false;
    
         /* The cost of performing the action. 
@@ -33,8 +33,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public GoapAction()
         {
-            _preconditions = new GoapState();
-            _effects = new GoapState();
+            _preconditions = new GoapStateBit();
+            _effects = new GoapStateBit();
         }
 
         public void DoReset()
@@ -90,19 +90,21 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public abstract bool IsSpecific();
 
-        public abstract List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal);
+        public abstract List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal);
 
-        public void addPrecondition(GoapStateKey key, object value)
+        public void addPrecondition(GoapStateBitFlagsEnum flag, ulong value)
         {
-            _preconditions.Set(key, value);
+            _preconditions.SetFlag(flag);
+            _preconditions.SetVal(flag, value);
         }
 
-        public void addEffect(GoapStateKey key, object value)
+        public void addEffect(GoapStateBitFlagsEnum flag, ulong value)
         {
-            _effects.Set(key, value);
+            _effects.SetFlag(flag);
+            _effects.SetVal(flag, value);
         }
 
-        public GoapState Preconditions
+        public GoapStateBit Preconditions
         {
             get
             {
@@ -110,7 +112,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             }
         }
 
-        public GoapState Effects
+        public GoapStateBit Effects
         {
             get
             {

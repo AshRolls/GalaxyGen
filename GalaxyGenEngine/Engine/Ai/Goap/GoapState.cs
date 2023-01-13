@@ -1,13 +1,6 @@
-﻿using Castle.Core;
-using GalaxyGenCore.Resources;
-using GalaxyGenEngine.Engine.Ai.Goap;
-using Ninject.Injection;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using static Akka.Actor.FSMBase;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {
