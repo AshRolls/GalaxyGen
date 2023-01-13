@@ -41,7 +41,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * A plan was found for the supplied goal.
          * These are the actions the Agent will perform, in order.
          */
-        void PlanFound(GoapState goal, Queue<GoapAction> actions);
+        void PlanFound(GoapState goal, Queue<GoapAction> actions, int iterations);
 
         /**
          * All actions are complete and the goal was reached. Hooray!

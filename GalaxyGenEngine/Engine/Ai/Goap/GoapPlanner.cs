@@ -16,7 +16,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * Returns null if a plan could not be found, or a list of the actions
          * that must be performed, in order, to fulfill the goal.
          */
-        public Queue<GoapAction> Plan(GoapAgent agent, HashSet<GoapAction> availableActions, GoapState worldState, GoapState goal)
+        public (Queue<GoapAction>,int) Plan(GoapAgent agent, HashSet<GoapAction> availableActions, GoapState worldState, GoapState goal)
         {
             // reset the actions so we can start fresh with them
             foreach (GoapAction a in availableActions)
@@ -37,41 +37,34 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             GoapState goalGS = new GoapState(goal);
             GoapNode startNode = new GoapNode(null, startingState, null, 0, goal, this);
             GoapNode res = null;
-            bool success = aStarGraph(startNode, ref res, goalGS, agent);
+            (bool success, int iterations) result = aStarGraph(startNode, ref res, goalGS, agent);
             //bool success = buildGraph(startNode, leaves, UsableActions, goalGS);
             //bool success = aStar(worldState, leaves, goalGS, resourceGoal, agent);
 
-            if (!success)
-            {
-                // oh no, we didn't get a plan
-                // Console.WriteLine("NO PLAN");
-                return null;
-            }
-
+            // We didn't get a plan
+            if (!result.success) return (null,0);
+        
             // get its node and work back through the parents
-            List<GoapAction> result = new List<GoapAction>();
+            Stack<GoapAction> plan = new Stack<GoapAction>();
             GoapNode n = res;
             while (n != null)
             {
-                if (n.Action != null)
-                {
-                    result.Insert(0, n.Action); // insert the action in the front
-                }
+                if (n.Action != null) plan.Push(n.Action);                
                 n = n.Parent;
             }
             // we now have this action list in correct order
 
             Queue<GoapAction> queue = new Queue<GoapAction>();
-            foreach (GoapAction a in result)
+            foreach (GoapAction a in plan)
             {
                 queue.Enqueue(a);
             }
 
             // hooray we have a plan!
-            return queue;
+            return (queue, result.iterations);
         }
 
-        private bool aStarGraph(GoapNode startNode, ref GoapNode cur, GoapState goal, GoapAgent agent)
+        private (bool,int) aStarGraph(GoapNode startNode, ref GoapNode cur, GoapState goal, GoapAgent agent)
         {
             PriorityQueue<GoapNode, float> queue = new PriorityQueue<GoapNode, float>();
             Dictionary<GoapState, float> visited = new Dictionary<GoapState, float>();
@@ -113,7 +106,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 }
             }
 
-            return found;
+            return (found,iterations);
         }
 
         //private bool aStar(GoapState start, List<GoapNode> leaves, GoapState goal, Dictionary<long, long> resourceGoal, object agent)

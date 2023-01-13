@@ -70,20 +70,19 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 loadActions();
 
                 // Plan
-                Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, goal);
-                if (plan != null)
+                (Queue<GoapAction> plan, int iterations) res = _planner.Plan(this, _availableActions, worldState, goal);
+                if (res.plan != null)
                 {
-                    // we have a plan, hooray!
-                    _currentActions = plan;
-                    _dataProvider.PlanFound(goal, plan);
+                    // we have a plan
+                    _currentActions = res.plan;
+                    _dataProvider.PlanFound(goal, res.plan, res.iterations);
 
                     fsm.PopState(); // move to PerformAction state
                     fsm.PushState(_performActionState);
                 }
                 else
                 {
-                    // ugh, we couldn't get a plan
-                    // Console.WriteLine("<color=orange>Failed Plan:</color>" + PrettyPrint(goal));
+                    // we couldn't get a plan
                     _dataProvider.PlanFailed(goal);
                     fsm.PopState(); // move back to IdleAction state
                     fsm.PushState(_idleState);

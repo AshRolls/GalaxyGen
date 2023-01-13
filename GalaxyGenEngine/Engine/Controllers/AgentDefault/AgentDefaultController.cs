@@ -273,10 +273,10 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             _textOutput.Write(_state.AgentId, "Plan failed " + GoapState.PrettyPrint(failedGoal));
         }
 
-        public void PlanFound(GoapState goal, Queue<GoapAction> actions)
+        public void PlanFound(GoapState goal, Queue<GoapAction> actions, int iterations)
         {
             // We found a plan for our goal
-            _textOutput.Write(_state.AgentId, "Plan found " + GoapAction.PrettyPrint(actions));
+            _textOutput.Write(_state.AgentId, "Plan found (" + iterations + ") " +GoapAction.PrettyPrint(actions));
        }
 
         public void ActionsFinished()
