@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {
@@ -23,15 +24,16 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             ResLocsIdx = new GoapStateResLoc[64];
         }
 
-        internal (Queue<GoapAction>, (int, long)) PlanBit(GoapAgent agent, HashSet<GoapAction> availableActions, GoapStateBit worldState, GoapStateBit goalState)
+        public void Reset()
         {
             UsableActions.Clear();
+            ResLocs.Clear();
+            _nextResLocIdx = 0;
+            Array.Clear(ResLocsIdx);
+        }
 
-            //ResLocs.Clear();
-            //_nextResLocIdx = 0;
-            //Array.Clear(ResLocsIdx);
-            // TODO clear and repopulate reslocs from starting world state and goal state we are passed.
-
+        internal (Queue<GoapAction>, (int, long)) PlanBit(GoapAgent agent, HashSet<GoapAction> availableActions, GoapStateBit worldState, GoapStateBit goalState)
+        {
             // reset the actions so we can start fresh with them            
             foreach (GoapAction a in availableActions)
             {
