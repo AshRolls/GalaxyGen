@@ -1,10 +1,4 @@
-﻿using GalaxyGenEngine.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {
@@ -44,16 +38,16 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 {
                     if (action.IsSpecific())
                     {
-                        GoapStateBit newState = this.State.GetNewState(action.Effects, _planner.ResLocs);
+                        GoapStateBit newState = this.State.GetNewState(action.Effects, _planner.ResLocs.Count);
                         GoapNodeBit newNode = new GoapNodeBit(this, newState, action, this.PathCost + action.GetCost(), _goalState, _planner);
                         expandList.Add(newNode);
                     }
                     else
                     {
-                        foreach (GoapAction sAction in action.GetSpecificActions(agent, this.State, this._goalState))
+                        foreach (GoapAction sAction in action.GetSpecificActions(agent, this.State, this._goalState, _planner))
                         {
-                            GoapStateBit newState = this.State.GetNewState(sAction.Effects, _planner.ResLocs);
-                            GoapNodeBit newNode = new GoapNodeBit(this, newState, sAction, this.PathCost, _goalState, _planner);
+                            GoapStateBit newState = this.State.GetNewState(sAction.Effects, _planner.ResLocs.Count);
+                            GoapNodeBit newNode = new(this, newState, sAction, this.PathCost + action.GetCost(), _goalState, _planner);
                             expandList.Add(newNode);
                         }
                     }

@@ -29,7 +29,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return false;
         }
         
-        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal, GoapPlanner planner)
         {
             GoapAgent ag = (GoapAgent)agent;
             List<GoapAction> actions = new();
@@ -44,11 +44,29 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             //    if (kvp.Key.Type == GoapStateKeyTypeEnum.AllowedResource && !allowedResourceTypes.Contains(kvp.Key.AllowedResource)) allowedResourceTypes.Add(kvp.Key.AllowedResource); 
             //}
 
+            ulong dockedAt = state.GetVal(GoapStateBitFlagsEnum.DockedAt);
+            if (ag.StateProvider.TryGetPlanetStoreId(dockedAt, out ulong dockedAtStoreId))
+            {
+                ulong shipStoreId = state.GetVal(GoapStateBitFlagsEnum.ShipStoreId);
+
+                for (int i = 0; i < planner.ResLocs.Count; i++)
+                {
+                    if (state.HasResFlag(i) && planner.ResLocsIdx[i].StoreId == shipStoreId)
+                    {
+                        long qty = state.GetResVal(i);
+                        actions.Add(new GoapLoadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 1L), planner));
+                        if (qty > 1) actions.Add(new GoapLoadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 2L), planner));
+                        if (qty > 3) actions.Add(new GoapLoadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 4L), planner));
+                        if (qty > 4) actions.Add(new GoapLoadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, qty), planner));
+                    }
+                }
+            }
+
             //ulong dockedAt = (ulong)state.Get(new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet));
             //if (ag.StateProvider.TryGetPlanetStoreId(dockedAt, out ulong dockedAtStoreId))
             //{
             //    ulong shipStoreId = (ulong)state.Get(new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.ShipStoreId, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet));
-               
+
             //    foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
             //    {
             //        if (kvp.Key.Type == GoapStateKeyTypeEnum.ResourceQty && kvp.Key.ResourceLocation.StoreId == shipStoreId && allowedResourceTypes.Contains(kvp.Key.ResourceLocation.ResType))

@@ -186,23 +186,20 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             ulong valIdx = 1UL;
             for (int i = 0; i < GoapPlanner.FLAGS_COUNT; i++)
             {                
-                if (test.HasFlag(valIdx))
-                {
-                    if (!(this.HasFlag(valIdx) && this.GetVal(valIdx) == test.GetVal(valIdx))) return false;
-                }
+                if (test.HasFlag(valIdx) && (!(this.HasFlag(valIdx) && this.GetVal(valIdx) == test.GetVal(valIdx)))) return false;                
                 valIdx = valIdx << 1;
             }
 
             for (int i = 0; i < resLocCount; i++)
             {
-                if (this.GetResVal(i) != test.GetResVal(i)) return false;
+                if (test.HasResFlag(i) && (this.GetResVal(i) != test.GetResVal(i))) return false;                
             }
             return true;
         }
 
-        internal GoapStateBit GetNewState(GoapStateBit toApply, Dictionary<GoapStateResLoc, int> resLocs)
+        internal GoapStateBit GetNewState(GoapStateBit toApply, int resLocsCount)
         {
-            GoapStateBit newGs = this.DeepClone();
+            GoapStateBit newGs = this.DeepClone(resLocsCount);
             for (int i = 0; i < GoapPlanner.FLAGS_COUNT; i++)
             {
                 if (toApply.HasFlag(i)) 
@@ -212,7 +209,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 }                    
             }
             
-            for (int i = 0; i < 64; i++)
+            for (int i = 0; i < resLocsCount; i++)
             {
                 if (toApply.HasResFlag(i))
                 {
@@ -222,7 +219,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             return newGs;
         }
 
-        internal GoapStateBit DeepClone()
+        internal GoapStateBit DeepClone(int resLocsCount)
         {
             GoapStateBit newGs = new();
             for (int i = 0; i < GoapPlanner.FLAGS_COUNT; i++)
@@ -234,6 +231,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 }                
             }
 
+            newGs.ResFlags = this.ResFlags;
             newGs.ResQtys = (long[])this.ResQtys.Clone();
             return newGs;
         }

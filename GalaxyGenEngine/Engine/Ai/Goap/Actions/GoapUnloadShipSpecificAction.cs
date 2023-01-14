@@ -8,12 +8,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         private ResourceQuantity _resQ;
         private long _curQ;        
 
-        public GoapUnloadShipSpecificAction(ulong sourceShipStoreId, ulong destStoreId, ResourceQuantity resQ)
+        public GoapUnloadShipSpecificAction(ulong sourceShipStoreId, ulong destStoreId, ResourceQuantity resQ, GoapPlanner planner)
         {
             GoapStateResLoc resLoc = new(resQ.Type, sourceShipStoreId);
-            //addResEffect(resLoc, (0L - resQ.Quantity));
+            addResEffect(resLoc, (0L - resQ.Quantity), planner);
             resLoc = new(resQ.Type, destStoreId);            
-            //addResEffect(resLoc, resQ.Quantity);
+            addResEffect(resLoc, resQ.Quantity, planner);
             
             //TODO add allowed resources here
             //key = new(GoapStateKeyTypeEnum.AllowedResource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(), resQ.Type);
@@ -42,7 +42,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             return true;
         }
-        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal, GoapPlanner planner)
         {
             return null;
         }

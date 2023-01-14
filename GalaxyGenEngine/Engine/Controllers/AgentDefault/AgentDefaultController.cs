@@ -237,28 +237,28 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
             ulong dest = chooseRandomDestinationScId();
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
-            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);            
+            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
 
-            //int r = RandomUtils.Random(2);
-            //ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
+            int r = RandomUtils.Random(2);
+            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
 
-            //// add all goal resources to allowed resources
+            // add all goal resources to allowed resources
 
-            //ulong storeId;
-            //if (_state.TryGetPlanetStoreId(dest, out storeId))
-            //{
-            //    //long qty = _state.PlanetResourceQuantity(dest, res);
-            //    long qty = (long)RandomUtils.Random(9) + 1L;
-            //    GoapStateResLoc resLoc = new(res, storeId);
-            //    if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
-            //    {
-            //        goalState.SetResFlagAndVal(idx, qty);
-            //    }
-            //    else
-            //    {
-            //        goalState.SetResFlagAndVal(_planner.AddResourceLocation(resLoc), qty);
-            //    }
-            //}
+            ulong storeId;
+            if (_state.TryGetPlanetStoreId(dest, out storeId))
+            {
+                //long qty = _state.PlanetResourceQuantity(dest, res);
+                long qty = (long)RandomUtils.Random(9) + 1L;
+                GoapStateResLoc resLoc = new(res, storeId);
+                if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
+                {
+                    goalState.SetResFlagAndVal(idx, qty);
+                }
+                else
+                {
+                    goalState.SetResFlagAndVal(_planner.AddResourceLocation(resLoc), qty);
+                }
+            }
 
             //_textOutput.Write(_state.AgentId, "Goal created " + GoapStateBit.PrettyPrint(goalState));
             _textOutput.Write(_state.AgentId, "Goal State created ");

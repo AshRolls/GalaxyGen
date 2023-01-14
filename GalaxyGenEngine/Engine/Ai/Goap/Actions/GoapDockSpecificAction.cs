@@ -31,7 +31,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             return true;
         }
-        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal, GoapPlanner planner)
         {
             return null;
         }

@@ -90,7 +90,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public abstract bool IsSpecific();
 
-        public abstract List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal);
+        public abstract List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal, GoapPlanner planner);
 
         public void addPrecondition(GoapStateBitFlagsEnum flag, ulong value)
         {            
@@ -100,6 +100,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public void addEffect(GoapStateBitFlagsEnum flag, ulong value)
         {            
             _effects.SetFlagAndVal(flag, value);
+        }
+
+        // TODO this might fail if try add resource fails after 64 res locs
+        public void addResEffect(GoapStateResLoc resLoc, long qty, GoapPlanner planner)
+        {   
+            if (planner.TryAddResourceLocation(resLoc, out int idx)) _effects.SetResFlagAndVal(idx, qty);
+            else _effects.SetResFlagAndVal(planner.GetResourceLocationIdx(resLoc), qty);            
         }
 
         public GoapStateBit Preconditions

@@ -11,6 +11,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     {
         public HashSet<GoapAction> UsableActions { get; private set; }
         public Dictionary<GoapStateResLoc, int> ResLocs { get; private set; }
+        public GoapStateResLoc[] ResLocsIdx { get; private set; }
         private int _nextResLocIdx = 0;
 
         public static readonly int FLAGS_COUNT = Enum.GetNames(typeof(GoapStateBitFlagsEnum)).Length - 1;
@@ -19,13 +20,17 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             UsableActions = new();
             ResLocs = new();
+            ResLocsIdx = new GoapStateResLoc[64];
         }
 
         internal (Queue<GoapAction>, (int, long)) PlanBit(GoapAgent agent, HashSet<GoapAction> availableActions, GoapStateBit worldState, GoapStateBit goalState)
         {
             UsableActions.Clear();
-            ResLocs.Clear();
-            _nextResLocIdx = 0;
+
+            //ResLocs.Clear();
+            //_nextResLocIdx = 0;
+            //Array.Clear(ResLocsIdx);
+            // TODO clear and repopulate reslocs from starting world state and goal state we are passed.
 
             // reset the actions so we can start fresh with them            
             foreach (GoapAction a in availableActions)
@@ -90,16 +95,17 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 }
 
                 // check if we have explored this state before
-                if (visited.TryGetValue(cur.State, out float existingCost))
-                {
-                    if (cur.Cost >= existingCost)
-                    {
-                        visitedHits++;
-                        continue;
-                    }
-                    else visited[cur.State] = existingCost;
-                }
-                else visited.Add(cur.State, cur.Cost);
+                // TODO this doesn't take into account agent position as position is not in state
+                //if (visited.TryGetValue(cur.State, out float existingCost))
+                //{
+                //    if (cur.Cost >= existingCost)
+                //    {
+                //        visitedHits++;
+                //        continue;
+                //    }
+                //    else visited[cur.State] = existingCost;
+                //}
+                //else visited.Add(cur.State, cur.Cost);
 
                 // expand current nodes
                 foreach (GoapNodeBit node in cur.Expand(agent))
@@ -115,6 +121,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public int AddResourceLocation(GoapStateResLoc resLoc)
         {
             ResLocs.Add(resLoc, _nextResLocIdx);
+            ResLocsIdx[_nextResLocIdx] = resLoc;
             return _nextResLocIdx++;
         }
 
@@ -123,11 +130,17 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             if (!ResLocs.ContainsKey(resLoc))
             {
                 ResLocs.Add(resLoc, _nextResLocIdx);
+                ResLocsIdx[_nextResLocIdx] = resLoc;
                 idx = _nextResLocIdx++;
                 return true;
             }
             idx = 0;
             return false;
+        }
+
+        public int GetResourceLocationIdx(GoapStateResLoc resLoc)
+        {
+            return ResLocs[resLoc];
         }
 
         public bool TryGetResourceLocationIdx(GoapStateResLoc resLoc, out int idx)
