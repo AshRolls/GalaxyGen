@@ -1,7 +1,9 @@
 ﻿using Akka.Event;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 using GalaxyGenCore.Resources;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,6 +34,32 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         }
     }
 
+    public class Long64Array : IEquatable<Long64Array>
+    {
+        public long[] Values = new long[64];
+
+        public override bool Equals(object obj) => obj is Long64Array o && Equals(o);
+
+        public bool Equals(Long64Array other)
+        {            
+            for (int i = 0; i < 64; i++)
+            {
+                if (Values[i] != other.Values[i]) return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new();
+            for (int i = 0; i < 64; i++)
+            {
+                hash.Add(Values[i]);
+            }
+            return hash.ToHashCode();
+        }
+    }
+
     public class GoapStateBit
     {
         public ulong Flags;
@@ -43,7 +71,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public ulong IsDocked;
 
         public ulong ResFlags;
-        public long[] ResQtys = new long[64];       
+        public Long64Array ResQtys = new Long64Array();     
        
         public ulong GetVal(GoapStateBitFlagsEnum bit)
         {
@@ -147,7 +175,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public long GetResVal(int idx)
         {
-            return ResQtys[idx];
+            return ResQtys.Values[idx];
         }
 
         //public bool SetResVal(GoapStateResLoc resLoc, long qty, GoapPlanner _planner)
@@ -158,7 +186,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public void SetResFlagAndVal(int idx, long qty)
         {
             SetResFlag(idx);
-            ResQtys[idx] = qty;
+            ResQtys.Values[idx] = qty;
         }        
 
         public void SetResFlag(int bitIdx)
@@ -213,7 +241,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 if (toApply.HasResFlag(i))
                 {
-                    newGs.ResQtys[i] += toApply.ResQtys[i];
+                    newGs.ResQtys.Values[i] += toApply.ResQtys.Values[i];
                 }
             }
             return newGs;
@@ -232,8 +260,37 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             }
 
             newGs.ResFlags = this.ResFlags;
-            newGs.ResQtys = (long[])this.ResQtys.Clone();
+            newGs.ResQtys.Values = (long[])this.ResQtys.Values.Clone();
             return newGs;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is GoapStateBit bit &&
+                   Flags == bit.Flags &&
+                   DockedAt == bit.DockedAt &&
+                   ShipStoreId == bit.ShipStoreId &&
+                   AllowedRes1 == bit.AllowedRes1 &&
+                   AllowedRes2 == bit.AllowedRes2 &&
+                   AllowedRes3 == bit.AllowedRes3 &&
+                   IsDocked == bit.IsDocked &&
+                   ResFlags == bit.ResFlags &&
+                   EqualityComparer<Long64Array>.Default.Equals(ResQtys, bit.ResQtys);
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new HashCode();
+            hash.Add(Flags);
+            hash.Add(DockedAt);
+            hash.Add(ShipStoreId);
+            hash.Add(AllowedRes1);
+            hash.Add(AllowedRes2);
+            hash.Add(AllowedRes3);
+            hash.Add(IsDocked);
+            hash.Add(ResFlags);
+            hash.Add(ResQtys);
+            return hash.ToHashCode();
         }
     }
 }

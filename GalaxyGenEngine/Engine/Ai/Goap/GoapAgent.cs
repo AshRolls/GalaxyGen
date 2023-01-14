@@ -60,7 +60,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             _idleState = (fsm, gameObj) =>
             {
                 // GOAP planning
-
                 _planner.Reset();
                 // get the world state and the goal we want to plan for
                 GoapStateBit worldState = _dataProvider.GetWorldState(_planner);
