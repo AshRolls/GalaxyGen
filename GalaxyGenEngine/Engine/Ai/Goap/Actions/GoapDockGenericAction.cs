@@ -8,7 +8,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public GoapDockGenericAction(HashSet<ulong> possibleDocks)
         {
             _targets = possibleDocks;
-            addPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            addPrecondition(GoapStateBitFlagsEnum.IsDocked, 0UL);
             addPrecondition(GoapStateBitFlagsEnum.DockedAt, 0UL);
         }
 

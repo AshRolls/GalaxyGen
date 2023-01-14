@@ -40,7 +40,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             List<GoapNodeBit> expandList = new List<GoapNodeBit>();
             foreach (GoapAction action in _planner.UsableActions)
             {
-                if (action.Preconditions.InStateBit(this.State, _planner.ResLocs.Count) && action.CheckProceduralPrecondition(agent))
+                if (this.State.InStateBit(action.Preconditions, _planner.ResLocs.Count) && action.CheckProceduralPrecondition(agent))
                 {
                     if (action.IsSpecific())
                     {

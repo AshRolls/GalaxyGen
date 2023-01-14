@@ -40,12 +40,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public ulong AllowedRes1;
         public ulong AllowedRes2;
         public ulong AllowedRes3;
+        public ulong IsDocked;
+
         public ulong ResFlags;
         public long[] ResQtys = new long[64];       
        
         public ulong GetVal(GoapStateBitFlagsEnum bit)
         {
-            if (!HasFlag(bit)) return 0UL;
             switch (bit)
             {
                 case GoapStateBitFlagsEnum.DockedAt: return DockedAt;                   
@@ -53,13 +54,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 case GoapStateBitFlagsEnum.AllowedRes1: return AllowedRes1;
                 case GoapStateBitFlagsEnum.AllowedRes2: return AllowedRes2;
                 case GoapStateBitFlagsEnum.AllowedRes3: return AllowedRes3;
+                case GoapStateBitFlagsEnum.IsDocked: return IsDocked;
             }
             throw new Exception("Should not reach here");
         }
 
         public ulong GetVal(ulong valIdx)
         {
-            if (!HasFlag(valIdx)) return 0UL;
             switch (valIdx)
             {
                 case 1UL: return DockedAt;
@@ -67,6 +68,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 case 1UL << 2: return AllowedRes1;
                 case 1UL << 3: return AllowedRes2;
                 case 1UL << 4: return AllowedRes3;
+                case 1UL << 5: return IsDocked;
             }
             throw new Exception("Should not reach here");
         }   
@@ -86,11 +88,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             switch (idx)
             {
-                case 1: DockedAt = val; break;
-                case 2: ShipStoreId = val; break;
-                case 3: AllowedRes1 = val; break;
-                case 4: AllowedRes2 = val; break;
-                case 5: AllowedRes3 = val; break;
+                case 0: DockedAt = val; break;
+                case 1: ShipStoreId = val; break;
+                case 2: AllowedRes1 = val; break;
+                case 3: AllowedRes2 = val; break;
+                case 4: AllowedRes3 = val; break;
+                case 5: IsDocked = val; break;
             }
         }        
 
@@ -103,6 +106,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 case GoapStateBitFlagsEnum.AllowedRes1: AllowedRes1 = val; break;
                 case GoapStateBitFlagsEnum.AllowedRes2: AllowedRes2 = val; break;
                 case GoapStateBitFlagsEnum.AllowedRes3: AllowedRes3 = val; break;
+                case GoapStateBitFlagsEnum.IsDocked: IsDocked = val; break;
             }
         }
 
@@ -180,7 +184,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public bool InStateBit(GoapStateBit test, int resLocCount)
         {            
             ulong valIdx = 1UL;
-            for(int i = 0; i < GoapPlanner.FLAGS_COUNT; i++)
+            for (int i = 0; i < GoapPlanner.FLAGS_COUNT; i++)
             {                
                 if (test.HasFlag(valIdx))
                 {

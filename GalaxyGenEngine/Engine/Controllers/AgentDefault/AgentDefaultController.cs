@@ -188,10 +188,18 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public GoapStateBit GetWorldState(GoapPlanner _planner)
         {
-            GoapStateBit worldData = new();            
-            
-            if (_state.CurrentShipIsDocked) worldData.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, _state.CurrentShipDockedPlanetScId);                 
-            else worldData.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, 0UL);           
+            GoapStateBit worldData = new();
+
+            if (_state.CurrentShipIsDocked)
+            {
+                worldData.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
+                worldData.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, _state.CurrentShipDockedPlanetScId);
+            }
+            else
+            {
+                worldData.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 0UL);
+                worldData.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, 0UL);
+            }
                         
             worldData.SetFlagAndVal(GoapStateBitFlagsEnum.ShipStoreId, _state.CurrentShipStoreId);
 
@@ -228,8 +236,9 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             GoapStateBit goalState = new GoapStateBit();
 
             ulong dest = chooseRandomDestinationScId();
-            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
-            
+            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);            
+
             //int r = RandomUtils.Random(2);
             //ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
 

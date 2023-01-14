@@ -12,7 +12,7 @@ namespace GalaxyGenEngine.ViewModel
 {
     public class TextOutputViewModel : ITextOutputViewModel
     {
-        private ObservableCollection<String> consoleLines_Var = new ObservableCollection<string>();
+        private ObservableCollection<String> consoleLines_Var = new();
         public ObservableCollection<String> ConsoleLines
         {
             get
