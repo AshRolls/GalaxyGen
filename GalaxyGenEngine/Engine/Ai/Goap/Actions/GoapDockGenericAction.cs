@@ -8,9 +8,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public GoapDockGenericAction(HashSet<ulong> possibleDocks)
         {
             _targets = possibleDocks;
-
-            GoapStateKey key = new(GoapStateKeyTypeEnum.StateName,GoapStateKeyStateNameEnum.IsDocked,new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);                        
-            addPrecondition(key, false);            
+            addPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            addPrecondition(GoapStateBitFlagsEnum.DockedAt, 0UL);
         }
 
         public override void Reset()
@@ -37,7 +36,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return false;
         }  
 
-        public override List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal)
         {
             List<GoapAction> actions = new();
             foreach (ulong t in _targets)

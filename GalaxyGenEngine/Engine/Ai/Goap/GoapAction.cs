@@ -93,15 +93,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public abstract List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal);
 
         public void addPrecondition(GoapStateBitFlagsEnum flag, ulong value)
-        {
-            _preconditions.SetFlag(flag);
-            _preconditions.SetVal(flag, value);
+        {            
+            _preconditions.SetFlagAndVal(flag, value);
         }
 
         public void addEffect(GoapStateBitFlagsEnum flag, ulong value)
-        {
-            _effects.SetFlag(flag);
-            _effects.SetVal(flag, value);
+        {            
+            _effects.SetFlagAndVal(flag, value);
         }
 
         public GoapStateBit Preconditions

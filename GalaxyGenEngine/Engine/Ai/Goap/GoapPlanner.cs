@@ -10,22 +10,32 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     public class GoapPlanner
     {
         public HashSet<GoapAction> UsableActions { get; private set; }
+        public Dictionary<GoapStateResLoc, int> ResLocs { get; private set; }
+        private int _nextResLocIdx = 0;
+
         public static readonly int FLAGS_COUNT = Enum.GetNames(typeof(GoapStateBitFlagsEnum)).Length - 1;
+
+        public GoapPlanner() 
+        {
+            UsableActions = new();
+            ResLocs = new();
+        }
 
         internal (Queue<GoapAction>, (int, long)) PlanBit(GoapAgent agent, HashSet<GoapAction> availableActions, GoapStateBit worldState, GoapStateBit goalState)
         {
-            // reset the actions so we can start fresh with them
-            foreach (GoapAction a in availableActions) a.DoReset();            
+            UsableActions.Clear();
+            ResLocs.Clear();
+            _nextResLocIdx = 0;
 
-            UsableActions = new HashSet<GoapAction>();
-            foreach (GoapAction a in availableActions) UsableActions.Add(a);            
-
-            // take any goals that are already fulfilled away from starting world state here?
+            // reset the actions so we can start fresh with them            
+            foreach (GoapAction a in availableActions)
+            {
+                a.DoReset();
+                UsableActions.Add(a);
+            }            
             
             GoapNodeBit res = null;
             (bool success, (int iterations, long ms) stats) = aStarGraphBit(worldState, ref res, goalState, agent);
-            //bool success = buildGraph(startNode, leaves, UsableActions, goalGS);
-            //bool success = aStar(worldState, leaves, goalGS, resourceGoal, agent);
 
             // We didn't get a plan
             if (!success) return (null, (0, 0));
@@ -56,8 +66,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             GoapNodeBit startNode = new(null, worldState, null, 0, goalState, this);            
             queue.Enqueue(startNode, 0);
 
-            Dictionary<GoapStateBit, float> visited = new();                        
-            Dictionary<GoapStateResLoc, int> resLocs = new();
+            Dictionary<GoapStateBit, float> visited = new();                                    
                         
             const int MAX_NODES = 10000;
             const float MAX_COST = 15;            
@@ -74,7 +83,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 cost = cur.Cost;
 
                 // check goal
-                if (cur.State.InStateBit(goalState, resLocs.Count))
+                if (cur.State.InStateBit(goalState, ResLocs.Count))
                 {
                     found = true;
                     break;
@@ -93,7 +102,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 else visited.Add(cur.State, cur.Cost);
 
                 // expand current nodes
-                foreach (GoapNodeBit node in cur.Expand(agent, resLocs))
+                foreach (GoapNodeBit node in cur.Expand(agent))
                 {
                     queue.Enqueue(node, node.Cost);
                 }
@@ -103,6 +112,34 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             return (found, (iterations, sw.ElapsedMilliseconds));
         }
 
+        public int AddResourceLocation(GoapStateResLoc resLoc)
+        {
+            ResLocs.Add(resLoc, _nextResLocIdx);
+            return _nextResLocIdx++;
+        }
+
+        public bool TryAddResourceLocation(GoapStateResLoc resLoc, out int idx)
+        {
+            if (!ResLocs.ContainsKey(resLoc))
+            {
+                ResLocs.Add(resLoc, _nextResLocIdx);
+                idx = _nextResLocIdx++;
+                return true;
+            }
+            idx = 0;
+            return false;
+        }
+
+        public bool TryGetResourceLocationIdx(GoapStateResLoc resLoc, out int idx)
+        {            
+            if (ResLocs.TryGetValue(resLoc, out int resLocIdx))
+            {
+                idx = resLocIdx;
+                return true;
+            }
+            idx = 0; 
+            return false;
+        }
 
         ///**
         // * Plan what sequence of actions can fulfill the goal.

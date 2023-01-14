@@ -186,31 +186,21 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             _state.Memory = JsonConvert.SerializeObject(_memory);
         }
 
-        public GoapState GetWorldState()
+        public GoapStateBit GetWorldState(GoapPlanner _planner)
         {
-            GoapState worldData = new GoapState();
-            GoapStateKey key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);
-            GoapStateKey key2 = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);
-            if (_state.CurrentShipIsDocked)
-            {
-                worldData.Set(key, _state.CurrentShipDockedPlanetScId);
-                worldData.Set(key2, true);
-            }
-            else
-            {
-                worldData.Set(key, 0UL);
-                worldData.Set(key2, true);
-            }
+            GoapStateBit worldData = new();            
             
-            key = new GoapStateKey(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.ShipStoreId, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);
-            worldData.Set(key, _state.CurrentShipStoreId);
+            if (_state.CurrentShipIsDocked) worldData.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, _state.CurrentShipDockedPlanetScId);                 
+            else worldData.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, 0UL);           
+                        
+            worldData.SetFlagAndVal(GoapStateBitFlagsEnum.ShipStoreId, _state.CurrentShipStoreId);
+
             List<ResourceQuantity> resources = _state.CurrentShipResources();
             foreach (ResourceQuantity resQ in resources)
-            {
-                if (resQ.Quantity > 0)
-                {
-                    key = new GoapStateKey(GoapStateKeyTypeEnum.ResourceQty, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(resQ.Type, _state.CurrentShipStoreId), ResourceTypeEnum.NotSet);
-                    worldData.Set(key, resQ.Quantity);
+            {               
+                if (resQ.Quantity > 0 && _planner.TryAddResourceLocation(new GoapStateResLoc(resQ.Type, _state.CurrentShipStoreId), out var idx))
+                {                             
+                    worldData.SetResFlagAndVal(idx, resQ.Quantity);
                 }
             }
 
@@ -222,10 +212,9 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                     resources = _state.PlanetResources(destScId);
                     foreach (ResourceQuantity resQ in resources)
                     {
-                        if (resQ.Quantity > 0)
+                        if (resQ.Quantity > 0 && _planner.TryAddResourceLocation(new GoapStateResLoc(resQ.Type, storeId), out var idx))
                         {
-                            key = new GoapStateKey(GoapStateKeyTypeEnum.ResourceQty, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(resQ.Type,storeId), ResourceTypeEnum.NotSet);                            
-                            worldData.Set(key, resQ.Quantity);
+                            worldData.SetResFlagAndVal(idx, resQ.Quantity);
                         }
                     }
                 }
@@ -234,28 +223,36 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return worldData;
         }
 
-        public GoapState CreateGoalState()
+        public GoapStateBit CreateGoalState(GoapPlanner _planner)
         {
-            GoapState goalState = new GoapState();
+            GoapStateBit goalState = new GoapStateBit();
 
             ulong dest = chooseRandomDestinationScId();
-            GoapStateKey key = new(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.DockedAt, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);
-            goalState.Set(key, dest);
+            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
+            
+            //int r = RandomUtils.Random(2);
+            //ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
 
-            int r = RandomUtils.Random(2);
-            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
-            key = new(GoapStateKeyTypeEnum.AllowedResource, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(), res);
-            goalState.Set(key, 0);
+            //// add all goal resources to allowed resources
 
-            ulong storeId;
-            if (_state.TryGetPlanetStoreId(dest, out storeId))
-            {
-                long qty = _state.PlanetResourceQuantity(dest, res);
-                key = new(GoapStateKeyTypeEnum.ResourceQty, GoapStateKeyStateNameEnum.None, new GoapStateKeyResLoc(res, storeId), ResourceTypeEnum.NotSet);
-                goalState.Set(key, (long)RandomUtils.Random(9) + 1L);
-            }
+            //ulong storeId;
+            //if (_state.TryGetPlanetStoreId(dest, out storeId))
+            //{
+            //    //long qty = _state.PlanetResourceQuantity(dest, res);
+            //    long qty = (long)RandomUtils.Random(9) + 1L;
+            //    GoapStateResLoc resLoc = new(res, storeId);
+            //    if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
+            //    {
+            //        goalState.SetResFlagAndVal(idx, qty);
+            //    }
+            //    else
+            //    {
+            //        goalState.SetResFlagAndVal(_planner.AddResourceLocation(resLoc), qty);
+            //    }
+            //}
 
-            _textOutput.Write(_state.AgentId, "Goal created " + GoapState.PrettyPrint(goalState));
+            //_textOutput.Write(_state.AgentId, "Goal created " + GoapStateBit.PrettyPrint(goalState));
+            _textOutput.Write(_state.AgentId, "Goal State created ");
             return goalState;
         }
 
@@ -271,12 +268,12 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return planetsToChooseFrom[index];
         }
 
-        public void PlanFailed(GoapState failedGoal)
+        public void PlanFailed(GoapStateBit failedGoal)
         {
-            _textOutput.Write(_state.AgentId, "Plan failed " + GoapState.PrettyPrint(failedGoal));
+            _textOutput.Write(_state.AgentId, "Plan failed "); //+ GoapStateBit.PrettyPrint(failedGoal);
         }
 
-        public void PlanFound(GoapState goal, Queue<GoapAction> actions, (int iterations, long ms) stats)
+        public void PlanFound(GoapStateBit goal, Queue<GoapAction> actions, (int iterations, long ms) stats)
         {
             // We found a plan for our goal
             _textOutput.Write(_state.AgentId, "Plan found (" + stats.iterations + "," + stats.ms +"ms) " +GoapAction.PrettyPrint(actions));

@@ -7,12 +7,10 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     public class GoapUndockAction : GoapAction
     {
         public GoapUndockAction()
-        {            
-            GoapStateKey key = new(GoapStateKeyTypeEnum.StateName, GoapStateKeyStateNameEnum.IsDocked, new GoapStateKeyResLoc(), ResourceTypeEnum.NotSet);
-            addPrecondition(key, true);
-            addEffect(key, false);
-            key.StateName = GoapStateKeyStateNameEnum.DockedAt;
-            addEffect(key, 0L);
+        {                        
+            addPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            addEffect(GoapStateBitFlagsEnum.IsDocked, 0L);            
+            addEffect(GoapStateBitFlagsEnum.DockedAt, 0L);
         }
 
         public override void Reset()
@@ -41,7 +39,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return true;
         }
 
-        public override List<GoapAction> GetSpecificActions(object agent, GoapState state, GoapState goal)
+        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal)
         {
             return null;
         }

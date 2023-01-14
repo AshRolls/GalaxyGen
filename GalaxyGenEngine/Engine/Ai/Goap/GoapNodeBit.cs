@@ -35,16 +35,16 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             Cost = PathCost + _heuristicCost;
         }
 
-        public List<GoapNodeBit> Expand(GoapAgent agent, Dictionary<GoapStateResLoc, int> resLocs)
+        public List<GoapNodeBit> Expand(GoapAgent agent)
         {
             List<GoapNodeBit> expandList = new List<GoapNodeBit>();
             foreach (GoapAction action in _planner.UsableActions)
             {
-                if (action.Preconditions.InStateBit(this.State, resLocs.Count) && action.CheckProceduralPrecondition(agent))
+                if (action.Preconditions.InStateBit(this.State, _planner.ResLocs.Count) && action.CheckProceduralPrecondition(agent))
                 {
                     if (action.IsSpecific())
                     {
-                        GoapStateBit newState = this.State.GetNewState(action.Effects, resLocs);
+                        GoapStateBit newState = this.State.GetNewState(action.Effects, _planner.ResLocs);
                         GoapNodeBit newNode = new GoapNodeBit(this, newState, action, this.PathCost + action.GetCost(), _goalState, _planner);
                         expandList.Add(newNode);
                     }
@@ -52,7 +52,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     {
                         foreach (GoapAction sAction in action.GetSpecificActions(agent, this.State, this._goalState))
                         {
-                            GoapStateBit newState = this.State.GetNewState(sAction.Effects, resLocs);
+                            GoapStateBit newState = this.State.GetNewState(sAction.Effects, _planner.ResLocs);
                             GoapNodeBit newNode = new GoapNodeBit(this, newState, sAction, this.PathCost, _goalState, _planner);
                             expandList.Add(newNode);
                         }

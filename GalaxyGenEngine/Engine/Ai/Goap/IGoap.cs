@@ -23,13 +23,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * The starting state of the Agent and the world.
          * Supply what states are needed for actions to run.
          */
-        GoapStateBit GetWorldState();
+        GoapStateBit GetWorldState(GoapPlanner planner);
 
         /**
          * Give the planner a new goal so it can figure out 
          * the actions needed to fulfill it.
          */
-        GoapStateBit CreateGoalState();
+        GoapStateBit CreateGoalState(GoapPlanner planner);
 
         /**
          * No sequence of actions could be found for the supplied goal.

@@ -16,7 +16,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         ShipStoreId = (1UL << 1),
         AllowedRes1 = (1UL << 2),
         AllowedRes2 = (1UL << 3),
-        AllowedRes3 = (1UL << 4)
+        AllowedRes3 = (1UL << 4),
+        IsDocked = (1L << 5) // TODO move all bool flags into new flag ulong
     }
 
     public record GoapStateResLoc
@@ -74,7 +75,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             return this.GetVal(1UL << idx);
         }
-        
+
+        public void SetFlagAndVal(GoapStateBitFlagsEnum bit, ulong val)
+        {
+            SetFlag(bit);
+            SetVal(bit, val);
+        }
+
         public void SetVal(int idx, ulong val)
         {
             switch (idx)
@@ -85,7 +92,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 case 4: AllowedRes2 = val; break;
                 case 5: AllowedRes3 = val; break;
             }
-        }
+        }        
 
         public void SetVal(GoapStateBitFlagsEnum bit, ulong val)
         {
@@ -134,13 +141,19 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             Flags ^= (ulong)bit;
         }
 
-        public long GetResLocQty(int idx)
+        public long GetResVal(int idx)
         {
             return ResQtys[idx];
         }
 
-        public void SetResQty(int idx, long qty)
+        //public bool SetResVal(GoapStateResLoc resLoc, long qty, GoapPlanner _planner)
+        //{
+
+        //}
+
+        public void SetResFlagAndVal(int idx, long qty)
         {
+            SetResFlag(idx);
             ResQtys[idx] = qty;
         }        
 
@@ -178,7 +191,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
             for (int i = 0; i < resLocCount; i++)
             {
-                if (this.GetResLocQty(i) != test.GetResLocQty(i)) return false;
+                if (this.GetResVal(i) != test.GetResVal(i)) return false;
             }
             return true;
         }
