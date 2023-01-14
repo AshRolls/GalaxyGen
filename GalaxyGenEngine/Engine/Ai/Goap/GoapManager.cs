@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {
+    //TODO Use NodeManager for object pooling
     //public class NodeManager
     //{
     //    static Stack<GoapNode> _usedNodes = new Stack<GoapNode>();

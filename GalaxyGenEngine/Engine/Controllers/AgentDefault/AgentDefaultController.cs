@@ -233,13 +233,12 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public GoapStateBit CreateGoalState(GoapPlanner _planner)
         {
-            GoapStateBit goalState = new GoapStateBit();
+            GoapStateBit goalState = new();
 
             ulong dest = chooseRandomDestinationScId();
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
-
-            int r = RandomUtils.Random(2);
+            
             ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
 
             // add all goal resources to allowed resources

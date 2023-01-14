@@ -1,12 +1,7 @@
-﻿using Akka.Event;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using GalaxyGenCore.Resources;
+﻿using GalaxyGenCore.Resources;
+using GalaxyGenEngine.Framework;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Ai.Goap
 {    
@@ -31,32 +26,6 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             ResType = resType;
             StoreId = storeId;
-        }
-    }
-
-    public class Long64Array : IEquatable<Long64Array>
-    {
-        public long[] Values = new long[64];
-
-        public override bool Equals(object obj) => obj is Long64Array o && Equals(o);
-
-        public bool Equals(Long64Array other)
-        {            
-            for (int i = 0; i < 64; i++)
-            {
-                if (Values[i] != other.Values[i]) return false;
-            }
-            return true;
-        }
-
-        public override int GetHashCode()
-        {
-            HashCode hash = new();
-            for (int i = 0; i < 64; i++)
-            {
-                hash.Add(Values[i]);
-            }
-            return hash.ToHashCode();
         }
     }
 
@@ -223,6 +192,23 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 if (test.HasResFlag(i) && (this.GetResVal(i) != test.GetResVal(i))) return false;                
             }
             return true;
+        }
+
+        public int GetDifferenceCount(GoapStateBit other, int resLocCount)
+        {
+            int count = 0;
+            ulong valIdx = 1UL;
+            for (int i = 0; i < GoapPlanner.FLAGS_COUNT; i++)
+            {
+                if (other.HasFlag(valIdx) && (!(this.HasFlag(valIdx) && this.GetVal(valIdx) == other.GetVal(valIdx)))) count++;
+                valIdx = valIdx << 1;
+            }
+
+            for (int i = 0; i < resLocCount; i++)
+            {
+                if (other.HasResFlag(i) && (this.GetResVal(i) != other.GetResVal(i))) count++;
+            }
+            return count;
         }
 
         internal GoapStateBit GetNewState(GoapStateBit toApply, int resLocsCount)
