@@ -155,7 +155,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public void SetResFlagAndVal(int idx, long qty)
         {
             SetResFlag(idx);
-            ResQtys.Values[idx] = qty;
+            ResQtys.Values[idx] += qty;
         }        
 
         public void SetResFlag(int bitIdx)
@@ -227,7 +227,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 if (toApply.HasResFlag(i))
                 {
-                    newGs.ResQtys.Values[i] += toApply.ResQtys.Values[i];
+                    newGs.SetResFlagAndVal(i, toApply.ResQtys.Values[i]);                    
                 }
             }
             return newGs;

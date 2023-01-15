@@ -246,8 +246,9 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             ulong storeId;
             if (_state.TryGetPlanetStoreId(dest, out storeId))
             {
-                //long qty = _state.PlanetResourceQuantity(dest, res);
-                long qty = (long)RandomUtils.Random(9) + 1L;
+                //long qty = _state.PlanetResourceQuantity(dest, res) + (long)RandomUtils.Random(1) + 1L;
+                long qty = _state.PlanetResourceQuantity(dest, res) + 1L;
+                //long qty = (long)RandomUtils.Random(1) + 1L;
                 GoapStateResLoc resLoc = new(res, storeId);
                 if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
                 {

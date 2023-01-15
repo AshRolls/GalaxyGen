@@ -75,8 +75,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
             Dictionary<GoapStateBit, float> visited = new();                                    
                         
-            const int MAX_NODES = 200000;
-            const float MAX_COST = 40;            
+            const int MAX_NODES = 300000;
+            const float MAX_COST = 15;            
             int iterations = 0;
             int visitedHits = 0;
             float cost = 0;
@@ -96,7 +96,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                     break;
                 }
 
-                // check if we have explored this state before
+                //check if we have explored this state before
                 // TODO this doesn't take into account agent position as position is not in state
                 if (visited.TryGetValue(cur.State, out float existingCost))
                 {

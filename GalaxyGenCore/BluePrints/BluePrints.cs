@@ -64,20 +64,20 @@ namespace GalaxyGenCore.BluePrints
             // pull these in from XML eventually
             ResourceQuantity prod = new ResourceQuantity();
             prod.Type = ResourceTypeEnum.Metal_Platinum;
-            prod.Quantity = 1L;
+            prod.Quantity = 11L;
             ResourceQuantity cons = new ResourceQuantity();
             cons.Type = ResourceTypeEnum.Exotic_Spice;
-            cons.Quantity = 9L;
-            types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 10L);
+            cons.Quantity = 1L;
+            types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 100L);
 
 
             prod = new ResourceQuantity();
             prod.Type = ResourceTypeEnum.Exotic_Spice;
-            prod.Quantity = 10L;
+            prod.Quantity = 13L;
             cons = new ResourceQuantity();
             cons.Type = ResourceTypeEnum.Metal_Platinum;
             cons.Quantity = 1L;
-            types_Var[(int)BluePrintEnum.PlatinumToSpice] = createBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 50L);
+            types_Var[(int)BluePrintEnum.PlatinumToSpice] = createBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 100L);
         }
 
         private static BluePrint createBluePrint(BluePrintEnum type, String name, List<ResourceQuantity> produces, List<ResourceQuantity> consumes, ulong baseTicks)

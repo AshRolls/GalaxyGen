@@ -54,10 +54,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
                     if (state.HasResFlag(i) && planner.ResLocsIdx[i].StoreId == dockedAtStoreId)
                     {
                         long qty = state.GetResVal(i);
-                        actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 1L), planner));
+                        if (qty > 0) actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 1L), planner));
                         if (qty > 1) actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 2L), planner));
                         if (qty > 3) actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 4L), planner));
-                        if (qty > 4) actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, qty), planner));
+                        if (qty > 7) actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 8L), planner));
+                        if (qty > 15) actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 16L), planner));
+                        if (qty > 31) actions.Add(new GoapLoadShipSpecificAction(dockedAtStoreId, shipStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, qty), planner));
                     }
                 }
             }
