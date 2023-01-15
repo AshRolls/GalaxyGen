@@ -28,12 +28,30 @@ namespace GalaxyGen
             this.DataContext = mvm;
         }
 
+        private Boolean _autoScroll = true;
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             ScrollViewer scroll = sender as ScrollViewer;
-            if (scroll != null)
-            {
-                scroll.ScrollToEnd();
+            // User scroll event : set or unset auto-scroll mode
+            if (e.ExtentHeightChange == 0)
+            {   // Content unchanged : user scroll event
+                if (scroll.VerticalOffset == scroll.ScrollableHeight)
+                {   // Scroll bar is in bottom
+                    // Set auto-scroll mode
+                    _autoScroll = true;
+                }
+                else
+                {   // Scroll bar isn't in bottom
+                    // Unset auto-scroll mode
+                    _autoScroll = false;
+                }
+            }
+
+            // Content scroll event : auto-scroll eventually
+            if (_autoScroll && e.ExtentHeightChange != 0)
+            {   // Content changed and auto-scroll mode set
+                // Autoscroll
+                scroll.ScrollToVerticalOffset(scroll.ExtentHeight);
             }
         }
     }

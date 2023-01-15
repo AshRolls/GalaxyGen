@@ -17,6 +17,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public static readonly int FLAGS_COUNT = Enum.GetNames(typeof(GoapStateBitFlagsEnum)).Length - 1;
         public static readonly int ALLOWED_RES_MAX = 2;
+        public static readonly int ALLOWED_DEST_MAX = 3;
 
         public GoapPlanner() 
         {
@@ -33,7 +34,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             Array.Clear(ResLocsIdx);
         }
 
-        internal (Queue<GoapAction>, (int, long)) PlanBit(GoapAgent agent, HashSet<GoapAction> availableActions, GoapStateBit worldState, GoapStateBit goalState)
+        internal (Queue<GoapAction>, (int, long)) PlanBit(GoapAgent agent, HashSet<GoapAction> availableActions, GoapStateBit worldState, GoapStateBit goalState, GoapStateBit allowedState)
         {
             // reset the actions so we can start fresh with them            
             foreach (GoapAction a in availableActions)
@@ -43,7 +44,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             }            
             
             GoapNodeBit res = null;
-            (bool success, (int iterations, long ms) stats) = aStarGraphBit(worldState, ref res, goalState, agent);
+            (bool success, (int iterations, long ms) stats) = aStarGraphBit(worldState, ref res, goalState, allowedState, agent);
 
             // We didn't get a plan
             if (!success) return (null, (0, 0));
@@ -67,11 +68,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             return (queue, stats);
         }
 
-        private (bool, (int, long)) aStarGraphBit(GoapStateBit worldState, ref GoapNodeBit cur, GoapStateBit goalState, GoapAgent agent)
+        private (bool, (int, long)) aStarGraphBit(GoapStateBit worldState, ref GoapNodeBit cur, GoapStateBit goalState, GoapStateBit allowedState, GoapAgent agent)
         {
             PriorityQueue<GoapNodeBit, float> queue = new();
 
-            worldState.AddAllowedResources(goalState);
+            worldState.AddAllowedResources(allowedState);
+            worldState.AddAllowedDestinations(allowedState);
             GoapNodeBit startNode = new(null, worldState, null, 0, goalState, this);            
             queue.Enqueue(startNode, 0);
 

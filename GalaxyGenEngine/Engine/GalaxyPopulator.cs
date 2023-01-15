@@ -10,7 +10,7 @@ namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
-        const int NUMBER_OF_AGENTS = 1;
+        const int NUMBER_OF_AGENTS = 100;
 
         public Galaxy GetFullGalaxy()
         {
@@ -64,14 +64,14 @@ namespace GalaxyGenEngine.Engine
                 if (j % 2 == 0)
                 {
                     addMetalProducerToPlanet(ag, p);
-                    //addNewStoreToPlanet(p, ag, resQs);
-                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    addNewStoreToPlanet(p, ag, resQs);
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 else
                 {
                     addSpiceProducerToPlanet(ag, p);
-                    //addNewStoreToPlanet(p, ag, resQs);
-                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    addNewStoreToPlanet(p, ag, resQs);
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 j++;
             }                            

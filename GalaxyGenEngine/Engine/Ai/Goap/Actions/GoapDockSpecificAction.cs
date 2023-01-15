@@ -5,11 +5,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapDockSpecificAction : GoapAction
     {
-        public GoapDockSpecificAction(ulong dockScId)
+        public GoapDockSpecificAction(ulong dockScId, (bool newAllowedDest, int allowedIdx) allowedStatus)
         {
             target = dockScId;
             AddEffect(GoapStateBitFlagsEnum.IsDocked, 1UL);
-            AddEffect(GoapStateBitFlagsEnum.DockedAt, dockScId);            
+            AddEffect(GoapStateBitFlagsEnum.DockedAt, dockScId);
+            if (allowedStatus.newAllowedDest) AddEffect((GoapStateBitFlagsEnum)((ulong)GoapStateBitFlagsEnum.AllowedLoc1 << allowedStatus.allowedIdx), dockScId);
         }
 
         public override void Reset()

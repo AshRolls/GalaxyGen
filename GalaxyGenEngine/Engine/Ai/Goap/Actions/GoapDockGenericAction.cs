@@ -41,8 +41,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             List<GoapAction> actions = new();
             foreach (ulong t in _targets)
             {
-                GoapDockSpecificAction a = new(t);
-                actions.Add(a);
+                (bool allowed, (bool, int) allowedStatus) = state.IsAllowedDestination(t);
+                if (allowed)
+                {
+                    GoapDockSpecificAction a = new(t, allowedStatus);
+                    actions.Add(a);
+                }                
             }
             return actions;
         }

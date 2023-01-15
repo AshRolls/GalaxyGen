@@ -230,15 +230,18 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return worldData;
         }
 
-        public GoapStateBit CreateGoalState(GoapPlanner _planner)
+        public (GoapStateBit,GoapStateBit) CreateGoalState(GoapPlanner _planner)
         {
             GoapStateBit goalState = new();
+            GoapStateBit allowedState = new();
 
             ulong dest = chooseRandomDestinationScId();
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
+            allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedLoc1, dest);
             
-            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;            
+            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
+            allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedRes1, (ulong)res);
 
             ulong storeId;
             if (_state.TryGetPlanetStoreId(dest, out storeId))
@@ -260,7 +263,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
             //_textOutput.Write(_state.AgentId, "Goal created " + GoapStateBit.PrettyPrint(goalState));
             _textOutput.Write(_state.AgentId, "Goal State created ");
-            return goalState;
+            return (goalState,allowedState);
         }
 
         private UInt64 chooseRandomDestinationScId()

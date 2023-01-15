@@ -98,11 +98,18 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             switch (bit)
             {
                 case GoapStateBitFlagsEnum.DockedAt: DockedAt = val; break;
+                case GoapStateBitFlagsEnum.IsDocked: IsDocked = val; break;
                 case GoapStateBitFlagsEnum.ShipStoreId: ShipStoreId = val; break;
                 case GoapStateBitFlagsEnum.AllowedRes1: AllowedRes1 = val; break;
                 case GoapStateBitFlagsEnum.AllowedRes2: AllowedRes2 = val; break;
                 case GoapStateBitFlagsEnum.AllowedRes3: AllowedRes3 = val; break;
-                case GoapStateBitFlagsEnum.IsDocked: IsDocked = val; break;
+                case GoapStateBitFlagsEnum.AllowedRes4: AllowedRes4 = val; break;
+                case GoapStateBitFlagsEnum.AllowedRes5: AllowedRes5 = val; break;
+                case GoapStateBitFlagsEnum.AllowedLoc1: AllowedLoc1 = val; break;
+                case GoapStateBitFlagsEnum.AllowedLoc2: AllowedLoc2 = val; break;
+                case GoapStateBitFlagsEnum.AllowedLoc3: AllowedLoc3 = val; break;
+                case GoapStateBitFlagsEnum.AllowedLoc4: AllowedLoc4 = val; break;
+                case GoapStateBitFlagsEnum.AllowedLoc5: AllowedLoc5 = val; break;
             }
         }
 
@@ -323,7 +330,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 if (HasFlag(bitIdx))
                 {
-                    if (this.GetVal(bitIdx) == (ulong)resType) return (true, (false, i));
+                    if (GetVal(bitIdx) == (ulong)resType) return (true, (false, i));
                 }
                 else return (true, (true, i));
                 
@@ -331,5 +338,36 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             }
             return (false, (false,0));
         }
+
+        internal void AddAllowedDestinations(GoapStateBit toApply)
+        {
+            ulong bitIdx = (ulong)GoapStateBitFlagsEnum.AllowedLoc1;
+            for (int i = 0; i < GoapPlanner.ALLOWED_DEST_MAX; i++)
+            {
+                if (toApply.HasFlag(bitIdx))
+                {
+                    this.setFlag(bitIdx);
+                    this.setVal((GoapStateBitFlagsEnum)bitIdx, toApply.GetVal(bitIdx));
+                }
+                bitIdx = bitIdx << 1;
+            }
+        }
+
+        internal (bool allowed, (bool newAllowedDest, int allowedIdx)) IsAllowedDestination(ulong dest)
+        {
+            ulong bitIdx = (ulong)GoapStateBitFlagsEnum.AllowedLoc1;
+            for (int i = 0; i < GoapPlanner.ALLOWED_DEST_MAX; i++)
+            {
+                if (HasFlag(bitIdx))
+                {
+                    if (GetVal(bitIdx) == dest) return (true, (false, i));
+                }
+                else return (true, (true, i));
+
+                bitIdx = bitIdx << 1;
+            }
+            return (false, (false, 0));
+        }
+
     }
 }
