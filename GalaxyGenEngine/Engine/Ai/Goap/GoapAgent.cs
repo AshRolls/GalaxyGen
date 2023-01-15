@@ -139,7 +139,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 {
                     // perform the next action
                     action = _currentActions.Peek();
-                    bool inRange = action.RequiresInRange() ? action.isInRange() : true;
+                    bool inRange = action.RequiresInRange() ? action.IsInRange() : true;
 
                     if (inRange)
                     {

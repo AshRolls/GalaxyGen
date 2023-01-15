@@ -24,7 +24,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             this.PathCost = pathCost;            
             this._planner = planner;            
             
-            _heuristicCost = state.GetDifferenceCount(goalState, planner.ResLocs.Count);
+            _heuristicCost = state.GetDifferenceCount(goalState, planner.ResLocs.Count) * 2;
             Cost = PathCost + _heuristicCost;
         }
 

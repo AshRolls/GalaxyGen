@@ -8,9 +8,9 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     {
         public GoapUndockAction()
         {                        
-            addPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
-            addEffect(GoapStateBitFlagsEnum.IsDocked, 0L);            
-            addEffect(GoapStateBitFlagsEnum.DockedAt, 0L);
+            AddPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            AddEffect(GoapStateBitFlagsEnum.IsDocked, 0L);            
+            AddEffect(GoapStateBitFlagsEnum.DockedAt, 0L);
         }
 
         public override void Reset()

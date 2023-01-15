@@ -78,12 +78,12 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * Are we in range of the target?
          * The MoveTo state will set this and it gets reset each time this action is performed.
          */
-        public bool isInRange()
+        public bool IsInRange()
         {
             return _inRange;
         }
 
-        public void setInRange(bool inRange)
+        public void SetInRange(bool inRange)
         {
             this._inRange = inRange;
         }
@@ -92,20 +92,20 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public abstract List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal, GoapPlanner planner);
 
-        public void addPrecondition(GoapStateBitFlagsEnum flag, ulong value)
+        public void AddPrecondition(GoapStateBitFlagsEnum flag, ulong value)
         {            
             _preconditions.SetFlagAndVal(flag, value);
         }
 
-        public void addEffect(GoapStateBitFlagsEnum flag, ulong value)
+        public void AddEffect(GoapStateBitFlagsEnum flag, ulong value)
         {            
             _effects.SetFlagAndVal(flag, value);
         }
 
         // TODO this might fail if try add resource fails after 64 res locs
-        public void addResEffect(GoapStateResLoc resLoc, long qty, GoapPlanner planner)
-        {   
-            if (planner.TryAddResourceLocation(resLoc, out int idx)) _effects.SetResFlagAndVal(idx, qty);
+        public void AddResEffect(GoapStateResLoc resLoc, long qty, GoapPlanner planner)
+        {
+            if (planner.TryAddResourceLocation(resLoc, out int idx)) _effects.SetResFlagAndVal(idx, qty);            
             else _effects.SetResFlagAndVal(planner.GetResourceLocationIdx(resLoc), qty);            
         }
 

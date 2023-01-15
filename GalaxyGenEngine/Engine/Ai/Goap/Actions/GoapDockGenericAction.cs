@@ -8,8 +8,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public GoapDockGenericAction(HashSet<ulong> possibleDocks)
         {
             _targets = possibleDocks;
-            addPrecondition(GoapStateBitFlagsEnum.IsDocked, 0UL);
-            addPrecondition(GoapStateBitFlagsEnum.DockedAt, 0UL);
+            AddPrecondition(GoapStateBitFlagsEnum.IsDocked, 0UL);
+            AddPrecondition(GoapStateBitFlagsEnum.DockedAt, 0UL);
         }
 
         public override void Reset()

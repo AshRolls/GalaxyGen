@@ -16,6 +16,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         private int _nextResLocIdx = 0;
 
         public static readonly int FLAGS_COUNT = Enum.GetNames(typeof(GoapStateBitFlagsEnum)).Length - 1;
+        public static readonly int ALLOWED_RES_MAX = 2;
 
         public GoapPlanner() 
         {
@@ -69,14 +70,15 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         private (bool, (int, long)) aStarGraphBit(GoapStateBit worldState, ref GoapNodeBit cur, GoapStateBit goalState, GoapAgent agent)
         {
             PriorityQueue<GoapNodeBit, float> queue = new();
-            
+
+            worldState.AddAllowedResources(goalState);
             GoapNodeBit startNode = new(null, worldState, null, 0, goalState, this);            
             queue.Enqueue(startNode, 0);
 
             Dictionary<GoapStateBit, float> visited = new();                                    
                         
-            const int MAX_NODES = 300000;
-            const float MAX_COST = 15;            
+            const int MAX_NODES = 500000;
+            const float MAX_COST = 30;            
             int iterations = 0;
             int visitedHits = 0;
             float cost = 0;

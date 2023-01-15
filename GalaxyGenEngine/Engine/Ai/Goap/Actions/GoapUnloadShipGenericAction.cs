@@ -8,7 +8,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
     {       
         public GoapUnloadShipGenericAction()
         {            
-            addPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            AddPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
         }
 
         public override void Reset()
@@ -53,13 +53,17 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
                 {
                     if (state.HasResFlag(i) && planner.ResLocsIdx[i].StoreId == shipStoreId)
                     {
-                        long qty = state.GetResVal(i);
-                        if (qty > 0) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 1L), planner));
-                        if (qty > 1) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 2L), planner));
-                        if (qty > 3) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 4L), planner));
-                        if (qty > 7) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 8L), planner));
-                        if (qty > 15) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 16L), planner));
-                        if (qty > 31) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, qty), planner));
+                        (bool allowed, (bool newAllowedRes, int allowedIdx) allowedStatus) = state.IsAllowedResource(planner.ResLocsIdx[i].ResType);
+                        if (allowed)
+                        {
+                            long qty = state.GetResVal(i);
+                            if (qty > 0) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 1L), allowedStatus, planner));
+                            if (qty > 1) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 2L), allowedStatus, planner));
+                            if (qty > 3) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 4L), allowedStatus, planner));
+                            if (qty > 7) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 8L), allowedStatus, planner));
+                            if (qty > 15) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, 16L), allowedStatus, planner));
+                            if (qty > 31) actions.Add(new GoapUnloadShipSpecificAction(shipStoreId, dockedAtStoreId, new ResourceQuantity(planner.ResLocsIdx[i].ResType, qty), allowedStatus, planner));
+                        }
                     }
                 }
             }

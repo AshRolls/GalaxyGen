@@ -10,17 +10,24 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     {
         NotSet = 0,
         DockedAt = (1UL << 0),
-        ShipStoreId = (1UL << 1),
-        AllowedRes1 = (1UL << 2),
-        AllowedRes2 = (1UL << 3),
-        AllowedRes3 = (1UL << 4),
-        IsDocked = (1L << 5) // TODO move all bool flags into new flag ulong
+        IsDocked = (1L << 1), // TODO move all bool flags into new flag ulong
+        ShipStoreId = (1UL << 2),
+        AllowedRes1 = (1UL << 3),
+        AllowedRes2 = (1UL << 4),
+        AllowedRes3 = (1UL << 5),
+        AllowedRes4 = (1UL << 6),
+        AllowedRes5 = (1UL << 7),        
+        AllowedLoc1 = (1L << 8),
+        AllowedLoc2 = (1L << 9),
+        AllowedLoc3 = (1L << 10),
+        AllowedLoc4 = (1L << 11),
+        AllowedLoc5 = (1L << 12)
     }
 
     public record GoapStateResLoc
     {
         public ResourceTypeEnum ResType;
-        public ulong StoreId; // TODO modify later to Int32 if memory is getting bloated
+        public ulong StoreId; // TODO modify indexes later to Int32 if memory is getting bloated
 
         public GoapStateResLoc(ResourceTypeEnum resType, ulong storeId)
         {
@@ -33,11 +40,18 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
     {
         public ulong Flags;
         public ulong DockedAt;
+        public ulong IsDocked;
         public ulong ShipStoreId;
         public ulong AllowedRes1;
         public ulong AllowedRes2;
         public ulong AllowedRes3;
-        public ulong IsDocked;
+        public ulong AllowedRes4;
+        public ulong AllowedRes5;
+        public ulong AllowedLoc1;
+        public ulong AllowedLoc2;
+        public ulong AllowedLoc3;
+        public ulong AllowedLoc4;
+        public ulong AllowedLoc5;
 
         public ulong ResFlags;
         public Long64Array ResQtys = new Long64Array();     
@@ -46,55 +60,40 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             switch (bit)
             {
-                case GoapStateBitFlagsEnum.DockedAt: return DockedAt;                   
+                case GoapStateBitFlagsEnum.DockedAt: return DockedAt;
+                case GoapStateBitFlagsEnum.IsDocked: return IsDocked;
                 case GoapStateBitFlagsEnum.ShipStoreId: return ShipStoreId;
                 case GoapStateBitFlagsEnum.AllowedRes1: return AllowedRes1;
                 case GoapStateBitFlagsEnum.AllowedRes2: return AllowedRes2;
                 case GoapStateBitFlagsEnum.AllowedRes3: return AllowedRes3;
-                case GoapStateBitFlagsEnum.IsDocked: return IsDocked;
+                case GoapStateBitFlagsEnum.AllowedRes4: return AllowedRes4;
+                case GoapStateBitFlagsEnum.AllowedRes5: return AllowedRes5;
+                case GoapStateBitFlagsEnum.AllowedLoc1: return AllowedLoc1;
+                case GoapStateBitFlagsEnum.AllowedLoc2: return AllowedLoc2;
+                case GoapStateBitFlagsEnum.AllowedLoc3: return AllowedLoc3;
+                case GoapStateBitFlagsEnum.AllowedLoc4: return AllowedLoc4;
+                case GoapStateBitFlagsEnum.AllowedLoc5: return AllowedLoc5;
             }
             throw new Exception("Should not reach here");
         }
 
         public ulong GetVal(ulong valIdx)
         {
-            switch (valIdx)
-            {
-                case 1UL: return DockedAt;
-                case 1UL << 1: return ShipStoreId;
-                case 1UL << 2: return AllowedRes1;
-                case 1UL << 3: return AllowedRes2;
-                case 1UL << 4: return AllowedRes3;
-                case 1UL << 5: return IsDocked;
-            }
-            throw new Exception("Should not reach here");
+            return GetVal((GoapStateBitFlagsEnum)valIdx);            
         }   
 
         public ulong GetVal(int idx)
         {
-            return this.GetVal(1UL << idx);
+            return GetVal((GoapStateBitFlagsEnum)(1UL << idx));
         }
 
         public void SetFlagAndVal(GoapStateBitFlagsEnum bit, ulong val)
         {
-            SetFlag(bit);
-            SetVal(bit, val);
+            setFlag(bit);
+            setVal(bit, val);
         }
 
-        public void SetVal(int idx, ulong val)
-        {
-            switch (idx)
-            {
-                case 0: DockedAt = val; break;
-                case 1: ShipStoreId = val; break;
-                case 2: AllowedRes1 = val; break;
-                case 3: AllowedRes2 = val; break;
-                case 4: AllowedRes3 = val; break;
-                case 5: IsDocked = val; break;
-            }
-        }        
-
-        public void SetVal(GoapStateBitFlagsEnum bit, ulong val)
+        private void setVal(GoapStateBitFlagsEnum bit, ulong val)
         {
             switch (bit)
             {
@@ -107,14 +106,24 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             }
         }
 
-        public void SetFlag(GoapStateBitFlagsEnum bit)
+        private void setVal(int idx, ulong val)
+        {
+            setVal((GoapStateBitFlagsEnum)(1UL << idx), val);
+        }                
+
+        private void setFlag(ulong bit)
+        {
+            Flags |= bit;
+        }
+
+        private void setFlag(GoapStateBitFlagsEnum bit)
         {
             Flags |= (ulong)bit;
         }
 
-        public void SetFlag(int bitIdx)
+        private void setFlag(int idx)
         {
-            Flags |= (1UL << bitIdx);
+            Flags |= (1UL << idx);
         }
 
         public void UnsetFlag(GoapStateBitFlagsEnum bit)
@@ -154,11 +163,11 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
         public void SetResFlagAndVal(int idx, long qty)
         {
-            SetResFlag(idx);
+            setResFlag(idx);
             ResQtys.Values[idx] += qty;
         }        
 
-        public void SetResFlag(int bitIdx)
+        private void setResFlag(int bitIdx)
         {
             ResFlags |= (1UL << bitIdx);
         }
@@ -218,8 +227,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 if (toApply.HasFlag(i)) 
                 {
-                    newGs.SetFlag(i);
-                    newGs.SetVal(i, toApply.GetVal(i));
+                    newGs.setFlag(i);
+                    newGs.setVal(i, toApply.GetVal(i));
                 }                    
             }
             
@@ -240,8 +249,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             {
                 if (this.HasFlag(i))
                 {
-                    newGs.SetFlag(i);
-                    newGs.SetVal(i, this.GetVal(i));
+                    newGs.setFlag(i);
+                    newGs.setVal(i, this.GetVal(i));
                 }                
             }
 
@@ -255,11 +264,18 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             return obj is GoapStateBit bit &&
                    Flags == bit.Flags &&
                    DockedAt == bit.DockedAt &&
+                   IsDocked == bit.IsDocked &&
                    ShipStoreId == bit.ShipStoreId &&
                    AllowedRes1 == bit.AllowedRes1 &&
                    AllowedRes2 == bit.AllowedRes2 &&
                    AllowedRes3 == bit.AllowedRes3 &&
-                   IsDocked == bit.IsDocked &&
+                   AllowedRes4 == bit.AllowedRes4 &&
+                   AllowedRes5 == bit.AllowedRes5 &&
+                   AllowedLoc1 == bit.AllowedLoc1 &&
+                   AllowedLoc2 == bit.AllowedLoc2 &&
+                   AllowedLoc3 == bit.AllowedLoc3 &&
+                   AllowedLoc4 == bit.AllowedLoc4 &&
+                   AllowedLoc5 == bit.AllowedLoc5 &&
                    ResFlags == bit.ResFlags &&
                    EqualityComparer<Long64Array>.Default.Equals(ResQtys, bit.ResQtys);
         }
@@ -269,14 +285,51 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
             HashCode hash = new HashCode();
             hash.Add(Flags);
             hash.Add(DockedAt);
+            hash.Add(IsDocked);
             hash.Add(ShipStoreId);
             hash.Add(AllowedRes1);
             hash.Add(AllowedRes2);
             hash.Add(AllowedRes3);
-            hash.Add(IsDocked);
+            hash.Add(AllowedRes4);
+            hash.Add(AllowedRes5);
+            hash.Add(AllowedLoc1);
+            hash.Add(AllowedLoc2);
+            hash.Add(AllowedLoc3);
+            hash.Add(AllowedLoc4);
+            hash.Add(AllowedLoc5);
             hash.Add(ResFlags);
             hash.Add(ResQtys);
             return hash.ToHashCode();
+        }
+
+        internal void AddAllowedResources(GoapStateBit toApply)
+        {
+            ulong bitIdx = (ulong)GoapStateBitFlagsEnum.AllowedRes1;
+            for (int i = 0; i < GoapPlanner.ALLOWED_RES_MAX; i++)  
+            {                
+                if (toApply.HasFlag(bitIdx))
+                {
+                    this.setFlag(bitIdx);
+                    this.setVal((GoapStateBitFlagsEnum)bitIdx, toApply.GetVal(bitIdx));
+                }
+                bitIdx = bitIdx << 1;
+            }
+        }
+
+        internal (bool allowed, (bool newAllowedRes, int allowedIdx)) IsAllowedResource(ResourceTypeEnum resType)
+        {
+            ulong bitIdx = (ulong)GoapStateBitFlagsEnum.AllowedRes1;
+            for (int i = 0; i < GoapPlanner.ALLOWED_RES_MAX; i++)
+            {
+                if (HasFlag(bitIdx))
+                {
+                    if (this.GetVal(bitIdx) == (ulong)resType) return (true, (false, i));
+                }
+                else return (true, (true, i));
+                
+                bitIdx = bitIdx << 1;
+            }
+            return (false, (false,0));
         }
     }
 }

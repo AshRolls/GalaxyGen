@@ -8,8 +8,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         public GoapDockSpecificAction(ulong dockScId)
         {
             target = dockScId;
-            addEffect(GoapStateBitFlagsEnum.IsDocked, 1UL);
-            addEffect(GoapStateBitFlagsEnum.DockedAt, dockScId);            
+            AddEffect(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            AddEffect(GoapStateBitFlagsEnum.DockedAt, dockScId);            
         }
 
         public override void Reset()

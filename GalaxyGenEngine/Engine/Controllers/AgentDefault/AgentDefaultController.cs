@@ -180,7 +180,6 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipSetDestination(ShipCommandEnum.SetDestination, _memory.CurrentDestinationScId), 10, _state.CurrentShipId, _state.AgentId));
         }
 
-
         private void saveMemory()
         {
             _state.Memory = JsonConvert.SerializeObject(_memory);
@@ -239,16 +238,15 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
             
-            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
-
-            // add all goal resources to allowed resources
+            ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;            
 
             ulong storeId;
             if (_state.TryGetPlanetStoreId(dest, out storeId))
             {
+                long qty = (long)RandomUtils.Random(1) + 1L;
                 //long qty = _state.PlanetResourceQuantity(dest, res) + (long)RandomUtils.Random(1) + 1L;
-                long qty = _state.PlanetResourceQuantity(dest, res) + 1L;
-                //long qty = (long)RandomUtils.Random(1) + 1L;
+                //long qty = _state.PlanetResourceQuantity(dest, res) + 1L;
+                
                 GoapStateResLoc resLoc = new(res, storeId);
                 if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
                 {
@@ -320,7 +318,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                 {
                     if (_state.CurrentShipAtDestination(_memory.CurrentDestinationScId)) // check if we are there
                     {
-                        nextAction.setInRange(true);
+                        nextAction.SetInRange(true);
                         return true;
                     }
                     else

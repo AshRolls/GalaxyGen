@@ -10,7 +10,7 @@ namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
-        const int NUMBER_OF_AGENTS = 100;
+        const int NUMBER_OF_AGENTS = 1;
 
         public Galaxy GetFullGalaxy()
         {
@@ -55,23 +55,23 @@ namespace GalaxyGenEngine.Engine
             int j = 0;
             List<ResourceQuantity> resQs = new() { new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 10), 
                                                new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 10),
-                                               //new ResourceQuantity(ResourceTypeEnum.Uranium, 10),
-                                               //new ResourceQuantity(ResourceTypeEnum.Xenon, 10),
-                                               //new ResourceQuantity(ResourceTypeEnum.Aluminium, 10)
+                                               new ResourceQuantity(ResourceTypeEnum.Metal_Uranium, 10),
+                                               new ResourceQuantity(ResourceTypeEnum.Gas_Xenon, 10),
+                                               new ResourceQuantity(ResourceTypeEnum.Metal_Aluminium, 10)
             };
             foreach (Planet p in ss.Planets.Values)
             {
                 if (j % 2 == 0)
                 {
                     addMetalProducerToPlanet(ag, p);
-                    addNewStoreToPlanet(p, ag, resQs);
-                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    //addNewStoreToPlanet(p, ag, resQs);
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 else
                 {
                     addSpiceProducerToPlanet(ag, p);
-                    addNewStoreToPlanet(p, ag, resQs);
-                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    //addNewStoreToPlanet(p, ag, resQs);
+                    addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
                 j++;
             }                            
