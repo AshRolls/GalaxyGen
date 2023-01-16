@@ -65,11 +65,10 @@ namespace GalaxyGenEngine.Engine.Controllers
         }
 
         private void requestResources(MessageTick tick)
-        {
-            MessagePlanetRequestResources msg = new MessagePlanetRequestResources(_bp.Consumes, _model.Owner.AgentId, _model.Planet.Stores[_model.Owner.AgentId].StoreId, tick.Tick);
-            if (_planetC.ReceiveResourceRequest(msg))
+        {            
+            if (_planetC.ResourcesRequest(_bp.Consumes, _model.Owner.AgentId, tick.Tick))
             {
-                _model.TickForNextProduction = msg.TickSent + _bp.BaseTicks;
+                _model.TickForNextProduction = tick.Tick + _bp.BaseTicks;
                 _model.Producing = true;
                 _model.ProduceNThenStop--;
             }

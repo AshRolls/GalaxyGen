@@ -150,27 +150,33 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public void RequestUndock()
         {
-            _textOutput.Write(_state.AgentId, "Requesting Undock from " + _state.CurrentShipDockedPlanetScId);
+            _textOutput.Write(_state.AgentId, "Requesting undock from " + _state.CurrentShipDockedPlanetScId);
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Undock, _state.CurrentShipDockedPlanetScId), _curTick, _state.CurrentShipId, _state.AgentId));
         }
 
         public void RequestDock()
         {
-            _textOutput.Write(_state.AgentId, "Requesting Dock from " + _memory.CurrentDestinationScId);
+            _textOutput.Write(_state.AgentId, "Requesting dock from " + _memory.CurrentDestinationScId);
             _actorSolarSystem.Tell(new MessageShipCommand(new MessageShipDocking(ShipCommandEnum.Dock, _memory.CurrentDestinationScId), _curTick, _state.CurrentShipId, _state.AgentId));
         }
 
         public void RequestLoadShip(ResourceQuantity resQ)
         {
-            _textOutput.Write(_state.AgentId, "Requesting Load resources " + resQ.Type + ":" + resQ.Quantity);            
-            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestLoadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
+            _textOutput.Write(_state.AgentId, "Requesting load resources " + resQ.Type + ":" + resQ.Quantity);            
+            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestLoadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), _curTick, _state.CurrentShipDockedPlanetScId));
         }
 
         public void RequestUnloadShip(ResourceQuantity resQ)
         {
-            _textOutput.Write(_state.AgentId, "Requesting Unloading resources " + resQ.Type + ":" + resQ.Quantity);            
-            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), 10, _state.CurrentShipDockedPlanetScId));
-        }                       
+            _textOutput.Write(_state.AgentId, "Requesting Uunloading resources " + resQ.Type + ":" + resQ.Quantity);            
+            _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), _curTick, _state.CurrentShipDockedPlanetScId));
+        }     
+        
+        public void RequestCreateSellOrder(ResourceQuantity resQ)
+        {
+            _textOutput.Write(_state.AgentId, "Requesting create sell order " + resQ.Type + ":" + resQ.Quantity);
+            _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketBasic(MarketCommandEnum.PlaceSellOrder, resQ.Type, resQ.Quantity,0L), _state.AgentId, _curTick, _state.CurrentShipDockedPlanetScId));
+        }
 
         private void setNewDestination(UInt64 destinationScId)
         {
@@ -241,16 +247,17 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedLoc1, dest);
             
             ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
-            allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedRes1, (ulong)res);
+            allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedRes1, (ulong)res);           
 
             ulong storeId;
             if (_state.TryGetPlanetStoreId(dest, out storeId))
             {
-                long qty = (long)RandomUtils.Random(1) + 1L;
+                //long qty = (long)RandomUtils.Random(1) + 1L;
                 //long qty = _state.PlanetResourceQuantity(dest, res) + (long)RandomUtils.Random(1) + 1L;
-                //long qty = _state.PlanetResourceQuantity(dest, res) + 1L;
-                
-                GoapStateResLoc resLoc = new(res, storeId);
+                long qty = _state.PlanetResourceQuantity(dest, res);
+
+                //GoapStateResLoc resLoc = new(res, storeId); // planet store
+                GoapStateResLoc resLoc = new(res, dest); // market
                 if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
                 {
                     goalState.SetResFlagAndVal(idx, qty);
@@ -359,6 +366,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                 new GoapDockGenericAction(_state.PlanetsInSolarSystemScIds.ToHashSet()),
                 new GoapLoadShipGenericAction(),
                 new GoapUnloadShipGenericAction(),
+                new GoapCreateSellOrderGenericAction()
             };
 
             //foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)

@@ -34,23 +34,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
         {
             GoapAgent ag = (GoapAgent)agent;
             List<GoapAction> actions = new();
-            //List<ResourceTypeEnum> allowedResourceTypes = new(); // list faster than hashset for small sets
-            //foreach (KeyValuePair<GoapStateKey, object> kvp in goal.GetValues())
-            //{
-            //    if (kvp.Key.Type == GoapStateKeyTypeEnum.ResourceQty && !allowedResourceTypes.Contains(kvp.Key.ResourceLocation.ResType)) allowedResourceTypes.Add(kvp.Key.ResourceLocation.ResType);
-            //}
-            //foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
-            //{
-            //    if (kvp.Key.Type == GoapStateKeyTypeEnum.AllowedResource && !allowedResourceTypes.Contains(kvp.Key.AllowedResource)) allowedResourceTypes.Add(kvp.Key.AllowedResource);
-            //}
-
             ulong dockedAt = state.GetVal(GoapStateBitFlagsEnum.DockedAt);
             if (ag.StateProvider.TryGetPlanetStoreId(dockedAt, out ulong dockedAtStoreId))
             {
                 ulong shipStoreId = state.GetVal(GoapStateBitFlagsEnum.ShipStoreId);
 
                 for (int i = 0; i < planner.ResLocs.Count; i++)
-                {                    
+                {
                     if (state.HasResFlag(i) && planner.ResLocsIdx[i].StoreId == dockedAtStoreId)
                     {
                         (bool allowed, (bool newAllowedRes, int allowedIdx) allowedStatus) = state.IsAllowedResource(planner.ResLocsIdx[i].ResType);
@@ -66,18 +56,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
                         }
                     }
                 }
-            }
-            //foreach (KeyValuePair<GoapStateKey, object> kvp in state.GetValues())
-            //{
-            //    if (kvp.Key.Type == GoapStateKeyTypeEnum.ResourceQty && kvp.Key.ResourceLocation.StoreId == dockedAtStoreId && allowedResourceTypes.Contains(kvp.Key.ResourceLocation.ResType))
-            //    {
-            //        actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 1L)));
-            //        if ((long)kvp.Value > 1) actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 2L)));
-            //        if ((long)kvp.Value > 3) actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, 4L)));
-            //        if ((long)kvp.Value > 4) actions.Add(new GoapLoadShipSpecificAction(kvp.Key.ResourceLocation.StoreId, shipStoreId, new ResourceQuantity(kvp.Key.ResourceLocation.ResType, (long)kvp.Value)));
-            //    }
-            //}
-            
+            }            
             return actions;
         }
 

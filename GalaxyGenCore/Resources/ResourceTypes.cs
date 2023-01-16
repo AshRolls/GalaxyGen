@@ -16,25 +16,11 @@ namespace GalaxyGenCore.Resources
         Gas_Xenon        
     }
 
-    public struct ResourceQuantity
-    {
-        public ResourceQuantity(ResourceTypeEnum type, long qty)
-        {
-            Type = type;
-            Quantity = qty;
-        }
+    public record struct ResourceQuantityLocation(ResourceTypeEnum Type, ulong StoreId, long Qty);
 
-        public ResourceTypeEnum Type { get; set; }
-        public long Quantity { get; set; }
-    }
+    public record struct ResourceQuantity(ResourceTypeEnum Type, long Quantity);
 
-    public class ResourceType
-    {
-        public ResourceTypeEnum Type { get; set; }
-        public String Name { get; set; }
-        public Double VolumePerUnit { get; set; }
-        public Int64 DefaultTicksToProduce { get; set; }
-    }
+    public record class ResourceType(ResourceTypeEnum Type, String Name, Double VolumePerUnit, Int64 DefaultTicksToProduce);
 
     public static class ResourceTypes
     {
@@ -67,14 +53,7 @@ namespace GalaxyGenCore.Resources
 
         private static ResourceType createResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)
         {
-            ResourceType res = new()
-            {
-                Type = type,
-                Name = name,
-                VolumePerUnit = volPerUnit,
-                DefaultTicksToProduce = defaultToProd
-            };
-            return res;
+            return new(type, name, volPerUnit, defaultToProd );            
         }
     }
 }

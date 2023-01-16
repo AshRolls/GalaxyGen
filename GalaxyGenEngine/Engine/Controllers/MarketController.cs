@@ -1,14 +1,9 @@
-﻿using Akka.Actor;
-using GalaxyGenEngine.Engine.Messages;
+﻿using GalaxyGenEngine.Engine.Messages;
 using GalaxyGenEngine.Model;
-using GalaxyGenCore.BluePrints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GalaxyGenCore.Resources;
-using System.Diagnostics;
 
 namespace GalaxyGenEngine.Engine.Controllers
 {
@@ -31,8 +26,9 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         private void setupMarket()
         {
+            _books = new();
             // add a book for every resource type
-            foreach (ResourceTypeEnum resT in Enum.GetValues(typeof(ResourceTypeEnum)))
+            foreach (ResourceTypeEnum resT in Enum.GetValues(typeof(ResourceTypeEnum)).Cast<ResourceTypeEnum>().Skip(1))
             {
                 _books.Add(resT, new Book(resT));
             }
@@ -96,18 +92,29 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         private bool PlaceSellOrder(MessageMarketBasic msg, ulong tick, ulong agentId)
         {
-            Book b = _books[msg.ResourceType];
-            MarketOrder mo = new MarketOrder();
-            mo.Buy = false;
-            mo.Quantity = msg.Quantity;
-            mo.LimitPrice = msg.LimitPrice;
-            mo.EntryTick = tick;
-            mo.OwnerId = agentId;
-            _model.Orders.Add(mo.MarketOrderId, mo);
+            // get resources from planet
+            if (_planetC.ResourceRequest(new ResourceQuantity(msg.ResourceType, msg.Quantity), agentId, tick))
+            {
+                Book b = _books[msg.ResourceType];
 
-            TreeOrder to = new TreeOrder(mo.MarketOrderId, false, mo.Quantity, mo.LimitPrice, mo.EntryTick);
-            addTreeOrderToBook(to, b);
+                // check if sell order is lower than highest buy order
+                long price = b.LowestSell == null ? 1000 : Math.Max(b.LowestSell.limitPrice - 1,1); // TODO remove and get agent to calc price
+                if (b.HighestBuy != null && msg.LimitPrice < b.HighestBuy.limitPrice) return false;
 
+                // create database object and add
+                MarketOrder mo = new MarketOrder();
+                mo.Buy = false;
+                mo.Quantity = msg.Quantity;
+                //mo.LimitPrice = msg.LimitPrice;
+                mo.LimitPrice = price;
+                mo.EntryTick = tick;
+                mo.OwnerId = agentId;
+                _model.Orders.Add(mo.MarketOrderId, mo);
+
+                // create tree object and add
+                TreeOrder to = new TreeOrder(mo.MarketOrderId, false, mo.Quantity, mo.LimitPrice, mo.EntryTick);
+                addTreeOrderToBook(to, b);
+            }
             return true;
         }
     }

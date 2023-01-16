@@ -24,17 +24,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         AllowedLoc5 = (1L << 12)
     }
 
-    public record GoapStateResLoc
-    {
-        public ResourceTypeEnum ResType;
-        public ulong StoreId; // TODO modify indexes later to Int32 if memory is getting bloated
-
-        public GoapStateResLoc(ResourceTypeEnum resType, ulong storeId)
-        {
-            ResType = resType;
-            StoreId = storeId;
-        }
-    }
+    public record GoapStateResLoc(ResourceTypeEnum ResType, ulong StoreId);    
 
     public class GoapStateBit
     {

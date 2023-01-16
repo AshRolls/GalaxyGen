@@ -112,24 +112,31 @@ namespace GalaxyGenEngine.Engine.Controllers
             return s.StoredResources[type];
         }
 
-        internal bool ReceiveResourceRequest(MessagePlanetRequestResources msg)
+        internal bool ResourcesRequest(List<ResourceQuantity> resourcesRequested, ulong agentId, ulong tick)
         {            
-            Store s = getStoreForOwner(msg.AgentId);
-            if (s == null) return false; // does not have resources
-            if (checkResourcesAvailable(msg.ResourcesRequested, s))
+            Store s = getStoreForOwner(agentId);
+            if (s == null) return false;
+            if (checkResourcesAvailable(resourcesRequested, s))
             {
-                // remove resources
-                foreach (ResourceQuantity resQ in msg.ResourcesRequested)
+                foreach (ResourceQuantity resQ in resourcesRequested)
                 {
-                    s.StoredResources[resQ.Type] -= resQ.Quantity;
-                    //_actorTextOutput.Tell("Store removed " + resQ.Type + " " + resQ.Quantity);
+                    if (!ResourceRequest(resQ, agentId, tick)) return false;
                 }
+            }
+            return true;
+        }
+
+        internal bool ResourceRequest(ResourceQuantity resQ, ulong agentId, ulong tick)
+        {
+            Store s = getStoreForOwner(agentId);
+            if (s == null) return false; 
+            if (checkResourceAvailable(resQ, s))
+            {
+                // remove resource
+                s.StoredResources[resQ.Type] -= resQ.Quantity;                                
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         internal bool ReceiveResourceLoadShipRequest(MessagePlanetCommand msg)
@@ -162,28 +169,27 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
         }
 
+        private bool checkResourceAvailable(ResourceQuantity resQ, Store s)
+        {
+            if (s.StoredResources.ContainsKey(resQ.Type))
+            {
+                Int64 storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
+                if (storedResQ < resQ.Quantity)
+                {
+                    return false;
+                }
+                else return true;
+            }
+            return false;
+        }
+
         private bool checkResourcesAvailable(List<ResourceQuantity> resourcesRequested, Store s)
         {
-            bool hasResources = true;
             foreach (ResourceQuantity resQ in resourcesRequested)
             {
-                if (s.StoredResources.ContainsKey(resQ.Type))
-                {
-                    Int64 storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
-                    if (storedResQ < resQ.Quantity)
-                    {
-                        hasResources = false;
-                        break;
-                    }
-                }
-                else
-                {
-                    hasResources = false;
-                    break;
-                }
+                if (!checkResourceAvailable(resQ, s)) return false;
             }
-
-            return hasResources;
+            return true;
         }    
 
         internal void UndockShip(UInt64 shipId)
