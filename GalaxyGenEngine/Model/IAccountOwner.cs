@@ -4,6 +4,6 @@ namespace GalaxyGenEngine.Model
 {
     public interface IAccountOwner
     {
-        Account Account { get; set; }
+        ulong AccountId { get; set; }
     }    
 }

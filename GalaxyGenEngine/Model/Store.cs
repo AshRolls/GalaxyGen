@@ -18,7 +18,7 @@ namespace GalaxyGenEngine.Model
         public String Name { get; set; }
 
         public Dictionary<ResourceTypeEnum,Int64> StoredResources { get; set; }
-        public Agent Owner { get; set; }
+        public ulong OwnerId { get; set; }
 
         public IStoreLocation Location { get; set; }
 

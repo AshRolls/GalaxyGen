@@ -168,14 +168,14 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public void RequestUnloadShip(ResourceQuantity resQ)
         {
-            _textOutput.Write(_state.AgentId, "Requesting Uunloading resources " + resQ.Type + ":" + resQ.Quantity);            
+            _textOutput.Write(_state.AgentId, "Requesting Unloading resources " + resQ.Type + ":" + resQ.Quantity);            
             _actorSolarSystem.Tell(new MessagePlanetCommand(new MessagePlanetRequestShipResources(PlanetCommandEnum.RequestUnloadShip, new List<ResourceQuantity>() { resQ }, _state.AgentId, _state.CurrentShipId), _curTick, _state.CurrentShipDockedPlanetScId));
         }     
         
         public void RequestCreateSellOrder(ResourceQuantity resQ)
         {
             _textOutput.Write(_state.AgentId, "Requesting create sell order " + resQ.Type + ":" + resQ.Quantity);
-            _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketBasic(MarketCommandEnum.PlaceSellOrder, resQ.Type, resQ.Quantity,0L), _state.AgentId, _curTick, _state.CurrentShipDockedPlanetScId));
+             _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.PlaceSellOrderLowest, resQ.Type, resQ.Quantity), _state.AgentId, _curTick, _state.CurrentShipDockedPlanetScId));
         }
 
         private void setNewDestination(UInt64 destinationScId)

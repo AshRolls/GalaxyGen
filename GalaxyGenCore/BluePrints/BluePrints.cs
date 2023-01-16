@@ -66,7 +66,6 @@ namespace GalaxyGenCore.BluePrints
             ResourceQuantity cons = new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 1L);            
             types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 100L);
 
-
             prod = new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 11L);
             cons = new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 1L);            
             types_Var[(int)BluePrintEnum.PlatinumToSpice] = createBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 100L);

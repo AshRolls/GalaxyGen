@@ -17,8 +17,7 @@ namespace GalaxyGenEngine.Model
         }
 
         public UInt64 SolarSystemId { get; set; }
-        public UInt64 StarChartId { get; set; }
-
+        public UInt64 StarChartId { get; set; }        
         public Dictionary<ulong, Planet> Planets { get; set; }
         public ICollection<Agent> Agents { get; set; }
         public Dictionary<ulong, Ship> Ships { get; set; }

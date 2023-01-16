@@ -7,20 +7,17 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Messages
 {
-    public class MessageMarketBasic : IMessageMarketCommandData
+    public class MessageMarketGeneral : IMessageMarketCommandData
     {
-        public MessageMarketBasic(MarketCommandEnum type, ResourceTypeEnum res, long qty, long limitPrice)
+        public MessageMarketGeneral(MarketCommandEnum type, ResourceTypeEnum res, long qty)
         {
             CommandType = type;
             ResourceType = res;
             Quantity = qty;
-            LimitPrice = limitPrice;
         }
 
         public MarketCommandEnum CommandType { get; private set; }
         public ResourceTypeEnum ResourceType { get; private set; }
         public long Quantity { get; private set; }
-        public long LimitPrice { get; private set; }
-
     }
 }

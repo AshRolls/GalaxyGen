@@ -1,5 +1,6 @@
 ﻿using GalaxyGenEngine.Framework;
 using System;
+using System.Collections.Generic;
 
 namespace GalaxyGenEngine.Model
 {
@@ -8,12 +9,13 @@ namespace GalaxyGenEngine.Model
         public Account()
         {
             AccountId = IdUtils.GetId();
+            Balances = new();
         }
 
         public UInt64 AccountId { get; set; }
 
         public IAccountOwner Owner { get; set; }        
 
-        public Int64 Balance { get; set; }
+        public Dictionary<ulong,long> Balances { get; private set; }
     }
 }

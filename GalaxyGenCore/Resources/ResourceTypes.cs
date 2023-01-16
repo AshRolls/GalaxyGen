@@ -47,8 +47,9 @@ namespace GalaxyGenCore.Resources
         public static void InitialiseResourceTypes()
         {
             // TODO Json ify ?
-            ResourceTypes.Types[(int)ResourceTypeEnum.Exotic_Spice] = createResource(ResourceTypeEnum.Exotic_Spice, "Spice", 10, 5);
-            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Platinum] = createResource(ResourceTypeEnum.Metal_Platinum, "Platinum", 0.5, 25);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Exotic_Spice] = createResource(ResourceTypeEnum.Exotic_Spice, "Spice", 1, 5);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Platinum] = createResource(ResourceTypeEnum.Metal_Platinum, "Platinum", 3, 25);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Uranium] = createResource(ResourceTypeEnum.Metal_Uranium, "Uranium", 2, 15);
         }
 
         private static ResourceType createResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)

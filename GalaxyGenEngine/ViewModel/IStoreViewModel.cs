@@ -14,7 +14,6 @@ namespace GalaxyGenEngine.ViewModel
     {
         Store Model { get; set; }
         string Name { get; set; }
-        Agent Owner { get; set; }
         ObservableCollection<IResourceQuantityViewModel> StoredResources { get; }
     }
 

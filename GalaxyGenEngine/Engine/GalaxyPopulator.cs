@@ -11,25 +11,29 @@ namespace GalaxyGenEngine.Engine
     public class GalaxyPopulator : IGalaxyPopulator
     {
         const int NUMBER_OF_AGENTS = 100;
-
+        private Galaxy _gal;
         public Galaxy GetFullGalaxy()
         {
-            Galaxy gal = this.getNewGalaxy();
-            gal.MaxId = 100;
+            _gal = this.getNewGalaxy();
+            _gal.MaxId = 100;
+            Currency currency = new Currency();
+            currency.Name = "GalStandard";
+            _gal.Currencies.Add(currency.CurrencyId, currency);
 
             ShipType shipT = new ShipType();
             shipT.Name = "Basic Ship";
             shipT.MaxCruisingSpeedKmH = 300000;
-            gal.ShipTypes.Add(shipT);
+            _gal.ShipTypes.Add(shipT);
                         
             foreach (ScSolarSystem chartSS in StarChart.SolarSystems.Values)
             {
                 SolarSystem ss = getNewSolarSystemFromStarChart(chartSS);
                 ss.StarChartId = StarChart.GetIdForObject(chartSS);
+                
 
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
-                    Planet p = this.getNewPlanet(chartP);
+                    Planet p = this.getNewPlanet(chartP, currency.CurrencyId);
                     p.StarChartId = StarChart.GetIdForObject(chartP);
                     ss.Planets.Add(p.StarChartId, p);
                     p.SolarSystem = ss;
@@ -37,18 +41,18 @@ namespace GalaxyGenEngine.Engine
                 
                 for (int i = 0; i < NUMBER_OF_AGENTS; i++)
                 {
-                    AddAgent(shipT, chartSS, i, ss);
+                    AddAgent(shipT, chartSS, i, ss, currency.CurrencyId);
                 }
 
-                gal.SolarSystems.Add(ss);
+                _gal.SolarSystems.Add(ss);
             }
 
-            return gal;
+            return _gal;
         }
 
-        private void AddAgent(ShipType shipT, ScSolarSystem chartSS, int name, SolarSystem ss)
+        private void AddAgent(ShipType shipT, ScSolarSystem chartSS, int name, SolarSystem ss, ulong seedCurrencyId)
         {
-            Agent ag = this.GetAgent("Agent " + name);
+            Agent ag = this.GetAgent("Agent " + name, seedCurrencyId);
             ss.Agents.Add(ag);
             ag.SolarSystem = ss;
 
@@ -123,7 +127,7 @@ namespace GalaxyGenEngine.Engine
             return gal;
         }
 
-        private Planet getNewPlanet(ScPlanet chartP)
+        private Planet getNewPlanet(ScPlanet chartP, ulong currencyId)
         {
             Planet plan = new Planet();
             plan.Name = chartP.Name;
@@ -134,6 +138,7 @@ namespace GalaxyGenEngine.Engine
             plan.Society = soc;
 
             Market m = new Market();
+            m.CurrencyId = currencyId;
             plan.Market = m;
             
             return plan;
@@ -142,7 +147,7 @@ namespace GalaxyGenEngine.Engine
         private void addNewStoreToPlanet(Planet p, Agent o, List<ResourceQuantity> resourcesToSeed)
         {
             Store s = new Store();
-            s.Owner = o;
+            s.OwnerId = o.AgentId;
             s.Location = p;
             p.Stores.Add(o.AgentId,s);
             o.Stores.Add(s);
@@ -153,21 +158,22 @@ namespace GalaxyGenEngine.Engine
             }                        
         }
 
-        private Agent GetAgent(String seedName)
+        private Agent GetAgent(String seedName, ulong seedCurrencyId)
         {
             Agent ag = new Agent();
             ag.Memory = "";
-            ag.Account = getAccount();
-            ag.Account.Owner = ag;            
+            ag.AccountId  = getAccount(ag, seedCurrencyId);                       
             ag.Name = seedName;
             return ag;
         }
 
-        private Account getAccount()
+        private ulong getAccount(Agent owner, ulong seedCurrencyId)
         {
             Account ac = new Account();
-            ac.Balance = 1000000;
-            return ac;
+            ac.Balances.Add(seedCurrencyId, 10000L);
+            ac.Owner = owner;
+            _gal.Accounts.Add(owner.AgentId, ac);
+            return ac.AccountId;
         }
 
         private Producer getNewProducer(String seedName, BluePrintEnum bpType)
@@ -184,7 +190,7 @@ namespace GalaxyGenEngine.Engine
         private void addNewCargoStoreToShip(Ship ship, Agent o)
         {
             Store s = new Store();
-            s.Owner = o;
+            s.OwnerId = o.AgentId;
             s.Location = ship;
             ship.Stores.Add(o.AgentId,s);           
             o.Stores.Add(s);

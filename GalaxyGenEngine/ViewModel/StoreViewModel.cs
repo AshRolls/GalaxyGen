@@ -35,7 +35,6 @@ namespace GalaxyGenEngine.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
-            Owner = model_Var.Owner;
 
             //foreach (ResourceQuantity resQ in model_Var.StoredResources) // TODO large inefficiencies with this method. Maybe better just to have storeVM add model objects directly?
             //{
@@ -63,24 +62,6 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-        public Agent Owner
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Owner;
-                else
-                    return null;
-            }
-            set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.Owner = value;
-                    OnPropertyChanged("Owner");
-                }
-            }
-        }
 
         private ObservableCollection<IResourceQuantityViewModel> storedResources_Var = new ObservableCollection<IResourceQuantityViewModel>();
         public ObservableCollection<IResourceQuantityViewModel> StoredResources

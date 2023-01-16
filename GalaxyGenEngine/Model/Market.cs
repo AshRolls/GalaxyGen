@@ -10,8 +10,10 @@ namespace GalaxyGenEngine.Model
             Orders = new Dictionary<ulong, MarketOrder>();            
         }
 
-        public Int64 MarketId { get; set; }
+        public ulong MarketId { get; private set; }
 
-        public Dictionary<ulong, MarketOrder> Orders { get; set; }
+        public ulong CurrencyId { get; set; }
+
+        public Dictionary<ulong, MarketOrder> Orders { get; private set; }
     }
 }

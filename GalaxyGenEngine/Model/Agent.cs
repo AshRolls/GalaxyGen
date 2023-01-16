@@ -42,6 +42,6 @@ namespace GalaxyGenEngine.Model
 
         public String Memory { get; set; }
 
-        public Account Account { get; set; }
+        public ulong AccountId { get; set; }
     }
 }

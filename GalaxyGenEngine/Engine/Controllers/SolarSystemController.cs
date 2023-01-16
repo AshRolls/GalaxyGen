@@ -184,5 +184,17 @@ namespace GalaxyGenEngine.Engine.Controllers
         {
             _parentActor.SendMessageToAgent(agentId, msg);
         }
+
+        internal bool CurrencyRequest(ulong currencyId, long qty, ulong agentId, ulong tick)
+        {
+            if (!(_model.Galaxy.Accounts[agentId].Balances[currencyId] >= qty)) return false;
+            _model.Galaxy.Accounts[agentId].Balances[currencyId] -= qty;
+            return true;
+        }
+
+        internal void AddCurrency(ulong currencyId, long qty, ulong agentId)
+        {
+            _model.Galaxy.Accounts[agentId].Balances[currencyId] += qty;
+        }
     }
 }

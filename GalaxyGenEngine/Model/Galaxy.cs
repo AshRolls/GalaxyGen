@@ -12,6 +12,8 @@ namespace GalaxyGenEngine.Model
         {
             SolarSystems = new HashSet<SolarSystem>();
             ShipTypes = new HashSet<ShipType>();
+            Accounts = new();
+            Currencies = new();
             GalaxyId = IdUtils.GetId();
         }
 
@@ -25,6 +27,8 @@ namespace GalaxyGenEngine.Model
 
         public ICollection<SolarSystem> SolarSystems { get; set; }
         public ICollection<ShipType> ShipTypes { get; set; }
+        public Dictionary<ulong, Account> Accounts { get; set; }
+        public Dictionary<ulong, Currency> Currencies { get; set; }
 
         [JsonIgnore]
         public UInt64 TicksPerSecond { get; set; }

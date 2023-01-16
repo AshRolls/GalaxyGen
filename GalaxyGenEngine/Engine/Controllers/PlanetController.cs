@@ -63,24 +63,30 @@ namespace GalaxyGenEngine.Engine.Controllers
             foreach (ProducerController pc in _producerCs)
             {
                 pc.Tick(tick);
-            }            
+            }
         }
 
         internal void ReceiveProducedResource(MessageProducedResources mpr)
         {
-            Store s = getOrCreateStoreForOwner(mpr.Owner);
-            addResourceQuantityToStore(s, mpr.Resources);
+            Store s = getOrCreateStoreForOwner(mpr.Owner.AgentId);
+            addResourcesQuantityToStore(s, mpr.Resources);
         }
 
-        private Store getOrCreateStoreForOwner(Agent owner)
+        internal void ReceiveMarketResource(ResourceTypeEnum resType, long quantity, ulong ownerId)
+        {            
+            Store s = getOrCreateStoreForOwner(ownerId);
+            addResourceQuantityToStore(s, new ResourceQuantity(resType, quantity));
+        }
+
+        private Store getOrCreateStoreForOwner(ulong ownerId)
         {
-            Store s = getStoreForOwner(owner.AgentId);
+            Store s = getStoreForOwner(ownerId);
             if (s == null)
             {
                 s = new Store();
                 s.Location = _model;
-                s.Owner = owner;
-                _model.Stores.Add(owner.AgentId, s);
+                s.OwnerId = ownerId;
+                _model.Stores.Add(ownerId, s);
             }
             return s;
         }
@@ -90,20 +96,24 @@ namespace GalaxyGenEngine.Engine.Controllers
             return _model.Stores[ownerId];
         }
 
-        private void addResourceQuantityToStore(Store s, List<ResourceQuantity> resources)
+        private void addResourcesQuantityToStore(Store s, List<ResourceQuantity> resources)
         {
             foreach (ResourceQuantity resQ in resources)
             {
-                if (s.StoredResources.ContainsKey(resQ.Type))
-                {
-                    s.StoredResources[resQ.Type] += resQ.Quantity;
-                }
-                else
-                {
-                    s.StoredResources.Add(resQ.Type, resQ.Quantity);
-                }
-
+                addResourceQuantityToStore(s, resQ);
                 //_actorTextOutput.Tell("Store added " + resQ.Type + " " + resQ.Quantity);
+            }
+        }
+
+        private void addResourceQuantityToStore(Store s, ResourceQuantity resQ)
+        {
+            if (s.StoredResources.ContainsKey(resQ.Type))
+            {
+                s.StoredResources[resQ.Type] += resQ.Quantity;
+            }
+            else
+            {
+                s.StoredResources.Add(resQ.Type, resQ.Quantity);
             }
         }
 
@@ -159,7 +169,7 @@ namespace GalaxyGenEngine.Engine.Controllers
                     // remove resources
                     sourceStore.StoredResources[resQ.Type] -= resQ.Quantity;
                     // add to ship store
-                    addResourceQuantityToStore(destStore, new List<ResourceQuantity>() { resQ });
+                    addResourcesQuantityToStore(destStore, new List<ResourceQuantity>() { resQ });
                 }
                 return true;
             }

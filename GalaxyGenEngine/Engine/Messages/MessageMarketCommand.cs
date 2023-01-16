@@ -10,12 +10,14 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public enum MarketCommandEnum
     {
-        GetBuyOrders,               
-        PlaceBuyOrder,
-        FulfilBuyOrder,
-        GetSellOrders,
-        PlaceSellOrder,
-        FulfilSellOrder
+        PlaceSellOrderLowest,
+        PlaceSellOrderSpecific,
+        SellToHighestBuy,
+        BuyFromLowestSell,
+        PlaceBuyOrderHighest,
+        PlaceBuyOrderSpecific,
+        GetBuyOrders,                               
+        GetSellOrders               
     }
 
     public class MessageMarketCommand : Message
