@@ -67,6 +67,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
         }
 
+        // TODO move this into ShipController
         internal void ReceiveCommandForShip(MessageShipCommand msg)
         {           
             ShipController sc = _shipCs[msg.ShipId];

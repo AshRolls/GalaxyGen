@@ -17,4 +17,8 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Engine\Market\" />
+  </ItemGroup>
+
 </Project>

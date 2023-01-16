@@ -19,9 +19,10 @@ namespace GalaxyGenEngine.Engine.Controllers
         private Planet _model;
         private SolarSystemController _solarSystemC;
         private HashSet<ProducerController> _producerCs;
+        private MarketController _marketController;
         private TextOutputController _textOutput;
         private ScPlanet _scPlanet;
-        private Double _orbitHours;
+        private double _orbitHours;
         private ulong _curTick;
 
         public PlanetController(Planet p, SolarSystemController ssc, TextOutputController textOutput)
@@ -40,8 +41,7 @@ namespace GalaxyGenEngine.Engine.Controllers
                 _producerCs.Add(pc);
             }
 
-            // TODO create a controller for market.
-
+            _marketController = new MarketController(p.Market, this, _solarSystemC, textOutput);
         }
 
         public void Tick(MessageTick tick)
@@ -200,7 +200,7 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal void ReceiveCommandForMarket(MessageMarketCommand msg)
         {
-            throw new NotImplementedException();
+            _marketController.receiveMarketCommand(msg);
         }
 
         internal void ReceiveCommandForPlanet(MessagePlanetCommand msg)

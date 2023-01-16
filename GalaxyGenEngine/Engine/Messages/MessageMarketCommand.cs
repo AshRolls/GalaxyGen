@@ -20,14 +20,17 @@ namespace GalaxyGenEngine.Engine.Messages
 
     public class MessageMarketCommand : Message
     {
-        public MessageMarketCommand(IMessageMarketCommandData cmd, UInt64 tickSent, UInt64 planetScId)
+        public MessageMarketCommand(IMessageMarketCommandData cmd, UInt64 agentId, UInt64 tickSent, UInt64 planetScId)
         {
             Command = cmd;
             TickSent = tickSent;
+            AgentId = agentId;
             PlanetScId = planetScId;
         }
 
         public IMessageMarketCommandData Command { get; private set; }
+        public UInt64 AgentId { get; private set; }
         public UInt64 PlanetScId { get; private set; }
+
     }
 }

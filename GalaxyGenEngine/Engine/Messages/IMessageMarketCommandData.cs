@@ -8,8 +8,6 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public interface IMessageMarketCommandData
     {
-        MarketCommandEnum CommandType { get; set; }
-        Int64 TargetId { get; set; }
-        Int64 Quantity { get; set; }
+        MarketCommandEnum CommandType { get; }
     }
 }

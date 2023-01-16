@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GalaxyGenCore.Resources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,18 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageMarketBasic : IMessageMarketCommandData
     {
-        public MessageMarketBasic(MarketCommandEnum type, Int64 targetId, Int64 quantity)
+        public MessageMarketBasic(MarketCommandEnum type, ResourceTypeEnum res, long qty, long limitPrice)
         {
             CommandType = type;
+            ResourceType = res;
+            Quantity = qty;
+            LimitPrice = limitPrice;
         }
 
-        public MarketCommandEnum CommandType { get; set; }
-        public Int64 TargetId { get; set; }
-        public Int64 Quantity { get; set; }
+        public MarketCommandEnum CommandType { get; private set; }
+        public ResourceTypeEnum ResourceType { get; private set; }
+        public long Quantity { get; private set; }
+        public long LimitPrice { get; private set; }
 
     }
 }

@@ -13,8 +13,7 @@ namespace GalaxyGenCore.Resources
         Metal_Platinum,
         Metal_Aluminium,
         Metal_Uranium,
-        Gas_Xenon
-        
+        Gas_Xenon        
     }
 
     public struct ResourceQuantity

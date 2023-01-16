@@ -7,11 +7,11 @@ namespace GalaxyGenEngine.Model
     {
         public Market() 
         { 
-            Orders = new Dictionary<long, MarketOrder>();            
+            Orders = new Dictionary<ulong, MarketOrder>();            
         }
 
         public Int64 MarketId { get; set; }
 
-        public Dictionary<long, MarketOrder> Orders { get; set; }
+        public Dictionary<ulong, MarketOrder> Orders { get; set; }
     }
 }

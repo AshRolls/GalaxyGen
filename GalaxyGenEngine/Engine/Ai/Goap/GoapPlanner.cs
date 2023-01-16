@@ -79,8 +79,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
             Dictionary<GoapStateBit, float> visited = new();                                    
                         
-            const int MAX_NODES = 500000;
-            const float MAX_COST = 30;            
+            const int MAX_NODES = 10000;
+            const float MAX_COST = 10;            
             int iterations = 0;
             int visitedHits = 0;
             float cost = 0;
