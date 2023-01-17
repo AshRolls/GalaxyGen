@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Akka.Routing;
+using GalaxyGenCore.Resources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,10 +12,12 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
     {
         public AgentDefaultMemory()
         {
-            MarketLastCheckedTick = new Dictionary<UInt64, UInt64>();  // key = planetscid, value = tick
+            MarketLastCheckedTick = new();  // key = planetscid, value = tick
+            StoppedProducers = new();
         }
 
         public UInt64 CurrentDestinationScId { get; set; }
-        public Dictionary<UInt64,UInt64> MarketLastCheckedTick { get; set; }
+        public Dictionary<ulong, ulong> MarketLastCheckedTick { get; set; }       
+        public Dictionary<ulong, (ulong planetScId, List<ResourceQuantity> resQs)> StoppedProducers { get; set; }
     }
 }

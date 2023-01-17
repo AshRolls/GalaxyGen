@@ -5,7 +5,10 @@ namespace GalaxyGenEngine.Engine.Messages
     public enum AgentCommandEnum
     {
         ShipCommandFailed,
-        PlanetCommandFailed
+        PlanetCommandFailed,
+        MarketCommandFailed,
+        ProducerStartedProducing,
+        ProducerStoppedProducing        
     }
 
     public class MessageAgentCommand : Message

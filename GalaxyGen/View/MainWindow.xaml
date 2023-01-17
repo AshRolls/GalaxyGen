@@ -68,8 +68,7 @@
 
             <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="5" Margin="10">
                 <Button Command="{Binding RunMaxEngineCommand}" Content="RUN MAX" />
-                <Button Command="{Binding RunEngineThrottledCommand}" Content="RUN THROTTLE" />
-                <Button Command="{Binding RunEngineCommand}" Content="RUN" />
+                <Button Command="{Binding RunEngineThrottledCommand}" Content="RUN" />
                 <Button Command="{Binding RunEngineSingleTickCommand}" Content="TICK" />
                 <Button Command="{Binding StopEngineCommand}" Content="STOP" />
                 <Grid>

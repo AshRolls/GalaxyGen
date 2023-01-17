@@ -28,8 +28,7 @@ namespace GalaxyGenEngine.Engine
             foreach (ScSolarSystem chartSS in StarChart.SolarSystems.Values)
             {
                 SolarSystem ss = getNewSolarSystemFromStarChart(chartSS);
-                ss.StarChartId = StarChart.GetIdForObject(chartSS);
-                
+                ss.StarChartId = StarChart.GetIdForObject(chartSS);                
 
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
@@ -98,8 +97,8 @@ namespace GalaxyGenEngine.Engine
         private void addMetalProducerToPlanet(Agent ag, Planet p)
         {
             Producer prod = this.getNewProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-            prod.Owner = ag;
-            prod.Planet = p;
+            prod.OwnerId = ag.AgentId;
+            prod.PlanetScId = p.StarChartId;
             ag.Producers.Add(prod);
             p.Producers.Add(prod);
         }
@@ -107,8 +106,8 @@ namespace GalaxyGenEngine.Engine
         private void addSpiceProducerToPlanet(Agent ag, Planet p)
         {           
             Producer prod = this.getNewProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-            prod.Owner = ag;
-            prod.Planet = p;
+            prod.OwnerId = ag.AgentId;
+            prod.PlanetScId = p.StarChartId;
             ag.Producers.Add(prod);
             p.Producers.Add(prod);
         }
@@ -116,6 +115,7 @@ namespace GalaxyGenEngine.Engine
         private SolarSystem getNewSolarSystemFromStarChart(ScSolarSystem chartSS)
         {
             SolarSystem ss = new SolarSystem();
+            ss.Galaxy = _gal;
             ss.Name = chartSS.Name;           
             return ss;
         }

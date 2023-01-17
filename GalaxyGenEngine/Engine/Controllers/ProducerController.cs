@@ -14,12 +14,14 @@ namespace GalaxyGenEngine.Engine.Controllers
     {
         private Producer _model;
         private BluePrint _bp;
+        private SolarSystemController _solarSystemC;
         private PlanetController _planetC;
-        private TextOutputController _textOutput;
+        private TextOutputController _textOutput;        
 
-        public ProducerController(Producer p, PlanetController pc, TextOutputController textOutput)
+        public ProducerController(Producer p, SolarSystemController ssc, PlanetController pc, TextOutputController textOutput)
         {
             _model = p;
+            _solarSystemC = ssc;
             _planetC = pc;
             _textOutput = textOutput;
             _bp = BluePrints.GetBluePrint(p.BluePrintType);            
@@ -41,17 +43,16 @@ namespace GalaxyGenEngine.Engine.Controllers
         {
             if (_model.TickForNextProduction <= tick.Tick)
             {
-                if (_model.Owner != null)
-                {
-                    MessageProducedResources mpr = new MessageProducedResources(_bp.Produces, _model.Owner);
-                    _planetC.ReceiveProducedResource(mpr);                    
-                    _model.Producing = false;
+                      
+                _planetC.ReceiveProducedResource(_bp.Produces, _model.OwnerId);                    
+                _model.Producing = false;
+                _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStoppedProducing, _bp.Consumes, _model.ProducerId, _model.PlanetScId), tick.Tick));
 
-                    //foreach (ResourceQuantity resQ in _bp.Produces)
-                    //{
-                    //    _actorTextOutput.Tell(_model.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
-                    //}
-                }
+                //foreach (ResourceQuantity resQ in _bp.Produces)
+                //{
+                //    _actorTextOutput.Tell(_model.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                //}
+
 
                 if (_model.AutoResumeProduction)
                 {
@@ -66,11 +67,12 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         private void requestResources(MessageTick tick)
         {            
-            if (_planetC.ResourcesRequest(_bp.Consumes, _model.Owner.AgentId, tick.Tick))
+            if (_planetC.ResourcesRequest(_bp.Consumes, _model.OwnerId, tick.Tick))
             {
                 _model.TickForNextProduction = tick.Tick + _bp.BaseTicks;
                 _model.Producing = true;
                 _model.ProduceNThenStop--;
+                _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStartedProducing, null, _model.ProducerId, _model.PlanetScId), tick.Tick));
             }
             else
             {

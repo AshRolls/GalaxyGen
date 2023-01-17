@@ -2,12 +2,9 @@
 using GalaxyGenEngine.Engine.Controllers;
 using GalaxyGenEngine.Engine.Messages;
 using GalaxyGenEngine.Model;
-using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 
 namespace GalaxyGenEngine.Engine
@@ -64,7 +61,7 @@ namespace GalaxyGenEngine.Engine
 
         private void setupTimers()
         {
-            _secondTimer = new Timer(1000);
+            _secondTimer = new Timer(5000);
             _secondTimer.Elapsed += secondTimer_Elapsed;
             _msTimer = new Timer(5);
             _msTimer.Elapsed += msTimer_Elapsed;
@@ -84,7 +81,7 @@ namespace GalaxyGenEngine.Engine
 
         private void secondTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            _state.TicksPerSecond = _state.CurrentTick - _ticksAtTimerStart;
+            _state.TicksPerSecond = (_state.CurrentTick - _ticksAtTimerStart) / 5;
             _ticksAtTimerStart = _state.CurrentTick;
         }
 

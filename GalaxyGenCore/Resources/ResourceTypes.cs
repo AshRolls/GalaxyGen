@@ -29,7 +29,7 @@ namespace GalaxyGenCore.Resources
         {
             get
             {
-                types_Var ??= new ResourceType[Enum.GetNames(typeof(ResourceTypeEnum)).Length]; // initialise to size of enum
+                types_Var ??= new ResourceType[Enum.GetNames(typeof(ResourceTypeEnum)).Length - 1]; // initialise to size of enum
                 return types_Var;
             }
             set
@@ -47,9 +47,11 @@ namespace GalaxyGenCore.Resources
         public static void InitialiseResourceTypes()
         {
             // TODO Json ify ?
-            ResourceTypes.Types[(int)ResourceTypeEnum.Exotic_Spice] = createResource(ResourceTypeEnum.Exotic_Spice, "Spice", 1, 5);
-            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Platinum] = createResource(ResourceTypeEnum.Metal_Platinum, "Platinum", 3, 25);
-            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Uranium] = createResource(ResourceTypeEnum.Metal_Uranium, "Uranium", 2, 15);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Exotic_Spice - 1] = createResource(ResourceTypeEnum.Exotic_Spice, "Spice", 1, 5);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Platinum - 1] = createResource(ResourceTypeEnum.Metal_Platinum, "Platinum", 3, 25);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Uranium - 1] = createResource(ResourceTypeEnum.Metal_Uranium, "Uranium", 2, 15);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Aluminium - 1] = createResource(ResourceTypeEnum.Metal_Aluminium, "Aluminium", 4, 20);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Gas_Xenon - 1] = createResource(ResourceTypeEnum.Gas_Xenon, "Xenon", 20, 5);
         }
 
         private static ResourceType createResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)

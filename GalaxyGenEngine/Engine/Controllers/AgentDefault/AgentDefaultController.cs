@@ -44,15 +44,38 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         {
             switch (msg.Command.CommandType)
             {
-                case AgentCommandEnum.ShipCommandFailed:
-                    _textOutput.Write(_state.AgentId, "Plan Failed (Ship)");
+                case AgentCommandEnum.ShipCommandFailed:                    
+                    _textOutput.Write(_state.AgentId, "Plan Failed (Ship Command)");
                     _goapAgent.ResetPlan();
                     break;
                 case AgentCommandEnum.PlanetCommandFailed:
-                    _textOutput.Write(_state.AgentId, "Plan Failed (Planet)");
+                    _textOutput.Write(_state.AgentId, "Plan Failed (Planet Command)");
                     _goapAgent.ResetPlan();
                     break;
+                case AgentCommandEnum.MarketCommandFailed:
+                    _textOutput.Write(_state.AgentId, "Plan Failed (Market Command)");
+                    _goapAgent.ResetPlan();
+                    break;
+                case AgentCommandEnum.ProducerStartedProducing:
+                    receiveProducerStarted(msg);
+                    break;
+                case AgentCommandEnum.ProducerStoppedProducing:
+                    receiveProducerStopped(msg);
+                    break;
+
             }
+        }
+
+        private void receiveProducerStarted(MessageAgentCommand msg)
+        {
+            MessageAgentProducerCommand mapc = (MessageAgentProducerCommand)msg.Command;
+            if (!_memory.StoppedProducers.ContainsKey(mapc.ProducerId)) _memory.StoppedProducers.Remove(mapc.ProducerId);
+        }
+
+        private void receiveProducerStopped(MessageAgentCommand msg)
+        {
+            MessageAgentProducerCommand mapc = (MessageAgentProducerCommand)msg.Command;
+            if (!_memory.StoppedProducers.ContainsKey(mapc.ProducerId)) _memory.StoppedProducers.Add(mapc.ProducerId, (mapc.PlanetScId, mapc.ResQs));
         }
         //private object pilotingCruisingShip(MessageTick tick)
         //{
@@ -178,6 +201,12 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
              _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.PlaceSellOrderLowest, resQ.Type, resQ.Quantity), _state.AgentId, _curTick, _state.CurrentShipDockedPlanetScId));
         }
 
+        public void RequestCreateBuyOrder(ResourceQuantity resQ)
+        {
+            _textOutput.Write(_state.AgentId, "Requesting create buy order " + resQ.Type + ":" + resQ.Quantity);
+            _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.PlaceBuyOrderHighest, resQ.Type, resQ.Quantity), _state.AgentId, _curTick, _state.CurrentShipDockedPlanetScId));
+        }
+
         private void setNewDestination(UInt64 destinationScId)
         {
             _memory.CurrentDestinationScId = destinationScId;
@@ -236,7 +265,57 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return worldData;
         }
 
-        public (GoapStateBit,GoapStateBit) CreateGoalState(GoapPlanner _planner)
+        public (GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner _planner)
+        {
+            //return createRandomDestAndQtyGoal(_planner);
+            return createFillProducersGoal(_planner);
+        }
+        private (GoapStateBit, GoapStateBit) createFillProducersGoal(GoapPlanner _planner)
+        {
+            GoapStateBit goalState = new();
+            GoapStateBit allowedState = new();
+
+            GoapStateBitFlagsEnum[] AllowedResArray = new GoapStateBitFlagsEnum[5];
+            AllowedResArray[0] = GoapStateBitFlagsEnum.AllowedRes1;
+            AllowedResArray[1] = GoapStateBitFlagsEnum.AllowedRes2;
+            AllowedResArray[2] = GoapStateBitFlagsEnum.AllowedRes3;
+            AllowedResArray[3] = GoapStateBitFlagsEnum.AllowedRes4;
+            AllowedResArray[4] = GoapStateBitFlagsEnum.AllowedRes5;
+
+            if (_memory.StoppedProducers.Count > 0)
+            {
+                (ulong dest, List<ResourceQuantity> resQs) = _memory.StoppedProducers.Values.ToArray()[RandomUtils.Random(_memory.StoppedProducers.Count)];
+                goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
+                goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
+                allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedLoc1, dest);
+                for (int i = 0; i < resQs.Count; i++)
+                {
+                    allowedState.SetFlagAndVal(AllowedResArray[i], (ulong)resQs[i].Type);
+                }
+
+                ulong storeId;
+                if (_state.TryGetPlanetStoreId(dest, out storeId))
+                {                    
+                    for (int i = 0; i < resQs.Count; i++)
+                    {
+                        GoapStateResLoc resLoc = new(resQs[i].Type, storeId);
+                        if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
+                        {
+                            goalState.SetResFlagAndVal(idx, resQs[i].Quantity);
+                        }
+                        else
+                        {
+                            goalState.SetResFlagAndVal(_planner.AddResourceLocation(resLoc), resQs[i].Quantity);
+                        }
+                    }
+                }
+            }
+
+            _textOutput.Write(_state.AgentId, "Goal State created ");
+            return (goalState, allowedState);
+        }
+
+        private (GoapStateBit, GoapStateBit) createRandomDestAndQtyGoal(GoapPlanner _planner)
         {
             GoapStateBit goalState = new();
             GoapStateBit allowedState = new();
@@ -245,19 +324,19 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
             allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedLoc1, dest);
-            
+
             ResourceTypeEnum res = RandomUtils.Random(2) == 1 ? ResourceTypeEnum.Metal_Platinum : ResourceTypeEnum.Exotic_Spice;
-            allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedRes1, (ulong)res);           
+            allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedRes1, (ulong)res);
 
             ulong storeId;
             if (_state.TryGetPlanetStoreId(dest, out storeId))
             {
                 //long qty = (long)RandomUtils.Random(1) + 1L;
                 //long qty = _state.PlanetResourceQuantity(dest, res) + (long)RandomUtils.Random(1) + 1L;
-                long qty = _state.PlanetResourceQuantity(dest, res);
+                long qty = _state.PlanetResourceQuantity(dest, res) + 1L;
 
-                //GoapStateResLoc resLoc = new(res, storeId); // planet store
-                GoapStateResLoc resLoc = new(res, dest); // market
+                GoapStateResLoc resLoc = new(res, storeId); // planet store
+                //GoapStateResLoc resLoc = new(res, dest); // market
                 if (_planner.TryGetResourceLocationIdx(resLoc, out int idx))
                 {
                     goalState.SetResFlagAndVal(idx, qty);
@@ -270,7 +349,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
             //_textOutput.Write(_state.AgentId, "Goal created " + GoapStateBit.PrettyPrint(goalState));
             _textOutput.Write(_state.AgentId, "Goal State created ");
-            return (goalState,allowedState);
+            return (goalState, allowedState);
         }
 
         private UInt64 chooseRandomDestinationScId()
@@ -365,26 +444,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                 new GoapUndockAction(),
                 new GoapDockGenericAction(_state.PlanetsInSolarSystemScIds.ToHashSet()),
                 new GoapLoadShipGenericAction(),
-                new GoapUnloadShipGenericAction(),
-                new GoapCreateSellOrderGenericAction()
+                new GoapUnloadShipGenericAction()
             };
-
-            //foreach (Int64 destScId in _state.PlanetsInSolarSystemScIds)
-            //{
-            //    actionsList.Add(new GoapUndockAction(destScId));
-            //    actionsList.Add(new GoapDockAction(destScId));
-            //    long storeId;
-            //    if (_state.TryGetPlanetStoreId(destScId, out storeId))
-            //    {
-            //        List<ResourceQuantity> resources = _state.PlanetResources(destScId);
-            //        foreach (ResourceQuantity resQ in resources)
-            //        {
-            //            //if (resQ.Quantity > 0) actionsList.Add(new GoapLoadShipAction(destScId, storeId, _state.CurrentShipStoreId, resQ));
-            //            if (resQ.Quantity > 0) actionsList.Add(new GoapLoadShipAction(destScId, storeId, _state.CurrentShipStoreId, new ResourceQuantity(resQ.Type,1L)));
-            //        }
-            //    }
-            //}
-
             return actionsList;
         }
 

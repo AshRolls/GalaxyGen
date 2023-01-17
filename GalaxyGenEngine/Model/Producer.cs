@@ -21,8 +21,8 @@ namespace GalaxyGenEngine.Model
         public bool AutoResumeProduction { get; set; }
         public int ProduceNThenStop { get; set; }
 
-        public virtual Agent Owner { get; set; }
+        public ulong OwnerId { get; set; }
 
-        public virtual Planet Planet { get; set; }
+        public ulong PlanetScId { get; set; }
     }
 }

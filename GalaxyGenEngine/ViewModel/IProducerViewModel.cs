@@ -17,8 +17,7 @@ namespace GalaxyGenEngine.ViewModel
     {
         Producer Model { get; set; }
         string Name { get; set; }
-        Agent Owner { get; set; }
-        Planet Planet { get; set; }
+        ulong OwnerId { get; set; }
         BluePrintEnum BluePrintType { get; set; }
         UInt64 TickForNextProduction { get; set; }
         bool Producing { get; set; }

@@ -18,7 +18,7 @@ namespace GalaxyGenEngine.Engine.Controllers
     {
         private Planet _model;
         private SolarSystemController _solarSystemC;
-        private HashSet<ProducerController> _producerCs;
+        private Dictionary<UInt64, ProducerController> _producerCs;
         private MarketController _marketController;
         private TextOutputController _textOutput;
         private ScPlanet _scPlanet;
@@ -33,12 +33,12 @@ namespace GalaxyGenEngine.Engine.Controllers
             _scPlanet = StarChart.GetPlanet(_model.StarChartId);
             _orbitHours = _scPlanet.OrbitDays * (double)Globals.DAYS_TO_TICKS_FACTOR;
 
-            _producerCs = new HashSet<ProducerController>();
+            _producerCs = new();
             // create child controllers for each producer in planet
             foreach (Producer prod in p.Producers)
             {
-                ProducerController pc = new ProducerController(prod, this, textOutput);
-                _producerCs.Add(pc);
+                ProducerController pc = new ProducerController(prod, ssc, this, textOutput);
+                _producerCs.Add(prod.ProducerId, pc);
             }
 
             _marketController = new MarketController(p.Market, this, _solarSystemC, textOutput);
@@ -60,16 +60,16 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         private void updateProducers(MessageTick tick)
         {
-            foreach (ProducerController pc in _producerCs)
+            foreach (ProducerController pc in _producerCs.Values)
             {
                 pc.Tick(tick);
             }
         }
 
-        internal void ReceiveProducedResource(MessageProducedResources mpr)
+        internal void ReceiveProducedResource(List<ResourceQuantity> resQs, ulong ownerId)
         {
-            Store s = getOrCreateStoreForOwner(mpr.Owner.AgentId);
-            addResourcesQuantityToStore(s, mpr.Resources);
+            Store s = getOrCreateStoreForOwner(ownerId);
+            addResourcesQuantityToStore(s, resQs);
         }
 
         internal void ReceiveMarketResource(ResourceTypeEnum resType, long quantity, ulong ownerId)
@@ -124,15 +124,15 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal bool ResourcesRequest(List<ResourceQuantity> resourcesRequested, ulong agentId, ulong tick)
         {            
-            Store s = getStoreForOwner(agentId);
-            if (s == null) return false;
-            if (checkResourcesAvailable(resourcesRequested, s))
+            Store s = getStoreForOwner(agentId);            
+            if (s != null && checkResourcesAvailable(resourcesRequested, s))
             {
                 foreach (ResourceQuantity resQ in resourcesRequested)
                 {
-                    if (!ResourceRequest(resQ, agentId, tick)) return false;
+                    s.StoredResources[resQ.Type] -= resQ.Quantity;
                 }
             }
+            else return false;            
             return true;
         }
 

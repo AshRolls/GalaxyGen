@@ -47,7 +47,6 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-
         public IEnumerable<UInt64> PlanetsInSolarSystemScIds
         {
             get

@@ -91,7 +91,16 @@ namespace GalaxyGenEngine.Engine.Controllers
                     success = placeSellOrderSpecific((MessageMarketSpecificPrice)msg.Command, msg.TickSent, msg.AgentId);
                     break;
                 case MarketCommandEnum.SellToHighestBuy:
-                    success = placeBuy((MessageMarketGeneral)msg.Command, msg.TickSent, msg.AgentId);
+                    success = placeFillOrder((MessageMarketGeneral)msg.Command, false, msg.TickSent, msg.AgentId);
+                    break;
+                case MarketCommandEnum.PlaceBuyOrderHighest:
+                    success = placeBuyOrderGeneral((MessageMarketGeneral)msg.Command, msg.TickSent, msg.AgentId);
+                    break;
+                case MarketCommandEnum.PlaceBuyOrderSpecific:
+                    success = placeBuyOrderSpecific((MessageMarketSpecificPrice)msg.Command, msg.TickSent, msg.AgentId);
+                    break;
+                case MarketCommandEnum.BuyFromLowestSell:
+                    success = placeFillOrder((MessageMarketGeneral)msg.Command, true, msg.TickSent, msg.AgentId);
                     break;
                 default:
                     success = false;
@@ -99,17 +108,14 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
             if (!success)
             {
-                _solarSystemC.SendMessageToAgent(msg.AgentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.ShipCommandFailed), msg.TickSent));
+                _solarSystemC.SendMessageToAgent(msg.AgentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.MarketCommandFailed), msg.TickSent));
             }
         }
 
-        private bool placeBuy(MessageMarketGeneral msg, ulong tick, ulong agentId)
+        private bool placeFillOrder(MessageMarketGeneral msg, bool buyOrder, ulong tick, ulong agentId)
         {
             Book b = _books[msg.ResourceType];
-
-            if (b.HighestBuy != null) return false;
-            throw new NotImplementedException();
-            return false;
+            return fillOrder(b, buyOrder, msg.ResourceType, msg.Quantity, agentId, 0, tick, false);
         }
 
         private bool placeSellOrderGeneral(MessageMarketGeneral msg, ulong tick, ulong agentId)
@@ -135,7 +141,31 @@ namespace GalaxyGenEngine.Engine.Controllers
             return createOrder(b, false, resType, quantity, price, tick, agentId);
         }
 
-        private bool fillOrder(Book b, bool buyOrder, ResourceTypeEnum resType, long quantity, ulong agentId, long price, ulong tick)
+        private bool placeBuyOrderGeneral(MessageMarketGeneral msg, ulong tick, ulong agentId)
+        {
+            Book b = _books[msg.ResourceType];
+            long price = b.HighestBuy == null ? 999 : b.HighestBuy.limitPrice + 1;
+            return placeBuyOrder(b, msg.ResourceType, msg.Quantity, agentId, tick, price);
+        }
+
+        private bool placeBuyOrderSpecific(MessageMarketSpecificPrice msg, ulong tick, ulong agentId)
+        {
+            Book b = _books[msg.ResourceType];
+            return placeBuyOrder(b, msg.ResourceType, msg.Quantity, agentId, tick, msg.LimitPrice);
+        }
+
+        private bool placeBuyOrder(Book b, ResourceTypeEnum resType, long quantity, ulong agentId, ulong tick, long price)
+        {
+            // check if sell order is lower than highest buy order                
+            if (b.LowestSell != null && b.LowestSell.limitPrice <= price)
+            {
+                fillOrder(b, true, resType, quantity, agentId, price, tick);
+            }
+            return createOrder(b, true, resType, quantity, price, tick, agentId);
+        }
+
+
+        private bool fillOrder(Book b, bool buyOrder, ResourceTypeEnum resType, long quantity, ulong agentId, long price, ulong tick, bool checkPrice = true)
         {
             // work out cost by traversing through orders until quantity is filled.
             long totalCost = 0;
@@ -155,19 +185,19 @@ namespace GalaxyGenEngine.Engine.Controllers
                 }
                 else if (buyOrder)
                 {
-                    if (orders.TrySuccessor(curOrder.parentLimit.limitPrice, out C5.KeyValuePair<long, TreeLimit> kvp))
-                    {
+                    if (orders.TrySuccessor(curOrder.parentLimit.limitPrice, out C5.KeyValuePair<long, TreeLimit> kvp) && checkPrice && kvp.Value.limitPrice <= price)
+                    {                                                
                         toFill.Add(curOrder);
                         curOrder = kvp.Value.head;
                     }
-                    else return false; // not enough depth in book to fill order
+                    else return false; // not enough depth in book to fill order or price exceeded
                 }
-                else if (orders.TryPredecessor(curOrder.parentLimit.limitPrice, out C5.KeyValuePair<long, TreeLimit> kvp))
+                else if (orders.TryPredecessor(curOrder.parentLimit.limitPrice, out C5.KeyValuePair<long, TreeLimit> kvp) && checkPrice && kvp.Value.limitPrice >= price)
                 {
                     toFill.Add(curOrder);
                     curOrder = kvp.Value.head;
                 }
-                else return false; // not enough depth in book to fill order
+                else return false; // not enough depth in book to fill order or price exceeded
             }
             totalCost += qty * curOrder.limitPrice;
 

@@ -14,5 +14,6 @@ namespace GalaxyGenEngine.Engine.Controllers
         void RequestLoadShip(ResourceQuantity resQ);
         void RequestUnloadShip(ResourceQuantity resQ);
         void RequestCreateSellOrder(ResourceQuantity resQ);
+        void RequestCreateBuyOrder(ResourceQuantity resQ);
     }
 }

@@ -1,16 +1,9 @@
-﻿using Akka.Actor;
-using GalaxyGenEngine.Engine;
-using GalaxyGenEngine.Framework;
-using GalaxyGenEngine.Model;
-using GalaxyGenCore;
+﻿using GalaxyGenEngine.Model;
 using GalaxyGenCore.BluePrints;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace GalaxyGenEngine.ViewModel
 {
@@ -31,8 +24,7 @@ namespace GalaxyGenEngine.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
-            Owner = model_Var.Owner;
-            Planet = model_Var.Planet;           
+            OwnerId = model_Var.OwnerId;                       
         }
 
         public String Name
@@ -52,43 +44,25 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-        public Agent Owner
+        public ulong OwnerId
         {
             get
             {
                 if (model_Var != null)
-                    return model_Var.Owner;
+                    return model_Var.OwnerId;
                 else
-                    return null;
-            }
-            set
-            {
+                    return 0;
+            }    
+            set {
                 if (model_Var != null)
                 {
-                    model_Var.Owner = value;
-                    OnPropertyChanged("Owner");
+                    model_Var.OwnerId = value;
+                    OnPropertyChanged("OwnerId");
                 }
             }
         }
 
-        public Planet Planet
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Planet;
-                else
-                    return null;
-            }
-            set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.Planet = value;
-                    OnPropertyChanged("Planet");
-                }
-            }
-        }
+      
 
         public BluePrintEnum BluePrintType
         {

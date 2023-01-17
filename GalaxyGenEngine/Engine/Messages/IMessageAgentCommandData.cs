@@ -8,6 +8,6 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public interface IMessageAgentCommandData
     {
-        AgentCommandEnum CommandType { get; set; }
+        AgentCommandEnum CommandType { get; }
     }
 }
