@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalaxyGenCore.BluePrints
 {
@@ -62,13 +59,13 @@ namespace GalaxyGenCore.BluePrints
         public static void InitialiseBluePrints()
         {
             // pull these in from XML eventually
-            ResourceQuantity prod = new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 11L);            
-            ResourceQuantity cons = new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 1L);            
-            types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 100L);
+            ResourceQuantity prod = new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 2L);            
+            ResourceQuantity cons = new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 2L);            
+            types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 1333L);
 
-            prod = new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 11L);
-            cons = new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 1L);            
-            types_Var[(int)BluePrintEnum.PlatinumToSpice] = createBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 100L);
+            prod = new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 2L);
+            cons = new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 2L);            
+            types_Var[(int)BluePrintEnum.PlatinumToSpice] = createBluePrint(BluePrintEnum.PlatinumToSpice, "Platinum to Spice", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 2000L);
         }
 
         private static BluePrint createBluePrint(BluePrintEnum type, String name, List<ResourceQuantity> produces, List<ResourceQuantity> consumes, ulong baseTicks)

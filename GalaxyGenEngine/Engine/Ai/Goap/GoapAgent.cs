@@ -63,24 +63,31 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
                 _planner.Reset();
                 // get the world state and the goal we want to plan for
                 GoapStateBit worldState = _dataProvider.GetWorldState(_planner);
-                (GoapStateBit goal, GoapStateBit allowed) = _dataProvider.CreateGoalState(_planner);
-                loadActions();
-
-                // Plan
-                (Queue<GoapAction> plan, (int,long) stats) = _planner.PlanBit(this, _availableActions, worldState, goal, allowed);
-                if (plan != null)
+                (bool goalSuccess, GoapStateBit goal, GoapStateBit allowed) = _dataProvider.CreateGoalState(_planner);
+                if (goalSuccess)
                 {
-                    // we have a plan
-                    _currentActions = plan;
-                    _dataProvider.PlanFound(goal, plan, stats);
+                    loadActions();
+                    // Plan
+                    (Queue<GoapAction> plan, (int, long) stats) = _planner.PlanBit(this, _availableActions, worldState, goal, allowed);
+                    if (plan != null)
+                    {
+                        // we have a plan
+                        _currentActions = plan;
+                        _dataProvider.PlanFound(goal, plan, stats);
 
-                    fsm.PopState(); // move to PerformAction state
-                    fsm.PushState(_performActionState);
+                        fsm.PopState(); // move to PerformAction state
+                        fsm.PushState(_performActionState);
+                    }
+                    else
+                    {
+                        // we couldn't get a plan
+                        _dataProvider.PlanFailed(goal);
+                        fsm.PopState(); // move back to IdleAction state
+                        fsm.PushState(_idleState);
+                    }
                 }
                 else
                 {
-                    // we couldn't get a plan
-                    _dataProvider.PlanFailed(goal);
                     fsm.PopState(); // move back to IdleAction state
                     fsm.PushState(_idleState);
                 }

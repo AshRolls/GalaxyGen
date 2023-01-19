@@ -16,8 +16,10 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultController : IAgentController, IGoap, IAgentActions
     {        
-        private const UInt64 DAYS_BEFORE_MARKET_RECHECK = 7;
-        private ulong _curTick;
+        private const UInt64 DAYS_BEFORE_MARKET_RECHECK = 10;
+        private const UInt64 TICKS_BEFORE_GOAP_RECHECK = 100;
+        private ulong _curTick;        
+        private ulong _nextCheckGoapTick;
         private AgentControllerState _state;
         private IActorRef _actorSolarSystem;
         private TextOutputController _textOutput;
@@ -37,7 +39,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         public void Tick(MessageTick tick)
         {
             _curTick = tick.Tick;
-            _goapAgent.Tick();
+            if (_curTick >= _nextCheckGoapTick) _goapAgent.Tick();
         }
 
         public void ReceiveCommand(MessageAgentCommand msg)
@@ -69,7 +71,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         private void receiveProducerStarted(MessageAgentCommand msg)
         {
             MessageAgentProducerCommand mapc = (MessageAgentProducerCommand)msg.Command;
-            if (!_memory.StoppedProducers.ContainsKey(mapc.ProducerId)) _memory.StoppedProducers.Remove(mapc.ProducerId);
+            if (_memory.StoppedProducers.ContainsKey(mapc.ProducerId)) _memory.StoppedProducers.Remove(mapc.ProducerId);
         }
 
         private void receiveProducerStopped(MessageAgentCommand msg)
@@ -265,23 +267,23 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return worldData;
         }
 
-        public (GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner _planner)
+        public (bool, GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner _planner)
         {
-            //return createRandomDestAndQtyGoal(_planner);
-            return createFillProducersGoal(_planner);
-        }
-        private (GoapStateBit, GoapStateBit) createFillProducersGoal(GoapPlanner _planner)
-        {
+            //(GoapStateBit g, GoapStateBit a) = createRandomDestAndQtyGoal(_planner);
+            //return (true, g, a);
             GoapStateBit goalState = new();
             GoapStateBit allowedState = new();
+            if (createFillProducersGoal(_planner, goalState, allowedState))
+            {
+                return (true, goalState, allowedState);
+            }
+            // do something else here
+            _textOutput.Write(_state.AgentId, "No goal, waiting... ");
+            return (false, goalState, allowedState);
 
-            GoapStateBitFlagsEnum[] AllowedResArray = new GoapStateBitFlagsEnum[5];
-            AllowedResArray[0] = GoapStateBitFlagsEnum.AllowedRes1;
-            AllowedResArray[1] = GoapStateBitFlagsEnum.AllowedRes2;
-            AllowedResArray[2] = GoapStateBitFlagsEnum.AllowedRes3;
-            AllowedResArray[3] = GoapStateBitFlagsEnum.AllowedRes4;
-            AllowedResArray[4] = GoapStateBitFlagsEnum.AllowedRes5;
-
+        }
+        private bool createFillProducersGoal(GoapPlanner _planner, GoapStateBit goalState, GoapStateBit allowedState)
+        {                    
             if (_memory.StoppedProducers.Count > 0)
             {
                 (ulong dest, List<ResourceQuantity> resQs) = _memory.StoppedProducers.Values.ToArray()[RandomUtils.Random(_memory.StoppedProducers.Count)];
@@ -290,7 +292,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                 allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedLoc1, dest);
                 for (int i = 0; i < resQs.Count; i++)
                 {
-                    allowedState.SetFlagAndVal(AllowedResArray[i], (ulong)resQs[i].Type);
+                    allowedState.SetFlagAndVal(GoapStateBit.AllowedResArray[i], (ulong)resQs[i].Type);
                 }
 
                 ulong storeId;
@@ -309,10 +311,14 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                         }
                     }
                 }
+                _textOutput.Write(_state.AgentId, "Goal State created ");
             }
-
-            _textOutput.Write(_state.AgentId, "Goal State created ");
-            return (goalState, allowedState);
+            else
+            {
+                _nextCheckGoapTick = _curTick + TICKS_BEFORE_GOAP_RECHECK;
+                return false;                
+            }            
+            return true;
         }
 
         private (GoapStateBit, GoapStateBit) createRandomDestAndQtyGoal(GoapPlanner _planner)
@@ -321,7 +327,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             GoapStateBit allowedState = new();
 
             ulong dest = chooseRandomDestinationScId();
-            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            //goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
             allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedLoc1, dest);
 
@@ -331,9 +337,10 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             ulong storeId;
             if (_state.TryGetPlanetStoreId(dest, out storeId))
             {
-                //long qty = (long)RandomUtils.Random(1) + 1L;
-                //long qty = _state.PlanetResourceQuantity(dest, res) + (long)RandomUtils.Random(1) + 1L;
-                long qty = _state.PlanetResourceQuantity(dest, res) + 1L;
+                long qty = (long)RandomUtils.Random(2) + 1L;
+                //long qty = 1L;
+                //long qty = _state.PlanetResourceQuantity(dest, res) + (long)RandomUtils.Random(2);
+                //long qty = _state.PlanetResourceQuantity(dest, res) + 1L;
 
                 GoapStateResLoc resLoc = new(res, storeId); // planet store
                 //GoapStateResLoc resLoc = new(res, dest); // market
@@ -366,6 +373,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         public void PlanFailed(GoapStateBit failedGoal)
         {
+            _nextCheckGoapTick = _curTick + TICKS_BEFORE_GOAP_RECHECK;
             _textOutput.Write(_state.AgentId, "Plan failed "); //+ GoapStateBit.PrettyPrint(failedGoal);
         }
 

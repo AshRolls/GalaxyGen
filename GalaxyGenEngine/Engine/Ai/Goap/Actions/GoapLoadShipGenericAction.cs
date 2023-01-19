@@ -35,13 +35,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             GoapAgent ag = (GoapAgent)agent;
             List<GoapAction> actions = new();
             ulong dockedAt = state.GetVal(GoapStateBitFlagsEnum.DockedAt);
-            if (ag.StateProvider.TryGetPlanetStoreId(dockedAt, out ulong dockedAtStoreId))
+            if (ag.StateProvider.TryGetPlanetStoreId(dockedAt, out ulong dockedAtStoreId))  // TODO optimise, we could pre-cache these rather than lookup each time
             {
                 ulong shipStoreId = state.GetVal(GoapStateBitFlagsEnum.ShipStoreId);
 
                 for (int i = 0; i < planner.ResLocs.Count; i++)
                 {
-                    if (state.HasResFlag(i) && planner.ResLocsIdx[i].StoreId == dockedAtStoreId)
+                    if (state.HasResFlag(i) && planner.ResLocsIdx[i].StoreId == dockedAtStoreId)                    
                     {
                         (bool allowed, (bool newAllowedRes, int allowedIdx) allowedStatus) = state.IsAllowedResource(planner.ResLocsIdx[i].ResType);
                         if (allowed)

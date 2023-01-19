@@ -29,7 +29,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
          * Give the planner a new goal so it can figure out 
          * the actions needed to fulfill it.
          */
-        (GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner planner);
+        (bool, GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner planner);
 
         /**
          * No sequence of actions could be found for the supplied goal.

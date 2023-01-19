@@ -18,6 +18,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public static readonly int FLAGS_COUNT = Enum.GetNames(typeof(GoapStateBitFlagsEnum)).Length - 1;
         public static readonly int ALLOWED_RES_MAX = 2;
         public static readonly int ALLOWED_DEST_MAX = 3;
+        public const int MAX_NODES = 100000;
+        public const float MAX_COST = 10;
 
         public GoapPlanner() 
         {
@@ -79,8 +81,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
 
             Dictionary<GoapStateBit, float> visited = new();                                    
                         
-            const int MAX_NODES = 10000;
-            const float MAX_COST = 10;            
+                      
             int iterations = 0;
             int visitedHits = 0;
             float cost = 0;
@@ -127,7 +128,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public int AddResourceLocation(GoapStateResLoc resLoc)
         {
             ResLocs.Add(resLoc, _nextResLocIdx);
-            ResLocsIdx[_nextResLocIdx] = resLoc;
+            ResLocsIdx[_nextResLocIdx] = resLoc;            
             return _nextResLocIdx++;
         }
 

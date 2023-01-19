@@ -39,7 +39,7 @@ namespace GalaxyGenEngine.ViewModel
         {
             OnPropertyChanged("Name");
             OnPropertyChanged("CurrentTick");
-            OnPropertyChanged("TicksPerSecond");
+            OnPropertyChanged("TicksPerSecond");            
         }
 
         public IActorRef Actor

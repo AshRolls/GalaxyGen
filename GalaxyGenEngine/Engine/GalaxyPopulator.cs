@@ -5,12 +5,13 @@ using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using GalaxyGenCore.BluePrints;
 using GalaxyGenCore.Resources;
+using GalaxyGenEngine.Framework;
 
 namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
-        const int NUMBER_OF_AGENTS = 100;
+        const int NUMBER_OF_AGENTS = 1;
         private Galaxy _gal;
         public Galaxy GetFullGalaxy()
         {
@@ -54,29 +55,37 @@ namespace GalaxyGenEngine.Engine
             Agent ag = this.GetAgent("Agent " + name, seedCurrencyId);
             ss.Agents.Add(ag);
             ag.SolarSystem = ss;
-
-            int j = 0;
-            List<ResourceQuantity> resQs = new() { new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 10), 
-                                               new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 10),
+            
+            List<ResourceQuantity> resQs = new() { new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 2), 
+                                               new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 2),
                                                new ResourceQuantity(ResourceTypeEnum.Metal_Uranium, 10),
                                                new ResourceQuantity(ResourceTypeEnum.Gas_Xenon, 10),
                                                new ResourceQuantity(ResourceTypeEnum.Metal_Aluminium, 10)
             };
+
+            int j = 0;
             foreach (Planet p in ss.Planets.Values)
             {
+                //int j = RandomUtils.Random(4);
+                j++;
                 if (j % 2 == 0)
                 {
                     addMetalProducerToPlanet(ag, p);
                     addNewStoreToPlanet(p, ag, resQs);
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() {  new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 1)});
                     //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
-                else
+                else if (j % 2 == 1)
                 {
                     addSpiceProducerToPlanet(ag, p);
                     addNewStoreToPlanet(p, ag, resQs);
                     //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
                 }
-                j++;
+                else
+                {
+                    addNewStoreToPlanet(p, ag, resQs);
+                }
             }                            
 
             Ship s = this.getNewShip("Ship" + name, shipT);
@@ -196,8 +205,8 @@ namespace GalaxyGenEngine.Engine
             o.Stores.Add(s);
 
             // seed with basic starter resource
-            s.StoredResources.Add(ResourceTypeEnum.Exotic_Spice, 2);
-            s.StoredResources.Add(ResourceTypeEnum.Metal_Platinum, 2);
+            //s.StoredResources.Add(ResourceTypeEnum.Exotic_Spice, 1);
+            //s.StoredResources.Add(ResourceTypeEnum.Metal_Platinum, 1);
         }
 
         private Ship getNewShip(String seedName, ShipType shipT)

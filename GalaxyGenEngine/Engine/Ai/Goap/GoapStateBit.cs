@@ -44,7 +44,13 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         public ulong AllowedLoc5;
 
         public ulong ResFlags;
-        public Long64Array ResQtys = new Long64Array();     
+        public Long64Array ResQtys = new Long64Array();
+
+        public readonly static GoapStateBitFlagsEnum[] AllowedResArray = new[] { GoapStateBitFlagsEnum.AllowedRes1,
+                                                                                GoapStateBitFlagsEnum.AllowedRes2,
+                                                                                GoapStateBitFlagsEnum.AllowedRes3,
+                                                                                GoapStateBitFlagsEnum.AllowedRes4,
+                                                                                GoapStateBitFlagsEnum.AllowedRes5 };
        
         public ulong GetVal(GoapStateBitFlagsEnum bit)
         {
@@ -127,6 +133,7 @@ namespace GalaxyGenEngine.Engine.Ai.Goap
         {
             Flags &= ~(ulong)bit;
         }
+
         // Works with "None" as well
         public bool HasFlag(GoapStateBitFlagsEnum bit)
         {
