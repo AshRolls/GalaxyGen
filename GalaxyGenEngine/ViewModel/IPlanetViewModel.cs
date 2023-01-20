@@ -16,7 +16,7 @@ namespace GalaxyGenEngine.ViewModel
         Planet Model { get; set; }
         String Name { get; }
         //Int64 Population { get; set; }
-        Vector2 Position { get; }        
+        Vector2 Position { get; }
         ISocietyViewModel Society { get; }
         IMarketViewModel Market { get; }
         ObservableCollection<IProducerViewModel> Producers { get; }

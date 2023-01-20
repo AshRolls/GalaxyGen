@@ -44,7 +44,7 @@ namespace GalaxyGenEngine.Engine
             _subscribedActorAgents = new Dictionary<UInt64, IActorRef>();
             _numberOfIncompleteAg = ss.Agents.Count();
             
-            //if (ss.Agents.Count > 0) _textOutput.AddAllowedId(ss.Agents.First().AgentId); 
+            if (ss.Agents.Count > 0) _textOutput.SetAllowedId(ss.Agents.First().AgentId); 
 
             foreach (Agent agent in ss.Agents)
             {
