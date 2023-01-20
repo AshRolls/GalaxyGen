@@ -25,6 +25,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         private TextOutputController _textOutput;
         private AgentDefaultMemory _memory;
         private GoapAgent _goapAgent;
+        private delegate bool AgentGoal(GoapPlanner _planner, GoapStateBit goalState, GoapStateBit allowedState);
+        private AgentGoal _curGoal;
 
         public AgentDefaultController(AgentControllerState state, IActorRef actorSolarSystem, TextOutputController textOutput)
         {
@@ -34,13 +36,15 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             _goapAgent = new GoapAgent(this, this, _state);
             _memory = JsonConvert.DeserializeObject<AgentDefaultMemory>(_state.Memory);
             if (_memory == null) _memory = new AgentDefaultMemory();
+            _curGoal = createFillProducersGoal;
         }
 
         public void Tick(MessageTick tick)
         {
-            _curTick = tick.Tick;
+            _curTick = tick.Tick;            
+            //checkMarkets();
             if (_curTick >= _nextCheckGoapTick) _goapAgent.Tick();
-        }
+        }       
 
         public void ReceiveCommand(MessageAgentCommand msg)
         {
@@ -121,30 +125,28 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         //}
 
         // scan the local and system markets and decide if there is an order we want to place / fulfil
-        private void checkMarkets(MessageTick tick)
+        private void checkMarkets()
         {
-            // do i need to place a place / fulfil a market order, if so leave ship to interact with market            
-            UInt64 curPlanet = _state.CurrentShipDockedPlanetScId;
-            if (checkOverMinimumTimeForMarketCheck(curPlanet, tick.Tick))
+            // do i need to place a place / fulfil a market order, if so leave ship to interact with market                        
+            if (_state.CurrentShipIsDocked)
             {
-                checkMarketPlaceOrder(tick);
+                if (checkOverMinimumTimeForMarketCheck(_state.CurrentShipDockedPlanetScId)) checkMarketResourceNeeds();
             }
         }
 
-        private void checkMarketPlaceOrder(MessageTick tick)
+        private void checkMarketResourceNeeds()
         {
-            // TODO check stock and decide what we need (everywhere) and don't need (at this location)
+            if (_memory.StoppedProducers.Count > 0)
+            {
+                foreach ((ulong dest, List < ResourceQuantity > resQs) v in _memory.StoppedProducers.Values)
+                {
 
-
-            // get prices at current location for needs
-            // buy TODO buy any with reasonable price
-
-            // get prices at current location for dont needs
-            // sell TODO sell any at reasonable price
+                }                
+            }
         }
 
         // make sure we haven't recently scanned market
-        private bool checkOverMinimumTimeForMarketCheck(UInt64 planetScId, UInt64 tick)
+        private bool checkOverMinimumTimeForMarketCheck(UInt64 planetScId)
         {
             if (!_memory.MarketLastCheckedTick.ContainsKey(planetScId))
             {
@@ -153,7 +155,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             else
             {
                 UInt64 tickForMinNextMarketCheck = _memory.MarketLastCheckedTick[planetScId] + (DAYS_BEFORE_MARKET_RECHECK * Globals.DAYS_TO_TICKS_FACTOR);
-                return tick >= tickForMinNextMarketCheck;
+                return _curTick >= tickForMinNextMarketCheck;
             }
         }
 
@@ -267,13 +269,17 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return worldData;
         }
 
-        public (bool, GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner _planner)
+        private void setAgentGoal()
         {
-            //(GoapStateBit g, GoapStateBit a) = createRandomDestAndQtyGoal(_planner);
-            //return (true, g, a);
+            _curGoal = createFillProducersGoal;
+        }
+
+        public (bool, GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner _planner)
+        {            
+            setAgentGoal();
             GoapStateBit goalState = new();
             GoapStateBit allowedState = new();
-            if (createFillProducersGoal(_planner, goalState, allowedState))
+            if (_curGoal(_planner, goalState, allowedState))
             {
                 return (true, goalState, allowedState);
             }
@@ -321,11 +327,8 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             return true;
         }
 
-        private (GoapStateBit, GoapStateBit) createRandomDestAndQtyGoal(GoapPlanner _planner)
+        private bool createRandomDestAndQtyGoal(GoapPlanner _planner, GoapStateBit goalState, GoapStateBit allowedState)
         {
-            GoapStateBit goalState = new();
-            GoapStateBit allowedState = new();
-
             ulong dest = chooseRandomDestinationScId();
             //goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
             goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
@@ -356,7 +359,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
             //_textOutput.Write(_state.AgentId, "Goal created " + GoapStateBit.PrettyPrint(goalState));
             _textOutput.Write(_state.AgentId, "Goal State created ");
-            return (goalState, allowedState);
+            return true;
         }
 
         private UInt64 chooseRandomDestinationScId()

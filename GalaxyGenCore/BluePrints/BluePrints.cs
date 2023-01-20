@@ -59,7 +59,7 @@ namespace GalaxyGenCore.BluePrints
         public static void InitialiseBluePrints()
         {
             // pull these in from XML eventually
-            ResourceQuantity prod = new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 2L);            
+            ResourceQuantity prod = new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 3L);            
             ResourceQuantity cons = new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 2L);            
             types_Var[(int)BluePrintEnum.SpiceToPlatinum] = createBluePrint(BluePrintEnum.SpiceToPlatinum, "Spice To Platinum", new List<ResourceQuantity> { prod }, new List<ResourceQuantity> { cons }, 1333L);
 
