@@ -20,9 +20,8 @@ namespace GalaxyGenEngine.Model
         public UInt64 PlanetId { get; set; }
         public UInt64 StarChartId { get; set; }
         public TypeEnum GalType { get; set; }
-               
-        public Double PositionX { get; set; }
-        public Double PositionY { get; set; }
+
+        public Vector2 Position { get; set; }
 
         public Int64 Population { get; set; }
 

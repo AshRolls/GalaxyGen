@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Framework
 {    
@@ -11,16 +6,16 @@ namespace GalaxyGenEngine.Framework
     {
         // http://stackoverflow.com/a/12550458/771034
         // Length function is slow (sqrt!) Use approx 
-        public static PointD GetNewPointForShip(Double distance, Double aX, Double aY, Double bX, Double bY)
+        public static Vector2 GetNewPointForShip(Double distance, Double aX, Double aY, Double bX, Double bY)
         {
             Vector2 aV = new Vector2(aX, aY);
             Vector2 bV = new Vector2(bX, bY);
             Vector2 abV = aV - bV;
             double length = abV.Length;
-            if (length < distance) return new PointD(bX, bY); // don't overshoot
+            if (length < distance) return new Vector2(bX, bY); // don't overshoot
             abV /= length;
             abV *= distance;
-            return new PointD(abV.X + aX, abV.Y + aY);
+            return new Vector2(abV.X + aX, abV.Y + aY);
         }
 
         // Returns the length of the hypotenuse rounded to an integer, using

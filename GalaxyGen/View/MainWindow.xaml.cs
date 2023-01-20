@@ -9,6 +9,7 @@ using GalaxyGenEngine.Model;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Linq;
+using GalaxyGenEngine.Framework;
 
 namespace GalaxyGen
 {
@@ -24,7 +25,6 @@ namespace GalaxyGen
         public MainWindow()
         {
             InitializeComponent();
-
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -56,25 +56,22 @@ namespace GalaxyGen
             {
                 lock (_mvm.SelectedSolarSystemVm.Ships)
                 {
-                    (double, double)[] shipsArray = new (double, double)[_mvm.SelectedSolarSystemVm.Ships.Count];
+                    Vector2[] shipsArray = new Vector2[_mvm.SelectedSolarSystemVm.Ships.Count];
                     int i = 0;
                     foreach (IShipViewModel shipVm in _mvm.SelectedSolarSystemVm.Ships)
                     {
-                        shipsArray[i++] = (shipVm.PositionX, shipVm.PositionY);
+                        shipsArray[i++] = shipVm.Position;
                     }
                     RenderArray rA = new(0, shipsArray);
                     _visualiser.AddRenderArray(rA);
                 }                
-            }
-            if (_mvm.SelectedSolarSystemVm != null)
-            {
                 lock (_mvm.SelectedSolarSystemVm.Planets)
                 {
-                    (double, double)[] planetsArray = new (double, double)[_mvm.SelectedSolarSystemVm.Planets.Count];
+                    Vector2[] planetsArray = new Vector2[_mvm.SelectedSolarSystemVm.Planets.Count];
                     int i = 0;
                     foreach (IPlanetViewModel planetVm in _mvm.SelectedSolarSystemVm.Planets)
                     {
-                        planetsArray[i++] = (planetVm.PositionX, planetVm.PositionY);
+                        planetsArray[i++] = planetVm.Position;
                     }
                     RenderArray rA = new(1, planetsArray);
                     _visualiser.AddRenderArray(rA);

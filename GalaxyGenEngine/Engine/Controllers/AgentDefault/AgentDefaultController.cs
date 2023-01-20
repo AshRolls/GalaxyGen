@@ -39,11 +39,12 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             _curGoal = createFillProducersGoal;
         }
 
-        public void Tick(MessageTick tick)
+        public bool Tick(MessageTick tick)
         {
             _curTick = tick.Tick;            
             //checkMarkets();
             if (_curTick >= _nextCheckGoapTick) _goapAgent.Tick();
+            return true;
         }       
 
         public void ReceiveCommand(MessageAgentCommand msg)

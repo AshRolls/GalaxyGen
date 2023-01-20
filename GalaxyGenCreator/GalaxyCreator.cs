@@ -33,10 +33,10 @@ namespace GalaxyGenCreator
                     ScSolarSystem ss = new ScSolarSystem();
                     ss.Planets = new HashSet<ScPlanet>();
                     ss.Name = "SolarSystem" + i.ToString();
-                    ss.Planets.Add(getPlanet("P1", _rand.Next(100), _rand.Next(100)+100));
+                    ss.Planets.Add(getPlanet("P1", _rand.Next(100) + 10, _rand.Next(100)+100));
                     ss.Planets.Add(getPlanet("P2", _rand.Next(200) + 100, _rand.Next(100)+500));
                     ss.Planets.Add(getPlanet("P3", _rand.Next(200) + 300, _rand.Next(100)+1000));
-                    ss.Planets.Add(getPlanet("P4", _rand.Next(500) + 500, _rand.Next(100)+4000));
+                    ss.Planets.Add(getPlanet("P4", _rand.Next(500) + 500, _rand.Next(100)+5000));
                     gal.SolarSystems.Add(ss);
                 }
             }

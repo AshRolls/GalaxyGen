@@ -5,6 +5,7 @@ using Raylib_cs;
 using static Raylib_cs.Raylib;
 using static Raylib_cs.Color;
 using System.Collections.Generic;
+using GalaxyGenEngine.Framework;
 
 namespace GalaxyGen.Raylib
 {
@@ -23,9 +24,7 @@ namespace GalaxyGen.Raylib
         private RenderRectangle[] _planetRecs;
         private static readonly Color FULLRED = new Color(255, 0, 0, 255);
 
-
-        internal record RenderItem(byte Type, ulong Id, int X, int Y);
-        internal record RenderArray(byte Type, (double X, double Y)[] Positions);
+        internal record RenderArray(byte Type, Vector2[] Positions);
 
         internal record RenderRectangle(int X, int Y, int W, int H);
 

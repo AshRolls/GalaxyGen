@@ -1,12 +1,7 @@
-﻿using Akka.Actor;
+﻿using GalaxyGenEngine.Framework;
 using GalaxyGenEngine.Model;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.ViewModel
 {
@@ -14,8 +9,7 @@ namespace GalaxyGenEngine.ViewModel
     {
         Ship Model { get; set; }
         String Name { get; }
-        Double PositionX { get; }
-        Double PositionY { get; }
+        Vector2 Position { get; }
     }
 
     public interface IShipViewModelFactory

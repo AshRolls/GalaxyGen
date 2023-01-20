@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using GalaxyGenEngine.Framework;
 
 namespace GalaxyGenEngine.ViewModel
 {
@@ -45,25 +46,14 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-        public Double PositionX
+        public Vector2 Position
         {
             get
             {
                 if (model_Var != null)
-                    return model_Var.PositionX;
+                    return model_Var.Position;
                 else
-                    return 0;
-            }
-        }
-
-        public Double PositionY
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.PositionY;
-                else
-                    return 0;
+                    return new Vector2(0,0);
             }
         }
 

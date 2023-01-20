@@ -26,7 +26,7 @@ namespace GalaxyGenEngine.Engine
             IActorRef _actorTextOutput = _galaxyActorSystem.ActorOf(textOutputProps, "TextOutput");
             _textOutput = new TextOutputController(_actorTextOutput);
 
-            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_textOutput, state.Model);
+            Props teCoordinatorProps = Props.Create<ActorGalaxy>(_textOutput, state.Model);
             _actorTECoordinator = _galaxyActorSystem.ActorOf(teCoordinatorProps, "TECoordinator");
             
             engineInitialised = true;
