@@ -271,7 +271,9 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
         private void setAgentGoal()
         {
-            _curGoal = createFillProducersGoal;
+            //_curGoal = createFillProducersGoal;
+            //_curGoal = createRandomDestAndQtyGoal;
+            _curGoal = createRandomDestGoal;
         }
 
         public (bool, GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner _planner)
@@ -356,6 +358,18 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                     goalState.SetResFlagAndVal(_planner.AddResourceLocation(resLoc), qty);
                 }
             }
+
+            //_textOutput.Write(_state.AgentId, "Goal created " + GoapStateBit.PrettyPrint(goalState));
+            _textOutput.Write(_state.AgentId, "Goal State created ");
+            return true;
+        }
+
+        private bool createRandomDestGoal(GoapPlanner _planner, GoapStateBit goalState, GoapStateBit allowedState)
+        {
+            ulong dest = chooseRandomDestinationScId();
+            //goalState.SetFlagAndVal(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            goalState.SetFlagAndVal(GoapStateBitFlagsEnum.DockedAt, dest);
+            allowedState.SetFlagAndVal(GoapStateBitFlagsEnum.AllowedLoc1, dest);         
 
             //_textOutput.Write(_state.AgentId, "Goal created " + GoapStateBit.PrettyPrint(goalState));
             _textOutput.Write(_state.AgentId, "Goal State created ");

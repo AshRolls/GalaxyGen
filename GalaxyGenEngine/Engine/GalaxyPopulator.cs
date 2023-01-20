@@ -11,7 +11,7 @@ namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
-        const int NUMBER_OF_AGENTS = 1;
+        const int NUMBER_OF_AGENTS = 10000;
         private Galaxy _gal;
         public Galaxy GetFullGalaxy()
         {

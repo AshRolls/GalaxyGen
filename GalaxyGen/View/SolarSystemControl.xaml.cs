@@ -2,16 +2,17 @@
 using System.Windows;
 using System.Windows.Controls;
 
+
 namespace GalaxyGen
 {
     /// <summary>
     /// Interaction logic for SolarSystemControl.xaml
     /// </summary>
     public partial class SolarSystemControl : UserControl
-    {
+    {        
         public SolarSystemControl()
         {
-            InitializeComponent();
+            InitializeComponent();                     
         }
 
         public ISolarSystemViewModel SolarSystemVm

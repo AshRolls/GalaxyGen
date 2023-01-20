@@ -7,7 +7,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="800" d:DesignWidth="800"
              x:Name="uc">
-    <Grid x:Name="SolarSystemLayoutRoot">
+    <!--<Grid x:Name="SolarSystemLayoutRoot">
         <ItemsControl ItemsSource="{Binding ElementName=uc,Path=SolarSystemVm.Planets}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -58,5 +58,5 @@
         <Canvas>
             <Ellipse Fill="Yellow" Height="5" Width="5" Canvas.Top="398" Canvas.Left="398"/>
         </Canvas>
-    </Grid>
+    </Grid> -->
 </UserControl>
