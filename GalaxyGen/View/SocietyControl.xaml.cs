@@ -1,4 +1,4 @@
-﻿using GCEngine.ViewModel;
+﻿using GalaxyGenEngine.ViewModel;
 using System.Windows;
 using System.Windows.Controls;
 

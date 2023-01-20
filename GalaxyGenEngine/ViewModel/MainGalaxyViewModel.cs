@@ -1,6 +1,6 @@
-﻿using GCEngine.Engine;
-using GCEngine.Framework;
-using GCEngine.Model;
+﻿using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.BluePrints;
 using GalaxyGenCore.Resources;
 using GalaxyGenCore.StarChart;
@@ -9,8 +9,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
+using GalaxyGenEngine.Engine.Messages;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class MainGalaxyViewModel : IMainGalaxyViewModel
     {        
@@ -122,7 +123,7 @@ namespace GCEngine.ViewModel
 
         private void createSsVmFromSelectedScSS()
         {
-            Int64 scId = StarChart.GetIdForObject(selectedScSolarSystem_Var);
+            UInt64 scId = StarChart.GetIdForObject(selectedScSolarSystem_Var);
             SolarSystem ss = Galaxy.Model.SolarSystems.Where(x => x.StarChartId == scId).FirstOrDefault();
             if (ss != null)
             {
@@ -163,7 +164,7 @@ namespace GCEngine.ViewModel
 
         private void createPVmFromSelectedScP()
         {
-            Int64 pId = StarChart.GetIdForObject(selectedScPlanet_Var);
+            UInt64 pId = StarChart.GetIdForObject(selectedScPlanet_Var);
             Planet p = SelectedSolarSystemVm.Planets.Select(x => x.Model).Where(x => x.StarChartId == pId).FirstOrDefault();
             if (p != null)
             {
@@ -211,7 +212,6 @@ namespace GCEngine.ViewModel
             }
         }
 
-
         private RelayCommand runMaxEngineCommand;
         public ICommand RunMaxEngineCommand
         {
@@ -219,10 +219,24 @@ namespace GCEngine.ViewModel
             {
                 if (runMaxEngineCommand == null)
                 {
-                    runMaxEngineCommand = new RelayCommand(() => runEngine(true));
+                    runMaxEngineCommand = new RelayCommand(() => runEngine(EngineRunCommand.RunMax));
                     runMaxEngineCommand.IsEnabled = true;
                 }
                 return runMaxEngineCommand;
+            }
+        }
+
+        private RelayCommand runEngineThrottledCommand;
+        public ICommand RunEngineThrottledCommand
+        {
+            get
+            {
+                if (runEngineThrottledCommand == null)
+                {
+                    runEngineThrottledCommand = new RelayCommand(() => runEngine(EngineRunCommand.RunThrottled));
+                    runEngineThrottledCommand.IsEnabled = true;
+                }
+                return runEngineThrottledCommand;
             }
         }
 
@@ -233,16 +247,30 @@ namespace GCEngine.ViewModel
             {
                 if (runEngineCommand == null)
                 {
-                    runEngineCommand = new RelayCommand(() => runEngine(false));
+                    runEngineCommand = new RelayCommand(() => runEngine(EngineRunCommand.RunPulse));
                     runEngineCommand.IsEnabled = true;
                 }
                 return runEngineCommand; 
             }
         }
 
-        private void runEngine(bool maxRate)
+        private RelayCommand runEngineSingleTickCommand;
+        public ICommand RunEngineSingleTickCommand
+        {
+            get
+            {
+                if (runEngineSingleTickCommand == null)
+                {
+                    runEngineSingleTickCommand = new RelayCommand(() => runEngine(EngineRunCommand.SingleTick));
+                    runEngineSingleTickCommand.IsEnabled = true;
+                }
+                return runEngineSingleTickCommand;
+            }
+        }
+
+        private void runEngine(EngineRunCommand cmd)
         {            
-            _tickEngine.Run(maxRate);
+            _tickEngine.Run(cmd);
         }
 
         private RelayCommand stopEngineCommand;

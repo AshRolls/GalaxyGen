@@ -8,30 +8,19 @@ namespace GalaxyGenCore.Resources
 {
     public enum ResourceTypeEnum : ulong
     {
-        NotSet = 0,
-        Spice = 1,
-        Platinum = 2
+        NotSet,
+        Exotic_Spice,
+        Metal_Platinum,
+        Metal_Aluminium,
+        Metal_Uranium,
+        Gas_Xenon        
     }
 
-    public struct ResourceQuantity
-    {
-        public ResourceQuantity(ResourceTypeEnum type, UInt64 qty)
-        {
-            Type = type;
-            Quantity = qty;
-        }
+    public record struct ResourceQuantityLocation(ResourceTypeEnum Type, ulong StoreId, long Qty);
 
-        public ResourceTypeEnum Type { get; set; }
-        public UInt64 Quantity { get; set; }
-    }
+    public record struct ResourceQuantity(ResourceTypeEnum Type, long Quantity);
 
-    public class ResourceType
-    {
-        public ResourceTypeEnum Type { get; set; }
-        public String Name { get; set; }
-        public Double VolumePerUnit { get; set; }
-        public Int64 DefaultTicksToProduce { get; set; }
-    }
+    public record class ResourceType(ResourceTypeEnum Type, String Name, Double VolumePerUnit, Int64 DefaultTicksToProduce);
 
     public static class ResourceTypes
     {
@@ -40,7 +29,7 @@ namespace GalaxyGenCore.Resources
         {
             get
             {
-                if (types_Var == null) types_Var = new ResourceType[Enum.GetNames(typeof(ResourceTypeEnum)).Length]; // initialise to size of enum
+                types_Var ??= new ResourceType[Enum.GetNames(typeof(ResourceTypeEnum)).Length - 1]; // initialise to size of enum
                 return types_Var;
             }
             set
@@ -58,18 +47,16 @@ namespace GalaxyGenCore.Resources
         public static void InitialiseResourceTypes()
         {
             // TODO Json ify ?
-            ResourceTypes.Types[(int)ResourceTypeEnum.Spice] = createResource(ResourceTypeEnum.Spice, "Spice", 10, 5);
-            ResourceTypes.Types[(int)ResourceTypeEnum.Platinum] = createResource(ResourceTypeEnum.Platinum, "Platinum", 0.5, 25);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Exotic_Spice - 1] = createResource(ResourceTypeEnum.Exotic_Spice, "Spice", 1, 5);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Platinum - 1] = createResource(ResourceTypeEnum.Metal_Platinum, "Platinum", 3, 25);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Uranium - 1] = createResource(ResourceTypeEnum.Metal_Uranium, "Uranium", 2, 15);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Metal_Aluminium - 1] = createResource(ResourceTypeEnum.Metal_Aluminium, "Aluminium", 4, 20);
+            ResourceTypes.Types[(int)ResourceTypeEnum.Gas_Xenon - 1] = createResource(ResourceTypeEnum.Gas_Xenon, "Xenon", 20, 5);
         }
 
         private static ResourceType createResource(ResourceTypeEnum type, String name, double volPerUnit, Int64 defaultToProd)
         {
-            ResourceType res = new ResourceType();
-            res.Type = type;
-            res.Name = name;
-            res.VolumePerUnit = volPerUnit;
-            res.DefaultTicksToProduce = defaultToProd;
-            return res;
+            return new(type, name, volPerUnit, defaultToProd );            
         }
     }
 }

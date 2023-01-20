@@ -1,5 +1,5 @@
-﻿using GCEngine.Engine;
-using GCEngine.Model;
+﻿using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore;
 using GalaxyGenCore.Resources;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public interface IResourceTypeViewModel : INotifyPropertyChanged
     {

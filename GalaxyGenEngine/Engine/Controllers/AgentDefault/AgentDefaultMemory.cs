@@ -1,19 +1,23 @@
-﻿using System;
+﻿using Akka.Routing;
+using GalaxyGenCore.Resources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Controllers.AgentDefault
+namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 {
     public class AgentDefaultMemory
     {
         public AgentDefaultMemory()
         {
-            MarketLastCheckedTick = new Dictionary<Int64, Int64>();  // key = planetscid, value = tick
+            MarketLastCheckedTick = new();  // key = planetscid, value = tick
+            StoppedProducers = new();
         }
 
-        public Int64 CurrentDestinationScId { get; set; }
-        public Dictionary<Int64,Int64> MarketLastCheckedTick { get; set; }
+        public UInt64 CurrentDestinationScId { get; set; }
+        public Dictionary<ulong, ulong> MarketLastCheckedTick { get; set; }       
+        public Dictionary<ulong, (ulong planetScId, List<ResourceQuantity> resQs)> StoppedProducers { get; set; }
     }
 }

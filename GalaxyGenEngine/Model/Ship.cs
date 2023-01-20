@@ -1,8 +1,8 @@
-﻿using GCEngine.Framework;
+﻿using GalaxyGenEngine.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public enum ShipStateEnum
     {
@@ -19,10 +19,10 @@ namespace GCEngine.Model
             ShipId = IdUtils.GetId();
             GalType = TypeEnum.Ship;
             Agents = new List<Agent>();
-            Stores = new Dictionary<Int64, Store>();
+            Stores = new Dictionary<UInt64, Store>();
         }
 
-        public Int64 ShipId { get; set; }
+        public UInt64 ShipId { get; set; }
         public TypeEnum GalType { get; set; }
 
         public String Name { get; set; }
@@ -34,13 +34,13 @@ namespace GCEngine.Model
 
         public Agent Owner { get; set; }
         public Agent Pilot { get; set; }
-        public Dictionary<Int64, Store> Stores { get; set; }
+        public Dictionary<UInt64, Store> Stores { get; set; }
         public SolarSystem SolarSystem { get; set; }
         public Planet DockedPlanet { get; set; }
 
         public ICollection<Agent> Agents { get; set; }
 
-        public Int64 DestinationScId { get; set; }
+        public UInt64 DestinationScId { get; set; }
 
         public bool AutopilotActive { get; set; }
     }

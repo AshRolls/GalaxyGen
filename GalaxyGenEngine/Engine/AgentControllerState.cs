@@ -1,12 +1,12 @@
-﻿using GCEngine.Framework;
-using GCEngine.Model;
+﻿using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.Resources;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public class AgentControllerState : IAgentControllerState
     {
@@ -31,6 +31,14 @@ namespace GCEngine.Engine
             }
         }
 
+        public ulong AgentId
+        {
+            get
+            {
+                return _model.AgentId;
+            }
+        }
+
         public IEnumerable<ScPlanet> PlanetsInSolarSystem
         {
             get
@@ -39,12 +47,11 @@ namespace GCEngine.Engine
             }
         }
 
-
-        public IEnumerable<Int64> PlanetsInSolarSystemScIds
+        public IEnumerable<UInt64> PlanetsInSolarSystemScIds
         {
             get
             {
-                return _model.SolarSystem.Planets.Select(x => x.StarChartId);
+                return _model.SolarSystem.Planets.Keys;
             }
         }
 
@@ -79,30 +86,30 @@ namespace GCEngine.Engine
         }
 
 
-        private Int64 lastDestinationScId;
+        private UInt64 lastDestinationScId;
         private Planet destinationPlanet;
-        private void updateCachedPlanet(Int64 destinationScId)
+        private void updateCachedPlanet(UInt64 destinationScId)
         {
             if (destinationScId != lastDestinationScId) // if we have a new destination, cache the planet so we only need to look it up once.
             {
-                destinationPlanet = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
+                destinationPlanet = _model.SolarSystem.Planets[destinationScId];
                 lastDestinationScId = destinationScId;
             }
         }
 
-        public Double DestinationX(Int64 destinationScId)
+        public Double DestinationX(UInt64 destinationScId)
         {
             updateCachedPlanet(destinationScId);
             return destinationPlanet.PositionX;            
         }
 
-        public Double DestinationY(Int64 destinationScId)
+        public Double DestinationY(UInt64 destinationScId)
         {
             updateCachedPlanet(destinationScId);
             return destinationPlanet.PositionY;
         }
 
-        public bool CurrentShipAtDestination(Int64 destinationScId)
+        public bool CurrentShipAtDestination(UInt64 destinationScId)
         {
             Ship s = (Ship)_model.Location;
             updateCachedPlanet(destinationScId);
@@ -114,7 +121,7 @@ namespace GCEngine.Engine
             return false;
         }
 
-        public bool XYAtDestination(Int64 destinationScId, Double X, Double Y)
+        public bool XYAtDestination(UInt64 destinationScId, Double X, Double Y)
         {
             updateCachedPlanet(destinationScId);
 
@@ -125,7 +132,7 @@ namespace GCEngine.Engine
             return false;
         }
 
-        public Int64 CurrentShipId
+        public UInt64 CurrentShipId
         {
             get
             {
@@ -133,12 +140,28 @@ namespace GCEngine.Engine
             }
         }
 
-        public Int64 CurrentShipDockedPlanetScId
+        public UInt64 CurrentShipStoreId
+        {
+            get
+            {
+                return ((Ship)_model.Location).Stores[_model.AgentId].StoreId;
+            }
+        }
+
+        public UInt64 CurrentShipDockedPlanetScId
         {
             get
             {
                 Ship s = (Ship)_model.Location;
                 return s.DockedPlanet.StarChartId;
+            }
+        }
+
+        public UInt64 CurrentShipDockedPlanetStoreId
+        {
+            get
+            {
+                return ((Ship)_model.Location).DockedPlanet.Stores[_model.AgentId].StoreId;
             }
         }
 
@@ -191,7 +214,7 @@ namespace GCEngine.Engine
             }
         }
 
-        public Int64 CurrentShipDestinationScID
+        public UInt64 CurrentShipDestinationScID
         {
             get
             {
@@ -199,38 +222,73 @@ namespace GCEngine.Engine
             }
         }
 
-        public UInt64 CurrentShipResourceQuantity(ResourceTypeEnum res)
+        public Int64 CurrentShipResourceQuantity(ResourceTypeEnum res)
         {
             Store s = ((Ship)_model.Location).Stores[_model.AgentId];
             if (s.StoredResources.ContainsKey(res))
                 return s.StoredResources[res];
             else
-                return 0;
+                return 0L;
         }
 
-        public UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res)
+        public List<ResourceQuantity> CurrentShipResources()
         {
-            Planet p = _model.SolarSystem.Planets.Where(x => x.StarChartId == planetScId).FirstOrDefault();
-            Store s = p.Stores[_model.AgentId];
+            List<ResourceQuantity> resources = new List<ResourceQuantity>();
+            Store s = ((Ship)_model.Location).Stores[_model.AgentId];
+            foreach (KeyValuePair<ResourceTypeEnum, Int64> kvp in s.StoredResources)
+            {
+                resources.Add(new ResourceQuantity(kvp.Key, kvp.Value));
+            }            
+            return resources;
+        }
+
+        public Int64 CurrentPlanetResourceQuantity(ResourceTypeEnum res)
+        {
+            Store s = ((Ship)_model.Location).DockedPlanet.Stores[_model.AgentId];
             if (s.StoredResources.ContainsKey(res))
                 return s.StoredResources[res];
             else
-                return 0;
+                return 0L;
         }
 
-        public List<ResourceQuantity> PlanetResources(Int64 planetScId)
+        public Int64 PlanetResourceQuantity(UInt64 planetScId, ResourceTypeEnum res)
         {
-            Planet p = _model.SolarSystem.Planets.Where(x => x.StarChartId == planetScId).FirstOrDefault();
+            // TODO should be using a controller rather than direct access to model
+            Planet p = _model.SolarSystem.Planets[planetScId];
+            if (p.Stores.ContainsKey(_model.AgentId))
+            {
+                Store s = p.Stores[_model.AgentId];
+                if (s.StoredResources.ContainsKey(res)) return s.StoredResources[res];               
+            }
+            return 0L;
+        }
+
+        public List<ResourceQuantity> PlanetResources(UInt64 planetScId)
+        {
+            // TODO should be using a controller rather than direct access to model
+            Planet p = _model.SolarSystem.Planets[planetScId];
             List<ResourceQuantity> resources = new List<ResourceQuantity>();
             if (p.Stores.ContainsKey(_model.AgentId))
             {
                 Store s = p.Stores[_model.AgentId];             
-                foreach (KeyValuePair<ResourceTypeEnum, UInt64> kvp in s.StoredResources)
+                foreach (KeyValuePair<ResourceTypeEnum, Int64> kvp in s.StoredResources)
                 {
                     resources.Add(new ResourceQuantity(kvp.Key, kvp.Value));
                 }
             }
             return resources;
+        }
+
+        public bool TryGetPlanetStoreId(UInt64 planetScId, out ulong storeId)
+        {
+            Planet p = _model.SolarSystem.Planets[planetScId];
+            if (p.Stores.ContainsKey(_model.AgentId))
+            {
+                storeId = p.Stores[_model.AgentId].StoreId;
+                return true;
+            }
+            storeId = 0L;
+            return false;
         }
     }
 }

@@ -1,16 +1,16 @@
-﻿using GCEngine.Model;
-using GCEngine.ViewModel;
+﻿using GalaxyGenEngine.Model;
+using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageShipResponse : Message
     {
-        public MessageShipResponse(bool response, MessageShipCommand sentCommand, Int64 tickSent)
+        public MessageShipResponse(bool response, MessageShipCommand sentCommand, UInt64 tickSent)
         {
             Response = response;
             SentCommand = sentCommand;

@@ -1,5 +1,5 @@
 ﻿using Akka.Actor;
-using GCEngine.Model;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
@@ -9,15 +9,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public interface IGalaxyViewModel : INotifyPropertyChanged
     {
         Galaxy Model { get; set; }
         IActorRef Actor { get; }
         String Name { get; set; }
-        Int64 CurrentTick { get; }
-        Int64 TicksPerSecond { get; }
+        UInt64 CurrentTick { get; }
+        UInt64 TicksPerSecond { get; }
         ICollection<ScSolarSystem> ScSolarSystems { get; }
     }
 

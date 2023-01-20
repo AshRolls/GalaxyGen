@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine;
-using GCEngine.Model;
+using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore;
 using GalaxyGenCore.BluePrints;
 using System;
@@ -11,16 +11,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public interface IProducerViewModel : INotifyPropertyChanged
     {
         Producer Model { get; set; }
         string Name { get; set; }
-        Agent Owner { get; set; }
-        Planet Planet { get; set; }
+        ulong OwnerId { get; set; }
         BluePrintEnum BluePrintType { get; set; }
-        Int64 TickForNextProduction { get; set; }
+        UInt64 TickForNextProduction { get; set; }
         bool Producing { get; set; }
         bool AutoResumeProduction { get; set; }
         int ProduceNThenStop { get; set; }

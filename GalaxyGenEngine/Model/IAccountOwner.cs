@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public interface IAccountOwner
     {
-        Account Account { get; set; }
+        ulong AccountId { get; set; }
     }    
 }

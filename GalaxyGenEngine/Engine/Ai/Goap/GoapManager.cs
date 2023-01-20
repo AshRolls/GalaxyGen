@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
+    //TODO Use NodeManager for object pooling
     //public class NodeManager
     //{
     //    static Stack<GoapNode> _usedNodes = new Stack<GoapNode>();

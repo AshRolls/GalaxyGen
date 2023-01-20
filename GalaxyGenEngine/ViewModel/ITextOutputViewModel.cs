@@ -5,8 +5,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public interface ITextOutputViewModel : INotifyPropertyChanged
     {

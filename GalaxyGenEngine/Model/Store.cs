@@ -1,24 +1,24 @@
-﻿using GCEngine.Framework;
+﻿using GalaxyGenEngine.Framework;
 using GalaxyGenCore.Resources;
 using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public class Store
     {
         public Store()
         {
             StoreId = IdUtils.GetId();
-            StoredResources = new Dictionary<ResourceTypeEnum, UInt64>();
+            StoredResources = new Dictionary<ResourceTypeEnum, Int64>();
         }
 
-        public Int64 StoreId { get; set; }
+        public UInt64 StoreId { get; set; }
 
         public String Name { get; set; }
 
-        public Dictionary<ResourceTypeEnum,UInt64> StoredResources { get; set; }
-        public Agent Owner { get; set; }
+        public Dictionary<ResourceTypeEnum,Int64> StoredResources { get; set; }
+        public ulong OwnerId { get; set; }
 
         public IStoreLocation Location { get; set; }
 

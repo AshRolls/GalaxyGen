@@ -6,16 +6,16 @@ namespace GalaxyGenCore.StarChart
 {
     public static class StarChart
     {
-        private static Dictionary<Int64, ScSolarSystem> _scSolarSystems = new Dictionary<Int64, ScSolarSystem>();
-        private static Dictionary<Int64, ScPlanet> _scPlanets = new Dictionary<Int64, ScPlanet>();
+        private static Dictionary<UInt64, ScSolarSystem> _scSolarSystems = new Dictionary<UInt64, ScSolarSystem>();
+        private static Dictionary<UInt64, ScPlanet> _scPlanets = new Dictionary<UInt64, ScPlanet>();
 
         public static void InitialiseStarChart()
         {
             // read from json and initialise _starChart
             ScGalaxy gal = GeneralJsonSerializer.Deserialize<ScGalaxy>(Globals.GALAXY_CORE_DB, null);
 
-            Int64 i = 1;
-            Int64 j = 10000000;
+            UInt64 i = 1;
+            UInt64 j = 10000000;
             foreach (ScSolarSystem ss in gal.SolarSystems)
             {
                 _scSolarSystems.Add(i, ss);
@@ -28,7 +28,7 @@ namespace GalaxyGenCore.StarChart
             }            
         }
 
-        public static Dictionary<Int64,ScSolarSystem> SolarSystems
+        public static Dictionary<UInt64,ScSolarSystem> SolarSystems
         {
             get
             {
@@ -36,17 +36,17 @@ namespace GalaxyGenCore.StarChart
             }
         }
 
-        public static ScSolarSystem GetSolarSystem(Int64 id)
+        public static ScSolarSystem GetSolarSystem(UInt64 id)
         {
             return GetEntry<ScSolarSystem>(_scSolarSystems, id);
         }
 
-        public static ScPlanet GetPlanet(Int64 id)
+        public static ScPlanet GetPlanet(UInt64 id)
         {
             return GetEntry<ScPlanet>(_scPlanets, id);
         }
 
-        private static T GetEntry<T>(Dictionary<Int64, T> table, Int64 id)
+        private static T GetEntry<T>(Dictionary<UInt64, T> table, UInt64 id)
         {
             T local;
             if ((table != null) && table.TryGetValue(id, out local))
@@ -56,26 +56,26 @@ namespace GalaxyGenCore.StarChart
             return default(T);
         }
 
-        public static Int64 GetIdForObject(ScSolarSystem obj)
+        public static UInt64 GetIdForObject(ScSolarSystem obj)
         {
             return GetID<ScSolarSystem>(_scSolarSystems, obj);
         }
 
-        public static Int64 GetIdForObject(ScPlanet obj)
+        public static UInt64 GetIdForObject(ScPlanet obj)
         {
             return GetID<ScPlanet>(_scPlanets, obj);
         }
 
-        private static Int64 GetID<T>(Dictionary<Int64, T> table, T obj) where T : class
+        private static UInt64 GetID<T>(Dictionary<UInt64, T> table, T obj) where T : class
         {
-            foreach (KeyValuePair<Int64, T> pair in table)
+            foreach (KeyValuePair<UInt64, T> pair in table)
             {
                 if (pair.Value == obj)
                 {
                     return pair.Key;
                 }
             }
-            return -1;
+            return 0UL;
         }               
                 
     }

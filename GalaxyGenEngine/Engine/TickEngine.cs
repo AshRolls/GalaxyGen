@@ -1,4 +1,4 @@
-﻿using GCEngine.ViewModel;
+﻿using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,41 +6,36 @@ using System.Text;
 using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
-using GCEngine.Engine.Messages;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Engine.Controllers;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public class TickEngine : ITickEngine
     {
         bool engineInitialised = false;
         ActorSystem _galaxyActorSystem;
         IActorRef _actorTECoordinator;
-        IActorRef _actorTextOutput;
+        TextOutputController _textOutput;
 
         public void SetupTickEngine(IGalaxyViewModel state, ITextOutputViewModel textOutput)
         {
             _galaxyActorSystem = ActorSystem.Create("GalaxyActors");
 
             Props textOutputProps = Props.Create<ActorTextOutput>(textOutput).WithDispatcher("akka.actor.synchronized-dispatcher");
-            _actorTextOutput = _galaxyActorSystem.ActorOf(textOutputProps, "TextOutput");
+            IActorRef _actorTextOutput = _galaxyActorSystem.ActorOf(textOutputProps, "TextOutput");
+            _textOutput = new TextOutputController(_actorTextOutput);
 
-            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_actorTextOutput, state.Model);
+            Props teCoordinatorProps = Props.Create<ActorTickEngineCoordinator>(_textOutput, state.Model);
             _actorTECoordinator = _galaxyActorSystem.ActorOf(teCoordinatorProps, "TECoordinator");
             
             engineInitialised = true;
         }
 
-        public void Run(bool maxRate)
+        public void Run(EngineRunCommand cmd)
         {
             if (!engineInitialised) throw new Exception("You must initialise engine first");
-
-            MessageEngineRunCommand run;
-            if (maxRate)
-                run = new MessageEngineRunCommand(EngineRunCommand.RunMax);
-            else
-                run = new MessageEngineRunCommand(EngineRunCommand.RunPulse);
-
-            _actorTECoordinator.Tell(run);
+            _actorTECoordinator.Tell(new MessageEngineRunCommand(cmd));
         }
 
         public void Stop()

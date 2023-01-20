@@ -1,5 +1,5 @@
-﻿using GCEngine.Engine;
-using GCEngine.Model;
+﻿using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore;
 using GalaxyGenCore.Resources;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class ResourceTypeViewModel : IResourceTypeViewModel
     {
@@ -21,17 +21,8 @@ namespace GCEngine.ViewModel
             set
             {                
                 model_Var = value;
-                updateFromModel();
                 OnPropertyChanged("Model");
             }
-        }
-
-        private void updateFromModel()
-        {
-            Type = model_Var.Type;
-            Name = model_Var.Name;
-            VolumePerUnit = model_Var.VolumePerUnit;
-            DefaultTicksToProduce = model_Var.DefaultTicksToProduce;           
         }
 
         public ResourceTypeEnum Type
@@ -43,14 +34,6 @@ namespace GCEngine.ViewModel
                 else
                     return 0;
             }
-            private set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.Type = value;
-                    OnPropertyChanged("Type");
-                }
-            }
         }
 
         public String Name
@@ -60,13 +43,6 @@ namespace GCEngine.ViewModel
                     return model_Var.Name;
                 else
                     return null;
-            }
-            private set {
-                if (model_Var != null)
-                {
-                    model_Var.Name = value;
-                    OnPropertyChanged("Name");
-                }
             }
         }
 
@@ -78,15 +54,7 @@ namespace GCEngine.ViewModel
                     return model_Var.VolumePerUnit;
                 else
                     return Double.NaN;
-            }
-            private set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.VolumePerUnit = value;
-                    OnPropertyChanged("VolumePerUnit");
-                }
-            }
+            }            
         }
 
         public Int64 DefaultTicksToProduce
@@ -97,14 +65,6 @@ namespace GCEngine.ViewModel
                     return model_Var.DefaultTicksToProduce;
                 else
                     return 0;
-            }
-            private set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.DefaultTicksToProduce = value;
-                    OnPropertyChanged("DefaultTicksToProduce");
-                }
             }
         }
 

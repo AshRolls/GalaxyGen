@@ -7,7 +7,7 @@ using System.Collections;
  */
 using System.Collections.Generic;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     /**
      * Any agent that wants to use GOAP must implement
@@ -23,33 +23,25 @@ namespace GCEngine.Engine.Ai.Goap
          * The starting state of the Agent and the world.
          * Supply what states are needed for actions to run.
          */
-        GoapState GetWorldState();
-
-        /**
-         * The resources of the Agent.
-         * Supply the current resources of the agent.
-         */
-        Dictionary<Int64, Int64> GetResourceState();
+        GoapStateBit GetWorldState(GoapPlanner planner);
 
         /**
          * Give the planner a new goal so it can figure out 
          * the actions needed to fulfill it.
          */
-        GoapState CreateGoalState();
-
-        Dictionary<Int64, Int64> CreateResourceGoal();
+        (bool, GoapStateBit, GoapStateBit) CreateGoalState(GoapPlanner planner);
 
         /**
          * No sequence of actions could be found for the supplied goal.
          * You will need to try another goal
          */
-        void PlanFailed(GoapState failedGoal);
+        void PlanFailed(GoapStateBit failedGoal);
 
         /**
          * A plan was found for the supplied goal.
          * These are the actions the Agent will perform, in order.
          */
-        void PlanFound(GoapState goal, Queue<GoapAction> actions);
+        void PlanFound(GoapStateBit goal, Queue<GoapAction> actions, (int iterations, long ms) stats);
 
         /**
          * All actions are complete and the goal was reached. Hooray!
@@ -70,7 +62,6 @@ namespace GCEngine.Engine.Ai.Goap
          */
         bool MoveAgent(GoapAction nextAction);
 
-        GoapAction[] GetActions();
-
+        List<GoapAction> GetActions();     
     }
 }

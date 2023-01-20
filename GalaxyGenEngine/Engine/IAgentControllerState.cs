@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
-using GCEngine.Framework;
-using GCEngine.Model;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using GalaxyGenCore.Resources;
 using System;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public interface IAgentControllerState
     {
         bool CurrentShipAutopilotActive { get; }
         double CurrentShipCruisingSpeed { get; }
-        long CurrentShipDockedPlanetScId { get; }
+        ulong CurrentShipDockedPlanetScId { get; }
         bool CurrentShipHasDestination { get; }
-        long CurrentShipId { get; }
+        ulong CurrentShipId { get; }
         bool CurrentShipIsDocked { get; }
         ShipStateEnum CurrentShipState { get; }
         double CurrentShipX { get; }
@@ -22,13 +22,15 @@ namespace GCEngine.Engine
         bool IsPilotingShip { get; }
         string Memory { get; set; }
         IEnumerable<ScPlanet> PlanetsInSolarSystem { get; }
-        IEnumerable<long> PlanetsInSolarSystemScIds { get; }
-        bool CurrentShipAtDestination(long destinationScId);
-        UInt64 CurrentShipResourceQuantity(ResourceTypeEnum resType);
-        double DestinationX(long destinationScId);
-        double DestinationY(long destinationScId);
-        bool XYAtDestination(long destinationScId, double X, double Y);
-        UInt64 PlanetResourceQuantity(Int64 planetScId, ResourceTypeEnum res);
-        List<ResourceQuantity> PlanetResources(Int64 planetScId);
+        IEnumerable<ulong> PlanetsInSolarSystemScIds { get; }        
+        bool CurrentShipAtDestination(ulong destinationScId);
+        Int64 CurrentShipResourceQuantity(ResourceTypeEnum resType);
+        Int64 CurrentPlanetResourceQuantity(ResourceTypeEnum resType);
+        double DestinationX(ulong destinationScId);
+        double DestinationY(ulong destinationScId);
+        bool XYAtDestination(ulong destinationScId, double X, double Y);
+        Int64 PlanetResourceQuantity(UInt64 planetScId, ResourceTypeEnum res);
+        List<ResourceQuantity> PlanetResources(UInt64 planetScId);
+        bool TryGetPlanetStoreId(ulong planetScId, out ulong storeId);
     }
 }

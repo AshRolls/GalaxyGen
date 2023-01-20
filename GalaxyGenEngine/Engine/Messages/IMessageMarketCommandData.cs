@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     public interface IMessageMarketCommandData
     {
-        MarketCommandEnum CommandType { get; set; }
-        Int64 TargetId { get; set; }
-        Int64 Quantity { get; set; }
+        MarketCommandEnum CommandType { get; }
     }
 }

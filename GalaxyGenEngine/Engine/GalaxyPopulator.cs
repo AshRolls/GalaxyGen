@@ -1,145 +1,142 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GCEngine.Model;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using GalaxyGenCore.BluePrints;
 using GalaxyGenCore.Resources;
+using GalaxyGenEngine.Framework;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
+        const int NUMBER_OF_AGENTS = 1;
+        private Galaxy _gal;
         public Galaxy GetFullGalaxy()
         {
-            Galaxy gal = this.GetGalaxy();
-            gal.MaxId = 100;
+            _gal = this.getNewGalaxy();
+            _gal.MaxId = 100;
+            Currency currency = new Currency();
+            currency.Name = "GalStandard";
+            _gal.Currencies.Add(currency.CurrencyId, currency);
 
             ShipType shipT = new ShipType();
             shipT.Name = "Basic Ship";
             shipT.MaxCruisingSpeedKmH = 300000;
-            gal.ShipTypes.Add(shipT);
+            _gal.ShipTypes.Add(shipT);
                         
             foreach (ScSolarSystem chartSS in StarChart.SolarSystems.Values)
             {
-                SolarSystem ss = getSolarSystemFromStarChartSS(chartSS);
-                ss.StarChartId = StarChart.GetIdForObject(chartSS);
+                SolarSystem ss = getNewSolarSystemFromStarChart(chartSS);
+                ss.StarChartId = StarChart.GetIdForObject(chartSS);                
 
-                Agent ag = this.GetAgent("Agent " + chartSS.Name);                
-                ss.Agents.Add(ag);
-                ag.SolarSystem = ss;
-
-                int j = 0;
                 foreach (ScPlanet chartP in chartSS.Planets)
                 {
-                    Planet p = this.GetPlanet(chartP);
+                    Planet p = this.getNewPlanet(chartP, currency.CurrencyId);
                     p.StarChartId = StarChart.GetIdForObject(chartP);
-
-                    if (j % 2 == 0)
-                    {
-                        addMetalProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
-                    }
-                    else
-                    {
-                        addSpiceProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 50) });
-                    }
-
-                    j++;
-                    ss.Planets.Add(p);
+                    ss.Planets.Add(p.StarChartId, p);
                     p.SolarSystem = ss;
                 }
-
-                Ship s = this.GetShip("Ship" + chartSS.Name, shipT);
-                s.Owner = ag;
-                s.ShipState = ShipStateEnum.Docked;
-                s.Agents.Add(ag);
-                ag.Location = s;
-                s.Pilot = ag;
-                ag.AgentState = AgentStateEnum.PilotingShip;
-                s.DockedPlanet = ss.Planets.First();
-                ss.Planets.First().DockedShips.Add(s);
-                ag.ShipsOwned.Add(s);
-                addNewCargoStoreToShip(s, ag);
-                s.SolarSystem = ss;
-                ss.Ships.Add(s);
-
-                const int NUMBER_OF_AGENTS = 0;
+                
                 for (int i = 0; i < NUMBER_OF_AGENTS; i++)
                 {
-
-                    ag = this.GetAgent("Agent " + i);
-                    ss.Agents.Add(ag);
-                    ag.SolarSystem = ss;
-
-                    s = this.GetShip("Ship" + i, shipT);
-                    s.Owner = ag;
-                    s.ShipState = ShipStateEnum.Docked;
-                    s.Agents.Add(ag);
-                    ag.Location = s;
-                    s.Pilot = ag;
-                    ag.AgentState = AgentStateEnum.PilotingShip;
-                    s.DockedPlanet = ss.Planets.First();
-                    ss.Planets.First().DockedShips.Add(s);
-                    ag.ShipsOwned.Add(s);
-                    addNewCargoStoreToShip(s, ag);
-                    s.SolarSystem = ss;
-                    ss.Ships.Add(s);
-          
-                    Planet p = ss.Planets.Skip(i % ss.Planets.Count()).First();
-                    if (i % 2 == 0)
-                    {
-                        addMetalProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Spice, 10) });
-                    }
-                    else
-                    {
-                        addSpiceProducerToPlanet(ag, p);
-                        addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() { new ResourceQuantity(ResourceTypeEnum.Platinum, 5) });
-                    }
+                    AddAgent(shipT, chartSS, i, ss, currency.CurrencyId);
                 }
 
-                gal.SolarSystems.Add(ss);
-            }                      
+                _gal.SolarSystems.Add(ss);
+            }
 
-            return gal;
+            return _gal;
+        }
+
+        private void AddAgent(ShipType shipT, ScSolarSystem chartSS, int name, SolarSystem ss, ulong seedCurrencyId)
+        {
+            Agent ag = this.GetAgent("Agent " + name, seedCurrencyId);
+            ss.Agents.Add(ag);
+            ag.SolarSystem = ss;
+            
+            List<ResourceQuantity> resQs = new() { new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 2), 
+                                               new ResourceQuantity(ResourceTypeEnum.Metal_Platinum, 2),
+                                               new ResourceQuantity(ResourceTypeEnum.Metal_Uranium, 10),
+                                               new ResourceQuantity(ResourceTypeEnum.Gas_Xenon, 10),
+                                               new ResourceQuantity(ResourceTypeEnum.Metal_Aluminium, 10)
+            };
+
+            int j = 0;
+            foreach (Planet p in ss.Planets.Values)
+            {
+                //int j = RandomUtils.Random(4);
+                j++;
+                if (j % 2 == 0)
+                {
+                    addMetalProducerToPlanet(ag, p);
+                    addNewStoreToPlanet(p, ag, resQs);
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>() {  new ResourceQuantity(ResourceTypeEnum.Exotic_Spice, 1)});
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                }
+                else if (j % 2 == 1)
+                {
+                    addSpiceProducerToPlanet(ag, p);
+                    addNewStoreToPlanet(p, ag, resQs);
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                    //addNewStoreToPlanet(p, ag, new List<ResourceQuantity>());
+                }
+                else
+                {
+                    addNewStoreToPlanet(p, ag, resQs);
+                }
+            }                            
+
+            Ship s = this.getNewShip("Ship" + name, shipT);
+            s.Owner = ag;
+            s.ShipState = ShipStateEnum.Docked;
+            s.Agents.Add(ag);
+            ag.Location = s;
+            s.Pilot = ag;
+            ag.AgentState = AgentStateEnum.PilotingShip;
+            s.DockedPlanet = ss.Planets.Values.First();
+            ss.Planets.Values.First().DockedShips.Add(s.ShipId, s);
+            ag.ShipsOwned.Add(s);
+            addNewCargoStoreToShip(s, ag);
+            s.SolarSystem = ss;
+            ss.Ships.Add(s.ShipId, s);
         }
 
         private void addMetalProducerToPlanet(Agent ag, Planet p)
         {
-            Producer prod = this.GetProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
-            prod.Owner = ag;
+            Producer prod = this.getNewProducer("Factory Metal", BluePrintEnum.SpiceToPlatinum);
+            prod.OwnerId = ag.AgentId;
+            prod.PlanetScId = p.StarChartId;
             ag.Producers.Add(prod);
             p.Producers.Add(prod);
-
         }
 
         private void addSpiceProducerToPlanet(Agent ag, Planet p)
         {           
-            Producer prod2 = this.GetProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
-            prod2.Owner = ag;
-            ag.Producers.Add(prod2);
-            p.Producers.Add(prod2);
+            Producer prod = this.getNewProducer("Factory Spice", BluePrintEnum.PlatinumToSpice);
+            prod.OwnerId = ag.AgentId;
+            prod.PlanetScId = p.StarChartId;
+            ag.Producers.Add(prod);
+            p.Producers.Add(prod);
         }
 
-
-        private SolarSystem getSolarSystemFromStarChartSS(ScSolarSystem chartSS)
+        private SolarSystem getNewSolarSystemFromStarChart(ScSolarSystem chartSS)
         {
             SolarSystem ss = new SolarSystem();
+            ss.Galaxy = _gal;
             ss.Name = chartSS.Name;           
             return ss;
         }
 
-        private Galaxy GetGalaxy()
+        private Galaxy getNewGalaxy()
         {
             Galaxy gal = new Galaxy();
             gal.Name = "Milky Way";
             return gal;
         }
 
-
-        private Planet GetPlanet(ScPlanet chartP)
+        private Planet getNewPlanet(ScPlanet chartP, ulong currencyId)
         {
             Planet plan = new Planet();
             plan.Name = chartP.Name;
@@ -150,7 +147,8 @@ namespace GCEngine.Engine
             plan.Society = soc;
 
             Market m = new Market();
-            
+            m.CurrencyId = currencyId;
+            plan.Market = m;
             
             return plan;
         }
@@ -158,7 +156,7 @@ namespace GCEngine.Engine
         private void addNewStoreToPlanet(Planet p, Agent o, List<ResourceQuantity> resourcesToSeed)
         {
             Store s = new Store();
-            s.Owner = o;
+            s.OwnerId = o.AgentId;
             s.Location = p;
             p.Stores.Add(o.AgentId,s);
             o.Stores.Add(s);
@@ -169,24 +167,25 @@ namespace GCEngine.Engine
             }                        
         }
 
-        private Agent GetAgent(String seedName)
+        private Agent GetAgent(String seedName, ulong seedCurrencyId)
         {
             Agent ag = new Agent();
             ag.Memory = "";
-            ag.Account = getAccount();
-            ag.Account.Owner = ag;            
+            ag.AccountId  = getAccount(ag, seedCurrencyId);                       
             ag.Name = seedName;
             return ag;
         }
 
-        private Account getAccount()
+        private ulong getAccount(Agent owner, ulong seedCurrencyId)
         {
             Account ac = new Account();
-            ac.Balance = 1000000;
-            return ac;
+            ac.Balances.Add(seedCurrencyId, 10000L);
+            ac.Owner = owner;
+            _gal.Accounts.Add(owner.AgentId, ac);
+            return ac.AccountId;
         }
 
-        private Producer GetProducer(String seedName, BluePrintEnum bpType)
+        private Producer getNewProducer(String seedName, BluePrintEnum bpType)
         {
             Producer prod = new Producer();
             prod.Name = seedName;
@@ -200,16 +199,17 @@ namespace GCEngine.Engine
         private void addNewCargoStoreToShip(Ship ship, Agent o)
         {
             Store s = new Store();
-            s.Owner = o;
+            s.OwnerId = o.AgentId;
             s.Location = ship;
             ship.Stores.Add(o.AgentId,s);           
             o.Stores.Add(s);
 
             // seed with basic starter resource
-            s.StoredResources.Add(ResourceTypeEnum.Spice, 10);
+            //s.StoredResources.Add(ResourceTypeEnum.Exotic_Spice, 1);
+            //s.StoredResources.Add(ResourceTypeEnum.Metal_Platinum, 1);
         }
 
-        private Ship GetShip(String seedName, ShipType shipT)
+        private Ship getNewShip(String seedName, ShipType shipT)
         {
             Ship s = new Ship();
             s.Type = shipT;

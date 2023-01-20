@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
+using GalaxyGenEngine.Framework;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class TextOutputViewModel : ITextOutputViewModel
     {
-        private ObservableCollection<String> consoleLines_Var = new ObservableCollection<string>();
+        private ObservableCollection<String> consoleLines_Var = new();
         public ObservableCollection<String> ConsoleLines
         {
             get
@@ -24,7 +26,7 @@ namespace GCEngine.ViewModel
         }
 
         public void AddLine(string line)
-        {            
+        {
             consoleLines_Var.Add(line);
             while (consoleLines_Var.Count > 1000) consoleLines_Var.RemoveAt(0);
         }

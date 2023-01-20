@@ -1,8 +1,8 @@
-﻿using GCEngine.Framework;
+﻿using GalaxyGenEngine.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public enum AgentStateEnum
     {
@@ -27,7 +27,7 @@ namespace GCEngine.Model
             AgentId = IdUtils.GetId();
         }
 
-        public Int64 AgentId { get; set; }
+        public UInt64 AgentId { get; set; }
 
         public String Name { get; set; }
         public AgentTypeEnum Type { get; set; }
@@ -42,6 +42,6 @@ namespace GCEngine.Model
 
         public String Memory { get; set; }
 
-        public Account Account { get; set; }
+        public ulong AccountId { get; set; }
     }
 }

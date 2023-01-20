@@ -1,5 +1,5 @@
 ﻿using Akka.Actor;
-using GCEngine.Model;
+using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public interface IPlanetViewModel : INotifyPropertyChanged
     {
