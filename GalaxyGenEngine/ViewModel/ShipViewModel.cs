@@ -14,33 +14,9 @@ namespace GalaxyGenEngine.ViewModel
 {
     public class ShipViewModel : IShipViewModel
     {        
-        private Timer _refreshTimer;
-
         public ShipViewModel()
         {            
-            setupAndStartTimer();
         }
-
-        private void setupAndStartTimer()
-        {
-            _refreshTimer = new Timer(50);
-            _refreshTimer.Elapsed += _refreshTimer_Elapsed;
-            _refreshTimer.Start();
-        }
-
-        private void _refreshTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            refreshAllProperties();
-        }
-
-        private void refreshAllProperties()
-        {
-            OnPropertyChanged("PositionX");
-            OnPropertyChanged("PositionY");
-            updatePosX800();
-            updatePosY800();
-        }
-
 
         private Ship model_Var;
         public Ship Model
@@ -80,7 +56,6 @@ namespace GalaxyGenEngine.ViewModel
             }
         }
 
-
         public Double PositionY
         {
             get
@@ -89,46 +64,6 @@ namespace GalaxyGenEngine.ViewModel
                     return model_Var.PositionY;
                 else
                     return 0;
-            }
-        }
-
-        private void updatePosX800()
-        {
-            Double posX = PositionX / 3000000;
-            PosX800 = (int)posX + 400;
-        }
-
-        private int posX800_Var;
-        public int PosX800
-        {
-            get
-            {
-                return posX800_Var;
-            }
-            private set
-            {
-                posX800_Var = value;
-                OnPropertyChanged("PosX800");
-            }
-        }
-
-        private void updatePosY800()
-        {
-            Double posY = PositionY / 3000000;
-            PosY800 = (int)posY + 400;
-        }
-
-        private int posY800_Var;
-        public int PosY800
-        {
-            get
-            {
-                return posY800_Var;
-            }
-            private set
-            {
-                posY800_Var = value;
-                OnPropertyChanged("PosY800");
             }
         }
 

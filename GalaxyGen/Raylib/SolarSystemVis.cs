@@ -20,6 +20,7 @@ namespace GalaxyGen.Raylib
         private const int _yOffset = _width / 2;
         private const int _cellSize = 2;
         private RenderRectangle[] _shipRecs;
+        private RenderRectangle[] _planetRecs;
         private static readonly Color FULLRED = new Color(255, 0, 0, 255);
 
 
@@ -31,6 +32,7 @@ namespace GalaxyGen.Raylib
         internal void StartVisualiser()
         {            
             _shipRecs = new RenderRectangle[0];
+            _planetRecs = new RenderRectangle[0];
             _renderer = new Viewer(_width, _height, 30, "Solarsystem");
             _renderer.StartViewer(processFrame);
         }        
@@ -39,9 +41,14 @@ namespace GalaxyGen.Raylib
         {
             //processItemQueue();
             processArrayQueue();
+            DrawRectangle(_xOffset, _yOffset, 4, 4, Color.YELLOW);
             foreach(RenderRectangle r in _shipRecs)  // foreach faster than for because we access the item multiple times
             {
                 DrawRectangle(r.X, r.Y, r.W, r.H, FULLRED);                                       
+            }
+            foreach (RenderRectangle r in _planetRecs)  // foreach faster than for because we access the item multiple times
+            {
+                DrawRectangle(r.X, r.Y, r.W, r.H, Color.SKYBLUE);
             }
         }
 
@@ -57,9 +64,13 @@ namespace GalaxyGen.Raylib
             {
                 switch (_rA.Type)
                 {
-                    case 1:
+                    case 0:
                         updateShipsArray();
                         break;
+                    case 1:
+                        updatePlanetsArray();
+                        break;
+
                 }
             }
         }
@@ -71,8 +82,19 @@ namespace GalaxyGen.Raylib
             {
                 RenderRectangle r = new((int)(_rA.Positions[i].X / _scaling) + _xOffset, 
                                         (int)(_rA.Positions[i].Y / _scaling) + _yOffset, 
-                                        _cellSize, _cellSize);
+                                        1, 1);
                 _shipRecs[i] = r;
+            }
+        }
+        private void updatePlanetsArray()
+        {
+            if (_planetRecs.Length != _rA.Positions.Length) _planetRecs = new RenderRectangle[_rA.Positions.Length];
+            for (int i = 0; i < _rA.Positions.Length; i++)
+            {
+                RenderRectangle r = new((int)(_rA.Positions[i].X / _scaling) + _xOffset,
+                                        (int)(_rA.Positions[i].Y / _scaling) + _yOffset,
+                                        _cellSize, _cellSize);
+                _planetRecs[i] = r;
             }
         }
 

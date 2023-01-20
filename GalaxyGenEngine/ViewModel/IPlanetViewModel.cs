@@ -17,8 +17,6 @@ namespace GalaxyGenEngine.ViewModel
         //Int64 Population { get; set; }
         Double PositionX { get; }
         Double PositionY { get; }
-        int PosX800 { get; }
-        int PosY800 { get; }
         ISocietyViewModel Society { get; }
         IMarketViewModel Market { get; }
         ObservableCollection<IProducerViewModel> Producers { get; }

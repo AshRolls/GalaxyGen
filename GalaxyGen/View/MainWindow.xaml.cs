@@ -54,17 +54,31 @@ namespace GalaxyGen
         {
             if (_mvm.SelectedSolarSystemVm != null)
             {
-                lock (_mvm.SelectedSolarSystemVm)
+                lock (_mvm.SelectedSolarSystemVm.Ships)
                 {
                     (double, double)[] shipsArray = new (double, double)[_mvm.SelectedSolarSystemVm.Ships.Count];
                     int i = 0;
-                    foreach (IShipViewModel shipVm in _mvm.SelectedSolarSystemVm.Ships.ToList())
+                    foreach (IShipViewModel shipVm in _mvm.SelectedSolarSystemVm.Ships)
                     {
                         shipsArray[i++] = (shipVm.PositionX, shipVm.PositionY);
                     }
-                    RenderArray rA = new(1, shipsArray);
+                    RenderArray rA = new(0, shipsArray);
                     _visualiser.AddRenderArray(rA);
                 }                
+            }
+            if (_mvm.SelectedSolarSystemVm != null)
+            {
+                lock (_mvm.SelectedSolarSystemVm.Planets)
+                {
+                    (double, double)[] planetsArray = new (double, double)[_mvm.SelectedSolarSystemVm.Planets.Count];
+                    int i = 0;
+                    foreach (IPlanetViewModel planetVm in _mvm.SelectedSolarSystemVm.Planets)
+                    {
+                        planetsArray[i++] = (planetVm.PositionX, planetVm.PositionY);
+                    }
+                    RenderArray rA = new(1, planetsArray);
+                    _visualiser.AddRenderArray(rA);
+                }
             }
         }
 

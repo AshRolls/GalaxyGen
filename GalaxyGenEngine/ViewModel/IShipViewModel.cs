@@ -16,8 +16,6 @@ namespace GalaxyGenEngine.ViewModel
         String Name { get; }
         Double PositionX { get; }
         Double PositionY { get; }
-        int PosX800 { get; }
-        int PosY800 { get; }
     }
 
     public interface IShipViewModelFactory
