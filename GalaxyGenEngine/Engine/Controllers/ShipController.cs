@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine.Messages;
-using GCEngine.Framework;
-using GCEngine.Model;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
@@ -9,21 +9,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Controllers
+namespace GalaxyGenEngine.Engine.Controllers
 {
     public class ShipController
     {
         private Ship _model;
         private SolarSystemController _solarSystemC;
-        private IActorRef _actorTextOutput;
-        private Planet _destination;
-        
-        public ShipController(Ship s, SolarSystemController ssc, IActorRef actorTextOutput)
+        private TextOutputController _textOutput;
+        private Planet _destination;        
+        public ShipController(Ship s, SolarSystemController ssc, TextOutputController textOutput)
         {
             _model = s;
             _solarSystemC = ssc;
-            _actorTextOutput = actorTextOutput;
-            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == _model.DestinationScId).FirstOrDefault();
+            _textOutput = textOutput;
+            if (_model.DestinationScId != 0)
+            {
+                _destination = _model.SolarSystem.Planets[_model.DestinationScId];
+            }
         }
 
         public void Tick(MessageTick tick)
@@ -135,10 +137,10 @@ namespace GCEngine.Engine.Controllers
             _model.PositionY = Y;
         }
 
-        internal void SetDestination(Int64 destinationScId)
+        internal void SetDestination(UInt64 destinationScId)
         {
             _model.DestinationScId = destinationScId;
-            _destination = _model.SolarSystem.Planets.Where(x => x.StarChartId == destinationScId).FirstOrDefault();
+            _destination = _model.SolarSystem.Planets[destinationScId];
         }
 
         internal void SetAutopilot(bool active)

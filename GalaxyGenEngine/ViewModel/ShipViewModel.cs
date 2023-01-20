@@ -1,5 +1,5 @@
 ﻿using Akka.Actor;
-using GCEngine.Model;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class ShipViewModel : IShipViewModel
     {        

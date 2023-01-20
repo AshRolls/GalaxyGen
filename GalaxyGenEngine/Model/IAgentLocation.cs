@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public interface IAgentLocation 
     {

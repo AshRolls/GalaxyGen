@@ -1,16 +1,16 @@
 ﻿using Akka.Actor;
-using GCEngine.ViewModel;
+using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public class ActorTextOutput : ReceiveActor
     {
-        ITextOutputViewModel _textOutputVm;
+        ITextOutputViewModel _textOutputVm;        
 
         public ActorTextOutput(ITextOutputViewModel textOutputVm)
         {

@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     internal class MessageEngineAgCompletedCommand
     {
-        public MessageEngineAgCompletedCommand(Int64 agentId)
+        public MessageEngineAgCompletedCommand(UInt64 agentId)
         {
             AgentId = agentId;
         }
 
-        public Int64 AgentId { get; private set; }
+        public UInt64 AgentId { get; private set; }
     }
 }

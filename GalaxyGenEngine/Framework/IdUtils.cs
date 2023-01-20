@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Framework
+namespace GalaxyGenEngine.Framework
 {
     public static class IdUtils
     {
-        public static Int64 currentId;
+        public static UInt64 currentId;
 
-        public static Int64 GetId()
+        public static UInt64 GetId()
         {
             return System.Threading.Interlocked.Increment(ref currentId);
         }

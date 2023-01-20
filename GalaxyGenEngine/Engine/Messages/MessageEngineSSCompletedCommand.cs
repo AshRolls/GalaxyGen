@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     internal class MessageEngineSSCompletedCommand
     {
-        public MessageEngineSSCompletedCommand(Int64 solarSystemId)
+        public MessageEngineSSCompletedCommand(UInt64 solarSystemId)
         {
             SolarSystemId = solarSystemId;            
         }
 
-        public Int64 SolarSystemId { get; private set; }        
+        public UInt64 SolarSystemId { get; private set; }        
     }
 }

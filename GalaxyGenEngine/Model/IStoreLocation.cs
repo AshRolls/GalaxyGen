@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public interface IStoreLocation
     {
-        Dictionary<Int64,Store> Stores { get; set; }
+        Dictionary<UInt64,Store> Stores { get; set; }
     }
 }

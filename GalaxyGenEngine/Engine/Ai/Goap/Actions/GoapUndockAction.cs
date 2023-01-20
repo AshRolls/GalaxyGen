@@ -1,60 +1,53 @@
-﻿using GCEngine.Engine.Controllers;
-using System;
+﻿using GalaxyGenCore.Resources;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Ai.Goap.Actions
+
+namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
 {
     public class GoapUndockAction : GoapAction
     {
-        private bool _requestSent = false;
-        private bool _docked = true;
-
-        public GoapUndockAction(Int64 undockScId)
-        {
-            //addPrecondition("isDocked", true);
-            addPrecondition("DockedAt", undockScId);
-            //addEffect("isDocked", false);
-            addEffect("DockedAt", 0L);
+        public GoapUndockAction()
+        {                        
+            AddPrecondition(GoapStateBitFlagsEnum.IsDocked, 1UL);
+            AddEffect(GoapStateBitFlagsEnum.IsDocked, 0L);            
+            AddEffect(GoapStateBitFlagsEnum.DockedAt, 0L);
         }
 
-        public override void reset()
+        public override void Reset()
         {
-            _requestSent = false;
-            _docked = true;
         }
 
-        public override bool isDone(object agent)
+        public override bool IsDone(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
             return !ag.StateProvider.CurrentShipIsDocked;
         }
     
 
-        public override bool requiresInRange()
+        public override bool RequiresInRange()
         {
             return false; 
         }
 
-        public override bool CheckProceduralPrecondition()
+        public override bool CheckProceduralPrecondition(object agent)
         {
             return true;
         }
 
-        public override bool perform(object agent)
+        public override bool IsSpecific()
+        {
+            return true;
+        }
+
+        public override List<GoapAction> GetSpecificActions(object agent, GoapStateBit state, GoapStateBit goal, GoapPlanner planner)
+        {
+            return null;
+        }
+
+        public override bool Perform(object agent)
         {
             GoapAgent ag = (GoapAgent)agent;
-
-            if (ag.StateProvider.CurrentShipIsDocked && !_requestSent)
-            {
-                _requestSent = true;
-                ag.ActionProvider.RequestUndock();
-            }
-
-            // TODO add a number of count before retry undock 
+            if (ag.StateProvider.CurrentShipIsDocked) ag.ActionProvider.RequestUndock();
             return true;
         }
     }

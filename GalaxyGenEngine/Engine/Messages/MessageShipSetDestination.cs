@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Messages
+namespace GalaxyGenEngine.Engine.Messages
 {
     public class MessageShipSetDestination : IMessageShipCommandData
     {
-        public MessageShipSetDestination(ShipCommandEnum type, Int64 desinationScId)
+        public MessageShipSetDestination(ShipCommandEnum type, UInt64 desinationScId)
         {
             CommandType = type;
             DestinationScId = desinationScId;
@@ -16,6 +16,6 @@ namespace GCEngine.Engine.Messages
 
         public ShipCommandEnum CommandType { get; set; }
 
-        public Int64 DestinationScId { get; set; }
+        public UInt64 DestinationScId { get; set; }
     }
 }

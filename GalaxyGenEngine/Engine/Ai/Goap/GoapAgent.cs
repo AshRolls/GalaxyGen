@@ -1,14 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
-using GCEngine.Engine.Ai.Fsm;
-using GCEngine.Engine.Controllers;
+using GalaxyGenEngine.Engine.Ai.Fsm;
+using GalaxyGenEngine.Engine.Controllers;
 
-namespace GCEngine.Engine.Ai.Goap
+namespace GalaxyGenEngine.Engine.Ai.Goap
 {
     public sealed class GoapAgent
     {
-
         private FSM _stateMachine;
 
         private FSM.FSMState _idleState; // finds something to do
@@ -24,7 +23,6 @@ namespace GCEngine.Engine.Ai.Goap
 
         private GoapPlanner _planner;
 
-
         public GoapAgent(IGoap provider, IAgentActions actions, IAgentControllerState state)
         {
             _dataProvider = provider;
@@ -37,15 +35,20 @@ namespace GCEngine.Engine.Ai.Goap
             createIdleState();
             createMoveToState();
             createPerformActionState();
-            _stateMachine.pushState(_idleState);
+            _stateMachine.PushState(_idleState);
             loadActions();
         }
-
 
         public void Tick()
         {
             _stateMachine.Update(this);
-        }        
+        }
+
+        public void ResetPlan()
+        {
+            _stateMachine.ClearState();
+            _stateMachine.PushState(_idleState);
+        }
 
         private bool hasActionPlan()
         {
@@ -57,33 +60,36 @@ namespace GCEngine.Engine.Ai.Goap
             _idleState = (fsm, gameObj) =>
             {
                 // GOAP planning
-
+                _planner.Reset();
                 // get the world state and the goal we want to plan for
-                GoapState worldState = _dataProvider.GetWorldState();
-                Dictionary<Int64, Int64> resourceState = _dataProvider.GetResourceState();
-                GoapState goal = _dataProvider.CreateGoalState();
-                Dictionary<Int64, Int64> resourceGoal = _dataProvider.CreateResourceGoal();
-                loadActions();
-
-                // Plan
-                Queue<GoapAction> plan = _planner.Plan(this, _availableActions, worldState, resourceState, goal, resourceGoal);
-                if (plan != null)
+                GoapStateBit worldState = _dataProvider.GetWorldState(_planner);
+                (bool goalSuccess, GoapStateBit goal, GoapStateBit allowed) = _dataProvider.CreateGoalState(_planner);
+                if (goalSuccess)
                 {
-                    // we have a plan, hooray!
-                    _currentActions = plan;
-                    _dataProvider.PlanFound(goal, plan);
+                    loadActions();
+                    // Plan
+                    (Queue<GoapAction> plan, (int, long) stats) = _planner.PlanBit(this, _availableActions, worldState, goal, allowed);
+                    if (plan != null)
+                    {
+                        // we have a plan
+                        _currentActions = plan;
+                        _dataProvider.PlanFound(goal, plan, stats);
 
-                    fsm.popState(); // move to PerformAction state
-                    fsm.pushState(_performActionState);
-
+                        fsm.PopState(); // move to PerformAction state
+                        fsm.PushState(_performActionState);
+                    }
+                    else
+                    {
+                        // we couldn't get a plan
+                        _dataProvider.PlanFailed(goal);
+                        fsm.PopState(); // move back to IdleAction state
+                        fsm.PushState(_idleState);
+                    }
                 }
                 else
                 {
-                    // ugh, we couldn't get a plan
-                    // Console.WriteLine("<color=orange>Failed Plan:</color>" + PrettyPrint(goal));
-                    _dataProvider.PlanFailed(goal);
-                    fsm.popState(); // move back to IdleAction state
-                    fsm.pushState(_idleState);
+                    fsm.PopState(); // move back to IdleAction state
+                    fsm.PushState(_idleState);
                 }
 
             };
@@ -96,26 +102,25 @@ namespace GCEngine.Engine.Ai.Goap
                 // move the game object
 
                 GoapAction action = _currentActions.Peek();
-                if (action.requiresInRange() && action.target == null)
+                if (action.RequiresInRange() && action.target == null)
                 {
                     // Console.WriteLine("<color=red>Fatal error:</color> Action requires a target but has none. Planning failed. You did not assign the target in your Action.checkProceduralPrecondition()");
-                    fsm.popState(); // move
-                    fsm.popState(); // perform
-                    fsm.pushState(_idleState);
+                    fsm.PopState(); // move
+                    fsm.PopState(); // perform
+                    fsm.PushState(_idleState);
                     return;
                 }
 
                 // get the agent to move itself
                 if (_dataProvider.MoveAgent(action))
                 {
-                    fsm.popState();
+                    fsm.PopState();
                 }
             };
         }
 
         private void createPerformActionState()
         {
-
             _performActionState = (fsm, gameObj) =>
             {
                 // perform the action
@@ -124,14 +129,14 @@ namespace GCEngine.Engine.Ai.Goap
                 {
                     // no actions to perform
                     // Console.WriteLine("<color=red>Done actions</color>");
-                    fsm.popState();
-                    fsm.pushState(_idleState);
+                    fsm.PopState();
+                    fsm.PushState(_idleState);
                     _dataProvider.ActionsFinished();
                     return;
                 }
 
                 GoapAction action = _currentActions.Peek();
-                if (action.isDone(this))
+                if (action.IsDone(this))
                 {
                     // the action is done. Remove it so we can perform the next one
                     _currentActions.Dequeue();
@@ -141,18 +146,18 @@ namespace GCEngine.Engine.Ai.Goap
                 {
                     // perform the next action
                     action = _currentActions.Peek();
-                    bool inRange = action.requiresInRange() ? action.isInRange() : true;
+                    bool inRange = action.RequiresInRange() ? action.IsInRange() : true;
 
                     if (inRange)
                     {
                         // we are in range, so perform the action
-                        bool success = action.perform(gameObj);
+                        bool success = action.Perform(gameObj);
 
                         if (!success)
                         {
                             // action failed, we need to plan again
-                            fsm.popState();
-                            fsm.pushState(_idleState);
+                            fsm.PopState();
+                            fsm.PushState(_idleState);
                             _dataProvider.PlanAborted(action);
                         }
                     }
@@ -160,15 +165,15 @@ namespace GCEngine.Engine.Ai.Goap
                     {
                         // we need to move there first
                         // push moveTo state
-                        fsm.pushState(_moveToState);
+                        fsm.PushState(_moveToState);
                     }
 
                 }
                 else
                 {
                     // no actions left, move to Plan state
-                    fsm.popState();
-                    fsm.pushState(_idleState);
+                    fsm.PopState();
+                    fsm.PushState(_idleState);
                     _dataProvider.ActionsFinished();
                 }
 
@@ -177,7 +182,7 @@ namespace GCEngine.Engine.Ai.Goap
 
         private void loadActions()
         {
-            GoapAction[] actions = _dataProvider.GetActions();
+            List<GoapAction> actions = _dataProvider.GetActions();
             _availableActions.Clear();
             foreach (GoapAction a in actions)
             {
@@ -195,35 +200,6 @@ namespace GCEngine.Engine.Ai.Goap
                 s += ", ";
             }
             return s;
-        }
-
-        public static string PrettyPrint(Queue<GoapAction> actions)
-        {
-            String s = "";
-            foreach (GoapAction a in actions)
-            {
-                s += a.GetType().Name;
-                s += "-> ";
-            }
-            s += "GOAL";
-            return s;
-        }
-
-        public static string prettyPrint(GoapAction[] actions)
-        {
-            String s = "";
-            foreach (GoapAction a in actions)
-            {
-                s += a.GetType().Name;
-                s += ", ";
-            }
-            return s;
-        }
-
-        public static string prettyPrint(GoapAction action)
-        {
-            String s = "" + action.GetType().Name;
-            return s;
-        }
+        }       
     }
 }

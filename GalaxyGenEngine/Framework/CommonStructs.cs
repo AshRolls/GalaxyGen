@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Framework
+namespace GalaxyGenEngine.Framework
 {
     public struct PointD
     {
@@ -72,6 +72,32 @@ namespace GCEngine.Framework
         public override string ToString()
         {
             return string.Format("[{0}, {1}]", X, Y);
+        }
+    }
+
+    public class Long64Array : IEquatable<Long64Array>
+    {
+        public long[] Values = new long[64];
+
+        public override bool Equals(object obj) => obj is Long64Array o && Equals(o);
+
+        public bool Equals(Long64Array other)
+        {
+            for (int i = 0; i < 64; i++)
+            {
+                if (Values[i] != other.Values[i]) return false;
+            }
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            HashCode hash = new();
+            for (int i = 0; i < 64; i++)
+            {
+                hash.Add(Values[i]);
+            }
+            return hash.ToHashCode();
         }
     }
 }

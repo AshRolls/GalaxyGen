@@ -1,6 +1,6 @@
-﻿using GCEngine.Engine;
-using GCEngine.Framework;
-using GCEngine.Model;
+﻿using GalaxyGenEngine.Engine;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.ViewModel
+namespace GalaxyGenEngine.ViewModel
 {
     public class StoreViewModel : IStoreViewModel
     {
@@ -35,7 +35,6 @@ namespace GCEngine.ViewModel
         private void updateFromModel()
         {
             Name = model_Var.Name;
-            Owner = model_Var.Owner;
 
             //foreach (ResourceQuantity resQ in model_Var.StoredResources) // TODO large inefficiencies with this method. Maybe better just to have storeVM add model objects directly?
             //{
@@ -63,24 +62,6 @@ namespace GCEngine.ViewModel
             }
         }
 
-        public Agent Owner
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.Owner;
-                else
-                    return null;
-            }
-            set
-            {
-                if (model_Var != null)
-                {
-                    model_Var.Owner = value;
-                    OnPropertyChanged("Owner");
-                }
-            }
-        }
 
         private ObservableCollection<IResourceQuantityViewModel> storedResources_Var = new ObservableCollection<IResourceQuantityViewModel>();
         public ObservableCollection<IResourceQuantityViewModel> StoredResources

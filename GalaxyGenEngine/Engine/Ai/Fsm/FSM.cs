@@ -10,7 +10,7 @@ using System.Collections;
  */
 using System;
 
-namespace GCEngine.Engine.Ai.Fsm
+namespace GalaxyGenEngine.Engine.Ai.Fsm
 {
     public class FSM
     {
@@ -19,21 +19,25 @@ namespace GCEngine.Engine.Ai.Fsm
 
         public delegate void FSMState(FSM fsm, object target);
 
-
         public void Update(object target)
         {
             if (stateStack.Peek() != null)
                 stateStack.Peek().Invoke(this, target);
         }
 
-        public void pushState(FSMState state)
+        public void PushState(FSMState state)
         {
             stateStack.Push(state);
         }
 
-        public void popState()
+        public void PopState()
         {
             stateStack.Pop();
+        }
+
+        public void ClearState()
+        {
+            stateStack.Clear();
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using GCEngine.ViewModel;
+﻿using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.ViewModel;
 using System;
 
-namespace GCEngine.Engine
+namespace GalaxyGenEngine.Engine
 {
     public interface ITickEngine
     {
         void SetupTickEngine(IGalaxyViewModel state, ITextOutputViewModel textOutput);
-        void Run(bool maxRate);
+        void Run(EngineRunCommand cmd);
         void Stop();
     }
 }

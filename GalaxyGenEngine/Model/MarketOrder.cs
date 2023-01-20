@@ -1,8 +1,8 @@
 ﻿using GalaxyGenCore.Resources;
-using GCEngine.Framework;
+using GalaxyGenEngine.Framework;
 using System;
 
-namespace GCEngine.Model
+namespace GalaxyGenEngine.Model
 {
     public class MarketOrder
     {
@@ -11,14 +11,15 @@ namespace GCEngine.Model
             MarketOrderId = IdUtils.GetId();
         }
 
-        public Int64 MarketOrderId { get; set; }
+        public UInt64 MarketOrderId { get; private set; }
         public bool Buy { get; set; }
         public ResourceTypeEnum Type {get; set;}
         public Int64 Quantity { get; set; }
         public Int64 LimitPrice { get; set; }
-        public Int64 EntryTick { get; set; }
-        public Int64 EventTick { get; set; }
+        public UInt64 EntryTick { get; set; }
+        public UInt64 EventTick { get; set; }
 
-        public Account OwnerAccount { get; set; }      
+        // TODO AgentId for now, should be Account later
+        public UInt64 OwnerId { get; set; }      
     }
 }

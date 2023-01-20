@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine.Messages;
-using GCEngine.Model;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore.BluePrints;
 using System;
 using System.Collections.Generic;
@@ -8,20 +8,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Controllers
+namespace GalaxyGenEngine.Engine.Controllers
 {
     public class ProducerController
     {
         private Producer _model;
         private BluePrint _bp;
+        private SolarSystemController _solarSystemC;
         private PlanetController _planetC;
-        private IActorRef _actorTextOutput;
+        private TextOutputController _textOutput;        
 
-        public ProducerController(Producer p, PlanetController pc, IActorRef actorTextOutput)
+        public ProducerController(Producer p, SolarSystemController ssc, PlanetController pc, TextOutputController textOutput)
         {
             _model = p;
+            _solarSystemC = ssc;
             _planetC = pc;
-            _actorTextOutput = actorTextOutput;
+            _textOutput = textOutput;
             _bp = BluePrints.GetBluePrint(p.BluePrintType);            
         }
 
@@ -41,17 +43,16 @@ namespace GCEngine.Engine.Controllers
         {
             if (_model.TickForNextProduction <= tick.Tick)
             {
-                if (_model.Owner != null)
-                {
-                    MessageProducedResources mpr = new MessageProducedResources(_bp.Produces, _model.Owner);
-                    _planetC.ReceiveProducedResource(mpr);                    
-                    _model.Producing = false;
+                      
+                _planetC.ReceiveProducedResource(_bp.Produces, _model.OwnerId);                    
+                _model.Producing = false;
+                _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStoppedProducing, _bp.Consumes, _model.ProducerId, _model.PlanetScId), tick.Tick));
 
-                    //foreach (ResourceQuantity resQ in _bp.Produces)
-                    //{
-                    //    _actorTextOutput.Tell(_model.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
-                    //}
-                }
+                //foreach (ResourceQuantity resQ in _bp.Produces)
+                //{
+                //    _actorTextOutput.Tell(_model.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
+                //}
+
 
                 if (_model.AutoResumeProduction)
                 {
@@ -65,13 +66,13 @@ namespace GCEngine.Engine.Controllers
         }
 
         private void requestResources(MessageTick tick)
-        {
-            MessageRequestResources msg = new MessageRequestResources(_bp.Consumes, _model.Owner, tick.Tick);
-            if (_planetC.ReceiveResourceRequest(msg))
+        {            
+            if (_planetC.ResourcesRequest(_bp.Consumes, _model.OwnerId, tick.Tick))
             {
-                _model.TickForNextProduction = msg.TickSent + _bp.BaseTicks;
+                _model.TickForNextProduction = tick.Tick + _bp.BaseTicks;
                 _model.Producing = true;
                 _model.ProduceNThenStop--;
+                _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStartedProducing, null, _model.ProducerId, _model.PlanetScId), tick.Tick));
             }
             else
             {

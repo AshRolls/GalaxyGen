@@ -1,7 +1,7 @@
 ﻿using Akka.Actor;
-using GCEngine.Engine.Messages;
-using GCEngine.Framework;
-using GCEngine.Model;
+using GalaxyGenEngine.Engine.Messages;
+using GalaxyGenEngine.Framework;
+using GalaxyGenEngine.Model;
 using GalaxyGenCore;
 using GalaxyGenCore.Framework;
 using GalaxyGenCore.Resources;
@@ -12,37 +12,41 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GCEngine.Engine.Controllers
+namespace GalaxyGenEngine.Engine.Controllers
 {
     public class PlanetController
     {
         private Planet _model;
-        private HashSet<ProducerController> _producerCs;
-        private IActorRef _actorTextOutput;
+        private SolarSystemController _solarSystemC;
+        private Dictionary<UInt64, ProducerController> _producerCs;
+        private MarketController _marketController;
+        private TextOutputController _textOutput;
         private ScPlanet _scPlanet;
-        private Double _orbitHours;
+        private double _orbitHours;
+        private ulong _curTick;
 
-        public PlanetController(Planet p, IActorRef actorTextOutput)
+        public PlanetController(Planet p, SolarSystemController ssc, TextOutputController textOutput)
         {
             _model = p;
-            _actorTextOutput = actorTextOutput;
+            _solarSystemC = ssc;
+            _textOutput = textOutput;
             _scPlanet = StarChart.GetPlanet(_model.StarChartId);
             _orbitHours = _scPlanet.OrbitDays * (double)Globals.DAYS_TO_TICKS_FACTOR;
 
-            _producerCs = new HashSet<ProducerController>();
+            _producerCs = new();
             // create child controllers for each producer in planet
             foreach (Producer prod in p.Producers)
             {
-                ProducerController pc = new ProducerController(prod, this, actorTextOutput);
-                _producerCs.Add(pc);
+                ProducerController pc = new ProducerController(prod, ssc, this, textOutput);
+                _producerCs.Add(prod.ProducerId, pc);
             }
 
-            // TODO create a controller for market.
-
+            _marketController = new MarketController(p.Market, this, _solarSystemC, textOutput);
         }
 
         public void Tick(MessageTick tick)
         {
+            _curTick = tick.Tick;
             movePlanetXY(tick);
             updateProducers(tick);
         }
@@ -56,72 +60,116 @@ namespace GCEngine.Engine.Controllers
 
         private void updateProducers(MessageTick tick)
         {
-            foreach (ProducerController pc in _producerCs)
+            foreach (ProducerController pc in _producerCs.Values)
             {
                 pc.Tick(tick);
-            }            
+            }
         }
 
-        internal void ReceiveProducedResource(MessageProducedResources mpr)
+        internal void ReceiveProducedResource(List<ResourceQuantity> resQs, ulong ownerId)
         {
-            Store s = getOrCreateStoreForOwner(mpr.Owner);
-            addResourceQuantityToStore(s, mpr);
+            Store s = getOrCreateStoreForOwner(ownerId);
+            addResourcesQuantityToStore(s, resQs);
         }
 
-        private Store getOrCreateStoreForOwner(Agent owner)
+        internal void ReceiveMarketResource(ResourceTypeEnum resType, long quantity, ulong ownerId)
+        {            
+            Store s = getOrCreateStoreForOwner(ownerId);
+            addResourceQuantityToStore(s, new ResourceQuantity(resType, quantity));
+        }
+
+        private Store getOrCreateStoreForOwner(ulong ownerId)
         {
-            Store s = getStoreForOwner(owner);
+            Store s = getStoreForOwner(ownerId);
             if (s == null)
             {
                 s = new Store();
                 s.Location = _model;
-                s.Owner = owner;
-                _model.Stores.Add(owner.AgentId, s);
+                s.OwnerId = ownerId;
+                _model.Stores.Add(ownerId, s);
             }
             return s;
         }
 
-        private Store getStoreForOwner(Agent owner)
+        private Store getStoreForOwner(ulong ownerId)
         {
-            return _model.Stores[owner.AgentId];
+            return _model.Stores[ownerId];
         }
 
-        private void addResourceQuantityToStore(Store s, MessageProducedResources msg)
+        private void addResourcesQuantityToStore(Store s, List<ResourceQuantity> resources)
         {
-            foreach (ResourceQuantity resQ in msg.Resources)
+            foreach (ResourceQuantity resQ in resources)
             {
-                if (s.StoredResources.ContainsKey(resQ.Type))
-                {
-                    s.StoredResources[resQ.Type] += resQ.Quantity;
-                }
-                else
-                {
-                    s.StoredResources.Add(resQ.Type, resQ.Quantity);
-                }
-
+                addResourceQuantityToStore(s, resQ);
                 //_actorTextOutput.Tell("Store added " + resQ.Type + " " + resQ.Quantity);
             }
         }
 
-        private UInt64 getStoredResourceQtyFromStore(Store s, ResourceTypeEnum type)
+        private void addResourceQuantityToStore(Store s, ResourceQuantity resQ)
+        {
+            if (s.StoredResources.ContainsKey(resQ.Type))
+            {
+                s.StoredResources[resQ.Type] += resQ.Quantity;
+            }
+            else
+            {
+                s.StoredResources.Add(resQ.Type, resQ.Quantity);
+            }
+        }
+
+        private Int64 getStoredResourceQtyFromStore(Store s, ResourceTypeEnum type)
         {
             return s.StoredResources[type];
         }
 
-        internal bool ReceiveResourceRequest(MessageRequestResources msg)
-        {
-            Store s = getStoreForOwner(msg.Owner);
-            if (s == null) return false; // does not have resources
-                                         // check that we have the resources in store
-            bool hasResources = checkResourcesAvailable(msg, s);
-
-            if (hasResources)
+        internal bool ResourcesRequest(List<ResourceQuantity> resourcesRequested, ulong agentId, ulong tick)
+        {            
+            Store s = getStoreForOwner(agentId);            
+            if (s != null && checkResourcesAvailable(resourcesRequested, s))
             {
-                // remove resources
-                foreach (ResourceQuantity resQ in msg.ResourcesRequested)
+                foreach (ResourceQuantity resQ in resourcesRequested)
                 {
                     s.StoredResources[resQ.Type] -= resQ.Quantity;
-                    //_actorTextOutput.Tell("Store removed " + resQ.Type + " " + resQ.Quantity);
+                }
+            }
+            else return false;            
+            return true;
+        }
+
+        internal bool ResourceRequest(ResourceQuantity resQ, ulong agentId, ulong tick)
+        {
+            Store s = getStoreForOwner(agentId);
+            if (s == null) return false; 
+            if (checkResourceAvailable(resQ, s))
+            {
+                // remove resource
+                s.StoredResources[resQ.Type] -= resQ.Quantity;                                
+                return true;
+            }
+            return false;
+        }
+
+        internal bool ReceiveResourceLoadShipRequest(MessagePlanetCommand msg)
+        {
+            MessagePlanetRequestShipResources msd = (MessagePlanetRequestShipResources)msg.Command;
+            Store planetS = getStoreForOwner(msd.AgentId);
+            Store shipS = _model.DockedShips[msd.ShipId].Stores[msd.AgentId];
+            if (msg.Command.CommandType == PlanetCommandEnum.RequestLoadShip) return moveResources(planetS, shipS, msd.ResourcesRequested);
+            else if (msg.Command.CommandType == PlanetCommandEnum.RequestUnloadShip) return moveResources(shipS, planetS, msd.ResourcesRequested);
+            return false;
+        }
+
+        private bool moveResources(Store sourceStore, Store destStore, List<ResourceQuantity> resQs)
+        {
+            if (sourceStore == null || destStore == null) return false; // does not have resources
+            if (checkResourcesAvailable(resQs, sourceStore))
+            {
+                foreach (ResourceQuantity resQ in resQs)
+                {
+                    // remove resources
+                    sourceStore.StoredResources[resQ.Type] -= resQ.Quantity;
+                    // add to ship store
+                    addResourcesQuantityToStore(destStore, new List<ResourceQuantity>() { resQ });
                 }
                 return true;
             }
@@ -131,45 +179,69 @@ namespace GCEngine.Engine.Controllers
             }
         }
 
-        private bool checkResourcesAvailable(MessageRequestResources msg, Store s)
+        private bool checkResourceAvailable(ResourceQuantity resQ, Store s)
         {
-            bool hasResources = true;
-            foreach (ResourceQuantity resQ in msg.ResourcesRequested)
+            if (s.StoredResources.ContainsKey(resQ.Type))
             {
-                if (s.StoredResources.ContainsKey(resQ.Type))
+                Int64 storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
+                if (storedResQ < resQ.Quantity)
                 {
-                    UInt64 storedResQ = getStoredResourceQtyFromStore(s, resQ.Type);
-                    if (storedResQ < resQ.Quantity)
-                    {
-                        hasResources = false;
-                        break;
-                    }
+                    return false;
                 }
-                else
-                {
-                    hasResources = false;
-                    break;
-                }
+                else return true;
             }
+            return false;
+        }
 
-            return hasResources;
+        private bool checkResourcesAvailable(List<ResourceQuantity> resourcesRequested, Store s)
+        {
+            foreach (ResourceQuantity resQ in resourcesRequested)
+            {
+                if (!checkResourceAvailable(resQ, s)) return false;
+            }
+            return true;
         }    
 
-        internal void UndockShip(Int64 shipId)
+        internal void UndockShip(UInt64 shipId)
         {
-            Ship s = _model.DockedShips.Where(x => x.ShipId == shipId).FirstOrDefault();
+            Ship s = _model.DockedShips[shipId];
             if (s != null)
-                _model.DockedShips.Remove(s);
+                _model.DockedShips.Remove(shipId);
         }
 
         internal void DockShip(Ship s)
         {
-            _model.DockedShips.Add(s);
+            _model.DockedShips.Add(s.ShipId, s);
         }
 
         internal void ReceiveCommandForMarket(MessageMarketCommand msg)
         {
-            throw new NotImplementedException();
+            _marketController.receiveMarketCommand(msg);
+        }
+
+        internal void ReceiveCommandForPlanet(MessagePlanetCommand msg)
+        {
+            bool success;
+            ulong agentId;
+            switch (msg.Command.CommandType)
+            {
+                case PlanetCommandEnum.RequestLoadShip:
+                    agentId = ((MessagePlanetRequestShipResources)msg.Command).AgentId;
+                    success = ReceiveResourceLoadShipRequest(msg);
+                    break;
+                case PlanetCommandEnum.RequestUnloadShip:
+                    agentId = ((MessagePlanetRequestShipResources)msg.Command).AgentId;
+                    success = ReceiveResourceLoadShipRequest(msg);
+                    break;
+                default:
+                    success = false;
+                    throw new Exception("Unknown Ship Command");
+            }
+            if (!success)
+            {
+                _solarSystemC.SendMessageToAgent(agentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.PlanetCommandFailed), _curTick));
+            }
+
         }
     }
 }
