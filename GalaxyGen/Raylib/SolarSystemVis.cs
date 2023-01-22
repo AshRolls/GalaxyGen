@@ -52,7 +52,7 @@ namespace GalaxyGen.Raylib
             DrawCircle(_xOffset, _yOffset, _cellSize * 2, Color.YELLOW);
             foreach(RenderRectangle r in _shipRecs)  // foreach faster than for because we access the item multiple times
             {
-                DrawRectangle(r.X, r.Y, r.W, r.H, FULLRED);                                       
+                DrawPixel(r.X, r.Y, FULLRED);                                       
             }
             foreach (RenderCircle r in _planetRecs)  // foreach faster than for because we access the item multiple times
             {
