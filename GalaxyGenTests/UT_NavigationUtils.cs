@@ -17,7 +17,7 @@ namespace GalaxyGenTests
             double bY = 4;
             double distance = 4;
 
-            PointD res = NavigationUtils.GetNewPointForShip(distance, aX, aY, bX, bY);
+            Vector2 res = NavigationUtils.GetNewPointForShip(distance, aX, aY, bX, bY);
             res.X.Should().BeApproximately(1.79, 0.01);
             res.Y.Should().BeApproximately(2.92, 0.01);
         }

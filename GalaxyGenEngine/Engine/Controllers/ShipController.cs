@@ -33,9 +33,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             if (_model.ShipState == ShipStateEnum.SpaceAutopilot)
             {
                 // move ship towards destination
-                PointD newPoint = NavigationUtils.GetNewPointForShip(_model.Type.MaxCruisingSpeedKmH, _model.PositionX, _model.PositionY, _destination.PositionX, _destination.PositionY);
-                _model.PositionX = newPoint.X;
-                _model.PositionY = newPoint.Y;
+                _model.Position = NavigationUtils.GetNewPointForShip(_model.Type.MaxCruisingSpeedKmH, _model.Position.X, _model.Position.Y, _destination.Position.X, _destination.Position.Y);
             }
         }
 
@@ -89,8 +87,7 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal void Undock()
         {
-            _model.PositionX = _model.DockedPlanet.PositionX;
-            _model.PositionY = _model.DockedPlanet.PositionY;
+            _model.Position = _model.DockedPlanet.Position;            
             _model.DockedPlanet = null;
             _model.AutopilotActive = false;
             _model.ShipState = ShipStateEnum.SpaceManual;           
@@ -123,9 +120,9 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
             else
             {
-                initStr.Append(_model.PositionX);
+                initStr.Append(_model.Position.X);
                 initStr.Append(",");
-                initStr.Append(_model.PositionY);
+                initStr.Append(_model.Position.Y);
             }
             initStr.Append("]");
             return initStr.ToString();
@@ -133,8 +130,7 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal void SetXY(Double X, Double Y)
         {
-            _model.PositionX = X;
-            _model.PositionY = Y;
+            _model.Position = new Vector2(X, Y);            
         }
 
         internal void SetDestination(UInt64 destinationScId)

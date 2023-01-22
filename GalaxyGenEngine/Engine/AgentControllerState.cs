@@ -97,35 +97,30 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public Double DestinationX(UInt64 destinationScId)
+        public Vector2 Destination(UInt64 destinationScId)
         {
             updateCachedPlanet(destinationScId);
-            return destinationPlanet.PositionX;            
+            return destinationPlanet.Position;
         }
-
-        public Double DestinationY(UInt64 destinationScId)
-        {
-            updateCachedPlanet(destinationScId);
-            return destinationPlanet.PositionY;
-        }
+       
 
         public bool CurrentShipAtDestination(UInt64 destinationScId)
         {
             Ship s = (Ship)_model.Location;
             updateCachedPlanet(destinationScId);
 
-            if (destinationPlanet != null && s.PositionX == destinationPlanet.PositionX && s.PositionY == destinationPlanet.PositionY)
+            if (destinationPlanet != null && s.Position == destinationPlanet.Position)
             {
                 return true;
             }
             return false;
         }
 
-        public bool XYAtDestination(UInt64 destinationScId, Double X, Double Y)
+        public bool AtDestination(UInt64 destinationScId, Vector2 pos)
         {
             updateCachedPlanet(destinationScId);
 
-            if (destinationPlanet != null && X == destinationPlanet.PositionX && Y == destinationPlanet.PositionY)
+            if (destinationPlanet != null && pos == destinationPlanet.Position)
             {
                 return true;
             }
@@ -173,28 +168,12 @@ namespace GalaxyGenEngine.Engine
             }
         }
 
-        public PointD CurrentShipXY
+        public Vector2 CurrentShipPos
         {
             get
             {
                 Ship s = (Ship)_model.Location;
-                return new PointD(s.PositionX, s.PositionY);
-            }
-        }
-
-        public Double CurrentShipX
-        {
-            get
-            {
-                return ((Ship)_model.Location).PositionX;
-            }
-        }
-
-        public Double CurrentShipY
-        {
-            get
-            {
-                return ((Ship)_model.Location).PositionY;
+                return s.Position;
             }
         }
 

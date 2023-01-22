@@ -29,9 +29,8 @@ namespace GalaxyGenEngine.Model
         public ShipType Type { get; set; }
 
         public ShipStateEnum ShipState { get; set; }
-        public Double PositionX { get; set; }
-        public Double PositionY { get; set; }
-
+       
+        public Vector2 Position { get; set; }
         public Agent Owner { get; set; }
         public Agent Pilot { get; set; }
         public Dictionary<UInt64, Store> Stores { get; set; }
