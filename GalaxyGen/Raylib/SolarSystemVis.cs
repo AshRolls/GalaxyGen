@@ -2,36 +2,39 @@
 using Raylib_cs;
 using static Raylib_cs.Raylib;
 using GalaxyGenEngine.Framework;
+using System;
 
 namespace GalaxyGen.Raylib
 {
     internal class SolarSystemVis
     {
-
         private Viewer _renderer;
         private ConcurrentQueue<RenderArray> _renderArrayQueue = new ConcurrentQueue<RenderArray>();
         private const int _initialWidth = 800;
-        private const int _initialHeight = 800;
-        private const int _scaling = 3000000;
+        private const int _initialHeight = 800;       
+        private int _curWidth = 800;
+        private int _curHeight = 800;
+        private int _scaling = 3000000;
+        private const int _scalingSpeed = 150000;
         private System.Numerics.Vector2 _prevPos;
         private System.Numerics.Vector2 _initialPos;
         private System.Numerics.Vector2 _mouseOffset;
-        private int _xOffset => (GetScreenWidth() / 2) + (int)_mouseOffset.X;
-        private int _yOffset => (GetScreenHeight() / 2) + (int)_mouseOffset.Y;
-
-        private const int _cellSize = 2;
+        private int _xOffset => (_curWidth / 2) + (int)_mouseOffset.X;
+        private int _yOffset => (_curHeight / 2) + (int)_mouseOffset.Y;
+        private const int _cellSize = 1;
         private RenderRectangle[] _shipRecs;
-        private RenderRectangle[] _planetRecs;
+        private RenderCircle[] _planetRecs;
         private static readonly Color FULLRED = new Color(255, 0, 0, 255);
 
         internal record RenderArray(byte Type, Vector2[] Positions);
 
         internal record RenderRectangle(int X, int Y, int W, int H);
+        internal record RenderCircle(int X, int Y, int R);
 
         internal void StartVisualiser()
         {            
             _shipRecs = new RenderRectangle[0];
-            _planetRecs = new RenderRectangle[0];
+            _planetRecs = new RenderCircle[0];
             _renderer = new Viewer(_initialWidth, _initialHeight, 60, "Solarsystem");
             _renderer.StartViewer(processFrame);
         }        
@@ -39,15 +42,21 @@ namespace GalaxyGen.Raylib
         internal void processFrame()
         {
             //processItemQueue();
-            processArrayQueue();            
-            DrawRectangle(_xOffset, _yOffset, 4, 4, Color.YELLOW);
+            processArrayQueue(); 
+            if (IsWindowResized())
+            {
+                _curWidth = GetScreenWidth();
+                _curHeight = GetScreenHeight();
+            }
+
+            DrawCircle(_xOffset, _yOffset, _cellSize * 2, Color.YELLOW);
             foreach(RenderRectangle r in _shipRecs)  // foreach faster than for because we access the item multiple times
             {
                 DrawRectangle(r.X, r.Y, r.W, r.H, FULLRED);                                       
             }
-            foreach (RenderRectangle r in _planetRecs)  // foreach faster than for because we access the item multiple times
+            foreach (RenderCircle r in _planetRecs)  // foreach faster than for because we access the item multiple times
             {
-                DrawRectangle(r.X, r.Y, r.W, r.H, Color.SKYBLUE);
+                DrawCircle(r.X, r.Y, r.R, Color.SKYBLUE);
             }
             processMouse();
         }
@@ -65,7 +74,8 @@ namespace GalaxyGen.Raylib
                 System.Numerics.Vector2 delta = thisPos - _prevPos;              
                 _prevPos = thisPos;
                 _mouseOffset += delta;
-            }            
+            }
+            _scaling = Math.Max((_scaling - (int)(GetMouseWheelMove() * _scalingSpeed)), 0);
         }
 
         internal void AddRenderArray(RenderArray item)
@@ -104,12 +114,12 @@ namespace GalaxyGen.Raylib
         }
         private void updatePlanetsArray()
         {
-            if (_planetRecs.Length != _rA.Positions.Length) _planetRecs = new RenderRectangle[_rA.Positions.Length];
+            if (_planetRecs.Length != _rA.Positions.Length) _planetRecs = new RenderCircle[_rA.Positions.Length];
             for (int i = 0; i < _rA.Positions.Length; i++)
             {
-                RenderRectangle r = new((int)(_rA.Positions[i].X / _scaling) + _xOffset,
+                RenderCircle r = new(   (int)(_rA.Positions[i].X / _scaling) + _xOffset,
                                         (int)(_rA.Positions[i].Y / _scaling) + _yOffset,
-                                        _cellSize, _cellSize);
+                                        _cellSize);
                 _planetRecs[i] = r;
             }
         }
