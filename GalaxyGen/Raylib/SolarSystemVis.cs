@@ -14,8 +14,9 @@ namespace GalaxyGen.Raylib
         private const int _initialHeight = 800;       
         private int _curWidth = 800;
         private int _curHeight = 800;
-        private int _scaling = 3000000;
-        private const int _scalingSpeed = 150000;
+        private int _scalingBase = 1750;
+        private int _scaling = 3000000; 
+        private const int _scalingSpeed = 50;
         private System.Numerics.Vector2 _prevPos;
         private System.Numerics.Vector2 _initialPos;
         private System.Numerics.Vector2 _mouseOffset;
@@ -75,7 +76,8 @@ namespace GalaxyGen.Raylib
                 _prevPos = thisPos;
                 _mouseOffset += delta;
             }
-            _scaling = Math.Max((_scaling - (int)(GetMouseWheelMove() * _scalingSpeed)), 0);
+            _scalingBase = Math.Max((_scalingBase - (int)(GetMouseWheelMove() * _scalingSpeed)), 0);
+            _scaling = _scalingBase * _scalingBase * 2;
         }
 
         internal void AddRenderArray(RenderArray item)
