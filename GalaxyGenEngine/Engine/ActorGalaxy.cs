@@ -9,7 +9,7 @@ using System.Timers;
 
 namespace GalaxyGenEngine.Engine
 {
-    public enum TickEngineRunState
+    public enum GalaxyRunState
     {
         Running,
         RunningThrottled,
@@ -17,21 +17,21 @@ namespace GalaxyGenEngine.Engine
         Stopped
     }
 
-    public class ActorTickEngineCoordinator : ReceiveActor
+    public class ActorGalaxy : ReceiveActor
     {
         private Galaxy _state;
         private HashSet<IActorRef> _subscribedActorSolarSystems; 
         private TextOutputController _textOutput;
-        private TickEngineRunState _runState;
+        private GalaxyRunState _runState;
         private int _numberOfIncompleteSS;
         private Timer _secondTimer;
         private Timer _msTimer;
         private UInt64 _ticksAtTimerStart;
         private bool _receivedAll;
 
-        public ActorTickEngineCoordinator(TextOutputController textOutput, Galaxy state)
+        public ActorGalaxy(TextOutputController textOutput, Galaxy state)
         {
-            _runState = TickEngineRunState.Stopped;
+            _runState = GalaxyRunState.Stopped;
             _state = state;
             _state.Actor = Self;
             _textOutput = textOutput;
@@ -61,7 +61,7 @@ namespace GalaxyGenEngine.Engine
 
         private void setupTimers()
         {
-            _secondTimer = new Timer(5000);
+            _secondTimer = new Timer(3000);
             _secondTimer.Elapsed += secondTimer_Elapsed;
             _msTimer = new Timer(5);
             _msTimer.Elapsed += msTimer_Elapsed;
@@ -81,7 +81,7 @@ namespace GalaxyGenEngine.Engine
 
         private void secondTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            _state.TicksPerSecond = (_state.CurrentTick - _ticksAtTimerStart) / 5;
+            _state.TicksPerSecond = (_state.CurrentTick - _ticksAtTimerStart) / 3;
             _ticksAtTimerStart = _state.CurrentTick;
         }
 
@@ -99,27 +99,27 @@ namespace GalaxyGenEngine.Engine
         {
             MessageTick pulse = new MessageTick(0);
             stop();
-            if (msg.RunCommand == EngineRunCommand.RunMax && _runState != TickEngineRunState.RunningMax)
+            if (msg.RunCommand == EngineRunCommand.RunMax && _runState != GalaxyRunState.RunningMax)
             {
                 _textOutput.Disable();
                 _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();                
-                _runState = TickEngineRunState.RunningMax;
+                _runState = GalaxyRunState.RunningMax;
                 startSecondTimer();
                 sendTick();
             }
-            else if (msg.RunCommand == EngineRunCommand.RunThrottled && _runState != TickEngineRunState.RunningThrottled)
+            else if (msg.RunCommand == EngineRunCommand.RunThrottled && _runState != GalaxyRunState.RunningThrottled)
             {
                 _textOutput.Enable();
                 _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
-                _runState = TickEngineRunState.RunningThrottled;
+                _runState = GalaxyRunState.RunningThrottled;
                 startSecondTimer();
                 _msTimer.Start();
                 sendTick();
             }
-            else if (msg.RunCommand == EngineRunCommand.RunPulse && _runState != TickEngineRunState.Running)
+            else if (msg.RunCommand == EngineRunCommand.RunPulse && _runState != GalaxyRunState.Running)
             {
                 _textOutput.Enable();
-                _runState = TickEngineRunState.Running;
+                _runState = GalaxyRunState.Running;
                 _runCancel = Context.System.Scheduler.ScheduleTellRepeatedlyCancelable(0, 5, Self, pulse, ActorRefs.Nobody);
                 startSecondTimer();
                 sendTick();
@@ -135,7 +135,7 @@ namespace GalaxyGenEngine.Engine
         {
             cancelPulse();
             stopTimers();
-            _runState = TickEngineRunState.Stopped;
+            _runState = GalaxyRunState.Stopped;
         }
 
         private void cancelPulse()
@@ -155,13 +155,13 @@ namespace GalaxyGenEngine.Engine
 
         private void receiveSSCompleted(MessageEngineSSCompletedCommand msg)
         {
-            if (_runState == TickEngineRunState.RunningMax || _runState == TickEngineRunState.RunningThrottled)
+            if (_runState == GalaxyRunState.RunningMax || _runState == GalaxyRunState.RunningThrottled)
             {
                 _numberOfIncompleteSS--;
                 if (_numberOfIncompleteSS <= 0)
                 {
                     _numberOfIncompleteSS = _subscribedActorSolarSystems.Count();
-                    if (_runState == TickEngineRunState.RunningMax) sendTick();
+                    if (_runState == GalaxyRunState.RunningMax) sendTick();
                     else _receivedAll = true;
                 }                
             }            

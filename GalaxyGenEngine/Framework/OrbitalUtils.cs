@@ -9,26 +9,20 @@ namespace GalaxyGenEngine.Framework
 {    
     public static class OrbitalUtils
     {        
-        public static PointD CalcPositionFromTick(UInt64 tick, Double orbitalTicks, Double orbitalKm)
+        public static Vector2 CalcPositionFromTick(UInt64 tick, Double orbitalTicks, Double orbitalKm)
         {
             double tickMod = tick % orbitalTicks;
             double slice = 2 * Math.PI / orbitalTicks;
             double angle = slice * tickMod;
-            PointD pt;
-            pt.X = orbitalKm * Math.Cos(angle);
-            pt.Y = orbitalKm * Math.Sin(angle);
-            return pt;
+            return new Vector2(orbitalKm * Math.Cos(angle), orbitalKm * Math.Sin(angle));            
         }
 
-        public static PointD CalcCenteredPositionFromTick(UInt64 tick, Double orbitalTicks, Double orbitalKm, PointD center)
+        public static Vector2 CalcCenteredPositionFromTick(UInt64 tick, Double orbitalTicks, Double orbitalKm, Vector2 center)
         {
             double tickMod = tick % orbitalTicks;
             double slice = 2 * Math.PI / orbitalTicks;
-            double angle = slice * tickMod;
-            PointD pt;
-            pt.X = center.X + orbitalKm * Math.Cos(angle);
-            pt.Y = center.Y + orbitalKm * Math.Sin(angle);
-            return pt;
+            double angle = slice * tickMod;            
+            return new Vector2(center.X + orbitalKm * Math.Cos(angle), center.Y + orbitalKm * Math.Sin(angle));
         }
     }
 }

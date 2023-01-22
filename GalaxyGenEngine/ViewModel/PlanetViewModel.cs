@@ -4,14 +4,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Timers;
+using GalaxyGenEngine.Framework;
 
 namespace GalaxyGenEngine.ViewModel
 {
     public class PlanetViewModel : IPlanetViewModel
     {
         private IProducerViewModelFactory _producerVmFactory;
-        private Timer _refreshTimer;
 
         public PlanetViewModel(ISocietyViewModelFactory initSocietyVMFactory, IProducerViewModelFactory initProducerVmFactory, IMarketViewModelFactory initMarketVmFactory)
         {            
@@ -20,29 +19,7 @@ namespace GalaxyGenEngine.ViewModel
             this.Society = societyViewModelFactory.CreateSocietyViewModel();
             IMarketViewModelFactory marketViewModelFactory = initMarketVmFactory;
             this.Market = marketViewModelFactory.CreateMarketViewModel();
-            setupAndStartTimer();
         }
-
-        private void setupAndStartTimer()
-        {
-            _refreshTimer = new Timer(50);
-            _refreshTimer.Elapsed += _refreshTimer_Elapsed;
-            _refreshTimer.Start();
-        }
-
-        private void _refreshTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            refreshAllProperties();
-        }
-
-        private void refreshAllProperties()
-        {
-            OnPropertyChanged("PositionX");
-            OnPropertyChanged("PositionY");
-            updatePosX800();
-            updatePosY800();
-        }
-
 
         private Planet model_Var;
         public Planet Model
@@ -101,65 +78,14 @@ namespace GalaxyGenEngine.ViewModel
         //    }
         //}
 
-        public Double PositionX
+        public Vector2 Position
         {
             get
             {
                 if (model_Var != null)
-                    return model_Var.PositionX;
+                    return model_Var.Position;
                 else
-                    return 0;
-            }
-        }
-
-        public Double PositionY
-        {
-            get
-            {
-                if (model_Var != null)
-                    return model_Var.PositionY;
-                else
-                    return 0;
-            }
-        }
-
-        private void updatePosX800()
-        {
-            Double posX = PositionX / 3000000;
-            PosX800 = (int)posX + 400;
-        }
-
-        private int posX800_Var;
-        public int PosX800
-        {
-            get
-            {
-                return posX800_Var;
-            }
-            private set
-            {
-                posX800_Var = value;
-                OnPropertyChanged("PosX800");
-            }
-        }
-
-        private void updatePosY800()
-        {
-            Double posY = PositionY / 3000000;
-            PosY800 = (int)posY + 400;
-        }
-
-        private int posY800_Var;
-        public int PosY800
-        {
-            get
-            {
-                return posY800_Var;
-            }
-            private set
-            {
-                posY800_Var = value;
-                OnPropertyChanged("PosY800");
+                    return new Vector2(0,0);
             }
         }
 

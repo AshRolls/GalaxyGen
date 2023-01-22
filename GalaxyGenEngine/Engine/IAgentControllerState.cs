@@ -15,10 +15,8 @@ namespace GalaxyGenEngine.Engine
         bool CurrentShipHasDestination { get; }
         ulong CurrentShipId { get; }
         bool CurrentShipIsDocked { get; }
-        ShipStateEnum CurrentShipState { get; }
-        double CurrentShipX { get; }
-        PointD CurrentShipXY { get; }
-        double CurrentShipY { get; }
+        ShipStateEnum CurrentShipState { get; }       
+        Vector2 CurrentShipPos { get; }        
         bool IsPilotingShip { get; }
         string Memory { get; set; }
         IEnumerable<ScPlanet> PlanetsInSolarSystem { get; }
@@ -26,9 +24,9 @@ namespace GalaxyGenEngine.Engine
         bool CurrentShipAtDestination(ulong destinationScId);
         Int64 CurrentShipResourceQuantity(ResourceTypeEnum resType);
         Int64 CurrentPlanetResourceQuantity(ResourceTypeEnum resType);
-        double DestinationX(ulong destinationScId);
-        double DestinationY(ulong destinationScId);
-        bool XYAtDestination(ulong destinationScId, double X, double Y);
+
+        Vector2 Destination(ulong destinationScId);        
+        bool AtDestination(ulong destinationScId, Vector2 pos);
         Int64 PlanetResourceQuantity(UInt64 planetScId, ResourceTypeEnum res);
         List<ResourceQuantity> PlanetResources(UInt64 planetScId);
         bool TryGetPlanetStoreId(ulong planetScId, out ulong storeId);

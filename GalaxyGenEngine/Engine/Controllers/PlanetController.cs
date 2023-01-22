@@ -2,15 +2,13 @@
 using GalaxyGenEngine.Engine.Messages;
 using GalaxyGenEngine.Framework;
 using GalaxyGenEngine.Model;
-using GalaxyGenCore;
+
 using GalaxyGenCore.Framework;
 using GalaxyGenCore.Resources;
 using GalaxyGenCore.StarChart;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace GalaxyGenEngine.Engine.Controllers
 {
@@ -47,15 +45,13 @@ namespace GalaxyGenEngine.Engine.Controllers
         public void Tick(MessageTick tick)
         {
             _curTick = tick.Tick;
-            movePlanetXY(tick);
+            movePlanetPos(tick);
             updateProducers(tick);
         }
 
-        private void movePlanetXY(MessageTick tick)
+        private void movePlanetPos(MessageTick tick)
         {
-            PointD pt = OrbitalUtils.CalcPositionFromTick(tick.Tick, _orbitHours, _scPlanet.OrbitKm);
-            _model.PositionX = pt.X;
-            _model.PositionY = pt.Y;
+            _model.Position = OrbitalUtils.CalcPositionFromTick(tick.Tick, _orbitHours, _scPlanet.OrbitKm);
         }
 
         private void updateProducers(MessageTick tick)
