@@ -31,7 +31,7 @@ namespace GalaxyGen
             _count = 0;
             _graphDataTimer = new Timer(50);
             _graphDataTimer.Elapsed += GraphDataTimer_Elapsed;
-            _graphDataTimer.Start();
+            //_graphDataTimer.Start();
             _lineGraphX = new();
             _lineGraphY = new();
             lines.Children.Add(_lineGraphX);

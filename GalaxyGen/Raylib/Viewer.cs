@@ -22,7 +22,9 @@ namespace GalaxyGen.Raylib
         public Viewer(int w, int h, int fps, string t)
         {            
             width = w; height = h; title = t;
+            SetConfigFlags(ConfigFlags.FLAG_WINDOW_RESIZABLE);
             InitWindow(width, height, "GalaxyGen Solarsystem " + title);
+            SetWindowMinSize(320, 320);
             SetTargetFPS(fps);
             ff_writer = new FFWriter(width, height, fps, title);
         }

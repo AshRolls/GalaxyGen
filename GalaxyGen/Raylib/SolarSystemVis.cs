@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
+﻿using System.Collections.Concurrent;
 using Raylib_cs;
 using static Raylib_cs.Raylib;
-using static Raylib_cs.Color;
-using System.Collections.Generic;
 using GalaxyGenEngine.Framework;
 
 namespace GalaxyGen.Raylib
@@ -12,13 +8,17 @@ namespace GalaxyGen.Raylib
     internal class SolarSystemVis
     {
 
-        private Viewer _renderer;        
+        private Viewer _renderer;
         private ConcurrentQueue<RenderArray> _renderArrayQueue = new ConcurrentQueue<RenderArray>();
-        private const int _width = 800;
-        private const int _height = 800;
+        private const int _initialWidth = 800;
+        private const int _initialHeight = 800;
         private const int _scaling = 3000000;
-        private const int _xOffset = _width / 2;
-        private const int _yOffset = _width / 2;
+        private System.Numerics.Vector2 _prevPos;
+        private System.Numerics.Vector2 _initialPos;
+        private System.Numerics.Vector2 _mouseOffset;
+        private int _xOffset => (GetScreenWidth() / 2) + (int)_mouseOffset.X;
+        private int _yOffset => (GetScreenHeight() / 2) + (int)_mouseOffset.Y;
+
         private const int _cellSize = 2;
         private RenderRectangle[] _shipRecs;
         private RenderRectangle[] _planetRecs;
@@ -32,14 +32,14 @@ namespace GalaxyGen.Raylib
         {            
             _shipRecs = new RenderRectangle[0];
             _planetRecs = new RenderRectangle[0];
-            _renderer = new Viewer(_width, _height, 30, "Solarsystem");
+            _renderer = new Viewer(_initialWidth, _initialHeight, 60, "Solarsystem");
             _renderer.StartViewer(processFrame);
         }        
 
         internal void processFrame()
         {
             //processItemQueue();
-            processArrayQueue();
+            processArrayQueue();            
             DrawRectangle(_xOffset, _yOffset, 4, 4, Color.YELLOW);
             foreach(RenderRectangle r in _shipRecs)  // foreach faster than for because we access the item multiple times
             {
@@ -49,6 +49,23 @@ namespace GalaxyGen.Raylib
             {
                 DrawRectangle(r.X, r.Y, r.W, r.H, Color.SKYBLUE);
             }
+            processMouse();
+        }
+
+        private void processMouse()
+        {
+            if (IsMouseButtonPressed(MouseButton.MOUSE_BUTTON_RIGHT))
+            {
+                _initialPos = GetMousePosition();
+                _prevPos = System.Numerics.Vector2.Zero;
+            }
+            else if (IsMouseButtonDown(MouseButton.MOUSE_RIGHT_BUTTON))
+            {
+                System.Numerics.Vector2 thisPos = GetMousePosition() - _initialPos;
+                System.Numerics.Vector2 delta = thisPos - _prevPos;              
+                _prevPos = thisPos;
+                _mouseOffset += delta;
+            }            
         }
 
         internal void AddRenderArray(RenderArray item)

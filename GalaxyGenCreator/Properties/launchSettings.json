@@ -1,8 +1,7 @@
 {
   "profiles": {
     "GalaxyGenCreator": {
-      "commandName": "Project",
-      "commandLineArgs": "100"
+      "commandName": "Project"
     }
   }
 }
