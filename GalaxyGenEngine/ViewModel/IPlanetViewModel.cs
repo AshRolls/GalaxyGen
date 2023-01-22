@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using GalaxyGenEngine.Framework;
 using GalaxyGenEngine.Model;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,7 @@ namespace GalaxyGenEngine.ViewModel
         Planet Model { get; set; }
         String Name { get; }
         //Int64 Population { get; set; }
-        Double PositionX { get; }
-        Double PositionY { get; }
-        int PosX800 { get; }
-        int PosY800 { get; }
+        Vector2 Position { get; }
         ISocietyViewModel Society { get; }
         IMarketViewModel Market { get; }
         ObservableCollection<IProducerViewModel> Producers { get; }

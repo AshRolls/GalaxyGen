@@ -56,8 +56,8 @@ namespace GalaxyGenEngine.Engine.Ai.Goap.Actions
             return true;
         }
 
-        private static HashSet<ulong> _targets;
-        public static HashSet<ulong> Targets
+        private HashSet<ulong> _targets;
+        public HashSet<ulong> Targets
         {
             get { return _targets; }
         }

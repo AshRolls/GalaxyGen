@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -7,19 +8,7 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Framework
 {
-    public struct PointD
-    {
-        public PointD(Double x, Double y)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public Double X;
-        public Double Y;
-    }
-
-    public struct Vector2
+    public struct Vector2 : IEquatable<Vector2>
     {
         public readonly double X;
         public readonly double Y;
@@ -54,11 +43,17 @@ namespace GalaxyGenEngine.Framework
             return new Point((int)a.X, (int)a.Y);
         }
 
+        public static bool operator ==(Vector2 lhs, Vector2 rhs) => lhs.Equals(rhs);
+
+        public static bool operator !=(Vector2 lhs, Vector2 rhs) => !(lhs == rhs);
+
+        [JsonIgnore]
         public Vector2 UnitVector
         {
             get { return this / Length; }
         }
 
+        [JsonIgnore]
         public double Length
         {
             get
@@ -72,6 +67,13 @@ namespace GalaxyGenEngine.Framework
         public override string ToString()
         {
             return string.Format("[{0}, {1}]", X, Y);
+        }
+
+        public bool Equals(Vector2 p) => X == p.X && Y == p.Y;
+        public override bool Equals(object obj) => obj is Vector2 other && this.Equals(other);
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(X, Y);
         }
     }
 
