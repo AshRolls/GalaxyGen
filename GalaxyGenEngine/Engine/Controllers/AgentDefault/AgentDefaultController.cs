@@ -140,16 +140,21 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         // scan the local and system markets and decide if there is an order we want to place / fulfil
         private void checkMarkets()
         {
-            // do i need to place a place / fulfil a market order, if so leave ship to interact with market                        
+                                  
             if (_state.CurrentShipIsDocked)
             {
-                if (checkOverMinimumTimeForMarketCheck(_state.CurrentShipDockedPlanetScId)) getMarketSnapshot();
+                ulong dockedPlanetScId = _state.CurrentShipDockedPlanetScId;
+                if (checkOverMinimumTimeForMarketCheck(dockedPlanetScId))
+                {
+                    getMarketSnapshot(dockedPlanetScId);
+                    setMarketChecked(dockedPlanetScId);
+                }
             }
         }
 
-        private void getMarketSnapshot()
+        private void getMarketSnapshot(ulong planetScId)
         {
-            _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketEmpty(MarketCommandEnum.GetMarketSnapshot), _state.AgentId, _curTick, _state.CurrentShipDockedPlanetScId));
+            _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketEmpty(MarketCommandEnum.GetMarketSnapshot), _state.AgentId, _curTick, planetScId));
         }
 
         private void checkMarketResourceNeeds()
@@ -161,6 +166,12 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
 
                 }                
             }
+        }
+
+        private void setMarketChecked(ulong planetScId)
+        {
+            if (!_memory.MarketLastCheckedTick.ContainsKey(planetScId)) _memory.MarketLastCheckedTick.Add(planetScId, _curTick);
+            else _memory.MarketLastCheckedTick[planetScId] = _curTick;
         }
 
         // make sure we haven't recently scanned market
