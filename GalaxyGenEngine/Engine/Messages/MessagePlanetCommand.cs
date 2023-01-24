@@ -1,4 +1,5 @@
-﻿using GalaxyGenEngine.Model;
+﻿using GalaxyGenCore.Resources;
+using GalaxyGenEngine.Model;
 using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -14,16 +15,8 @@ namespace GalaxyGenEngine.Engine.Messages
         RequestUnloadShip
     }
 
-    public class MessagePlanetCommand : Message
-    {
-        public MessagePlanetCommand(IMessagePlanetCommandData cmd, UInt64 tickSent, UInt64 planetScId)
-        {
-            Command = cmd;
-            TickSent = tickSent;
-            PlanetScId = planetScId;
-        }
+    public record MessagePlanetCommand(IMessagePlanetCommandData Command, UInt64 TickSent, UInt64 PlanetScId) : Message(TickSent);
 
-        public IMessagePlanetCommandData Command { get; private set; }        
-        public UInt64 PlanetScId { get; private set; }
-    }
+    public record MessagePlanetRequestResources(List<ResourceQuantity> ResourcesRequested, ulong AgentId, ulong StoreId, ulong TickSent) : Message(TickSent);
+    public record MessagePlanetRequestShipResources(PlanetCommandEnum CommandType, List<ResourceQuantity> ResourcesRequested, ulong AgentId, ulong ShipId) : IMessagePlanetCommandData;   
 }

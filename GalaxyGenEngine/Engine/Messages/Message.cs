@@ -6,8 +6,5 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Messages
 {
-    public abstract class Message
-    {
-        public UInt64 TickSent { get; protected set; }
-    }
+    public abstract record Message(ulong TickSent);    
 }

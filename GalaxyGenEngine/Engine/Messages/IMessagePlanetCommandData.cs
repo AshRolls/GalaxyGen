@@ -8,6 +8,6 @@ namespace GalaxyGenEngine.Engine.Messages
 {
     public interface IMessagePlanetCommandData
     {
-        PlanetCommandEnum CommandType { get; set; }
+        PlanetCommandEnum CommandType { get; }
     }
 }

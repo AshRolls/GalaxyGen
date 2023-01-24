@@ -21,23 +21,10 @@ namespace GalaxyGenEngine.Engine.Messages
         GetSellOrders,
         GetMarketSnapshot
     }
+
+    public record MessageMarketCommand(IMessageMarketCommandData Command, ulong AgentId, ulong TickSent, ulong PlanetScId) : Message(TickSent);
+
     public record MessageMarketEmpty(MarketCommandEnum CommandType) : IMessageMarketCommandData;
     public record MessageMarketSpecificPrice(MarketCommandEnum CommandType, ResourceTypeEnum ResourceType, long Quantity, long LimitPrice) : IMessageMarketCommandData;
-    public record MessageMarketGeneral(MarketCommandEnum CommandType, ResourceTypeEnum ResourceType, long Quantity) : IMessageMarketCommandData;
-
-    public class MessageMarketCommand : Message
-    {
-        public MessageMarketCommand(IMessageMarketCommandData cmd, UInt64 agentId, UInt64 tickSent, UInt64 planetScId)
-        {
-            Command = cmd;
-            TickSent = tickSent;
-            AgentId = agentId;
-            PlanetScId = planetScId;
-        }
-
-        public IMessageMarketCommandData Command { get; private set; }
-        public UInt64 AgentId { get; private set; }
-        public UInt64 PlanetScId { get; private set; }
-
-    }
+    public record MessageMarketGeneral(MarketCommandEnum CommandType, ResourceTypeEnum ResourceType, long Quantity) : IMessageMarketCommandData;        
 }

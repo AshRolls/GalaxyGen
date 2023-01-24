@@ -7,20 +7,11 @@ using System.Threading.Tasks;
 
 namespace GalaxyGenEngine.Engine.Messages
 {
-    public enum ProducerCommand
+    public enum ProducerCommandEnum
     {
         Run,
         Stop
     }
 
-    public class MessageProducerCommand
-    {
-        public MessageProducerCommand(ProducerCommand prodCmd)
-        {
-            ProducerCommand = prodCmd;
-        }
-
-        public ProducerCommand ProducerCommand { get; private set; }   
-        public int ProduceN { get; private set; }     
-    }
+    public record MessageProducerCommand(ProducerCommandEnum Command, int ProduceN);
 }

@@ -83,11 +83,11 @@ namespace GalaxyGenEngine.Engine.Controllers
         internal void receiveProducerCommand(MessageProducerCommand msg)
         {
             // we assume that run or stop always occurs after current production ends.
-            if (msg.ProducerCommand == ProducerCommand.Run)
+            if (msg.Command == ProducerCommandEnum.Run)
             {
                 _model.ProduceNThenStop = msg.ProduceN;
             }
-            else if (msg.ProducerCommand == ProducerCommand.Stop)
+            else if (msg.Command == ProducerCommandEnum.Stop)
             {
                 _model.ProduceNThenStop = 0;
             }
