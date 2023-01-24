@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaxyGenCore.Resources;
+using System;
+using System.Collections.Generic;
 
 namespace GalaxyGenEngine.Engine.Messages
 {
@@ -8,8 +10,12 @@ namespace GalaxyGenEngine.Engine.Messages
         PlanetCommandFailed,
         MarketCommandFailed,
         ProducerStartedProducing,
-        ProducerStoppedProducing        
+        ProducerStoppedProducing,
+        MarketSnapshot
     }
+    public record MessageAgentFailedCommand(AgentCommandEnum CommandType) : IMessageAgentCommandData;
+    public record MessageAgentProducerCommand(AgentCommandEnum CommandType, List<ResourceQuantity> ResQs, ulong ProducerId, ulong PlanetScId) : IMessageAgentCommandData;
+    public record MessageAgentMarketSnapshot(AgentCommandEnum CommandType, List<(ResourceTypeEnum, long)> spotPrices, ulong PlanetScId) : IMessageAgentCommandData;
 
     public class MessageAgentCommand : Message
     {

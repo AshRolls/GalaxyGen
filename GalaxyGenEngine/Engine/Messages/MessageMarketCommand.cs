@@ -1,4 +1,5 @@
-﻿using GalaxyGenEngine.Model;
+﻿using GalaxyGenCore.Resources;
+using GalaxyGenEngine.Model;
 using GalaxyGenEngine.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -17,8 +18,12 @@ namespace GalaxyGenEngine.Engine.Messages
         PlaceBuyOrderHighest,
         PlaceBuyOrderSpecific,
         GetBuyOrders,                               
-        GetSellOrders               
+        GetSellOrders,
+        GetMarketSnapshot
     }
+    public record MessageMarketEmpty(MarketCommandEnum CommandType) : IMessageMarketCommandData;
+    public record MessageMarketSpecificPrice(MarketCommandEnum CommandType, ResourceTypeEnum ResourceType, long Quantity, long LimitPrice) : IMessageMarketCommandData;
+    public record MessageMarketGeneral(MarketCommandEnum CommandType, ResourceTypeEnum ResourceType, long Quantity) : IMessageMarketCommandData;
 
     public class MessageMarketCommand : Message
     {

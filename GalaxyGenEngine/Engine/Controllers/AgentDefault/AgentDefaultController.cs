@@ -68,7 +68,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                     break;
                 case AgentCommandEnum.ProducerStoppedProducing:
                     receiveProducerStopped(msg);
-                    break;
+                    break;                
 
             }
         }
@@ -131,8 +131,13 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             // do i need to place a place / fulfil a market order, if so leave ship to interact with market                        
             if (_state.CurrentShipIsDocked)
             {
-                if (checkOverMinimumTimeForMarketCheck(_state.CurrentShipDockedPlanetScId)) checkMarketResourceNeeds();
+                if (checkOverMinimumTimeForMarketCheck(_state.CurrentShipDockedPlanetScId)) getMarketSnapshot();
             }
+        }
+
+        private void getMarketSnapshot()
+        {
+            _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketEmpty(MarketCommandEnum.GetMarketSnapshot), _state.AgentId, _curTick, _state.CurrentShipDockedPlanetScId));
         }
 
         private void checkMarketResourceNeeds()
