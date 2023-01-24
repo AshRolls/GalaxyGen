@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GalaxyGenCore.Resources;
 using C5;
-using Akka.Util.Internal;
 
 namespace GalaxyGenEngine.Engine.Controllers
 {
@@ -102,6 +101,9 @@ namespace GalaxyGenEngine.Engine.Controllers
                 case MarketCommandEnum.BuyFromLowestSell:
                     success = placeFillOrder((MessageMarketGeneral)msg.Command, true, msg.TickSent, msg.AgentId);
                     break;
+                case MarketCommandEnum.GetMarketSnapshot:
+                    success = getSnapshot(msg);
+                    break;
                 default:
                     success = false;
                     throw new Exception("Unknown Market Command");
@@ -110,6 +112,17 @@ namespace GalaxyGenEngine.Engine.Controllers
             {
                 _solarSystemC.SendMessageToAgent(msg.AgentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.MarketCommandFailed), msg.TickSent));
             }
+        }
+
+        private bool getSnapshot(MessageMarketCommand msg)
+        {
+            List<(ResourceTypeEnum, long)> prices = new();
+            foreach (System.Collections.Generic.KeyValuePair<ResourceTypeEnum, Book> kvp in _books)
+            {                
+                if (kvp.Value.GetSpotPrice(out long price)) prices.Add((kvp.Key, price));                
+            }
+            if (prices.Count > 0) _solarSystemC.SendMessageToAgent(msg.AgentId, new MessageAgentCommand(new MessageAgentMarketSnapshot(AgentCommandEnum.MarketSnapshot, prices, _planetC.GetPlanetScId()), msg.TickSent));                            
+            return true;
         }
 
         private bool placeFillOrder(MessageMarketGeneral msg, bool buyOrder, ulong tick, ulong agentId)
@@ -307,6 +320,13 @@ namespace GalaxyGenEngine.Engine.Controllers
             Type = type;
             SellOrders = new TreeDictionary<long, TreeLimit>();
             BuyOrders = new TreeDictionary<long, TreeLimit>();
+        }
+        
+        public bool GetSpotPrice(out long price)
+        {
+            if (LowestSell != null && HighestBuy != null) { price = ((LowestSell.limitPrice - HighestBuy.limitPrice) / 2) + LowestSell.limitPrice; return true; }
+            price = 0;
+            return false;
         }
     }
 

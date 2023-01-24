@@ -62,6 +62,8 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
         }
 
+        internal ulong GetPlanetScId() => _model.StarChartId;
+
         internal void ReceiveProducedResource(List<ResourceQuantity> resQs, ulong ownerId)
         {
             Store s = getOrCreateStoreForOwner(ownerId);

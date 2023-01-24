@@ -14,10 +14,12 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         {
             MarketLastCheckedTick = new();  // key = planetscid, value = tick
             StoppedProducers = new();
+            SpotPrices = new();
         }
 
         public UInt64 CurrentDestinationScId { get; set; }
-        public Dictionary<ulong, ulong> MarketLastCheckedTick { get; set; }       
-        public Dictionary<ulong, (ulong planetScId, List<ResourceQuantity> resQs)> StoppedProducers { get; set; }
+        public Dictionary<ulong, ulong> MarketLastCheckedTick { get; set; }
+        public Dictionary<(ulong planetScId, ResourceTypeEnum resT), (long spotPrice, ulong tick)> SpotPrices { get; set; }
+        public Dictionary<ulong, (ulong planetScId, List<ResourceQuantity> resQs)> StoppedProducers { get; set; }        
     }
 }

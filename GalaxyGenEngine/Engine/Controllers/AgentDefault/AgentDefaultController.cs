@@ -42,7 +42,7 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
         public bool Tick(MessageTick tick)
         {
             _curTick = tick.Tick;            
-            //checkMarkets();
+            checkMarkets();
             if (_curTick >= _nextCheckGoapTick) _goapAgent.Tick();
             return true;
         }       
@@ -68,8 +68,20 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
                     break;
                 case AgentCommandEnum.ProducerStoppedProducing:
                     receiveProducerStopped(msg);
-                    break;                
+                    break;
+                case AgentCommandEnum.MarketSnapshot:
+                    receiveMarketSnapshot(msg);
+                    break;
+            }
+        }
 
+        private void receiveMarketSnapshot(MessageAgentCommand msg)
+        {
+            MessageAgentMarketSnapshot mams = (MessageAgentMarketSnapshot)msg.Command;
+            foreach((ResourceTypeEnum resT, long price) in mams.SpotPrices)
+            {
+                if (_memory.SpotPrices.ContainsKey((mams.PlanetScId, resT))) _memory.SpotPrices[(mams.PlanetScId, resT)] = (price, msg.TickSent);
+                else _memory.SpotPrices.Add((mams.PlanetScId, resT), (price, msg.TickSent));
             }
         }
 

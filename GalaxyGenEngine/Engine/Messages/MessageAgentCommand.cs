@@ -18,7 +18,7 @@ namespace GalaxyGenEngine.Engine.Messages
 
     public record MessageAgentFailedCommand(AgentCommandEnum CommandType) : IMessageAgentCommandData;
     public record MessageAgentProducerCommand(AgentCommandEnum CommandType, List<ResourceQuantity> ResQs, ulong ProducerId, ulong PlanetScId) : IMessageAgentCommandData;
-    public record MessageAgentMarketSnapshot(AgentCommandEnum CommandType, List<(ResourceTypeEnum, long)> spotPrices, ulong PlanetScId) : IMessageAgentCommandData;
+    public record MessageAgentMarketSnapshot(AgentCommandEnum CommandType, List<(ResourceTypeEnum, long)> SpotPrices, ulong PlanetScId) : IMessageAgentCommandData;
 
     
     
