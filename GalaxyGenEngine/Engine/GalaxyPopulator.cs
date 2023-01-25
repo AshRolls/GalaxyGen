@@ -192,6 +192,9 @@ namespace GalaxyGenEngine.Engine
             prod.BluePrintType = bpType;
             prod.Producing = false;
             prod.AutoResumeProduction = true;
+            prod.AutoBuyFromMarket = true;
+            prod.AutoBuyFailed = false;
+            prod.AutoSellToMarket = true;
             prod.ProduceNThenStop = 0;
             return prod;
         }

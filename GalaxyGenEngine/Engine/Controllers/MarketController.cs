@@ -77,7 +77,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             to.parentLimit = tl;
         }
 
-        internal void receiveMarketCommand(MessageMarketCommand msg)
+        internal bool ReceiveMarketCommand(MessageMarketCommand msg)
         {
             // check the ship *could* execute this command
             bool success;
@@ -108,10 +108,7 @@ namespace GalaxyGenEngine.Engine.Controllers
                     success = false;
                     throw new Exception("Unknown Market Command");
             }
-            if (!success)
-            {
-                _solarSystemC.SendMessageToAgent(msg.AgentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.MarketCommandFailed), msg.TickSent));
-            }
+            return success;
         }
 
         private bool getSnapshot(MessageMarketCommand msg)
@@ -229,8 +226,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             {
                 to.parentLimit.totalVolume -= to.qty;
                 to.eventTime = tick;
-                to.qty = 0;
-
+                to.qty = 0;                  
             }
             curOrder.parentLimit.totalVolume -= qty;
             curOrder.eventTime = tick;
@@ -238,9 +234,11 @@ namespace GalaxyGenEngine.Engine.Controllers
             
             if (buyOrder) b.LowestSell = curOrder.parentLimit;
             else b.HighestBuy = curOrder.parentLimit; 
+
+            // TODO we need to update model as well, or the treeorder should BE the model.
             
             // add new resources to owner
-            if (buyOrder) _planetC.ReceiveMarketResource(resType, quantity, agentId);
+            if (buyOrder) _planetC.AddResource(resType, quantity, agentId);
             else _solarSystemC.AddCurrency(_model.CurrencyId, totalCost, agentId);
 
             return true;

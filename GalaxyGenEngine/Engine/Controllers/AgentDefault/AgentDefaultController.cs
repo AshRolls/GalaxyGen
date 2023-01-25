@@ -157,17 +157,6 @@ namespace GalaxyGenEngine.Engine.Controllers.AgentDefault
             _actorSolarSystem.Tell(new MessageMarketCommand(new MessageMarketEmpty(MarketCommandEnum.GetMarketSnapshot), _state.AgentId, _curTick, planetScId));
         }
 
-        private void checkMarketResourceNeeds()
-        {
-            if (_memory.StoppedProducers.Count > 0)
-            {
-                foreach ((ulong dest, List < ResourceQuantity > resQs) v in _memory.StoppedProducers.Values)
-                {
-
-                }                
-            }
-        }
-
         private void setMarketChecked(ulong planetScId)
         {
             if (!_memory.MarketLastCheckedTick.ContainsKey(planetScId)) _memory.MarketLastCheckedTick.Add(planetScId, _curTick);

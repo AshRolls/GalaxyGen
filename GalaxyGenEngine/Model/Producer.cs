@@ -16,9 +16,13 @@ namespace GalaxyGenEngine.Model
         public String Name { get; set; }
 
         public BluePrintEnum BluePrintType {get; set;}       
-        public UInt64 TickForNextProduction { get; set; }
+        public ulong TickForNextProduction { get; set; }        
+
         public bool Producing { get; set; }
         public bool AutoResumeProduction { get; set; }
+        public bool AutoBuyFromMarket { get; set; } 
+        public bool AutoBuyFailed { get; set; }
+        public bool AutoSellToMarket { get; set; }
         public int ProduceNThenStop { get; set; }
 
         public ulong OwnerId { get; set; }

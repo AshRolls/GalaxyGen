@@ -64,13 +64,13 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal ulong GetPlanetScId() => _model.StarChartId;
 
-        internal void ReceiveProducedResource(List<ResourceQuantity> resQs, ulong ownerId)
+        internal void AddResources(List<ResourceQuantity> resQs, ulong ownerId)
         {
             Store s = getOrCreateStoreForOwner(ownerId);
             addResourcesQuantityToStore(s, resQs);
         }
 
-        internal void ReceiveMarketResource(ResourceTypeEnum resType, long quantity, ulong ownerId)
+        internal void AddResource(ResourceTypeEnum resType, long quantity, ulong ownerId)
         {            
             Store s = getOrCreateStoreForOwner(ownerId);
             addResourceQuantityToStore(s, new ResourceQuantity(resType, quantity));
@@ -147,7 +147,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             return false;
         }
 
-        internal bool ReceiveResourceLoadShipRequest(MessagePlanetCommand msg)
+        internal bool ResourceLoadShipRequest(MessagePlanetCommand msg)
         {
             MessagePlanetRequestShipResources msd = (MessagePlanetRequestShipResources)msg.Command;
             Store planetS = getStoreForOwner(msd.AgentId);
@@ -212,12 +212,12 @@ namespace GalaxyGenEngine.Engine.Controllers
             _model.DockedShips.Add(s.ShipId, s);
         }
 
-        internal void ReceiveCommandForMarket(MessageMarketCommand msg)
+        internal bool CommandForMarket(MessageMarketCommand msg)
         {
-            _marketController.receiveMarketCommand(msg);
+            return _marketController.ReceiveMarketCommand(msg);            
         }
 
-        internal void ReceiveCommandForPlanet(MessagePlanetCommand msg)
+        internal void CommandForPlanet(MessagePlanetCommand msg)
         {
             bool success;
             ulong agentId;
@@ -225,11 +225,11 @@ namespace GalaxyGenEngine.Engine.Controllers
             {
                 case PlanetCommandEnum.RequestLoadShip:
                     agentId = ((MessagePlanetRequestShipResources)msg.Command).AgentId;
-                    success = ReceiveResourceLoadShipRequest(msg);
+                    success = ResourceLoadShipRequest(msg);
                     break;
                 case PlanetCommandEnum.RequestUnloadShip:
                     agentId = ((MessagePlanetRequestShipResources)msg.Command).AgentId;
-                    success = ReceiveResourceLoadShipRequest(msg);
+                    success = ResourceLoadShipRequest(msg);
                     break;
                 default:
                     success = false;

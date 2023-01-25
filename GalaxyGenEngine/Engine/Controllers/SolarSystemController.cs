@@ -164,12 +164,15 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         internal void ReceiveCommandForMarket(MessageMarketCommand msg)
         {
-            _planetCs[msg.PlanetScId].ReceiveCommandForMarket(msg);
+            if (!_planetCs[msg.PlanetScId].CommandForMarket(msg))
+            {
+                SendMessageToAgent(msg.AgentId, new MessageAgentCommand(new MessageAgentFailedCommand(AgentCommandEnum.MarketCommandFailed), msg.TickSent));
+            }
         }
 
         internal void ReceiveCommandForPlanet(MessagePlanetCommand msg)
         {            
-            _planetCs[msg.PlanetScId].ReceiveCommandForPlanet(msg);
+            _planetCs[msg.PlanetScId].CommandForPlanet(msg);
         }
 
         internal UInt64 SolarSystemId

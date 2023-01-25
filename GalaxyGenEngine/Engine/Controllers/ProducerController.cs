@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GalaxyGenCore.Resources;
 
 namespace GalaxyGenEngine.Engine.Controllers
 {
@@ -35,49 +36,61 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
             else if (_model.AutoResumeProduction || _model.ProduceNThenStop > 0)
             {
-                requestResources(tick);
+                if (_model.Producing) tryStartProduction(tick, true);
+                else tryStartProduction(tick, false);
             }
         }
 
         private void producingTick(MessageTick tick)
         {
             if (_model.TickForNextProduction <= tick.Tick)
-            {
-                      
-                _planetC.ReceiveProducedResource(_bp.Produces, _model.OwnerId);                    
-                _model.Producing = false;
-                _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStoppedProducing, _bp.Consumes, _model.ProducerId, _model.PlanetScId), tick.Tick));
-
-                //foreach (ResourceQuantity resQ in _bp.Produces)
-                //{
-                //    _actorTextOutput.Tell(_model.Name + " PRODUCES " + resQ.Quantity + " " + resQ.Type.ToString() + " " + tick.Tick.ToString());
-                //}
-
-
+            {                      
+                _planetC.AddResources(_bp.Produces, _model.OwnerId);                    
+                _model.Producing = false;                
                 if (_model.AutoResumeProduction)
                 {
-                    requestResources(tick);
+                    tryStartProduction(tick, true);
                 }
                 else
-                {
-                    _model.Producing = false;
+                {                    
+                    _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStoppedProducing, _bp.Consumes, _model.ProducerId, _model.PlanetScId), tick.Tick));
                 }
             }
         }
 
-        private void requestResources(MessageTick tick)
+        private void tryStartProduction(MessageTick tick, bool continuing)
         {            
+            if(!tryGetResourcesAndStart(tick, continuing))
+            {
+                if (!_model.AutoBuyFailed && tryBuyFromMarket(tick)) tryGetResourcesAndStart(tick, continuing);                
+            }
+        }
+
+        private bool tryGetResourcesAndStart(MessageTick tick, bool continuing)
+        {
             if (_planetC.ResourcesRequest(_bp.Consumes, _model.OwnerId, tick.Tick))
             {
                 _model.TickForNextProduction = tick.Tick + _bp.BaseTicks;
                 _model.Producing = true;
-                _model.ProduceNThenStop--;
-                _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStartedProducing, null, _model.ProducerId, _model.PlanetScId), tick.Tick));
+                _model.AutoBuyFailed = false;
+                if (_model.ProduceNThenStop > 0) _model.ProduceNThenStop--;
+                if (!continuing) _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStartedProducing, null, _model.ProducerId, _model.PlanetScId), tick.Tick));
+                return true;
             }
-            else
+            return false;
+        }
+
+        private bool tryBuyFromMarket(MessageTick tick)
+        {
+            foreach (ResourceQuantity rQ in _bp.Consumes)
             {
-                _model.Producing = false;
+                if (!_planetC.CommandForMarket(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.BuyFromLowestSell, rQ.Type, rQ.Quantity), _model.OwnerId, tick.Tick, _model.PlanetScId)))
+                {
+                    _model.AutoBuyFailed = true;
+                    _planetC.CommandForMarket(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.PlaceBuyOrderHighest, rQ.Type, rQ.Quantity), _model.OwnerId, tick.Tick, _model.PlanetScId));
+                }
             }
+            return !_model.AutoBuyFailed;
         }
 
         internal void receiveProducerCommand(MessageProducerCommand msg)
