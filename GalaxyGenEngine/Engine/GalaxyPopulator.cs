@@ -11,7 +11,7 @@ namespace GalaxyGenEngine.Engine
 {
     public class GalaxyPopulator : IGalaxyPopulator
     {
-        const int NUMBER_OF_AGENTS = 1000;
+        const int NUMBER_OF_AGENTS = 10;
         private Galaxy _gal;
         public Galaxy GetFullGalaxy()
         {
@@ -66,8 +66,8 @@ namespace GalaxyGenEngine.Engine
             int j = 0;
             foreach (Planet p in ss.Planets.Values)
             {
-                //int j = RandomUtils.Random(4);
-                j++;
+                j = RandomUtils.Random(3);
+                //j++;
                 if (j % 2 == 0)
                 {
                     addMetalProducerToPlanet(ag, p);

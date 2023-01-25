@@ -35,9 +35,8 @@ namespace GalaxyGenEngine.Engine.Controllers
                 producingTick(tick);
             }
             else if (_model.AutoResumeProduction || _model.ProduceNThenStop > 0)
-            {
-                if (_model.Producing) tryStartProduction(tick, true);
-                else tryStartProduction(tick, false);
+            {                
+                tryStartProduction(tick, false);
             }
         }
 
@@ -45,7 +44,8 @@ namespace GalaxyGenEngine.Engine.Controllers
         {
             if (_model.TickForNextProduction <= tick.Tick)
             {                      
-                _planetC.AddResources(_bp.Produces, _model.OwnerId);                    
+                _planetC.AddResources(_bp.Produces, _model.OwnerId);
+                if (_model.AutoSellToMarket) trySellToMarket(tick);
                 _model.Producing = false;                
                 if (_model.AutoResumeProduction)
                 {
@@ -54,6 +54,17 @@ namespace GalaxyGenEngine.Engine.Controllers
                 else
                 {                    
                     _solarSystemC.SendMessageToAgent(_model.OwnerId, new MessageAgentCommand(new MessageAgentProducerCommand(AgentCommandEnum.ProducerStoppedProducing, _bp.Consumes, _model.ProducerId, _model.PlanetScId), tick.Tick));
+                }
+            }
+        }
+
+        private void trySellToMarket(MessageTick tick)
+        {
+            foreach (ResourceQuantity rQ in _bp.Produces)
+            {
+                if (!_planetC.CommandForMarket(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.SellToHighestBuy, rQ.Type, rQ.Quantity), _model.OwnerId, tick.Tick, _model.PlanetScId)))
+                {                    
+                    _planetC.CommandForMarket(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.PlaceSellOrderLowest, rQ.Type, rQ.Quantity), _model.OwnerId, tick.Tick, _model.PlanetScId));
                 }
             }
         }
@@ -82,6 +93,7 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         private bool tryBuyFromMarket(MessageTick tick)
         {
+            // TODO only buy resources we need
             foreach (ResourceQuantity rQ in _bp.Consumes)
             {
                 if (!_planetC.CommandForMarket(new MessageMarketCommand(new MessageMarketGeneral(MarketCommandEnum.BuyFromLowestSell, rQ.Type, rQ.Quantity), _model.OwnerId, tick.Tick, _model.PlanetScId)))

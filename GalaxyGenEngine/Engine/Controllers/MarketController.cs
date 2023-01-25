@@ -69,9 +69,12 @@ namespace GalaxyGenEngine.Engine.Controllers
                 if (to.buy) tl = b.BuyOrders[to.limitPrice];
                 else tl = b.SellOrders[to.limitPrice]; 
             }
-            if (tl.tail != to) to.prev = tl.tail;
-            tl.tail.next = to;
-            tl.tail = to;
+            if (tl.tail != to)
+            {
+                to.prev = tl.tail;
+                tl.tail.next = to;
+                tl.tail = to;
+            }            
             tl.size++;
             tl.totalVolume += to.qty;
             to.parentLimit = tl;
@@ -180,6 +183,7 @@ namespace GalaxyGenEngine.Engine.Controllers
             // work out cost by traversing through orders until quantity is filled.
             long totalCost = 0;
             long qty = quantity;
+            if ((buyOrder && b.LowestSell == null) || (!buyOrder && b.HighestBuy == null)) return false;
             TreeOrder curOrder = buyOrder ? b.LowestSell.head : b.HighestBuy.head;
             TreeDictionary<long,TreeLimit> orders = buyOrder ? b.SellOrders : b.BuyOrders;
 
@@ -246,7 +250,7 @@ namespace GalaxyGenEngine.Engine.Controllers
 
         private bool createOrder(Book b, bool buyOrder, ResourceTypeEnum resType, long quantity, long limitPrice, ulong tick, ulong agentId)
         {
-            if (_planetC.ResourceRequest(new ResourceQuantity(resType, quantity), agentId, tick))
+            if (getAssets(buyOrder, resType, quantity, limitPrice, tick, agentId))
             {
                 // create database object and add
                 MarketOrder mo = new MarketOrder();
@@ -264,6 +268,12 @@ namespace GalaxyGenEngine.Engine.Controllers
             }
             return false;
         }
+
+        private bool getAssets(bool buyOrder, ResourceTypeEnum resType, long quantity, long limitPrice, ulong tick, ulong agentId)
+        {
+            if (buyOrder) return _solarSystemC.CurrencyRequest(_model.CurrencyId, quantity * limitPrice, agentId, tick);
+            else return _planetC.ResourceRequest(new ResourceQuantity(resType, quantity), agentId, tick);
+        }        
     }
     
 
